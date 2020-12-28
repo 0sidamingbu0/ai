@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>介绍 &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>介绍 &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc/copyright.html">版权声明</a></li>
@@ -611,7 +612,7 @@ build/xsdk/common/xstream/framework/CMakeFiles/xstream.dir/src/xstream_data.cpp.
 <h2>打包<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
 <li><p>编译不开源的库，如bpu_predict,ipc_tracking等。为保证有权限执行脚本，建议使用sudo权限执行一下脚本.
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">bash</span> <span class="pre">BuildAll/make.sh</span> <span class="pre">all</span> <span class="pre">release</span></code></p></li>
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">bash</span> <span class="pre">BuildAll/make.sh</span> <span class="pre">all</span> <span class="pre">release</span> <span class="pre">en_python_api</span></code></p></li>
 <li><p>打包，创建ai_express_release发版包
 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">bash</span> <span class="pre">BuildAll/package.sh</span></code></p></li>
 <li><p>生成文档，在ai_express_release/doc创建html格式的文档

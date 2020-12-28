@@ -6,17 +6,17 @@
     "image",
     "body_lowpassfilter_box",
     "head_final_box",
-    "face_final_box",
+    "face_lowpassfilter_box",
     "hand_lowpassfilter_box",
     "lowpassfilter_body_kps",
     "mask",
     "lowpassfilter_hand_lmk",
+    "lowpassfilter_lmk_106pts",
     "gesture_vote",
     "hand_disappeared_track_id_list",
     "bound_rect_filter",
     "age",
-    "gender",
-    "lmk_106pts"
+    "gender"
   ],
   "workflow": [
     {
@@ -209,6 +209,23 @@
       "method_config_file": "lowpassfilter_hand_config.json"
     },
     {
+      "thread_count": 1,
+      "method_type": "LowPassFilterMethod",
+      "unique_name": "lowpassfilter_face_method",
+      "timeout_duration": 2000,
+      "inputs": [
+        "face_final_box",
+        "disappeared_track_id",
+        "lmk_106pts"
+      ],
+      "outputs": [
+        "lowpassfilter_lmk_106pts",
+        "face_lowpassfilter_box"
+      ],
+      "method_config_file": "lowpassfilter_hand_config.json"
+    },
+    {
+      "thread_count": 2,
       "method_type": "CNNMethod",
       "unique_name": "age_gender",
       "timeout_duration": 2000,

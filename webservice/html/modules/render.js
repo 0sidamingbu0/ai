@@ -59,18 +59,20 @@ RenderFrame.prototype.renderPerformance = function (performance) {
 }
 
 
-RenderFrame.prototype.renderFrameStart = function ({ smartMsgData, imageWidth, imageHeight }) { // frame
+RenderFrame.prototype.renderFrameStart = function ({ smartMsgData }) { // frame
   this.smartCanvas1.clear();
   this.smartCanvas2.clear();
   let htmls1 = '';
   let htmls2 = '';
   if (smartMsgData.length) {
+    // console.log(444, smartMsgData)
     smartMsgData.map(item => {
+      // console.log(444, item)
       if (item) {
         if (item.boxes.length) {
           this.renderFrameBoxes(item.boxes, item.fall.fallShow);
           if (item.attributes && item.attributes.box) {
-            htmls1 += this.renderAttributes(item.attributes, imageWidth, imageHeight);
+            htmls1 += this.renderAttributes(item.attributes, item.id);
           }
         }
         if (item.fall.fallShow) {
@@ -97,7 +99,9 @@ RenderFrame.prototype.renderFrameBoxes = function (boxes, fall) {
     color = [254, 108, 113];
   }
   boxes.map(item => {
+    // drawBodyBoxId
     this.smartCanvas1.drawBodyBox(item.p1, item.p2, color);
+    // this.smartCanvas1.drawBodyBox(item.p1, item.p2, color,  id);
   })
 }
 
@@ -114,7 +118,7 @@ RenderFrame.prototype.renderFramePoints = function (points) {
         break;
       case "lmk_106pts":
         // console.log(222, points)
-        this.smartCanvas1.drawArcPoint(item.skeletonPoints, item.diameterSize, "#0ff");
+        this.smartCanvas1.drawArcPoint(item.skeletonPoints, "#0ff", item.diameterSize);
         break;
       case "parking":
         this.smartCanvas1.drawParkingPoint(item.skeletonPoints);
@@ -126,19 +130,18 @@ RenderFrame.prototype.renderFramePoints = function (points) {
   })
 }
 
-RenderFrame.prototype.createTemplateAttributesHtml = function (attributes, className, top, left) {
+RenderFrame.prototype.createTemplateAttributesHtml = function (attributes, id, className, top, left) {
   let html = `<li class="${className}" style="top:${top}; left:${left}"><ol>`
   if (typeof attributes.type !== 'undefined') {
     html += `<li class="${attributes.type}">${attributes.type}
-      ${typeof attributes.score !== 'undefined' && attributes.score
-        ? ':' + attributes.score.toFixed(3) : ''}
+      ${typeof id !== 'undefined' && id > 0 ? `: ${id}`: ''}
+      ${typeof attributes.score !== 'undefined' && attributes.score > 0 ? `(${attributes.score.toFixed(3)})` : ''}
     </li>`
   }
   if (attributes.attributes.length) {
     attributes.attributes.map(val => {
       html += `<li class="${val.type}">${val.type}: <span class="${val.type === 'gesture' ? 'gesture' : ''}">${val.value || ''}</span>
-        ${typeof val.score !== 'undefined' && val.score > 0
-          ? '(' + val[score].toFixed(3) + ')' : ''}
+        ${typeof val.score !== 'undefined' && val.score > 0 ? `(${val.score.toFixed(3)})` : ''}
       </li>`;
     });
   }
@@ -167,7 +170,7 @@ RenderFrame.prototype.calculateOffset = function (width, height) {
 }
 
 // 渲染属性框
-RenderFrame.prototype.renderAttributes = function (attributes, w, h) {
+RenderFrame.prototype.renderAttributes = function (attributes, id) {
   let box = attributes.box;
   let len = attributes.attributes.length;
   // console.log(attributes)
@@ -175,13 +178,13 @@ RenderFrame.prototype.renderAttributes = function (attributes, w, h) {
     len += 1;
   }
   let className = 'attribute-panel small';
-  let left = box.p1.x * this.canvasOffset.xScale;
+  let left = box.p1.x * this.canvasOffset.xScale - 12
   let top = box.p1.y * this.canvasOffset.yScale;
 
   if (top - len * 40 >= 0) {
     top = top - len * 40
   }
-  let html = this.createTemplateAttributesHtml(attributes, className, top + 'px', left + 'px');
+  let html = this.createTemplateAttributesHtml(attributes, id, className, top + 'px', left + 'px');
   return html
 }
 

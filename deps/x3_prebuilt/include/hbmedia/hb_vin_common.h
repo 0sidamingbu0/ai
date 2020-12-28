@@ -23,11 +23,18 @@ extern "C" {
 #define HB_VIN_MIPI_HOST_PRE_START_REQUEST_FAIL 508
 #define HB_VIN_MIPI_HOST_PRE_INIT_RESULT_FAIL   509
 #define HB_VIN_MIPI_HOST_PRE_START_RESULT_FAIL  510
+#define HB_VIN_MIPI_HOST_IPI_RESET_FAIL		511
+#define HB_VIN_MIPI_HOST_IPI_FATAL_FAIL		512
+#define HB_VIN_MIPI_HOST_IPI_GET_INFO_FAIL	513
+#define HB_VIN_MIPI_HOST_IPI_SET_INFO_FAIL	514
 #define HB_VIN_MIPI_DEV_START_FAIL		600
 #define HB_VIN_MIPI_DEV_STOP_FAIL		601
 #define HB_VIN_MIPI_DEV_INIT_FAIL		602
 #define HB_VIN_MIPI_DEV_PARSER_FAIL		603
 #define HB_VIN_MIPI_DEV_NOT_ENABLE		604
+#define HB_VIN_MIPI_DEV_IPI_FATAL_FAIL		605
+#define HB_VIN_MIPI_DEV_IPI_GET_INFO_FAIL	606
+#define HB_VIN_MIPI_DEV_IPI_SET_INFO_FAIL	607
 
 #ifndef ENTRY_NUM
 #define ENTRY_NUM 4
@@ -65,6 +72,17 @@ typedef struct _mipi_dev_cfg_t {
 	uint16_t  channel_sel[MIPIDEV_CHANNEL_NUM];
 } mipi_dev_cfg_t;
 
+typedef struct _mipi_dev_ipi_info_t {
+	uint16_t index;
+	uint16_t fatal;
+	uint16_t mode;
+	uint16_t vc;
+	uint16_t datatype;
+	uint16_t maxfnum;
+	uint32_t pixels;
+	uint32_t lines;
+} mipi_dev_ipi_info_t;
+
 #define MIPIHOST_CHANNEL_NUM (4)
 #define MIPIHOST_CHANNEL_0   (0)
 #define MIPIHOST_CHANNEL_1   (1)
@@ -88,6 +106,23 @@ typedef struct _mipi_host_cfg_t {
 	uint16_t  channel_num;
 	uint16_t  channel_sel[MIPIHOST_CHANNEL_NUM];
 } mipi_host_cfg_t;
+
+typedef struct _mipi_host_ipi_reset_t {
+	uint16_t  mask;
+	uint16_t  enable;
+} mipi_host_ipi_reset_t;
+
+typedef struct _mipi_host_ipi_info_t {
+	uint16_t index;
+	uint16_t fatal;
+	uint16_t mode;
+	uint16_t vc;
+	uint16_t datatype;
+	uint16_t hsa;
+	uint16_t hbp;
+	uint16_t hsd;
+	uint32_t adv;
+} mipi_host_ipi_info_t;
 
 #define MIPI_PARAM_NAME_LEN	(32)
 #define MIPI_PARAM_MAX		(10)

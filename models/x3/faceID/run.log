@@ -1,0 +1,9 @@
+Initialize HBCC Env
+PATH=/gpfs/plat_aidi/build/hbcc/v3.7.10/bin/:/usr/local/jdk/jdk1.8.0_241/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+LD_LIBRARY_PATH=:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/lib/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/lib32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/lib64/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/darwin/lib32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/darwin/lib64/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/m2/lib32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/m2/lib64/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/matrix/lib32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/matrix/libarm32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/x2/lib32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/x2/lib64/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/x2/libarch64/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/x2a/lib32/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/x2a/lib64/:/gpfs/plat_aidi/build/hbcc/v3.7.10/hbcc/targets/x2a/libarch64/
+PYTHONPATH=/gpfs/plat_aidi/build/hbcc/v3.7.10/lib/python3.6/site-packages/:
+hbdk-cc --march bernoulli2 -m /gpfs/plat_aidi/model/1883/IntInference/model-wo-bn-b8bit-pred-X2_1.6.json -p /gpfs/plat_aidi/model/1883/IntInference/model-wo-bn-b8bit-pred-0023.params -s 1x112x112x3 -i pyramid --O2 --pyramid-stride 112 -o faceID.hbm
+warning: quantiinput0 shift is fixed to 7, 7, 7, but shift in param is 0
+hbdk-pack /gpfs/plat_aidi/build/1144/so/faceID.hbm -o /gpfs/plat_aidi/build/1144/so/faceID.hbm --tag faceID_v0.0.2
+hbdk-perf /gpfs/plat_aidi/build/1144/so/faceID.hbm
+  FPS=101.3   (see faceID.html)

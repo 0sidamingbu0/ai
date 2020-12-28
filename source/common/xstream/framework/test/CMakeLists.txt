@@ -141,3 +141,35 @@ add_executable(config_test ${SOURCE_FILES} config_test.cpp)
 target_link_libraries(config_test
   PUBLIC ${BASE_LIBRARIES}
 )
+
+set(THREAD_PRIORITY_SOURCES ${SOURCE_FILES}
+  thread_priority_test.cpp
+)
+add_executable(xstream_thread_priority_test ${THREAD_PRIORITY_SOURCES})
+target_link_libraries(xstream_thread_priority_test
+  PUBLIC ${BASE_LIBRARIES}
+)
+
+set(THREAD_MANAGER_SOURCES ${SOURCE_FILES}
+  thread_manager_test.cpp
+)
+add_executable(xstream_thread_manager_test ${THREAD_MANAGER_SOURCES})
+target_link_libraries(xstream_thread_manager_test
+  PUBLIC ${BASE_LIBRARIES}
+)
+
+set(XTHREAD_POOL_SOURCES ${SOURCE_FILES}
+  xthread_pool_test.cpp
+)
+add_executable(xstream_xthread_pool_test ${XTHREAD_POOL_SOURCES})
+target_link_libraries(xstream_xthread_pool_test
+  PUBLIC ${BASE_LIBRARIES}
+)
+
+set(XTHREAD_SOURCES ${SOURCE_FILES}
+  xthread_test.cpp
+)
+add_executable(xstream_xthread_test ${XTHREAD_SOURCES})
+target_link_libraries(xstream_xthread_test
+  PUBLIC ${BASE_LIBRARIES}
+)

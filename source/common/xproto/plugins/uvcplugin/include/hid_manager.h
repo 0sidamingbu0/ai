@@ -13,8 +13,9 @@
 #include <queue>
 #include <string>
 #include <thread>
+#include <deque>
 #include <vector>
-
+#include <utility>
 
 #include "hobot_vision/blocking_queue.hpp"
 #include "./smart_manager.h"
@@ -49,6 +50,7 @@ class HidManager : public SmartManager {
   virtual int FeedSmart(XProtoMessagePtr msg, int ori_image_width,
                         int ori_image_height, int dst_image_width,
                         int dst_image_height);
+  int FeedDropSmart(uint64_t frame_id) override;
   int FeedInfo(const XProtoMessagePtr& msg);
 
  private:
@@ -58,6 +60,7 @@ class HidManager : public SmartManager {
   int Serialize(SmartMessagePtr smart_msg, int ori_image_width,
                 int ori_image_height, int dst_image_width,
                 int dst_image_height);
+  int SerializeDropFrame(uint64_t frame_id);
 
  public:
   // AP->CP info buffer
@@ -78,8 +81,17 @@ class HidManager : public SmartManager {
   std::string hid_file_ = "/dev/hidg0";
   int hid_file_handle_ = -1;
   std::mutex queue_lock_;
-  const unsigned int queue_max_size_ = 5;
-  std::queue<std::string> pb_buffer_queue_;
+  const unsigned int queue_max_size_ = 50;
+
+  using SmartMsg = std::pair<uint64_t, std::string>;
+  struct compare{
+    bool operator()(SmartMsg msg1, SmartMsg msg2){
+      return msg1.first > msg2.first;
+    }
+  };
+  std::priority_queue<SmartMsg,
+          std::deque<SmartMsg>, compare> smart_msg_queue_;
+
   std::condition_variable condition_;
 
   // CP->AP info buffer

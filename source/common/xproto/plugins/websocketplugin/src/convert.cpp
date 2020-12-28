@@ -158,24 +158,27 @@ int Convertor::PackSmartMsg(std::string &data, SmartMessage *smart_msg,
                             int dst_h) {
   if (!smart_msg)
     return -1;
-  switch ((WebsocketConfig::SmartType)type) {
-  case WebsocketConfig::SMART_FACE:
-  case WebsocketConfig::SMART_BODY: {
-      auto msg = dynamic_cast<CustomSmartMessage*>(smart_msg);
-      if (msg)
-        data = msg->Serialize(ori_w, ori_h, dst_w, dst_h);
-    break;
+  if (smart_msg) {
+    data = smart_msg->Serialize(ori_w, ori_h, dst_w, dst_h);
   }
-  case WebsocketConfig::SMART_VEHICLE: {
-    auto msg = dynamic_cast<VehicleSmartMessage*>(smart_msg);
-    if (msg) {
-      data = msg->Serialize(ori_w, ori_h, dst_w, dst_h);
-    }
-    break;
-  }
-  default:
-    return -1;
-  }
+  // switch ((WebsocketConfig::SmartType)type) {
+  // case WebsocketConfig::SMART_FACE:
+  // case WebsocketConfig::SMART_BODY: {
+  //     auto msg = dynamic_cast<CustomSmartMessage*>(smart_msg);
+  //     if (msg)
+  //       data = msg->Serialize(ori_w, ori_h, dst_w, dst_h);
+  //   break;
+  // }
+  // case WebsocketConfig::SMART_VEHICLE: {
+  //   auto msg = dynamic_cast<VehicleSmartMessage*>(smart_msg);
+  //   if (msg) {
+  //     data = msg->Serialize(ori_w, ori_h, dst_w, dst_h);
+  //   }
+  //   break;
+  // }
+  // default:
+  //   return -1;
+  // }
   return 0;
 }
 }  // namespace websocketplugin

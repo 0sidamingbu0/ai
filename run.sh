@@ -51,6 +51,12 @@ then
     run_mode="ut"
   elif [ $2 == "cmd_normal" ]; then
     run_mode="cmd_normal"
+  elif [ $2 == "ruku" ]; then
+    run_mode="ruku"
+  elif [ $2 == "db_list" ]; then
+    run_mode="db_list"
+  elif [ $2 == "db_drop_table" ]; then
+    run_mode="db_drop_table"
   else
     usage
   fi
@@ -100,12 +106,15 @@ visual_cfg_func() {
   sed -i 's#\("layer": \).*#\1'$layer',#g' configs/visualplugin_face.json
   sed -i 's#\("layer": \).*#\1'$layer',#g' configs/visualplugin_body.json
   sed -i 's#\("layer": \).*#\1'$layer',#g' configs/visualplugin_vehicle.json
+  sed -i 's#\("layer": \).*#\1'$layer',#g' configs/visualplugin_multisource.json
   sed -i 's#\("image_width": \).*#\1'$width',#g' configs/visualplugin_face.json
   sed -i 's#\("image_width": \).*#\1'$width',#g' configs/visualplugin_body.json
   sed -i 's#\("image_width": \).*#\1'$width',#g' configs/visualplugin_vehicle.json
+  sed -i 's#\("image_width": \).*#\1'$width',#g' configs/visualplugin_multisource.json
   sed -i 's#\("image_height": \).*#\1'$height',#g' configs/visualplugin_face.json
   sed -i 's#\("image_height": \).*#\1'$height',#g' configs/visualplugin_body.json
   sed -i 's#\("image_height": \).*#\1'$height',#g' configs/visualplugin_vehicle.json
+  sed -i 's#\("image_height": \).*#\1'$height',#g' configs/visualplugin_multisource.json
   sed -i 's#\("720p_layer": \).*#\1'$layer_720p',#g' configs/visualplugin_body.json
   sed -i 's#\("1080p_layer": \).*#\1'$layer_1080p',#g' configs/visualplugin_body.json
   sed -i 's#\("2160p_layer": \).*#\1'$layer_2160p',#g' configs/visualplugin_body.json
@@ -119,9 +128,13 @@ solution_cfg_func() {
   cp -rf body_solution/configs/multitask_with_hand_${resolution}M.json  body_solution/configs/multitask_with_hand.json
   cp -rf body_solution/configs/multitask_with_hand_960x544_${resolution}M.json  body_solution/configs/multitask_with_hand_960x544.json
   cp -rf body_solution/configs/segmentation_multitask_${resolution}M.json  body_solution/configs/segmentation_multitask.json
+  cp -rf face_solution/configs/filter_config_${resolution}M.json face_solution/configs/filter_config.json
   cp -rf face_solution/configs/face_pose_lmk_${resolution}M.json face_solution/configs/face_pose_lmk.json
+  cp -rf face_solution/configs/predict_face_pose_lmk_${resolution}M.json face_solution/configs/predict_face_pose_lmk.json
   cp -rf vehicle_solution/configs/vehicle_multitask_${resolution}M.json vehicle_solution/configs/vehicle_multitask.json
   cp -rf vehicle_solution/configs/config_match_${resolution}M.json vehicle_solution/configs/config_match.json
+  cp -rf yolov3_solution/configs/yolov3_predict_method_${resolution}M.json yolov3_solution/configs/yolov3_predict_method.json
+  cp -rf yolov3_solution/configs/yolov3_post_process_method_${resolution}M.json yolov3_solution/configs/yolov3_post_process_method.json
 }
 
 set_fb_cam_data_source_func() {
@@ -345,6 +358,32 @@ sensor_cfg_func() {
     echo 0 > /sys/class/vps/mipi_host2/param/stop_check_instart
     # TODO
     visual_cfg_func 0 1280 720 -1 0 -1
+  elif [ $sensor == "f37_1080p" ]; then
+    echo "sensor is f37_1080p, default resolution 1080P, 1080P X3 JPEG Codec..."
+    visual_cfg_func 0 1920 1080 -1 0 -1
+    solution_cfg_func 2
+    if [ $platform == "x3dev" ]; then
+      echo ""
+    elif [ $platform == "x3sdb" ]; then
+      # reset f37_1080p mipi cam
+      echo 119 > /sys/class/gpio/export
+      echo out > /sys/class/gpio/gpio119/direction
+      echo 0 > /sys/class/gpio/gpio119/value
+      sleep 0.2
+      echo 1 > /sys/class/gpio/gpio119/value
+      # enable mclk output to f37_1080p sensor in x3sdb(mipihost0)
+      echo 1 > /sys/class/vps/mipi_host0/param/snrclk_en
+      echo 24000000 > /sys/class/vps/mipi_host0/param/snrclk_freq
+      # enable mclk output to os8a10 sensor in x3sdb(mipihost1)
+      echo 1 > /sys/class/vps/mipi_host1/param/snrclk_en
+      echo 24000000 > /sys/class/vps/mipi_host1/param/snrclk_freq
+    fi
+    # support uvc device
+    echo start > /sys/devices/virtual/graphics/iar_cdev/iar_test_attr
+    echo device > /sys/devices/platform/soc/b2000000.usb/role
+    echo soc:usb-id > /sys/bus/platform/drivers/extcon-usb-gpio/unbind
+    service adbd stop
+    /etc/init.d/usb-gadget.sh start uvc-hid
   else
     echo "error! sensor" $sensor "is not supported"
   fi
@@ -412,6 +451,7 @@ choose_x3_single_cam_func() {
   echo -e '\t4. single camera: s5kgm1sp,  default 4000*3000'
   echo -e '\t5. single camera: s5kgm1sp_2160p, default 2160P'
   echo -e '\t6. single camera: usb_cam, default 1080P'
+  echo -e '\t7. single camera: f37_1080p, default 1080P'
   echo -e 'Which would you like? '
   set_data_source_func ${vio_cfg_file} ${vio_mode} ${data_source_num}
   if [ x"$run_mode" == x"ut" ];then
@@ -457,6 +497,12 @@ choose_x3_single_cam_func() {
       sensor=usb_cam_1080p
       set_data_source_func ${vio_cfg_file} ${vio_mode} ${data_source_num}
       set_cam_pipe_file_func $vio_mode $sensor
+      sensor_cfg_func $platform $sensor
+      ;;
+    7)  echo -e "\033[33m You choose 7:f37_1080p \033[0m"
+      sensor=f37_1080p
+      set_cam_pipe_file_func $vio_mode $sensor
+      sensor_setting_func $platform $sensor ${vio_pipe_file}
       sensor_cfg_func $platform $sensor
       ;;
     *) echo -e "\033[31m You choose unsupported single cam mode \033[0m"
@@ -990,7 +1036,6 @@ choose_solution_func() {
   echo -e '\t3.  body'
   echo -e '\t4.  xbox'
   echo -e '\t5.  behavior'
-  echo -e '\t6.  gesture'
   echo -e '\t7.  video_box'
   echo -e '\t8.  tv_uvc'
   echo -e '\t9.  face_body_multisource'
@@ -999,6 +1044,9 @@ choose_solution_func() {
   echo -e '\t12. apa_test'
   echo -e '\t13. ssd_test'
   echo -e '\t14. vio_test'
+  echo -e '\t15. multi_input_hapi_ipm'
+  echo -e '\t16. matting'
+  echo -e '\t17. yolov3_mobilenetv3_example'
   # echo -e '\t30. vehicle'
   # echo -e '\t31. vehicle_v2'
   # echo -e '\t32. gtest_vision_type'
@@ -1067,9 +1115,15 @@ choose_solution_func() {
       ;;
     7)  echo -e "\033[33m You choose 7:video_box \033[0m"
       if [ x"$run_mode" == x"ut" ];then
-        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json -${log_level}
+        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json ./video_box/configs/ware_config.json -${log_level}
+      elif [ x"$run_mode" == x"ruku" ];then
+        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json ./video_box/configs/ware_config.json  -${log_level} ruku ./configs/vio_config.json.x3dev.fb_face_pic
+      elif [ x"$run_mode" == x"db_list" ];then
+        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json ./video_box/configs/ware_config.json -${log_level} db_list 
+      elif [ x"$run_mode" == x"db_drop_table" ];then
+        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json ./video_box/configs/ware_config.json -${log_level} db_drop_table 
       else
-        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json -${log_level} normal
+        ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json ./video_box/configs/ware_config.json -${log_level} normal
       fi
       ;;
     8)  echo -e "\033[33m You choose 8:tv_uvc \033[0m"
@@ -1108,10 +1162,11 @@ choose_solution_func() {
       ;;
     11)  echo -e "\033[33m You choose 11:multi_input_hapi \033[0m"
       choose_platform_func
+      visual_cfg_func 0 1280 720 -1 -1 -1
       if [ x"$run_mode" == x"ut" ];then
-        ./multisourceinput/multisourceinput $vio_cfg_file ./multisourceinput/configs/apa_config.json ./multisourceinput/configs/websocket_config.json -${log_level}
+        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_config.json ./configs/visualplugin_multisource.json -${log_level}
       else
-        ./multisourceinput/multisourceinput $vio_cfg_file ./multisourceinput/configs/apa_config.json ./multisourceinput/configs/websocket_config.json -${log_level} normal
+        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_config.json ./configs/visualplugin_multisource.json -${log_level} normal
       fi
       ;;
     12)  echo -e "\033[33m You choose 12:apa_test \033[0m"
@@ -1128,6 +1183,29 @@ choose_solution_func() {
       choose_viotest_loop_mode_func
       ./vioplugin_test/vioplugin_sample ${vio_cfg_file} ${vio_test_loop} -${log_level}
       ;;
+    15)  echo -e "\033[33m You choose 15:multi_input_hapi_ipm \033[0m"
+      vio_cfg_file=./configs/vio_config.json.j3dev.multi_fb_sync.256x512
+      visual_cfg_func 0 256 512 -1 -1 -1
+      if [ x"$run_mode" == x"ut" ];then
+        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_ipm_config.json ./configs/visualplugin_multisource.json -${log_level}
+      else
+        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_ipm_config.json ./configs/visualplugin_multisource.json -${log_level} normal
+      fi
+      ;;
+    16)  echo -e "\033[33m You choose 16:matting \033[0m"
+      choose_platform_func
+      echo "vio_cnfig_file: $vio_cfg_file"
+      if [ x"$run_mode" == x"ut" ];then
+        ./body_solution/body_solution $vio_cfg_file ./body_solution/configs/matting_solution_multitask_960x544.json ./configs/visualplugin_body.json -${log_level}
+      else
+        ./body_solution/body_solution $vio_cfg_file ./body_solution/configs/matting_solution_multitask_960x544.json ./configs/visualplugin_body.json -${log_level} normal
+      fi
+      ;;
+    17)  echo -e "\033[33m You choose 17:yolvo3_mobilenetv2  \033[0m"
+      choose_platform_func
+      echo "vio_cnfig_file: $vio_cfg_file"
+      ./yolov3_solution/yolov3_solution $vio_cfg_file ./yolov3_solution/configs/solution_yolov3.json ./configs/visualplugin_body.json -${log_level} normal
+      ;;
     # 30)  echo -e "\033[33m You choose 30:vehicle \033[0m"
     #   if [ x"$run_mode" == x"ut" ];then
     #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution.json ./configs/visualplugin_vehicle.json -${log_level}
@@ -1137,9 +1215,9 @@ choose_solution_func() {
     #   ;;
     # 31)  echo -e "\033[33m You choose 31:vehicle_v2 \033[0m"
     #   if [ x"$run_mode" == x"ut" ];then
-    #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution_v2.json ./configs/visualplugin_vehicle.json -${log_level}
+    #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution_v2x.json ./configs/visualplugin_vehicle.json -${log_level}
     #   else
-    #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution_v2.json ./configs/visualplugin_vehicle.json -${log_level} normal
+    #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution_v2x.json ./configs/visualplugin_vehicle.json -${log_level} normal
     #   fi
     #   ;;
     # 32)  echo -e "\033[33m You choose 32:gtest_vision_type \033[0m"

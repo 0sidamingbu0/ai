@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>repo &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>repo &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -164,15 +165,46 @@ development workflow.  Repo is not meant to replace Git, only to make it
 easier to work with Git.  The repo command is an executable Python script
 that you can put anywhere in your path.</p>
 <ul class="simple">
-<li><p>Homepage: https://gerrit.googlesource.com/git-repo/</p></li>
-<li><p>Bug reports: https://bugs.chromium.org/p/gerrit/issues/list?q=component:repo</p></li>
-<li><p>Source: https://gerrit.googlesource.com/git-repo/</p></li>
-<li><p>Overview: https://source.android.com/source/developing.html</p></li>
-<li><p>Docs: https://source.android.com/source/using-repo.html</p></li>
+<li><p>Homepage: <a class="reference external" href="https://gerrit.googlesource.com/git-repo/">https://gerrit.googlesource.com/git-repo/</a></p></li>
+<li><p>Mailing list: <a class="reference external" href="https://groups.google.com/forum/#%21forum/repo-discuss">repo-discuss on Google Groups</a></p></li>
+<li><p>Bug reports: <a class="reference external" href="https://bugs.chromium.org/p/gerrit/issues/list?q=component:repo">https://bugs.chromium.org/p/gerrit/issues/list?q=component:repo</a></p></li>
+<li><p>Source: <a class="reference external" href="https://gerrit.googlesource.com/git-repo/">https://gerrit.googlesource.com/git-repo/</a></p></li>
+<li><p>Overview: <a class="reference external" href="https://source.android.com/source/developing.html">https://source.android.com/source/developing.html</a></p></li>
+<li><p>Docs: <a class="reference external" href="https://source.android.com/source/using-repo.html">https://source.android.com/source/using-repo.html</a></p></li>
 <li><p><a class="reference internal" href="docs/manifest-format.html"><span class="doc">repo Manifest Format</span></a></p></li>
 <li><p><a class="reference internal" href="docs/repo-hooks.html"><span class="doc">repo Hooks</span></a></p></li>
 <li><p><a class="reference internal" href="SUBMITTING_PATCHES.html"><span class="doc">Submitting patches</span></a></p></li>
+<li><p>Running Repo in <a class="reference internal" href="docs/windows.html"><span class="doc">Microsoft Windows</span></a></p></li>
+<li><p>GitHub mirror: <a class="reference external" href="https://github.com/GerritCodeReview/git-repo">https://github.com/GerritCodeReview/git-repo</a></p></li>
+<li><p>Postsubmit tests: <a class="reference external" href="https://github.com/GerritCodeReview/git-repo/actions">https://github.com/GerritCodeReview/git-repo/actions</a></p></li>
 </ul>
+<div class="section" id="contact">
+<h2>Contact<a class="headerlink" href="#contact" title="永久链接至标题">¶</a></h2>
+<p>Please use the <a class="reference external" href="https://groups.google.com/forum/#%21forum/repo-discuss">repo-discuss</a> mailing list or <a class="reference external" href="https://bugs.chromium.org/p/gerrit/issues/list?q=component:repo">issue tracker</a> for questions.</p>
+<p>You can <a class="reference external" href="https://bugs.chromium.org/p/gerrit/issues/entry?template=Repo+tool+issue">file a new bug report</a> under the “repo” component.</p>
+<p>Please do not e-mail individual developers for support.
+They do not have the bandwidth for it, and often times questions have already
+been asked on <a class="reference external" href="https://groups.google.com/forum/#%21forum/repo-discuss">repo-discuss</a> or bugs posted to the <a class="reference external" href="https://bugs.chromium.org/p/gerrit/issues/list?q=component:repo">issue tracker</a>.
+So please search those sites first.</p>
+</div>
+<div class="section" id="install">
+<h2>Install<a class="headerlink" href="#install" title="永久链接至标题">¶</a></h2>
+<p>Many distros include repo, so you might be able to install from there.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Debian/Ubuntu.</span>
+$ sudo apt-get install repo
+
+<span class="c1"># Gentoo.</span>
+$ sudo emerge dev-vcs/repo
+</pre></div>
+</div>
+<p>You can install it manually as well as it’s a single script.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ mkdir -p ~/.bin
+$ <span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="s2">/.bin:</span><span class="si">${</span><span class="nv">PATH</span><span class="si">}</span><span class="s2">&quot;</span>
+$ curl https://storage.googleapis.com/git-repo-downloads/repo &gt; ~/.bin/repo
+$ chmod a+rx ~/.bin/repo
+</pre></div>
+</div>
+</div>
 </div>
 
 

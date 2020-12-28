@@ -1,0 +1,4 @@
+{
+    "model_file_path": "../models/yolov3_nv12_hybrid_horizonrt.bin",
+    "pyramid_layer": 7
+}

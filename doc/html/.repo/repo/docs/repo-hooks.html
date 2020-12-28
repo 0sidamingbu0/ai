@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>repo hooks &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>repo hooks &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -228,6 +229,29 @@ then check it directly.  Hooks should not normally modify the active git repo
 (such as checking out a specific commit to run checks) without first prompting
 the user.  Although user interaction is discouraged in the common case, it can
 be useful when deploying automatic fixes.</p>
+<div class="section" id="shebang-handling">
+<h3>Shebang Handling<a class="headerlink" href="#shebang-handling" title="永久链接至标题">¶</a></h3>
+<p>*** note
+This is intended as a transitional feature.  Hooks are expected to eventually
+migrate to Python 3 only as Python 2 is EOL &amp; deprecated.</p>
+<hr class="docutils" />
+<p>If the hook is written against a specific version of Python (either 2 or 3),
+the script can declare that explicitly.  Repo will then attempt to execute it
+under the right version of Python regardless of the version repo itself might
+be executing under.</p>
+<p>Here are the shebangs that are recognized.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">#!/usr/bin/env</span> <span class="pre">python</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">#!/usr/bin/python</span></code>: The hook is compatible with
+Python 2 &amp; Python 3.  For maximum compatibility, these are recommended.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#!/usr/bin/env</span> <span class="pre">python2</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">#!/usr/bin/python2</span></code>: The hook requires Python 2.
+Version specific names like <code class="docutils literal notranslate"><span class="pre">python2.7</span></code> are also recognized.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#!/usr/bin/env</span> <span class="pre">python3</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">#!/usr/bin/python3</span></code>: The hook requires Python 3.
+Version specific names like <code class="docutils literal notranslate"><span class="pre">python3.6</span></code> are also recognized.</p></li>
+</ul>
+<p>If no shebang is detected, or does not match the forms above, we assume that the
+hook is compatible with both Python 2 &amp; Python 3 as if <code class="docutils literal notranslate"><span class="pre">#!/usr/bin/python</span></code> was
+used.</p>
+</div>
 </div>
 <div class="section" id="hooks">
 <h2>Hooks<a class="headerlink" href="#hooks" title="永久链接至标题">¶</a></h2>

@@ -549,8 +549,16 @@ bool ImageConvertor::ConvertNV12ToYUV444() {
   output_data_size_ = width_ * height_ * 3;
   output_data_ = new uint8_t[output_data_size_];
 
-  const uint8_t *input_y = input_data_[0];
-  const uint8_t *input_uv = input_y + input_first_stride_ * height_;
+  const uint8_t *input_y = nullptr;
+  const uint8_t *input_uv = nullptr;
+  if (FotmatDataArrayType::kContinueType == input_array_type_) {
+    input_y = input_data_[0];
+    input_uv = input_y + input_first_stride_ * height_;
+  } else {
+    input_y = input_data_[0];
+    input_uv = input_data_[1];
+  }
+
   uint8_t *output = output_data_;
   int loop = height_ / 2;
   for (int i = 0; i < loop; i++) {

@@ -110,6 +110,8 @@ int HB_VOT_SetWBAttr(VOT_WB votWb, VOT_WB_ATTR_S *pstWBAttr);
 int HB_VOT_GetWBFrame(VOT_WB votWb, void* pstVFrame, int millisec);
 int HB_VOT_ReleaseWBFrame(VOT_WB votWb, void* pstVFrame);
 
+int HB_VOT_ShutDownHDMI(void);
+int HB_VOT_StartHDMI(void);
 #ifdef __cplusplus
 #if __cplusplus
 }

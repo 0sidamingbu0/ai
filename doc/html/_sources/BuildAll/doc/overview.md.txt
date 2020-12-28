@@ -24,20 +24,18 @@ AI Express，中文名称AI应用开发中间件，是地平线芯片“天工�
 
 * XProto: 一套独立的原型应用开发框架。该框架将整个应用划分成一系列的Plugin，各个Plugin之间通过消息总线通信，完成了模块的解耦、复用、可扩展等需求。
 
-* 内置参考解决方案: 沉淀了人脸结构化、人体结构化、人体行为分析、视频盒子、体感游戏、usb camera、apa、车辆结构化、多路camera等示例。可以直接基于这些示例修改，完成客户的产品功能开发。
+* 内置参考解决方案: 沉淀了人脸结构化、人体结构化、人体行为分析、视频盒子、体感游戏、usb camera、apa、车辆结构化、多路camera、多路IPM图像回灌等示例。可以直接基于这些示例修改，完成客户的产品功能开发。
 
 ## XStream算法SDK编程框架
 XStream属于一套算法SDK编程框架，Method为框架核心组件，以Graph的方式将Method实例串联起来，XStream框架内部自动完成Method的调度。
 
-XStream源码由XStream-Framework、tutorials、vision_type、methods、imagetools组成。各个组件的功能描述如下：  
+XStream源码由XStream-Framework、tutorials、vision_type、imagetools组成。各个组件的功能描述如下：  
 
-* XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Metho的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发。
+* XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发。
 
 * tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性。
 
 * vision_type: 沉淀了XStream-Framework框架下视觉相关的数据结构，比如金字塔图像、矩形框、分割、分类属性等。沉淀的solution中大量使用这些数据结构。客户基于XStream-Framework重新开发，可以不依赖vision_type。
-
-* methods: 沉淀了XStream-Framework框架下一些Method，比如FasterRCNNMethod、CNNMethod、MotMethod。沉淀的solution中大量使用这些数Method。客户基于XStream-Framework重新开发，可以不依赖这些Method。
 
 * imagetools: 沉淀了一套图像处理的C++库，内部封装了OpenCV、libyuv、libturbojpeg等开源库，提供图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。客户基于XStream-Framework重新开发，可以不依赖imagetools。
 
@@ -47,7 +45,7 @@ XStream提供**流程配置**功能，支持将各种Method按照业务需求组
 
 ![框架](./image/face_snapshot.png "")
 
-它由XStream内置的四个算法Method组成：`FasterRCNNMethod`,`MOTMethod`,`GradingMethod`和`SnapShotMethod`，整个workflow支持对视频图片帧进行人脸框，人脸关键点，人脸姿态检测，并对检测到人进行跟踪，打分与抓拍。
+它由AI-Express内置的四个算法Method组成：`FasterRCNNMethod`,`MOTMethod`,`GradingMethod`和`SnapShotMethod`，整个workflow支持对视频图片帧进行人脸框，人脸关键点，人脸姿态检测，并对检测到人进行跟踪，打分与抓拍。这些内置的Method代码在solution_zoo/xstream/methods。
 
 ## XProto原型应用开发框架
 XProto原型应用开发框架是一套基于消息总线交互的可扩展框架，框架定义了基础的消息类型、Plugin基础类定义以及消息发布订阅的处理逻辑。开发者通过开发Plugin，以及这些Plugin之间交互的消息，降低了模块的耦合。
@@ -73,7 +71,7 @@ XStream聚集算法模型、策略的集成以及最终业务Workflow生成SDK�
 ## 场景参考解决方案
 基于XStream和XProto两套框架，我们也将经过地平线各种量产考验的场景解决方案进行开放，这些解决方案通过搭配地平线芯片以及开发板等硬件参考设计，可以实现快速场景应用的落地。
 
-目前提供了人脸结构化参考方案、人体结构化参考方案、人体行为分析参考方案、视频盒子参考方案、体感游戏参考方案、usb camera参考方案、apa自动泊车参考方案、车辆结构化、多路camera参考方案。提供了工程代码以及配套的参考模型，可以部署运行在地平线XJ3、XJ2开发板。这些参考方案会逐步完全对外开放。
+目前提供了人脸结构化参考方案、人体结构化参考方案、人体行为分析参考方案、视频盒子参考方案、体感游戏参考方案、usb camera参考方案、apa自动泊车参考方案、车辆结构化、多路camera、多路IPM图像回灌参考方案。提供了工程代码以及配套的参考模型，可以部署运行在地平线XJ3、XJ2开发板。这些参考方案会逐步完全对外开放。
 
 各个参考方案的功能描述如下
 
@@ -94,6 +92,10 @@ XStream聚集算法模型、策略的集成以及最终业务Workflow生成SDK�
 * 多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框，支持把多路图像和检测结果在web上展示。
 
 * 车辆结构化参考方案: 完成车辆检测、车牌检测与识别、车辆类型等结构化信息提取。
+
+* 多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。
+
+在开发参考方案时，沉淀了不少XStream框架下的Method，比如FasterRCNNMethod、CNNMethod、MotMethod等。
 
 ## AI Express与bpu_predict的区别
 嵌入式预测库bpu_predict提供了一套C风格的API，封装了地平线BPU操作的底层接口，并提供调度策略，帮助用户快速集成模型。bpu_predict提供的接口功能包括模型加载、Tensor内存分配、预测等功能，不包括模型的算法后处理或者预处理部分。

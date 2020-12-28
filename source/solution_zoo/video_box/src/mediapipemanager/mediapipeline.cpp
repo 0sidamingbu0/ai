@@ -171,6 +171,7 @@ int MediaPipeLine::Stop() {
 }
 
 int MediaPipeLine::DeInit() {
+  decode_type_ = RTSP_Payload_NONE;
   if (!init_) return 0;
 
   LOGI << "call mediapipeline DeInit, "
@@ -178,7 +179,6 @@ int MediaPipeLine::DeInit() {
   vps_module_->DeInit();
   vdec_module_->DeInit();
   init_ = false;
-  decode_type_ = RTSP_Payload_NONE;
   return 0;
 }
 

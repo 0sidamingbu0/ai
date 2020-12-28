@@ -21,6 +21,11 @@
 #include "FilterSkipFrameMethod/FilterSkipFrameMethod.h"
 #include "plate_vote_method/plate_vote_method.h"
 #include "VehiclePlateMatchMethod/VehiclePlateMatchMethod.h"
+#include "MultitaskPredictMethod/MultitaskPredictMethod.h"
+#include "MultitaskPostProcessMethod/MultitaskPostProcessMethod.h"
+#include "FaceSnapFilterMethod/FaceSnapFilterMethod.h"
+#include "GradingMethod/GradingMethod.h"
+#include "SnapShotMethod/SnapShotMethod.h"
 
 namespace xstream {
 namespace method_factory {
@@ -43,6 +48,16 @@ MethodPtr CreateMethod(const std::string &method_name) {
     return MethodPtr(new VehiclePlateMatchMethod());
   } else if ("PlateVoteMethod" == method_name) {
     return MethodPtr(new PlateVoteMethod());
+  } else if ("MultitaskPredictMethod" == method_name) {
+    return MethodPtr(new MultitaskPredictMethod());
+  } else if ("MultitaskPostProcessMethod" == method_name) {
+    return MethodPtr(new MultitaskPostProcessMethod());
+  } else if ("FaceSnapFilterMethod" == method_name) {
+    return MethodPtr(new FaceSnapFilterMethod());
+  } else if ("GradingMethod" == method_name) {
+    return MethodPtr(new GradingMethod());
+  } else if ("SnapShotMethod" == method_name) {
+    return MethodPtr(new SnapShotMethod());
   } else {
     return MethodPtr();
   }

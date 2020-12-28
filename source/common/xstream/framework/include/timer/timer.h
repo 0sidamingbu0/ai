@@ -19,6 +19,8 @@
 #include <memory>
 #include <map>
 #include "common/rw_mutex.h"
+#include "timer_manager.h"
+#include "timer_task.h"
 
 namespace xstream {
 #ifdef __USE_ISOC99
@@ -36,75 +38,6 @@ namespace xstream {
       kNumNanosecsPerSec / kNumMillisecsPerSec;
   static const int64_t kNumNanosecsPerMicrosec =
       kNumNanosecsPerSec / kNumMicrosecsPerSec;
-
-
-class TimerManager;
-
-class TimerTask {
- public:
-  enum TimerType { ONCE, CIRCLE };
-
-  explicit TimerTask(TimerManager &manager);
-
-  ~TimerTask();
-
-  void Start(std::function<void(void*)> fun, unsigned interval,
-             void *userdata_,
-             TimerType timeType = ONCE);
-
-  void Stop();
-
-  typedef timer_t TimerTaskID;
-  TimerTaskID TimerID();
-
- private:
-  void OnTimer(uint64_t now);
-  friend class TimerManager;
-  TimerManager &manager_;
-  TimerType timer_type_;
-  std::function<void(void*)> callback_fun_;
-  uint32_t interval_;
-  uint64_t expires_;
-  int vecIndex_;
-  std::list<TimerTask *>::iterator itr_;
-  TimerTaskID timer_id_;
-  const clockid_t clock_id_;
-  const int timer_signo_;
-  void *userdata_;
-  bool is_stop;
-};
-
-class TimerManager {
- public:
-  explicit TimerManager(int singno);
-
-  static uint64_t GetCurrentMillisecs();
-
-  void DetectTimers();
-
-  int ProcessSignHandler(siginfo_t *si);
-
- private:
-  friend class TimerTask;
-
-  void AddTimer(std::shared_ptr<TimerTask> timertask);
-
-  void RemoveTimer(TimerTask* timertask);
-
-  int Cascade(int offset, int index);
-
- protected:
-  int timer_signo_;
-
- private:
-//  typedef std::list<TimerTask *> TimeList;
-//  std::vector<TimeList> tvec_;
-//  uint64_t check_time_;
-
-  mutable RWLock timer_tb_mutex_;
-
-  std::map<TimerTask::TimerTaskID, std::shared_ptr<TimerTask>> timer_tb_;
-};
 
 class Timer {
  public:

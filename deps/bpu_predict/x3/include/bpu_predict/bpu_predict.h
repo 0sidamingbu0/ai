@@ -56,7 +56,8 @@ int BPU_getModelNameList(BPUHandle handle,
                          const char ***name_list,
                          int *name_list_cnt);
 
-enum BPUDtype { BPU_DTYPE_FLOAT32 = 0, BPU_DTYPE_INT8 };
+enum BPUDtype { BPU_DTYPE_FLOAT32 = 0, BPU_DTYPE_INT8,  BPU_DTYPE_INT32,
+    BPU_DTYPE_INT64};
 
 struct BPUModelInfo {
   int num;                   // num of data

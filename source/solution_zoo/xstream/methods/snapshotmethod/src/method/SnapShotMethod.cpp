@@ -96,6 +96,10 @@ std::vector<BaseDataPtr> SnapShotMethod::ProcessOneBatch(
       }
     }
   }
+  if (method_config_param_->snapshot_type == "crop") {
+    LOGI << "Crop Mode";
+    return strategy_map_["crop"]->ProcessFrame(in, param);
+  }
   LOGI << "Select Mode";
   return strategy_map_["select"]->ProcessFrame(in, param);
 }

@@ -123,18 +123,6 @@ XPluginAsync::XPluginAsync(int thread_num) {
   LOGD << "set XPluginAsync thread num = " << thread_num;
 }
 
-#ifdef PYAPI
-void XPluginAsync::RegMsg(const std::string &type,
-                          std::function<void(pybind11::object)> cb) {
-  auto callback = [=](XProtoMessagePtr msg) -> int {
-    pybind11::object py_input = pybind11::cast(msg);
-    cb(py_input);
-    return 0;
-  };
-  RegisterMsg(type, callback);
-}
-#endif
-
 }  // namespace xproto
 }  // namespace vision
 }  // namespace horizon

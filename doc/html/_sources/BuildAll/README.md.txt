@@ -260,7 +260,7 @@ bash BuildAll/generate_coverage_report.sh
 
 ## 打包
 * 编译不开源的库，如bpu_predict,ipc_tracking等。为保证有权限执行脚本，建议使用sudo权限执行一下脚本.
-`sudo bash BuildAll/make.sh all release`
+`sudo bash BuildAll/make.sh all release en_python_api`
 * 打包，创建ai_express_release发版包
 `sudo bash BuildAll/package.sh`
 * 生成文档，在ai_express_release/doc创建html格式的文档

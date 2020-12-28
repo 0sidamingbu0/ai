@@ -408,7 +408,7 @@ HCanvas.prototype.drawBodyBoxMot = function (p1, p2) {
   // this.drawCorner(p1, p2);
 };
 
-HCanvas.prototype.drawBodyBoxId = function (p1, p2, id) {
+HCanvas.prototype.drawBodyBoxId = function (p1, p2, id, color) {
   if (id == -1 || id == undefined) return;
   var context = this.context;
   var colorArr = ['#14CCBA', '#0066FF', '#F5A623', '#6DB324', '#9013FE'];
@@ -435,7 +435,7 @@ HCanvas.prototype.drawBodyBoxId = function (p1, p2, id) {
       context.lineTo(pos.x, pos.y);
     }
   });
-  context.fillStyle = colorArr[colorById];
+  context.fillStyle = color || colorArr[colorById];
   context.fill();
   context.closePath();
 
@@ -744,10 +744,10 @@ HCanvas.prototype.drawSkeleton = function (points) {
   });
 };
 
-HCanvas.prototype.drawArcPoint = function (points, diameterSize, colors) {
+HCanvas.prototype.drawArcPoint = function (points, colors, diameterSize) {
   var ctx = this.context;
   let size = diameterSize || 7
-  let color = colors || '#000'
+  let color = colors || '#f00'
   let minScore = 0.3
   points.map((item, index) => {
     if (item.score > minScore) {
@@ -766,7 +766,8 @@ HCanvas.prototype.drawArcPoint = function (points, diameterSize, colors) {
 HCanvas.prototype.drawParkingPoint = function (points) {
   var ctx = this.context;
   ctx.beginPath();
-  ctx.strokeStyle = "#C499FF";
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#ff0";
   points.map((item, index) => {
     if(index === 0) {
       ctx.moveTo(item.x, item.y);
@@ -774,8 +775,8 @@ HCanvas.prototype.drawParkingPoint = function (points) {
       ctx.lineTo(item.x, item.y);
     }
 
-    ctx.font = "50px serif";
-    ctx.strokeText(index + 1, item.x, item.y);
+    // ctx.font = "50px serif";
+    // ctx.strokeText(index + 1, item.x, item.y);
   })
   ctx.closePath();
   ctx.stroke();

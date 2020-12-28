@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>XStream算法SDK编程框架开发指南 &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>XStream算法SDK编程框架开发指南 &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -165,32 +165,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#id45">XStream-Framework使用这些数据结构</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id46">内置Method</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#fasterrcnnmethod">FasterRCNNMethod</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id47">配置文件</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#cnnmethod">CNNMethod</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id48">配置文件</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#predictmethod-postprocessmethod">PredictMethod&amp;&amp;PostProcessMethod</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#predictmethod">PredictMethod</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#postprocessmethod">PostProcessMethod</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#motmethod">MotMethod</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id49">输入</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id50">输出</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id51">配置文件</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="#imagetools">图像处理imagetools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id52">功能介绍</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id53">实现方式</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id54">接口描述</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id46">功能介绍</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id47">实现方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id48">接口描述</a></li>
 </ul>
 </li>
 </ul>
@@ -198,6 +176,7 @@
 <li class="toctree-l1"><a class="reference internal" href="xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="copyright.html">版权声明</a></li>
@@ -269,7 +248,7 @@
   <div class="section" id="xstreamsdk">
 <h1>XStream算法SDK编程框架开发指南<a class="headerlink" href="#xstreamsdk" title="永久链接至标题">¶</a></h1>
 <p>本文介绍XStream的开发指南，包含XStream-Framework的接口说明、开发流程讲解以及XStream的特性说明。此外会介绍XStream提供的示例代码功能描述。</p>
-<p>最后会描述XStream内置的数据结构、Method以及图像处理接口。这些内置模块在沉淀的参考解决方案中大量使用，若想复用那些解决方案，建议对这些内置的模块也熟悉了解，若是基于XStream框架重新开发，则可以完全不依赖这些内置模块。</p>
+<p>最后会描述XStream内置的数据结构、Method以及图像处理接口。这些内置模块在沉淀的参考解决方案中大量使用，若想复用那些解决方案，建议对这些内置的模块也熟悉了解。</p>
 <div class="section" id="xstream">
 <h2>XStream设计理念<a class="headerlink" href="#xstream" title="永久链接至标题">¶</a></h2>
 <p>XStream Framework，是一套基于C++实现的算法SDK编程框架。</p>
@@ -292,12 +271,11 @@
 </div>
 <div class="section" id="id1">
 <h2>XStream组成<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
-<p>XStream源码由XStream-Framework、tutorials、vision_type、methods、imagetools组成。各个组件的功能描述如下：</p>
+<p>XStream源码由XStream-Framework、tutorials、vision_type、imagetools组成。各个组件的功能描述如下：</p>
 <ul class="simple">
 <li><p>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Metho的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发</p></li>
 <li><p>tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性</p></li>
 <li><p>vision_type: 沉淀了视觉相关的数据结构，比如金字塔图像、矩形框、分割、分类属性等。沉淀的solution中大量使用这些数据结构。客户基于XStream-Framework重新开发，可以不依赖vision_type</p></li>
-<li><p>methods: 沉淀了XStream-Framework框架下一些Method，比如FasterRCNNMethod、CNNMethod、MotMethod。沉淀的solution中大量使用这些数Method。客户基于XStream-Framework重新开发，可以不依赖这些Method</p></li>
 <li><p>imagetools: 沉淀了一套图像处理的C++库，内部封装了OpenCV、libyuv、libturbojpeg等开源库，提供图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。客户基于XStream-Framework重新开发，可以不依赖imagetools</p></li>
 </ul>
 <p>其中XStream-Framework是XStream的核心，客户可以完全基于XStream-Framework，开发Method，构建workflow，完成客户的需求。</p>
@@ -536,31 +514,31 @@
 <li><p><strong>CreateMethod</strong>：用户在自定义Method后，需要通过实现CreateMethod完成Method实例创建。MethodFactory的工厂函数会根据不同的method_name名字返回对应的Method的实例，workflow中用到的Method都需要添加到该函数中。</p></li>
 </ul>
 <p>示例：参考下面Methode Node定义实例，需要实例化FasterRCNN Method和CNNMethod。</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
-  &quot;method_type&quot;: &quot;FasterRCNNMethod&quot;,
-  &quot;inputs&quot;: [
-    &quot;image&quot;
-  ],
-  &quot;outputs&quot;: [
-    &quot;rgb_face_box&quot;,
-    &quot;rgb_lmk&quot;,
-    &quot;rgb_pose&quot;
-  ],
-  &quot;method_config_file&quot;: &quot;face_pose_lmk.json&quot;
-},
-{
-  &quot;method_type&quot;: &quot;CNNMethod&quot;,
-  &quot;unique_name&quot;: &quot;age_gender&quot;,
-  &quot;inputs&quot;: [
-    &quot;rgb_face_box&quot;,
-    &quot;image&quot;
-  ],
-  &quot;outputs&quot;: [
-    &quot;age&quot;,
-    &quot;gender&quot;
-  ],
-  &quot;method_config_file&quot;: &quot;age_gender.json&quot;
-}
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;method_type&quot;</span><span class="p">:</span> <span class="s2">&quot;FasterRCNNMethod&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;image&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;rgb_face_box&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rgb_lmk&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rgb_pose&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;method_config_file&quot;</span><span class="p">:</span> <span class="s2">&quot;face_pose_lmk.json&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+  <span class="nt">&quot;method_type&quot;</span><span class="p">:</span> <span class="s2">&quot;CNNMethod&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;unique_name&quot;</span><span class="p">:</span> <span class="s2">&quot;age_gender&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;rgb_face_box&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gender&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;method_config_file&quot;</span><span class="p">:</span> <span class="s2">&quot;age_gender.json&quot;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>实现具体的CreateMethod：</p>
@@ -2537,548 +2515,19 @@ struct SnapshotInfo {
 </div>
 </div>
 </div>
-<div class="section" id="id46">
-<h2>内置Method<a class="headerlink" href="#id46" title="永久链接至标题">¶</a></h2>
-<p>本节主要介绍XStream内置的算法Method和策略Method，以及解释如何基于这些Method进行业务开发。</p>
-<p>智能业务中Method类型通常可以分为两类：</p>
-<ol class="simple">
-<li><p>算法Method：该类Method主要完成load模型、前处理并送给BPU完成预测、获取预测结果、完成结果解析等。</p></li>
-<li><p>策略Method:　该类Method无算法模型相关处理，是业务相关的策略模型，如过滤策略Method、融合策略Method、优选策略Method等。</p></li>
-</ol>
-<p>目前XStream中将一些常见Method沉淀，其中算法Method包括：FasterRCNNMethod、CNNMethod、PredictMethod、PostProcessMethod，策略Method包括MotMethod。XStream中已沉淀的这些Method只为用户提供参考，在提供的参考样例代码中会用到其中的Method。基于XStream框架开发时，如果不想使用内置Method，可以根据自己的需求(例如，不同的模型输入预处理、不同的模型和模型输出后处理等)，参考已有的Method，独立开发自定义的Method。</p>
-<div class="section" id="fasterrcnnmethod">
-<h3>FasterRCNNMethod<a class="headerlink" href="#fasterrcnnmethod" title="永久链接至标题">¶</a></h3>
-<p>FasterRCNNMethod主要是对fasterrcnn检测算法模型的集成。通常，FasterRCNNMethod的输入是类型为PymImageFrame或CVImageFrame的图像，具体可以参考<a class="reference external" href="#%E5%86%85%E7%BD%AE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84vision_type">内置数据结构vision_type</a>。预处理将图像数据resize成模型输入大小并做格式转换，模型预测通过调用BPU相关接口实现，后处理主要是对多种输出的解析，如检测框、关键点、分割等。</p>
-<div class="section" id="id47">
-<h4>配置文件<a class="headerlink" href="#id47" title="永久链接至标题">¶</a></h4>
-<p>使用FasterRCNNMethod时，首先要清楚模型每层的输出是什么，更改对应的配置文件进行适配。配置中的主要参数如下：</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>字段</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>net_info</td>
-<td>和模型相关的信息</td>
-</tr>
-<tr>
-<td>model_name</td>
-<td>编译出的hbm文件中模型的名字</td>
-</tr>
-<tr>
-<td>model_version</td>
-<td>模型的版本号，GetVersion接口返回的就是这个值</td>
-</tr>
-<tr>
-<td>pyramid_layer</td>
-<td>模型用到的金字塔图像数据的第几层</td>
-</tr>
-<tr>
-<td>method_outs</td>
-<td>method的实际输出，与workflow中Node的输出对应，可以配置为该模型输出能力的子集</td>
-</tr>
-<tr>
-<td>bpu_config_path</td>
-<td>bpu_predict配置的路径</td>
-</tr>
-<tr>
-<td>model_file_path</td>
-<td>模型文件的路径</td>
-</tr>
-<tr>
-<td>face_pv_thr</td>
-<td>人脸的置信度阈值，没达到置信度阈值的face_box及关联的人脸lmk和人脸pose一并不输出，默认阈值为0</td>
-</tr>
-<tr>
-<td>model_input_width</td>
-<td>模型输入的宽</td>
-</tr>
-<tr>
-<td>model_input_height</td>
-<td>模型输入的高</td>
-</tr>
-<tr>
-<td>model_out_sequence</td>
-<td>模型输出各分支的信息，我们需要根据model_out_sequence来进行模型结果的后处理</td>
-</tr>
-</tbody>
-</table><p>对于”model_out_sequence”,其内部个参数含义如下：</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>字段</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>name</td>
-<td>输出的名字</td>
-</tr>
-<tr>
-<td>type</td>
-<td>输出的类型</td>
-</tr>
-<tr>
-<td>box_name</td>
-<td>依赖的box的名字</td>
-</tr>
-</tbody>
-</table><p>FasterRCNNMethod配置文件示例：</p>
-<p>示例中检测模型输入数据大小是540x960，输出共5层，分别是人体框、人头框、人脸框、人体骨骼点和人体分割。</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;net_info&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;personMultitask&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;model_out_sequence&quot;</span><span class="p">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;body_box&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bbox&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;head_box&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bbox&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;face_box&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bbox&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;kps&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;kps&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;box_name&quot;</span><span class="p">:</span> <span class="s2">&quot;body_box&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mask&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;mask&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;box_name&quot;</span><span class="p">:</span> <span class="s2">&quot;body_box&quot;</span>
-      <span class="p">}</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;model_input_width&quot;</span><span class="p">:</span> <span class="mi">960</span><span class="p">,</span>
-    <span class="nt">&quot;model_input_height&quot;</span><span class="p">:</span> <span class="mi">540</span><span class="p">,</span>
-    <span class="nt">&quot;pyramid_layer&quot;</span><span class="p">:</span> <span class="mi">4</span>
-  <span class="p">},</span>
-  <span class="nt">&quot;method_outs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;face_box&quot;</span><span class="p">,</span> <span class="s2">&quot;head_box&quot;</span><span class="p">,</span> <span class="s2">&quot;body_box&quot;</span><span class="p">,</span><span class="s2">&quot;kps&quot;</span><span class="p">,</span><span class="s2">&quot;mask&quot;</span><span class="p">],</span>
-  <span class="nt">&quot;bpu_config_path&quot;</span><span class="p">:</span> <span class="s2">&quot;../configs/bpu_config.json&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;model_file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;../models/IPCModel.hbm&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="cnnmethod">
-<h3>CNNMethod<a class="headerlink" href="#cnnmethod" title="永久链接至标题">¶</a></h3>
-<p>CNNMethod主要是对检测框的属性进行预测，比如年龄性别、人脸识别、手势识别、摔倒检测、车辆属性等。</p>
-<div class="section" id="id48">
-<h4>配置文件<a class="headerlink" href="#id48" title="永久链接至标题">¶</a></h4>
-<p>同理，使用CNNMethod时需要清楚用到的模型的输入数据类型，以及后处理的类型。</p>
-<p>目前支持的输入数据类型包括rect、lmk、img、plate_num_img、lmk_seq、vid，其中rect与img都表示矩形框数据，区别在于rect输入需要对应模型的编译选项是resizer、img输入对应模型的编译选项是pyramid；lmk在矩形框数据基础上包括了人脸关键点；plate_num_img用于车牌框数据，与img的区别在于检测框的预处理；lmk_seq表示关键点序列，用于摔倒检测与手势识别；vid表示raw data，目前用于表示体感游戏中人体骨骼特征。</p>
-<p>后处理类型包括：face_feature、antispoofing、face_quality、binary_classify、lmk_pose、age_gender、vehicle_type、vehicle_color、plate_num、classify、act_det、back_bone、vid、common_lmk。</p>
-<p>face_feature表示人脸特征；</p>
-<p>antispoofing表示活体识别；</p>
-<p>face_quality表示人脸质量；</p>
-<p>binary_classify表示二元分类；</p>
-<p>lmk_pose表示人脸关键点以及人脸3d位置；</p>
-<p>age_gender表示年龄性别；</p>
-<p>vehicle_type表示车辆类型；</p>
-<p>vehicle_color表示车辆颜色；</p>
-<p>plate_num表示车牌号字符串输出；</p>
-<p>classify表示车牌号整型输出；</p>
-<p>act_det表示行为识别，目前支持摔倒检测和手势识别；</p>
-<p>back_bone表示人体骨骼特征，目前用于体感游戏；</p>
-<p>common_lmk表示关键点检测，目前用于手关键点检测。</p>
-<p>配置中主要参数如下：</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>配置名</th>
-<th>说明</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>model_name</td>
-<td>编译模型时指定的模型名字</td>
-<td></td>
-</tr>
-<tr>
-<td>model_version</td>
-<td>模型版本号</td>
-<td></td>
-</tr>
-<tr>
-<td>model_file_path</td>
-<td>模型文件地址</td>
-<td></td>
-</tr>
-<tr>
-<td>bpu_config_path</td>
-<td>bpu的配置文件地址</td>
-<td></td>
-</tr>
-<tr>
-<td>in_msg_type</td>
-<td>模型的处理方式（resizer或者pyramid或者ddr）</td>
-<td>rect/img(resizer/pyramid)/lmk_seq</td>
-</tr>
-<tr>
-<td>norm_method</td>
-<td>pyramid方式必填</td>
-<td>norm_by_width_length<br />norm_by_width_ratio<br />norm_by_height_rario<br />norm_by_lside_ratio<br />norm_by_height_length<br />norm_by_lside_length<br />norm_by_lside_square<br />norm_by_diagonal_square<br />norm_by_nothing</td>
-</tr>
-<tr>
-<td>filter_method</td>
-<td>pyramid方式必填</td>
-<td>out_of_range<br />no_filter</td>
-</tr>
-<tr>
-<td>expand_scale</td>
-<td>pyramid方式必填</td>
-<td>外扩系数</td>
-</tr>
-<tr>
-<td>post_fn</td>
-<td>后处理方式</td>
-<td>face_feature<br />antispoofing<br />lmk_pose<br />age_gender<br />face_quality<br />act_det</td>
-</tr>
-<tr>
-<td>threshold</td>
-<td>阈值</td>
-<td></td>
-</tr>
-<tr>
-<td>input_shift</td>
-<td>输入转浮点时参数</td>
-<td></td>
-</tr>
-<tr>
-<td>seq_len</td>
-<td>输入序列长度</td>
-<td></td>
-</tr>
-<tr>
-<td>stride</td>
-<td>序列步长</td>
-<td></td>
-</tr>
-<tr>
-<td>max_gap</td>
-<td>步长允许误差范围</td>
-<td></td>
-</tr>
-<tr>
-<td>buf_len</td>
-<td>缓存buffer长度</td>
-<td></td>
-</tr>
-<tr>
-<td>norm_kps_conf</td>
-<td>是否强制进行关键点置信度归一化</td>
-<td></td>
-</tr>
-<tr>
-<td>kps_norm_scale</td>
-<td>关键点置信度归一化参数</td>
-<td></td>
-</tr>
-<tr>
-<td>merge_groups</td>
-<td>类别融合</td>
-<td>字符串，需要保证格式为"[group1_idx1,group1_idx2];[group2_idx1,group_idx2]"</td>
-</tr>
-<tr>
-<td>target_group_idx</td>
-<td>目标类别index</td>
-<td></td>
-</tr>
-<tr>
-<td>max_handle_num</td>
-<td>最大处理数量</td>
-<td>负数表示无限制</td>
-</tr>
-<tr>
-<td>output_size</td>
-<td>输出槽的个数</td>
-<td></td>
-</tr>
-</tbody>
-</table><p>配置文件示例：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
-  &quot;model_name&quot;: &quot;faceAntiSpfRGB&quot;,
-  &quot;model_version&quot;: &quot;x2.1.0.11&quot;,
-  &quot;model_file_path&quot;: &quot;../models/PanelBoard.hbm&quot;,
-  &quot;bpu_config_path&quot;: &quot;../bpu_config/bpu_config.json&quot;,
-  &quot;in_msg_type&quot;: &quot;img&quot;,     # 输入类型，决定前处理方式和使用的bpu-predict接口
-  &quot;norm_method&quot;: &quot;norm_by_lside_square&quot;,    # normalize方法，需要和算法对齐
-  &quot;filter_method&quot;: &quot;no_filter&quot;,
-  &quot;expand_scale&quot;: 1.5,
-  &quot;post_fn&quot;: &quot;antispoofing&quot;,  # 后处理函数
-  &quot;threshold&quot;: 0.1,
-  &quot;max_handle_num&quot;: -1,
-  &quot;output_size&quot;: 2
-}
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="predictmethod-postprocessmethod">
-<h3>PredictMethod&amp;&amp;PostProcessMethod<a class="headerlink" href="#predictmethod-postprocessmethod" title="永久链接至标题">¶</a></h3>
-<p>前面介绍的FasterRCNNMethod和CNNMethod中，两者的核心处理函数DoProcess中都是按照数据预处理、预测、后处理的步骤来进行。同一线程中，只有前一帧数据按照整个pipeline完成后，后一帧数据才能够开始处理。因此在使用FasterRCNNMethod和CNNMethod时，要通过设置多个thread_list来提升bpu使用率，并且这种方法也无法做到性能最优。因此，提出了PredictMethod和PostProcessMethod。</p>
-<p>顾名思义，PredictMethod功能是向BPU输入数据进行预测，PostProcessMethod功能是将BPU的输出进行后处理。PredictMethod中的预测过程与FasterRCNNMethod、CNNMethod的最大差异是调用了BPU的异步预测接口，而PostProcessMethod等待预测完成后进行后处理。<strong>注意：PredictMethod和PostProcessMethod必须要配合使用</strong>，也就是说搭建的workflow中，PredictMethod节点的输出数据流驱动PostProcessMethod节点。</p>
-<p>workflow示例：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-      <span class="s2">&quot;image&quot;</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-      <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-      <span class="s2">&quot;parking_box&quot;</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;workflow&quot;</span><span class="p">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;thread_count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="nt">&quot;method_type&quot;</span><span class="p">:</span> <span class="s2">&quot;PredictMethod&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;unique_name&quot;</span><span class="p">:</span> <span class="s2">&quot;predict&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="s2">&quot;image&quot;</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="s2">&quot;run_data&quot;</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;method_config_file&quot;</span><span class="p">:</span> <span class="s2">&quot;predict_apa_detection.json&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;thread_count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="nt">&quot;method_type&quot;</span><span class="p">:</span> <span class="s2">&quot;PostProcessMethod&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;unique_name&quot;</span><span class="p">:</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="s2">&quot;run_data&quot;</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="s2">&quot;parking_box&quot;</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;method_config_file&quot;</span><span class="p">:</span> <span class="s2">&quot;postprocess_apa_detection.json&quot;</span>
-      <span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<div class="section" id="predictmethod">
-<h4>PredictMethod<a class="headerlink" href="#predictmethod" title="永久链接至标题">¶</a></h4>
-<p>PredictMethod可以进行各种模型的预测，包括检测任务和属性分类任务等，但实际应用中不同的模型输入类型或数目不一致，需要根据模型扩展不同预处理。目前PredictMethod支持了检测任务的预测。</p>
-<p>配置文件示例：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;predict_type&quot;</span><span class="p">:</span> <span class="s2">&quot;detect&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;pyramid_layer&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nt">&quot;model_file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;../../models/detection.hbm&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>配置文件说明：</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>字段</th>
-<th>含义</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>predict_type</td>
-<td>预测类型</td>
-<td>detect<br />classify(暂不可用)</td>
-</tr>
-<tr>
-<td>pyramid_layer</td>
-<td>模型用到的金字塔图像数据的第几层</td>
-<td></td>
-</tr>
-<tr>
-<td>model_file_path</td>
-<td>模型路径</td>
-<td></td>
-</tr>
-</tbody>
-</table></div>
-<div class="section" id="postprocessmethod">
-<h4>PostProcessMethod<a class="headerlink" href="#postprocessmethod" title="永久链接至标题">¶</a></h4>
-<p>PostProcessMethod的主要任务是获取预测结果，并根据模型进行后处理。因此需要对不同的模型设置不同的配置文件。</p>
-<p>配置文件示例：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;post_type&quot;</span><span class="p">:</span> <span class="s2">&quot;detect&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;net_info&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;model_out_sequence&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-          <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;parking_box&quot;</span><span class="p">,</span>
-          <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;apabbox&quot;</span>
-        <span class="p">}</span>
-      <span class="p">]</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;method_outs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;parking_box&quot;</span><span class="p">],</span>
-    <span class="nt">&quot;iou_threshold&quot;</span><span class="p">:</span> <span class="mf">0.3</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>配置文件说明：</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>字段</th>
-<th>含义</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>post_type</td>
-<td>预测类型</td>
-<td>detect<br />classify(暂不可用)</td>
-</tr>
-<tr>
-<td>net_info</td>
-<td>模型用到的金字塔图像数据的第几层</td>
-<td></td>
-</tr>
-<tr>
-<td>model_out_sequence</td>
-<td>模型路径</td>
-<td></td>
-</tr>
-<tr>
-<td>method_outs</td>
-<td>method的实际输出，与workflow中Node的输出对应，可以配置为该模型输出能力的子集</td>
-<td></td>
-</tr>
-<tr>
-<td>iou_threshold</td>
-<td>检测窗口IoU阈值</td>
-<td>当两个检测框的IoU大于该阈值时取置信度较高的检测框结果</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<div class="section" id="motmethod">
-<h3>MotMethod<a class="headerlink" href="#motmethod" title="永久链接至标题">¶</a></h3>
-<p>MotMethod属于策略Method，用于多目标跟踪，实现检测框的跟踪和ID分配功能。</p>
-<div class="section" id="id49">
-<h4>输入<a class="headerlink" href="#id49" title="永久链接至标题">¶</a></h4>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th align="center">Slot</th>
-<th align="center">内容</th>
-<th align="center">备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">0</td>
-<td align="center">XStreamBBox_list</td>
-<td align="center">必要项</td>
-</tr>
-</tbody>
-</table></div>
-<div class="section" id="id50">
-<h4>输出<a class="headerlink" href="#id50" title="永久链接至标题">¶</a></h4>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th align="center">Slot</th>
-<th align="center">内容</th>
-<th align="center">备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">0</td>
-<td align="center">XStreamBBox_list</td>
-<td align="center">带track_id</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="center">XStreamUint32_List</td>
-<td align="center">disappeared_track_id_list</td>
-</tr>
-</tbody>
-</table></div>
-<div class="section" id="id51">
-<h4>配置文件<a class="headerlink" href="#id51" title="永久链接至标题">¶</a></h4>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th align="center">字段</th>
-<th>描述</th>
-<th align="center">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">tracker_type</td>
-<td>MOT工作模式，目前仅支持IOU based MOT</td>
-<td align="center">IOU</td>
-</tr>
-<tr>
-<td align="center">device</td>
-<td>设备名称，若设置为X1，最大track_id为255，用以比对一致性</td>
-<td align="center">X2</td>
-</tr>
-<tr>
-<td align="center">update_no_target_predict</td>
-<td>无检测框输入更新状态机track预测框，设置为true对主体连续运动且有遮挡的场景效果好，设置为false对主体不移动且有遮挡的场景效果好</td>
-<td align="center">false</td>
-</tr>
-<tr>
-<td align="center">support_hungarian</td>
-<td>匈牙利匹配开关，打开匈牙利匹配id召回多，准确率下降；关闭则id召回少，准确率提升</td>
-<td align="center">false</td>
-</tr>
-<tr>
-<td align="center">need_check_merge</td>
-<td>每组输入框IOU大于一定阈值做融合，该操作会影响输出数量，检测框融合多在检测模块完成，一般情况置为false</td>
-<td align="center">false</td>
-</tr>
-<tr>
-<td align="center">original_bbox</td>
-<td>是否使用卡尔曼滤波器预测框，true为不使用，输出原始框坐标</td>
-<td align="center">true</td>
-</tr>
-<tr>
-<td align="center">max_track_target_num</td>
-<td>状态机保存最大track数</td>
-<td align="center">512</td>
-</tr>
-<tr>
-<td align="center">max_det_target_num</td>
-<td>输入框最大计算数</td>
-<td align="center">512</td>
-</tr>
-<tr>
-<td align="center">vanish_frame_count</td>
-<td>消失帧数</td>
-<td align="center">30</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-</div>
 <div class="section" id="imagetools">
 <h2>图像处理imagetools<a class="headerlink" href="#imagetools" title="永久链接至标题">¶</a></h2>
-<div class="section" id="id52">
-<h3>功能介绍<a class="headerlink" href="#id52" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id46">
+<h3>功能介绍<a class="headerlink" href="#id46" title="永久链接至标题">¶</a></h3>
 <p>imagetools是xstream自带的使用软件实现的常用图像处理函数。具体包括：图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。开发者可根据自己需要，自行选择使用或者不使用xstream自带的图像处理函数。</p>
 <p>imagetools的具体使用方法可以参考source/common/xstream/imagetools/example目录下样例代码，和source/common/xstream/imagetools/test目录下单元测试代码。</p>
 </div>
-<div class="section" id="id53">
-<h3>实现方式<a class="headerlink" href="#id53" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id47">
+<h3>实现方式<a class="headerlink" href="#id47" title="永久链接至标题">¶</a></h3>
 <p>imagetools对直接使用的开发者提供一套简洁清晰的接口，imagetools内部会调用libturbojpeg、libyuv、opencv等库的接口，通过软件来实现对图像进行各种处理。</p>
 </div>
-<div class="section" id="id54">
-<h3>接口描述<a class="headerlink" href="#id54" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id48">
+<h3>接口描述<a class="headerlink" href="#id48" title="永久链接至标题">¶</a></h3>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
 <span class="cm">* @brief 分配图像内存区域</span>
 <span class="cm">* @param image_size 图像区域的大小， 要求image_size &gt; 0</span>

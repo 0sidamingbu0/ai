@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>V2.8.0 &mdash; AI Express用户手册 2.8.0 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/overview.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xstream.html">XStream算法SDK编程框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/faq.html">常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/version.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/copyright.html">版权声明</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AI Express用户手册</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><font color=#0000ff>V2.8.0</font></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/ai_express_release_doc_v2.7.0_202012282200/release_note/v2.8.0/ReleaseNotes.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="font-color-0000ff-v2-8-0-font">
+<h1><font color=#0000ff>V2.8.0</font><a class="headerlink" href="#font-color-0000ff-v2-8-0-font" title="永久链接至标题">¶</a></h1>
+<div class="section" id="release-date">
+<h2>Release Date<a class="headerlink" href="#release-date" title="永久链接至标题">¶</a></h2>
+<p>2020/12/28</p>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>X3对齐系统软件月度对外发布的版本20201124(1124 + patch)版本</p></li>
+<li><p>bpu-predict接口对齐浮点工具链1.1.19版本</p></li>
+<li><p>新增人体分割Matting模型</p></li>
+<li><p>模型预测Method做了重构，XStream-Framework中新增DnnPredictMethod与DnnPostProcessMethod</p></li>
+<li><p>代码目录做了调整，将XStream中的Method示例迁移至solution_zoo</p></li>
+<li><p>新增动态手势类别</p></li>
+<li><p>新增yolov3示例和MobileNetV2的示例</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 版权所有 2020, Horizon Robotics
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

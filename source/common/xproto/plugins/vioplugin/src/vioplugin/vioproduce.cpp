@@ -695,6 +695,17 @@ int ImageList::Run() {
 
   // 图像列表文件列表
   auto list_of_img_list = json["file_path"];
+  int interval_ms = 30;
+  int name_list_loop = 1;
+  auto name_list_loop_obj = json["name_list_loop"];
+  auto interval_cfg = json["interval"];
+  if (!interval_cfg.isNull()) {
+    interval_ms = interval_cfg.asInt();
+  }
+  if (!name_list_loop_obj.isNull()) {
+    name_list_loop = name_list_loop_obj.asInt();
+  }
+
   auto is_4k_obj = json["is_4k"];  // special example for 4K Feedback
   bool is_4k = false;
   std::string file_4k = "configs/picture/4k.jpg";
@@ -770,12 +781,18 @@ int ImageList::Run() {
     }
   }
 
-  while (all_img_count > 0 && is_running_) {
+  auto all_img_count_str = all_img_count;
+  while (all_img_count >= 0 && is_running_) {
     // 循环这些list, 循环读出一个 sid => source id
     for (unsigned int sid = 0; sid < list_of_img_list.size(); sid++) {
       if (source_img_cnt[sid] >= image_source_list[sid].size()) {
         // 当前source已经读完
         LOGI << "Source: " << sid << " no data left";
+
+        if (name_list_loop && list_of_img_list.size()) {
+          all_img_count = all_img_count_str;
+          source_img_cnt[sid] = 0;
+        }
         continue;
       }
 
@@ -891,6 +908,7 @@ int ImageList::Run() {
         LOGF << "Don't support type: " << cam_type_;
         is_running_ = false;
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
     }
   }
   is_running_ = false;

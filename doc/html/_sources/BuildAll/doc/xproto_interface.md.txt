@@ -1,0 +1,450 @@
+# XProto API文档
+## 消息接口介绍
+plugin之间交互的方式消息总线分发机制，需要定义了统一的消息接口，实现统一接口的消息被总线分发给对应的plugin。
+### 统一消息基础类
+消息基础类XProtoMessage：
+```c++
+struct XProtoMessage : public std::enable_shared_from_this<XProtoMessage> {
+  XProtoMessage &operator=(const XProtoMessage &) = delete;
+  virtual ~XProtoMessage() = default;
+
+  std::string type_ = "NONE";
+
+  std::string param_ = "";
+
+  std::string type() const { return type_; }
+
+  virtual std::string Serialize() = 0;
+
+  virtual void *ConvertData() {
+    // need call delete() to release the output
+    return nullptr;
+  }
+};
+using XProtoMessagePtr = std::shared_ptr<XProtoMessage>;
+```
+描述：
+
+新Message需要继承XProtoMessage，定义自己的消息类，XProtoMessage描述了消息属性及功能函数，包括：
+- type_: 消息类型
+- param_: 消息附加参数信息
+- type(): 获取消息的类型
+- Serialize(): 新的消息类型需实现此接口，实现序列化操作，比如实现protobuf的序列化
+- ConvertData(): 消息转换成指定的数据结构，常用于特殊需求中
+
+----
+
+### 总线消息类型注册接口
+**XPLUGIN_REGISTER_MSG_TYPE(*MSG_TYPE*)**
+#### 参数
++ MSGTYPE: 消息类型
+#### 说明
+总线消息除了实现统一接口，还需要向总线注册其消息类型. 每一类消息都有一个字符串形式的消息类型和结构体来表示.
+该接口为一个宏, 参数*MSG_TYPE*用来表示声明的消息类型, 需要直接使用标识符的格式书写, 宏内部会将其转成字符串.
+**注意**: 需要在消费者Plugin调用订阅消息接口之前调用该接口声明消息类型,一般将该宏放在全局变量声明的位置.  
+
+----
+
+## plugin接口介绍
+实现了两个基础类XPlugin和XPluginAsync，实现自定义plugin只需要继承其中任意一个，建议选择XPluginAsync类.
+两个基础类有些差异，说明如下：
+* XPluginAsync是XPlugin的子类,XPluginAsync内部实现了消息的异步处理机制。
+* XPlugin提供了消息分发、获取&设置msg数量上限、获取&设置msg处理超时时间等接口，子类实现相应接口实现plugin功能.
+* XPluginAsync继承自XPlugin，实现了消息分发、流量控制、消息处理超时监控等功能，子类只需关注plugin的自身功能.
+
+### XPlugin类定义
+```c++
+class XPlugin : public std::enable_shared_from_this<XPlugin> {
+ public:
+  XPlugin() = default;
+  virtual ~XPlugin() = default;
+  // 完成register msg和workflow的初始化操作
+  virtual int Init() = 0;
+
+  virtual int DeInit() {
+    return 0;
+  }
+  // 处理register的msg类型，如有需要，push自己的msg到总线
+  virtual void OnMsg(XProtoMessagePtr msg) = 0;
+  // 用于流量管理
+  virtual int GetPluginMsgCount() = 0;
+  virtual int GetPluginMsgLimit() = 0;
+  virtual void SetPluginMsgLimit(int msg_limit_count) = 0;
+  // plugin处理msg时间监控
+  virtual int GetMsgMonitorTime() = 0;
+  virtual void SetMsgMonitorTime(int msg_monitor_time) = 0;
+
+  virtual std::string desc() const {
+    return "XPlugin";
+  }
+
+ protected:
+  // 向总线注册监听消息类型
+  void RegisterMsg(const std::string& type);
+  // 卸载监听消息类型
+  void UnRegisterMsg(const std::string& type);
+  // 向总线推送消息
+  void PushMsg(XProtoMessagePtr msg);
+  // 向总线推送消息
+  int TryPushMsg(XProtoMessagePtr msg);
+};
+using XPluginPtr = std::shared_ptr<XPlugin>;
+```
+
+### XPlugin接口API
+----
+#### XPlugin::Init
+##### 定义
+**virtual int Init() = 0;**
+
+##### 参数
+无
+
+##### 返回值
++ 0: 成功
++ 非0: 失败
+
+##### 说明
+初始化Plugin：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 该接口用来初始化Plugin.
+自定义Plugin一般在该接口内调用*订阅消息*接口.
+
+----
+#### XPlugin::DeInit
+##### 定义
+**int XPlugin::DeInit() = 0;**
+
+##### 参数
+无
+
+##### 返回值
++ 0: 成功
++ 非0: 失败
+
+##### 说明
+反初始化Plugin：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 该接口用来反初始化Plugin.  
+
+----
+#### XPlugin::OnMsg
+##### 定义
+**virtual void OnMsg(XProtoMessagePtr *msg*) = 0;**
+
+##### 参数
++ XProtoMessagePtr *msg*: 总线消息. 
+
+##### 返回值
+无
+
+##### 说明
+处理总线消息：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 该接口接收处理总线消息，接口中不能block时间过长. 
+
+----
+#### XPlugin::GetPluginMsgCount
+##### 定义
+**virtual int GetPluginMsgCount() = 0;**
+
+##### 参数
+无
+
+##### 返回值
++ *int*: 返回plugin待处理的msg数量
+
+##### 说明
+获取plugin待处理msg数量：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于获取plugin中待处理的msg数量. 
+
+----
+#### XPlugin::GetPluginMsgLimit
+##### 定义
+**virtual int GetPluginMsgLimit() = 0;**
+
+##### 参数
+无
+
+##### 返回值
++ *int*: 返回plugin处理msg数量上限
+
+##### 说明
+获取plugin处理msg数量上限：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于获取plugin中待处理的msg数量上限. 
+
+----
+#### XPlugin::SetPluginMsgLimit
+##### 定义
+**virtual void SetPluginMsgLimit(int *msg_limit_count*) = 0;**
+
+##### 参数
++ int *msg_limit_count*: 设置plugin能处理的msg数量上限. 
+
+##### 返回值
+无
+
+##### 说明
+设置plugin处理msg数量上限：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于设置plugin中待处理的msg数量上限. 
+
+----
+#### XPlugin::GetMsgMonitorTime
+##### 定义
+**virtual int GetMsgMonitorTime() = 0;**
+
+##### 参数
+无
+
+##### 返回值
++ *int*: msg处理超时时间
+
+##### 说明
+获取msg处理超时时间：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于获取plugin处理msg的超时时间. 
+
+----
+#### XPlugin::SetMsgMonitorTime
+##### 定义
+**virtual void SetMsgMonitorTime(int *msg_monitor_time*) = 0;**
+
+##### 参数
++ int *msg_monitor_time*: msg处理超时时间
+
+##### 返回值
+无
+
+##### 说明
+设置msg处理超时时间：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于设置plugin处理msg的超时时间. 
+
+----
+#### XPlugin::PushMsg
+##### 定义
+**void XPlugin::PushMsg(XProtoMessagePtr *msg*);**
+
+##### 参数
++ XProtoMessagePtr *msg*: 发布到总线的消息. 
+
+##### 返回值
+无
+
+##### 说明
+发布消息：该接口用来将消息发布到XProto内部总线上，如果消息拥塞，将等待通道畅通后发布消息. 接收一个类型为`XProtoMessage`的结构体指针, XProto的所有消息都继承于该类型.
+
+----
+#### XPlugin::TryPushMsg
+##### 定义
+**void XPlugin::TryPushMsg(XProtoMessagePtr *msg*);**
+
+##### 参数
++ XProtoMessagePtr *msg*: 发布到总线的消息. 
+
+##### 返回值
+无
+
+##### 说明
+发布消息：该接口尝试将消息发布到XProto内部总线上，如果消息拥塞，则丢弃消息立即返回. 接收一个类型为`XProtoMessage`的结构体指针, XProto的所有消息都继承于该类型.
+
+----
+#### XPlugin::RegisterMsg
+##### 定义
+**void XPlugin::RegisterMsg(const std::string& *type*, XProtoMessageFunc *callback*);**
+
+##### 参数
++ const std::string& *type*: 消息类型字符串.
++ XProtoMessageFunc *callback*: 该类型消息的回调函数.
+
+##### 返回值
+无
+
+##### 说明
+订阅消息：订阅指定类型的消息. 监听总线, 当指定的消息类型发布时, 调用回调函数. 
+
+----
+#### XPlugin::UnRegisterMsg
+##### 定义
+**void XPlugin::UnRegisterMsg(const std::string& *type*);**
+
+##### 参数
++ const std::string& *type*: 消息类型字符串.
+
+##### 返回值
+无
+
+##### 说明
+取消消息订阅：取消指定类型消息的订阅. 取消订阅后，plugin将不再接收此类型消息. 
+
+----
+#### XPlugin::desc
+##### 定义
+**std::string XPlugin::desc() const;**
+
+##### 参数
+无
+
+##### 返回值
+描述当前自定义Plugin的字符串.
+
+##### 说明
+插件描述信息：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 
+
+## XPluginAsync接口介绍
+### XPluginAsync基础类定义
+```c++
+class XPluginAsync : public XPlugin {
+ public:
+  XPluginAsync();
+  explicit XPluginAsync(int thread_num);
+  ~XPluginAsync() = default;
+  // 注册监听消息类型到总线+plugin的初始化
+  int Init() override;
+  int DeInit() override;
+  // 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制
+  void OnMsg(XProtoMessagePtr msg) override;
+  int GetPluginMsgCount() override;
+  // plugin处理消息数量限制
+  int GetPluginMsgLimit() override;
+  void SetPluginMsgLimit(int msg_limit_count) override;
+  // plugin处理msg时间预警
+  int GetMsgMonitorTime() override;
+  void SetMsgMonitorTime(int msg_monitor_time) override;
+  // 启动Plugin
+  virtual int Start() {
+    return 0;
+  }
+  // 停止Plugin
+  virtual int Stop() {
+    return 0;
+  }
+
+ protected:
+  using XProtoMessageFunc = std::function<int(XProtoMessagePtr)>;
+  // 重载注册监听消息类型接口，注册时包含异步回调函数
+  void RegisterMsg(const std::string& type, XProtoMessageFunc callback);
+  void UnRegisterMsg(const std::string& type);
+};
+```
+
+### Plugin接口API
+----
+#### XPluginAsync::Init
+##### 定义
+**int XPluginAsync::Init() override;**
+
+##### 参数
+无
+
+##### 返回值
++ 0: 成功
++ 非0: 失败
+
+##### 说明
+初始化Plugin：该接口需要继承`XPluginAsync`类的自定义Plugin实现该接口定义. 该接口用来初始化Plugin.
+自定义Plugin一般在该接口内调用*订阅消息*接口.
+
+----
+#### XPluginAsync::Start
+##### 定义
+**int XPluginAsync::Start();**
+
+##### 参数
+无
+
+##### 返回值
++ 0: 成功
++ 非0: 失败
+
+##### 说明
+启动Plugin：该接口需要继承`XPluginAsync`类的自定义Plugin实现该接口定义. 该接口用来启动Plugin. 
+
+----
+#### XPluginAsync::Stop
+##### 定义
+**int XPluginAsync::Stop();**
+
+##### 参数
+无
+
+##### 返回值
++ 0: 成功
++ 非0: 失败
+
+##### 说明
+停止Plugin：该接口需要继承`XPluginAsync`类的自定义Plugin实现该接口定义. 该接口用来停止Plugin. 
+
+----
+#### XPluginAsync::DeInit
+##### 定义
+**int XPluginAsync::DeInit() override;**
+
+##### 参数
+无
+
+##### 返回值
++ 0: 成功
++ 非0: 失败
+
+##### 说明
+反初始化Plugin：该接口需要继承`XPluginAsync`类的自定义Plugin实现该接口定义. 该接口用来反初始化Plugin.  
+继承自*XPluginAsync*子plugin类，在完成自己的反初始化任务后，最后需要调用*XPluginAsync::DeInit*接口以反初始化父类.
+
+----
+#### XPluginAsync::PushMsg
+##### 定义
+**void XPluginAsync::PushMsg(XProtoMessagePtr *msg*);**
+
+##### 参数
++ XProtoMessagePtr *msg*: 发布到总线的消息. 
+
+##### 返回值
+无
+
+##### 说明
+发布消息：该接口用来将消息发布到XProto内部总线上，如果消息拥塞，将等待通道畅通后发布消息. 接收一个类型为`XProtoMessage`的结构体指针, XProto的所有消息都继承于该类型.
+
+----
+#### XPluginAsync::TryPushMsg
+##### 定义
+**void XPluginAsync::TryPushMsg(XProtoMessagePtr *msg*);**
+
+##### 参数
++ XProtoMessagePtr *msg*: 发布到总线的消息. 
+
+##### 返回值
+无
+
+##### 说明
+发布消息：该接口尝试将消息发布到XProto内部总线上，如果消息拥塞，则丢弃消息立即返回. 接收一个类型为`XProtoMessage`的结构体指针, XProto的所有消息都继承于该类型.
+
+----
+#### XPluginAsync::RegisterMsg
+##### 定义
+**void XPluginAsync::RegisterMsg(const std::string& *type*, XProtoMessageFunc *callback*);**
+
+##### 参数
++ const std::string& *type*: 消息类型字符串.
++ XProtoMessageFunc *callback*: 该类型消息的回调函数.
+
+##### 返回值
+无
+
+##### 说明
+订阅消息：订阅指定类型的消息. 监听总线, 当指定的消息类型发布时, 调用回调函数. 
+
+----
+#### XPluginAsync::UnRegisterMsg
+##### 定义
+**void XPluginAsync::UnRegisterMsg(const std::string& *type*);**
+
+##### 参数
++ const std::string& *type*: 消息类型字符串.
+
+##### 返回值
+无
+
+##### 说明
+取消消息订阅：取消指定类型消息的订阅. 取消订阅后，plugin将不再接收此类型消息. 
+
+----
+#### XPluginAsync::desc
+##### 定义
+**std::string XPluginAsync::desc() const;**
+
+##### 参数
+无
+
+##### 返回值
+描述当前自定义Plugin的字符串.
+
+##### 说明
+插件描述信息：该接口需要继承`XPluginAsync`类的自定义Plugin实现该接口定义. 

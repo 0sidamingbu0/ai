@@ -97,6 +97,15 @@ int VdecModule::Input(void *data) {
   ret = HB_VDEC_SendStream(group_id_, pstStream, timeout_);
   if (ret != 0) {
     LOGE << "HB_VDEC_SendStream Failed. ret = " << ret;
+  } else {
+    in_fps_++;
+    std::chrono::duration<double, std::milli> interval_ms =
+            std::chrono::high_resolution_clock::now() - in_start_tp_;
+    if (interval_ms.count() >= 1000) {
+      LOGI << "vdec in fps " << in_fps_;
+      in_fps_ = 0;
+      in_start_tp_ = std::chrono::high_resolution_clock::now();
+    }
   }
   return ret;
 }
@@ -109,8 +118,17 @@ int VdecModule::Output(void **data) {
     data = nullptr;
     LOGE << "HB_VDEC_GetFrame Failed. ret = " << ret;
     return ret;
+  } else {
+    out_fps_++;
+    std::chrono::duration<double, std::milli> interval_ms =
+            std::chrono::high_resolution_clock::now() - out_start_tp_;
+    if (interval_ms.count() >= 1000) {
+      LOGI << "vdec out fps " << out_fps_;
+      out_fps_ = 0;
+      out_start_tp_ = std::chrono::high_resolution_clock::now();
+    }
   }
-  LOGI << "HB_VDEC_GetFrame frame width: " << buffers_[index].stVFrame.width
+  LOGD << "HB_VDEC_GetFrame frame width: " << buffers_[index].stVFrame.width
        << " frame height: " << buffers_[index].stVFrame.height
        << " frame size: " << buffers_[index].stVFrame.size;
 

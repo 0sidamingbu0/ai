@@ -31,7 +31,9 @@ namespace wareplugin {
 #define ADD_AUX_ATTR(attr, auxinfo)      \
   if (auxinfo != nullptr) {              \
     ADD_MASK_ATTR(attr, auxinfo->mask);  \
-  }                                      \
+  }
+
+#define IS_NOT_ENCRYPTED (1 << 6)
 
 // #define WARE_OK 0
 std::once_flag config_once;
@@ -150,9 +152,10 @@ int DB::CreateTable(const std::string &lib_name,
           const_cast<char *>(table_path_.c_str()),
           WARE_SQLITE, &table, WARE_TABLE_BYTE_SIZE, WARE_CHECK_NULL);
   if (WARE_TABLE_EXIST == ret) {
-    LOGW << "Failed to call ware_module_create_table, error code is " << ret
-         << " error msg is " << GetWareModuleErrorDetail(ret);
-    return ret;
+//    LOGI << "Failed to call ware_module_create_table, error code is " << ret
+//         << " error msg is " << GetWareModuleErrorDetail(ret);
+    LOGI << GetWareModuleErrorDetail(ret);
+    return kHorizonVisionSuccess;
   } else if (WARE_OK != ret) {
     LOGE << "Failed to call ware_module_create_table, error code is " << ret
          << " error msg is " << GetWareModuleErrorDetail(ret);
@@ -256,7 +259,7 @@ ware_feature_t *ConstructWareFeature(
       (features == nullptr) ?
       reinterpret_cast<ware_feature_t *>(
           std::calloc(1, sizeof(ware_feature_t))) : features;
-  ware_feature->attr = 1;
+  ware_feature->attr = 1 | IS_NOT_ENCRYPTED;
   ware_feature->size = feature_size;
   ware_feature->feature =
       reinterpret_cast<float *>(std::calloc(feature_size, sizeof(float)));
@@ -310,7 +313,7 @@ int DB::CreateRecordWithFeature(const std::string &lib_name,
     return ret;
   }
   LOGI << "Succeed to CreateRecord into " << lib_name << ":" << model_version
-       << ":" << id;
+       << "id: " << id;
   return kHorizonVisionSuccess;
 }
 
@@ -498,7 +501,7 @@ int DB::Search(const std::string &lib_name, const std::string &model_version,
          << GetWareModuleErrorDetail(ret);
     return ret;
   }
-  LOGI << "Secceed to Search feature in  " << lib_name << ":" << model_version;
+  LOGI << "Succeed to Search feature in  " << lib_name << ":" << model_version;
   return kHorizonVisionSuccess;
 }
 
@@ -677,13 +680,9 @@ int32_t DB::SearchHelper::Search(float similar_thres,
     if (search_result_->num > 0) {
       LOGD << "has match result, match num = " << search_result_->num;
       auto top1 = search_result_->id_score[0];
-      LOGI << "find match target , id is " << top1.id
+      LOGI << "find match target, id is " << top1.id
            << ", similar: " << top1.similar << ", distance: " << top1.distance;
-      if (top1.similar > similar_thres) {
-        recog_info->match = true;
-      } else {
-        recog_info->match = false;
-      }
+      recog_info->match = top1.similar > similar_thres;
       recog_info->distance = top1.distance;
 //      std::strcpy(recog_info->record_info.id, top1.id);
       recog_info->record_info.lib_name = HorizonVisionStrDup(table_.table_name);

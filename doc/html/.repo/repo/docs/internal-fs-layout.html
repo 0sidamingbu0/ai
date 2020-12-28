@@ -1,0 +1,551 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Repo internal filesystem layout &mdash; AI Express用户手册 2.8.0 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/overview.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xstream.html">XStream算法SDK编程框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/faq.html">常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/version.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/copyright.html">版权声明</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AI Express用户手册</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Repo internal filesystem layout</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/.repo/repo/docs/internal-fs-layout.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="repo-internal-filesystem-layout">
+<h1>Repo internal filesystem layout<a class="headerlink" href="#repo-internal-filesystem-layout" title="永久链接至标题">¶</a></h1>
+<p>A reference to the <code class="docutils literal notranslate"><span class="pre">.repo/</span></code> tree in repo client checkouts.
+Hopefully it’s complete &amp; up-to-date, but who knows!</p>
+<p>*** note
+<strong>Warning</strong>:
+This is meant for developers of the repo project itself as a quick reference.
+<strong>Nothing</strong> in here must be construed as ABI, or that repo itself will never
+change its internals in backwards incompatible ways.</p>
+<hr class="docutils" />
+<p>[TOC]</p>
+<div class="section" id="repo-layout">
+<h2>.repo/ layout<a class="headerlink" href="#repo-layout" title="永久链接至标题">¶</a></h2>
+<p>All content under <code class="docutils literal notranslate"><span class="pre">.repo/</span></code> is managed by <code class="docutils literal notranslate"><span class="pre">repo</span></code> itself with few exceptions.</p>
+<p>In general, you should not make manual changes in here.
+If a setting was initialized using an option to <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code>, you should use that
+command to change the setting later on.
+It is always safe to re-run <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> in existing repo client checkouts.
+For example, if you want to change the manifest branch, you can simply run
+<code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span> <span class="pre">--manifest-branch=&lt;new</span> <span class="pre">name&gt;</span></code> and repo will take care of the rest.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">config</span></code>: Per-repo client checkout settings using <a class="reference external" href="https://git-scm.com/docs/git-config">git-config</a> file format.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repo_config.json</span></code>: JSON cache of the <code class="docutils literal notranslate"><span class="pre">config</span></code> file for repo to
+read/process quickly.</p></li>
+</ul>
+<div class="section" id="repo-state">
+<h3>repo/ state<a class="headerlink" href="#repo-state" title="永久链接至标题">¶</a></h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">repo/</span></code>: A git checkout of the repo project.  This is how <code class="docutils literal notranslate"><span class="pre">repo</span></code> re-execs
+itself to get the latest released version.</p>
+<p>It tracks the git repository at <code class="docutils literal notranslate"><span class="pre">REPO_URL</span></code> using the <code class="docutils literal notranslate"><span class="pre">REPO_REV</span></code> branch.
+Those are specified at <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> time using the <code class="docutils literal notranslate"><span class="pre">--repo-url=&lt;REPO_URL&gt;</span></code>
+and <code class="docutils literal notranslate"><span class="pre">--repo-rev=&lt;REPO_REV&gt;</span></code> options.</p>
+<p>Any changes made to this directory will usually be automatically discarded
+by repo itself when it checks for updates.  If you want to update to the
+latest version of repo, use <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">selfupdate</span></code> instead.  If you want to
+change the git URL/branch that this tracks, re-run <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> with the new
+settings.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repo_fetchtimes.json</span></code>: Used by <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">sync</span></code> to record stats when syncing
+the various projects.</p></li>
+</ul>
+</div>
+<div class="section" id="manifests">
+<h3>Manifests<a class="headerlink" href="#manifests" title="永久链接至标题">¶</a></h3>
+<p>For more documentation on the manifest format, including the local_manifests
+support, see the <a class="reference internal" href="manifest-format.html"><span class="doc">manifest-format.md</span></a> file.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">manifests/</span></code>: A git checkout of the manifest project.  Its <code class="docutils literal notranslate"><span class="pre">.git/</span></code> state
+points to the <code class="docutils literal notranslate"><span class="pre">manifest.git</span></code> bare checkout (see below).  It tracks the git
+branch specified at <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> time via <code class="docutils literal notranslate"><span class="pre">--manifest-branch</span></code>.</p>
+<p>The local branch name is always <code class="docutils literal notranslate"><span class="pre">default</span></code> regardless of the remote tracking
+branch.  Do not get confused if the remote branch is not <code class="docutils literal notranslate"><span class="pre">default</span></code>, or if
+there is a remote <code class="docutils literal notranslate"><span class="pre">default</span></code> that is completely different!</p>
+<p>No manual changes should be made in here as it will just confuse repo and
+it won’t automatically recover causing no new changes to be picked up.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">manifests.git/</span></code>: A bare checkout of the manifest project.  It tracks the
+git repository specified at <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> time via <code class="docutils literal notranslate"><span class="pre">--manifest-url</span></code>.</p>
+<p>No manual changes should be made in here as it will just confuse repo.
+If you want to switch the tracking settings, re-run <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> with the
+new settings.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">manifest.xml</span></code>: The manifest that repo uses.  It is generated at <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code>
+and uses the <code class="docutils literal notranslate"><span class="pre">--manifest-name</span></code> to determine what manifest file to load next
+out of <code class="docutils literal notranslate"><span class="pre">manifests/</span></code>.</p>
+<p>Do not try to modify this to load other manifests as it will confuse repo.
+If you want to switch manifest files, re-run <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> with the new
+setting.</p>
+<p>Older versions of repo managed this with symlinks.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">manifest.xml</span> <span class="pre">-&gt;</span> <span class="pre">manifests/&lt;manifest-name&gt;.xml</span></code>: A symlink to the manifest
+that the user wishes to sync.  It is specified at <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code> time via
+<code class="docutils literal notranslate"><span class="pre">--manifest-name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">manifests.git/.repo_config.json</span></code>: JSON cache of the <code class="docutils literal notranslate"><span class="pre">manifests.git/config</span></code>
+file for repo to read/process quickly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">local_manifest.xml</span></code> (<em>Deprecated</em>): User-authored tweaks to the manifest
+used to sync.  See <a class="reference external" href="./manifest-format.md#Local-Manifests">local manifests</a> for more details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">local_manifests/</span></code>: Directory of user-authored manifest fragments to tweak
+the manifest used to sync.  See <a class="reference external" href="./manifest-format.md#Local-Manifests">local manifests</a> for more details.</p></li>
+</ul>
+</div>
+<div class="section" id="project-objects">
+<h3>Project objects<a class="headerlink" href="#project-objects" title="永久链接至标题">¶</a></h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">project.list</span></code>: Tracking file used by <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">sync</span></code> to determine when projects
+are added or removed and need corresponding updates in the checkout.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">projects/</span></code>: Bare checkouts of every project synced by the manifest.  The
+filesystem layout matches the <code class="docutils literal notranslate"><span class="pre">&lt;project</span> <span class="pre">path=...</span></code> setting in the manifest
+(i.e. where it’s checked out in the repo client source tree).  Those
+checkouts will symlink their <code class="docutils literal notranslate"><span class="pre">.git/</span></code> state to paths under here.</p>
+<p>Some git state is further split out under <code class="docutils literal notranslate"><span class="pre">project-objects/</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">project-objects/</span></code>: Git objects that are safe to share across multiple
+git checkouts.  The filesystem layout matches the <code class="docutils literal notranslate"><span class="pre">&lt;project</span> <span class="pre">name=...</span></code>
+setting in the manifest (i.e. the path on the remote server) with a <code class="docutils literal notranslate"><span class="pre">.git</span></code>
+suffix.  This allows for multiple checkouts of the same remote git repo to
+share their objects.  For example, you could have different branches of
+<code class="docutils literal notranslate"><span class="pre">foo/bar.git</span></code> checked out to <code class="docutils literal notranslate"><span class="pre">foo/bar-master</span></code>, <code class="docutils literal notranslate"><span class="pre">foo/bar-release</span></code>, etc…
+There will be multiple trees under <code class="docutils literal notranslate"><span class="pre">projects/</span></code> for each one, but only one
+under <code class="docutils literal notranslate"><span class="pre">project-objects/</span></code>.</p>
+<p>This layout is designed to allow people to sync against different remotes
+(e.g. a local mirror &amp; a public review server) while avoiding duplicating
+the content.  However, this can run into problems if different remotes use
+the same path on their respective servers.  Best to avoid that.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subprojects/</span></code>: Like <code class="docutils literal notranslate"><span class="pre">projects/</span></code>, but for git submodules.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subproject-objects/</span></code>: Like <code class="docutils literal notranslate"><span class="pre">project-objects/</span></code>, but for git submodules.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">worktrees/</span></code>: Bare checkouts of every project synced by the manifest.  The
+filesystem layout matches the <code class="docutils literal notranslate"><span class="pre">&lt;project</span> <span class="pre">name=...</span></code> setting in the manifest
+(i.e. the path on the remote server) with a <code class="docutils literal notranslate"><span class="pre">.git</span></code> suffix.  This has the
+same advantages as the <code class="docutils literal notranslate"><span class="pre">project-objects/</span></code> layout above.</p>
+<p>This is used when git worktrees are enabled.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="global-settings">
+<h3>Global settings<a class="headerlink" href="#global-settings" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">.repo/manifests.git/config</span></code> file is used to track settings for the entire
+repo client checkout.
+Most settings use the <code class="docutils literal notranslate"><span class="pre">[repo]</span></code> section to avoid conflicts with git.
+User controlled settings are initialized when running <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code>.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>Setting</th>
+<th><code>repo init</code> Option</th>
+<th>Use/Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>manifest.groups</td>
+<td><code>--groups</code> &amp; <code>--platform</code></td>
+<td>The manifest groups to sync</td>
+</tr>
+<tr>
+<td>repo.archive</td>
+<td><code>--archive</code></td>
+<td>Use <code>git archive</code> for checkouts</td>
+</tr>
+<tr>
+<td>repo.clonefilter</td>
+<td><code>--clone-filter</code></td>
+<td>Filter setting when using [partial git clones]</td>
+</tr>
+<tr>
+<td>repo.depth</td>
+<td><code>--depth</code></td>
+<td>Create shallow checkouts when cloning</td>
+</tr>
+<tr>
+<td>repo.dissociate</td>
+<td><code>--dissociate</code></td>
+<td>Dissociate from any reference/mirrors after initial clone</td>
+</tr>
+<tr>
+<td>repo.mirror</td>
+<td><code>--mirror</code></td>
+<td>Checkout is a repo mirror</td>
+</tr>
+<tr>
+<td>repo.partialclone</td>
+<td><code>--partial-clone</code></td>
+<td>Create [partial git clones]</td>
+</tr>
+<tr>
+<td>repo.reference</td>
+<td><code>--reference</code></td>
+<td>Reference repo client checkout</td>
+</tr>
+<tr>
+<td>repo.submodules</td>
+<td><code>--submodules</code></td>
+<td>Sync git submodules</td>
+</tr>
+<tr>
+<td>repo.worktree</td>
+<td><code>--worktree</code></td>
+<td>Use <code>git worktree</code> for checkouts</td>
+</tr>
+<tr>
+<td>user.email</td>
+<td><code>--config-name</code></td>
+<td>User's e-mail address; Copied into <code>.git/config</code> when checking out a new project</td>
+</tr>
+<tr>
+<td>user.name</td>
+<td><code>--config-name</code></td>
+<td>User's name; Copied into <code>.git/config</code> when checking out a new project</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="repo-hooks-settings">
+<h3>Repo hooks settings<a class="headerlink" href="#repo-hooks-settings" title="永久链接至标题">¶</a></h3>
+<p>For more details on this feature, see the <a class="reference internal" href="repo-hooks.html"><span class="doc">repo-hooks docs</span></a>.
+We’ll just discuss the internal configuration settings.
+These are stored in the registered <code class="docutils literal notranslate"><span class="pre">&lt;repo-hooks&gt;</span></code> project itself, so if the
+manifest switches to a different project, the settings will not be copied.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>Setting</th>
+<th>Use/Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>repo.hooks.\&lt;hook>.approvedmanifest</td>
+<td>User approval for secure manifest sources (e.g. https://)</td>
+</tr>
+<tr>
+<td>repo.hooks.\&lt;hook>.approvedhash</td>
+<td>User approval for insecure manifest sources (e.g. http://)</td>
+</tr>
+</tbody>
+</table><p>For example, if our manifest had the following entries, we would store settings
+under <code class="docutils literal notranslate"><span class="pre">.repo/projects/src/repohooks.git/config</span></code> (which would be reachable via
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">--git-dir=src/repohooks/.git</span> <span class="pre">config</span></code>).</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>  &lt;project path=&quot;src/repohooks&quot; name=&quot;chromiumos/repohooks&quot; ... /&gt;
+  &lt;repo-hooks in-project=&quot;chromiumos/repohooks&quot; ... /&gt;
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">&lt;hook&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">pre-upload</span></code>, the <code class="docutils literal notranslate"><span class="pre">.git/config</span></code> setting might be:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[repo &quot;hooks.pre-upload&quot;]</span>
+	<span class="na">approvedmanifest</span> <span class="o">=</span> <span class="s">https://chromium.googlesource.com/chromiumos/manifest</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="per-project-settings">
+<h2>Per-project settings<a class="headerlink" href="#per-project-settings" title="永久链接至标题">¶</a></h2>
+<p>These settings are somewhat meant to be tweaked by the user on a per-project
+basis (e.g. <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">config</span></code> in a checked out source repo).</p>
+<p>Where possible, we re-use standard git settings to avoid confusion, and we
+refrain from documenting those, so see <a class="reference external" href="https://git-scm.com/docs/git-config">git-config</a> documentation instead.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">help</span> <span class="pre">upload</span></code> for documentation on <code class="docutils literal notranslate"><span class="pre">[review]</span></code> settings.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">[remote]</span></code> settings are automatically populated/updated from the manifest.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">[branch]</span></code> settings are updated by <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">branch</span></code>.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>Setting</th>
+<th>Subcommands</th>
+<th>Use/Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>review.\&lt;url>.autocopy</td>
+<td>upload</td>
+<td>Automatically add to <code>--cc=&lt;value&gt;</code></td>
+</tr>
+<tr>
+<td>review.\&lt;url>.autoreviewer</td>
+<td>upload</td>
+<td>Automatically add to <code>--reviewers=&lt;value&gt;</code></td>
+</tr>
+<tr>
+<td>review.\&lt;url>.autoupload</td>
+<td>upload</td>
+<td>Automatically answer "yes" or "no" to all prompts</td>
+</tr>
+<tr>
+<td>review.\&lt;url>.uploadhashtags</td>
+<td>upload</td>
+<td>Automatically add to <code>--hashtag=&lt;value&gt;</code></td>
+</tr>
+<tr>
+<td>review.\&lt;url>.uploadlabels</td>
+<td>upload</td>
+<td>Automatically add to <code>--label=&lt;value&gt;</code></td>
+</tr>
+<tr>
+<td>review.\&lt;url>.uploadnotify</td>
+<td>upload</td>
+<td>[Notify setting][upload-notify] to use</td>
+</tr>
+<tr>
+<td>review.\&lt;url>.uploadtopic</td>
+<td>upload</td>
+<td>Default [topic] to use</td>
+</tr>
+<tr>
+<td>review.\&lt;url>.username</td>
+<td>upload</td>
+<td>Override username with <code>ssh://</code> review URIs</td>
+</tr>
+<tr>
+<td>remote.\&lt;remote>.fetch</td>
+<td>sync</td>
+<td>Set of refs to fetch</td>
+</tr>
+<tr>
+<td>remote.\&lt;remote>.projectname</td>
+<td>\&lt;network></td>
+<td>The name of the project as it exists in Gerrit review</td>
+</tr>
+<tr>
+<td>remote.\&lt;remote>.pushurl</td>
+<td>upload</td>
+<td>The base URI for pushing CLs</td>
+</tr>
+<tr>
+<td>remote.\&lt;remote>.review</td>
+<td>upload</td>
+<td>The URI of the Gerrit review server</td>
+</tr>
+<tr>
+<td>remote.\&lt;remote>.url</td>
+<td>sync &amp; upload</td>
+<td>The URI of the git project to fetch</td>
+</tr>
+<tr>
+<td>branch.\&lt;branch>.merge</td>
+<td>sync &amp; upload</td>
+<td>The branch to merge &amp; upload &amp; track</td>
+</tr>
+<tr>
+<td>branch.\&lt;branch>.remote</td>
+<td>sync &amp; upload</td>
+<td>The remote to track</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="dotconfig-layout">
+<h2>~/ dotconfig layout<a class="headerlink" href="#dotconfig-layout" title="永久链接至标题">¶</a></h2>
+<p>Repo will create &amp; maintain a few files in the user’s home directory.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.repoconfig/</span></code>: Repo’s per-user directory for all random config files/state.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repoconfig/config</span></code>: Per-user settings using <a class="reference external" href="https://git-scm.com/docs/git-config">git-config</a> file format.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repoconfig/keyring-version</span></code>: Cache file for checking if the gnupg subdir
+has all the same keys as the repo launcher.  Used to avoid running gpg
+constantly as that can be quite slow.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repoconfig/gnupg/</span></code>: GnuPG’s internal state directory used when repo needs
+to run <code class="docutils literal notranslate"><span class="pre">gpg</span></code>.  This provides isolation from the user’s normal <code class="docutils literal notranslate"><span class="pre">~/.gnupg/</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repoconfig/.repo_config.json</span></code>: JSON cache of the <code class="docutils literal notranslate"><span class="pre">.repoconfig/config</span></code>
+file for repo to read/process quickly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.repo_.gitconfig.json</span></code>: JSON cache of the <code class="docutils literal notranslate"><span class="pre">.gitconfig</span></code> file for repo to
+read/process quickly.</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 版权所有 2020, Horizon Robotics
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

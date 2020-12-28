@@ -22,9 +22,6 @@
 #include "xproto/plugin/xplugin.h"
 #include "xproto/message/pluginflow/flowmsg.h"
 #include "xproto/threads/threadpool.h"
-#ifdef PYAPI
-#include "pybind11/pybind11.h"
-#endif
 namespace horizon {
 namespace vision {
 namespace xproto {
@@ -60,10 +57,6 @@ class XPluginAsync : public XPlugin {
   virtual int Stop() {
     return 0;
   }
-#ifdef PYAPI
-  void RegMsg(const std::string &type,
-              std::function<void(pybind11::object)> cb);
-#endif
 
  protected:
   using XProtoMessageFunc = std::function<int(XProtoMessagePtr)>;

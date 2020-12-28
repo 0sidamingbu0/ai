@@ -14,6 +14,7 @@ extern "C"
 #include <stdint.h>
 #include <sys/time.h>
 
+#define HB_VIO_PYM_MAX_BASE_LAYER 6
 #define HB_VIO_BUFFER_MAX_PLANES 3
 #define HB_VIO_BUFFER_PREPARE 4
 
@@ -26,6 +27,7 @@ extern "C"
 #define HB_VIO_IPU_US_CB_MSG	0x020
 #define HB_VIO_PYM_CB_MSG		0x040
 #define HB_VIO_DIS_CB_MSG		0x080
+#define HB_VIO_PYM_VER2_CB_MSG		0x100
 
 #define HB_VIO_PYM_MAX_LAYER 30
 
@@ -41,6 +43,8 @@ typedef enum VIO_INFO_TYPE_S {
 	HB_VIO_IPU_DS3_IMG_INFO,
 	HB_VIO_IPU_DS4_IMG_INFO,
 	HB_VIO_PYM_IMG_INFO,
+	HB_VIO_ISP_IMG_INFO,
+	HB_VIO_PYM_V2_IMG_INFO,
 	HB_VIO_INFO_MAX
 } VIO_INFO_TYPE_E;
 
@@ -53,6 +57,7 @@ typedef enum VIO_CALLBACK_TYPE {
 	HB_VIO_IPU_US_CALLBACK,
 	HB_VIO_PYM_CALLBACK,	// 6
 	HB_VIO_DIS_CALLBACK,
+	HB_VIO_PYM_V2_CALLBACK,
 	HB_VIO_MAX_CALLBACK
 } VIO_CALLBACK_TYPE_E;
 
@@ -76,6 +81,12 @@ typedef enum VIO_DATA_TYPE_S {
 	HB_VIO_GDC1_FEEDBACK_SRC_DATA,
 	HB_VIO_PYM_LAYER_DATA,
 	HB_VIO_MD_DATA,
+	HB_VIO_ISP_RAW_DATA,
+	HB_VIO_PYM_COMMON_DATA,
+	HB_VIO_PYM_DATA_V2,
+	HB_VIO_CIM_RAW_DATA,
+	HB_VIO_CIM_YUV_DATA,
+	HB_VIO_EMBED_DATA,
 	HB_VIO_DATA_TYPE_MAX
 } VIO_DATA_TYPE_E;
 
@@ -104,16 +115,17 @@ typedef struct address_info_s {
 
 typedef struct image_info_s {
 	uint16_t sensor_id;
-	uint16_t pipeline_id;
+	uint32_t pipeline_id;
 	uint32_t frame_id;
-	uint64_t time_stamp;	//HW time stamp
-	struct timeval tv;  //system time of hal get buf
+	uint64_t time_stamp;//HW time stamp
+	struct timeval tv;//system time of hal get buf
 	int buf_index;
 	int img_format;
-	int fd[HB_VIO_BUFFER_MAX_PLANES];	//ion buf fd
+	int fd[HB_VIO_BUFFER_MAX_PLANES];//ion buf fd
 	uint32_t size[HB_VIO_BUFFER_MAX_PLANES];
 	uint32_t planeCount;
 	uint32_t dynamic_flag;
+	uint32_t water_mark_line;
 	VIO_DATA_TYPE_E data_type;
 	buffer_state_e state;
 } image_info_t;
@@ -146,6 +158,12 @@ typedef struct pym_buffer_s {
 	uint64_t paddr_whole[HB_VIO_BUFFER_MAX_PLANES];
 	uint32_t layer_size[30][HB_VIO_BUFFER_MAX_PLANES];
 } pym_buffer_t;
+
+//use in j3 j5
+typedef struct pym_buffer_common_s {
+	image_info_t pym_img_info;
+	address_info_t pym[HB_VIO_PYM_MAX_BASE_LAYER];//only for base layer
+} pym_buffer_common_t;
 
 typedef struct osd_box_s {
 	uint8_t osd_en;
@@ -344,6 +362,7 @@ typedef struct {
     custom_tranformation_t custom;  ///< Parsed custom transformation structure
     double trapezoid_left_angle;    ///< Left Acute angle in degrees between trapezoid base and leg
     double trapezoid_right_angle;   ///< Right Acute angle in degrees between trapezoid base and leg
+    uint8_t check_compute;          ///< Perform fixed point and floating point result comparisons
 } window_t;
 //---------------------------------------------------------
 /**

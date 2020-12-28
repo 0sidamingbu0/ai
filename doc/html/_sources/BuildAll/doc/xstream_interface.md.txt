@@ -1,0 +1,522 @@
+# XStream API文档
+
+## 数据结构体定义
+本节内容描述XStream API接口中需要的数据结构。
+### DataState
+```c++
+enum class DataState {
+  /// valid
+  VALID = 0,
+  /// filtered
+  FILTERED = 1,
+  /// invisible
+  INVISIBLE = 2,
+  /// disappeared
+  DISAPPEARED = 3,
+  /// invalid
+  INVALID = 4,
+};
+```
+描述：
+
+DataState定义了数据的几种基本状态。在业务开发过程中，对数据处理时，可能会依赖这些状态。数据正常有效，应该设置为VALID。
+
+----
+
+### BaseData
+```c++
+struct BaseData {
+  BaseData();
+  virtual ~BaseData();
+  /// type
+  std::string type_ = "";
+  /// name
+  std::string name_ = "";
+  /// error code
+  int error_code_ = 0;
+  /// error detail info
+  std::string error_detail_ = "";
+  /// context of C structure
+  std::shared_ptr<CContext> c_data_;
+  /// data status
+  DataState state_ = DataState::VALID;
+
+  typedef std::shared_ptr<BaseData> BaseDataPtr;
+};
+```
+
+描述：
+
+BaseData结构体描述了框架内部数据流的基本信息。**Method之间传递的数据，必须是从BaseData派生出来**。BaseData数据成员包括：
+
+- 数据类型type_: 用户自定义数据的描述信息，如"box"等，该字段当前无特殊作用，可不关注；
+- 数据名称name_: 数据的别名。框架运行过程中，会将数据的name_赋值为workflow配置文件中配置的名字。对于InputData，需要外部指定数据的name_,指定的name_需要和workflow配置中配置的名字一致；
+- 错误码error_code_: 数据错误码；
+- 错误信息error_detail_: 错误信息描述；
+- CContext c_data_: 扩展的C数据结构，可不关注；
+- 数据状态state_: 该数据的状态，默认为有效。
+
+----
+
+### BaseDataVector
+```c++
+struct BaseDataVector : public BaseData {
+  BaseDataVector();
+
+  std::vector<BaseDataPtr> datas_;
+};
+```
+
+描述：
+
+BaseDataVector为BaseData的一个派生类，用于表示数组类数据，比如保存一帧图像中的所有的人体检测框，datas_数组中每个成员指向一个人体检测框数据。
+
+- datas_: 用于保存数组中每个值。
+
+----
+
+### XStreamData
+```c++
+/// Wrap other data structures into derived classes of BaseData
+template <typename Dtype>
+struct XStreamData : public BaseData {
+  Dtype value;
+  XStreamData() {}
+  explicit XStreamData(const Dtype &val) { value = val; }
+};
+```
+
+描述：
+
+XStreamData用于将其他非BaseData继承的数据结构，通过模板类封装，封装后的具体类继承自BaseData，可以用于Method之间数据传递。
+
+封装后的具体类包含一个成员value，用于保存原始数据结构的值。
+
+----
+
+### InputParam
+```c++
+class InputParam {
+ public:
+  explicit InputParam(const std::string &unique_name) {
+    unique_name_ = unique_name;
+    is_json_format_ = false;
+    is_enable_this_method_ = true;
+  }
+  virtual ~InputParam() = default;
+  virtual std::string Format() = 0;
+
+ public:
+  bool is_json_format_;
+  bool is_enable_this_method_;
+  std::string unique_name_;
+};
+
+typedef std::shared_ptr<InputParam> InputParamPtr;
+```
+
+描述：
+
+InputParam是输入数据参数的数据结构。包括：
+- unique_name_：表示该参数作用在具体节点的唯一性标识，对应workflow配置中的Method名字。
+- is_json_format_：表示输入参数是否是json字符串。若是，可以通过Format()接口获取json字符串；
+- is_enable_this_method_：表示是否使能该节点。若为true，则将本参数传递入节点，且节点正常运算；若为false，则跳过该节点运算。
+
+当准备InputData时，可以通过InputParam，更新Method的配置参数。用户可以继承该类，定义具体的参数类型，然后相关的Method使用新定义的数据类型解析配置参数。
+
+----
+
+### DisableParam
+```c++
+class DisableParam : public InputParam {
+ public:
+  enum class Mode {
+    /// passthrough mode: use inputdata as outputdata;
+    /// slot size of outputdata and inputdata must be equal;
+    PassThrough,
+    /// use pre-difined data as outputdata;
+    /// slot size of predifine data and outputdata must be equal;
+    UsePreDefine,
+    /// set outputdata status as DataState::INVALID
+    Invalid,
+    /// flexibly passthrough mode
+    /// 1. passthrough inputdata to outputdata in order
+    /// 2. if slot size of inputdata greater than outputdata,
+    ///    only use the first few slots.
+    /// 3. if slot size of inputdata less than outputdata,
+    ///    set status of last few slots invalid.
+    BestEffortPassThrough
+  };
+  explicit DisableParam(const std::string &unique_name,
+                        Mode mode = Mode::Invalid)
+      : InputParam(unique_name), mode_{mode} {
+    is_enable_this_method_ = false;
+  }
+  virtual ~DisableParam() = default;
+  virtual std::string Format() { return unique_name_ + " : disabled"; }
+  Mode mode_;
+  /// pre-difined data, used in Mode::UsePreDefine
+  std::vector<BaseDataPtr> pre_datas_;
+};
+
+typedef std::shared_ptr<DisableParam> DisableParamPtr;
+```
+
+描述：
+
+DisableParam继承自InputParam，用于workflow节点旁路控制：
+- mode_：指定节点旁路的模式，具体模式说明可以参考用户文档或者xstream tutorials。
+- pre_datas__：UsePreDefine模式，使用用户传入的值代替节点的输出值
+
+当准备InputData时，可以通过设置DisableParam，临时跳过一些节点的计算。
+
+----
+
+### SdkCommParam
+```c++
+class SdkCommParam : public InputParam {
+ public:
+  SdkCommParam(const std::string &unique_name, const std::string &param)
+      : InputParam(unique_name) {
+    param_ = param;
+    is_json_format_ = true;
+  }
+  virtual std::string Format() { return param_; }
+  virtual ~SdkCommParam() = default;
+
+ public:
+  std::string param_;  // json format
+};
+typedef std::shared_ptr<SdkCommParam> CommParamPtr;
+```
+
+描述：
+
+SdkCommParam继承自InputParam，常规的json方式描述参数。通过调用Format接口获取json字符串。
+
+----
+
+### InputData
+```c++
+struct InputData {
+  /// input data, such as image, timestamp, box..
+  std::vector<BaseDataPtr> datas_;
+  /// InputParam
+  std::vector<InputParamPtr> params_;
+  /// input_data source id, used in multi-input; default value 0(single-input)
+  uint32_t source_id_ = 0;
+  /// context_ pasthroughed to OutputData::context_
+  const void *context_ = nullptr;
+};
+```
+描述：
+
+InputData结构体描述了框架的输入数据流基本信息。包括：
+- 数据流datas_：BaseData数组，表示一帧计算输入的数据；
+- 参数params_：InputParam数组，注意参数params_和输入数据datas_无位置对应关系，InputParam中有成员描述该InputParam配置具体对应到哪个Method；
+- 输入源source_id_：输入源编号，表示输入源的唯一标志，多输入源从0开始编号，单输入源默认为0，用于支持多路；
+- 透传数据context_：透传数据，该数据会透传到OutputData，可用于业务特殊需求。
+
+----
+
+### OutputData
+```c++
+struct OutputData {
+  /// error code
+  int error_code_ = 0;
+  /// error info
+  std::string error_detail_ = "";
+  /// used in Node's outputdata, represents node's name
+  std::string unique_name_ = "";
+  /// outputdata name
+  std::string output_type_ = "";
+  /// output data, such as detection_box, landmarks..
+  std::vector<BaseDataPtr> datas_;
+  /// passthroughed from inputdata
+  const void *context_ = nullptr;
+  /// sequence_id in single-input
+  int64_t sequence_id_ = 0;
+  /// input_data source id, used in multi-input; default value 0(single-input)
+  uint32_t source_id_ = 0;
+  uint64_t global_sequence_id_ = 0;
+};
+```
+描述：
+
+OutputData结构体描述了框架的输出数据流基本信息。包括：
+- error_code_：表示错误码，非0表示预测出现错误；
+- error_detail_：表示错误描述信息；
+- unique_name_：表示该输出数据是某具体节点的输出数据，unique_name_对应workflow配置中产生该数据的Method的名字；
+- output_type_：多路输出中表示该组输出数据的名称，单路输出时默认是"__NODE_WHOLE_OUTPUT__"；
+- datas_：表示一帧预测计算的所有输出数据；
+- context_：透传字段，由该帧数据的输入数据InputData.context_传入；
+- sequence_id_: 表示该输出数据对应输入源的输入帧的序列号，从0开始依次累加；
+- source_id_: 表示多输入源情况下输入源的编号；
+- global_sequence_id_: 表示多输入源情况下，对应输入帧的总序列号；单输入源情况下，与sequence_id_相同。
+
+
+## XStream API说明
+### SetConfig
+```c++
+int SetConfig(const std::string &key, const std::string &value);
+```
+- 描述：用于设置整个workflow的配置，目前支持的配置有workflow配置文件、性能统计profiler相关功能、超时告警以及帧内中间数据的释放。
+
+- 输入：
+
+  1）key为"config_file"，value设置为workflow的配置文件路径，它定义整个workflow数据流。
+
+  2）key为"profiler"，value为"on"，表示打开性能统计功能。"off"表示关闭, 默认为关闭。
+
+  3）key为"profiler_file",value为性能统计输出文件路径，用于设置性能统计文件的路径名称。当打开性能统计功能，需要设置输出文件路径。
+
+  4）key为"profiler_time_interval",value为统计耗时的最小时间间隔，单位为微秒。若某处统计的耗时小于value，则此耗时记录不会添加到性能统计结果。默认值是3000微秒，即3毫秒。
+
+  5）key为"profiler_fps_interval",value为统计帧率的最小时间间隔，单位为微秒。若某处统计Fps的耗时小于value，则此fps记录不会添加到性能统计结果。默认200*1000微秒，即200毫秒。
+
+  6）key为"free_framedata", value为"on", 表示尽早地释放掉在后面node节点中不再需要使用的框架中的某项中间数据，打开此项配置,可以减少峰值内存使用。默认关闭。
+
+  7）key为"time_monitor", value为输入框架的每帧数据处理的最大时长, 单位毫秒。设置value非0，则打开超时告警功能。value默认为0，即关闭超时告警功能。
+
+- 返回：接口返回0表示设置成功，返回-1表示设置失败；
+
+----
+
+
+### Init
+```c++
+int Init();
+```
+- 描述：用于初始化XStream对象，注意必须在调用SetConfig之后执行Init()。
+
+- 返回：接口返回0表示初始化成功，否则表示初始化失败。
+
+----
+
+
+### SetCallback
+```c++
+typedef std::function<void(OutputDataPtr)> XStreamCallback;
+int SetCallback(XStreamCallback callback, const std::string &name = "");
+```
+- 描述：用于回调函数的设置，用于异步预测的使用。使用同步接口时，该接口无效。注意必须在调用Init后执行SetCallback，否则节点等信息还未完善，设置回调函数会失败。
+
+- 输入：
+
+  1）callback：表示设置的回调函数。
+
+  2）name: 默认为空，表示设置整个workflow的输出数据的回调函数；当name设置为某个节点的unique名字，设置该节点输出数据的回调函数。
+
+- 返回：接口返回0表示设置成功，否则表示设置失败；
+
+----
+
+
+### GetConfig
+```c++
+InputParamPtr GetConfig(const std::string &unique_name);
+```
+- 描述：获取某个节点的参数。
+
+- 输入：
+
+  1）unique_name: 某个节点的unique名字（对应workflow配置中的节点名字），表示获取该节点的参数
+
+- 返回：InputParamPtr
+
+----
+
+### UpdateConfig
+```c++
+int UpdateConfig(const std::string &unique_name, InputParamPtr ptr);
+```
+- 描述：用于设置或更新节点的参数。
+
+- 输入：
+
+  1）unique_name: 某个节点的unique名字（对应workflow配置中的节点名字），表示更新或设置该节点的参数。
+
+  2）ptr：更新的参数信息。
+
+- 返回：返回0表示参数更新成功，否则失败。
+
+----
+
+### SyncPredict
+```c++
+OutputDataPtr SyncPredict(InputDataPtr input);
+```
+- 描述：同步运行接口，传⼊数据，接口会阻塞住，直到整个workflow处理完成，将workflow的输出结果通过函数返回值返回。
+
+- 输入：
+
+  1）input: 待处理的输入数据，需要用户自己封装。
+
+- 返回：返回OutputDataPtr，输出workflow的输出结果。
+
+----
+
+### SyncPredict2
+```c++
+std::vector<OutputDataPtr> SyncPredict2(InputDataPtr input);
+```
+- 描述：用于多组输出的同步运行接口，传⼊数据，接口会阻塞住，直到整个workflow处理完成，将workflow的输出结果通过函数返回值返回。
+
+- 输入：
+
+  1）input: 待处理的输入数据，需要用户自己封装。
+
+- 返回：返回OutputDataPtr数组，输出workflow的多组输出结果。
+
+----
+
+### AsyncPredict
+```c++
+int64_t AsyncPredict(InputDataPtr input);
+```
+- 描述：异步运行接口，AsyncPredict接口调用后立即返回，workflow的输出结果通过回调函数处理。
+
+- 输入：
+
+  1）input: 待处理的输入数据，需要用户自己封装。
+
+- 返回：接口返回值大于等于0，则表示该任务成功加入队列，且返回码表示该路输入源的sequence_id；若接口返回值小于0，表示任务队列已满，添加任务失败。
+
+----
+
+### GetTaskNum
+```c++
+int64_t GetTaskNum();
+```
+- 描述：用于获取框架中当前任务队列的长度，即未完成的任务数量。
+
+- 返回：返回未完成的任务数量。
+
+## Method API说明
+### MethodInfo属性说明
+```c++
+struct MethodInfo {
+  /// is thread safe
+  bool is_thread_safe_ = false;
+  /// is need reorder, the order of outputdata must be same as the inputdata
+  bool is_need_reorder = false;
+  /// is dependent on inputdata source
+  bool is_src_ctx_dept = false;
+};
+```
+描述：
+
+MethodInfo结构体定义了Method的属性信息，包括：
+- is_thread_safe_: Method是否为线程安全，默认值是false。在Workflow定义时候，支持配置Node的线程数。如果线程数配置大于1，若Method的计算过程是非线程安全的，则多线程下会定义多个Method实例；否则多线程复用一个Method实例。
+
+- is_need_reorder: 是否要求数据按顺逐帧调用Method处理。比如一些目标跟踪场景，要求输出数据是有序的。默认是false，表示不要求有序。**注意：在is_need_reorder=true的method，由于有前后帧序依赖，线程数只允许为1**。同时is_need_reorder=true会一定程度上降低执行效率。
+
+- is_src_ctx_dept: 对输入数据的处理是否依赖输入源。比如目标跟踪场景，会记录前几帧数据并分配track_id，这类Method需要将属性设置为`is_src_ctx_dept = true`。
+
+----
+
+### Method API
+#### Init
+```c++
+int Init(const std::string &config_file_path);
+```
+- 描述：Method的初始化函数，一般包括配置文件的加载、配置参数的获取，关键变量的设置等。
+
+- 输入：
+
+  1）config_file_path: Method对应的配置文件路径。
+
+- 返回：接口返回0表示初始化成功，否则表示初始化失败；
+
+----
+
+#### InitFromJsonString
+```c++
+int InitFromJsonString(const std::string &config);
+```
+- 描述：Method的初始化函数，与Init函数的区别在于，传入的参数是Json格式的配置内容，而非文件路径。
+
+- 输入：
+
+  config: Method对应的配置内容，Json格式。
+
+- 返回：接口返回0表示初始化成功，否则表示初始化失败；
+
+----
+
+#### Finalize
+```c++
+void Finalize();
+```
+- 描述：Method对象销毁前需要处理的内容，包括关键变量的释放等。
+
+----
+
+#### UpdateParameter
+```c++
+int UpdateParameter(InputParamPtr ptr);
+```
+- 描述：更新Method的参数。
+
+- 输入：
+
+  ptr: 待更新的参数；
+
+- 返回：接口返回0表示更新成功，否则表示更新失败；
+
+----
+
+#### GetParameter
+```c++
+InputParamPtr GetParameter();
+```
+- 描述：获取Method的参数。
+
+- 返回：接口返回InputParam。
+
+----
+
+#### GetVersion
+```c++
+std::string GetVersion();
+```
+- 描述：获取Method的版本信息。
+
+- 返回：接口返回Method的版本信息。
+
+----
+
+#### GetMethodInfo
+```c++
+MethodInfo GetMethodInfo();
+```
+- 描述：获取Method的属性信息。
+
+- 返回：接口返回Method的属性信息MethodInfo。
+
+----
+
+#### OnProfilerChanged
+```c++
+void OnProfilerChanged(bool on);
+```
+- 描述：用于告知Method Profiler状态的更改。
+
+- 输入：
+  on：表示Profiler的状态。
+
+----
+
+#### DoProcess
+```c++
+std::vector<std::vector<BaseDataPtr>> DoProcess(
+    const std::vector<std::vector<BaseDataPtr>> &input,
+    const std::vector<InputParamPtr> &param);
+```
+- 描述：Method的核心处理函数。
+
+- 输入：
+  1）input：表示待处理的数据，input[i]表示Batch i的数据，目前仅支持i=0。
+  2）param：表示Method的参数，param[i]表示处理Batch i数据的参数。
+
+- 返回：接口返回Method的输出结果output，output[i]表示Batch i的输出数据。

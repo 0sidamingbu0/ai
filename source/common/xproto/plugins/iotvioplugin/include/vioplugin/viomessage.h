@@ -99,6 +99,20 @@ struct MultiVioMessage : VioMessage {
     multi_vio_img_.clear();}
 };
 
+struct ImageFacePicMessage : ImageVioMessage {
+ public:
+  ImageFacePicMessage() = delete;
+  explicit ImageFacePicMessage(
+      const std::shared_ptr<VioPipeLine> &vio_pipeline,
+      std::vector<std::shared_ptr<PymImageFrame>> &image_frame,
+      uint32_t img_num, bool is_valid = true):
+      ImageVioMessage(vio_pipeline, image_frame, img_num, is_valid) {
+    type_ = TYPE_FACE_PIC_IMAGE_MESSAGE;
+  }
+  ~ImageFacePicMessage(){}
+};
+
+
 }  // namespace vioplugin
 }  // namespace xproto
 }  // namespace vision

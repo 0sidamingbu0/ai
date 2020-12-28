@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Miscellaneous &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>Miscellaneous &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -362,7 +363,7 @@ avoids this issue involves weak reference with a cleanup callback:</p>
 <p class="admonition-title">注解</p>
 <p>PyPy (at least version 5.9) does not garbage collect objects when the
 interpreter exits. An alternative approach (which also works on CPython) is to use
-the <code class="xref py py-mod docutils literal notranslate"><span class="pre">atexit</span></code> module <a class="footnote-reference brackets" href="#f7" id="id2">2</a>, for example:</p>
+the <a class="reference external" href="https://docs.python.org/3/library/atexit.html#module-atexit" title="(在 Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">atexit</span></code></a> module <a class="footnote-reference brackets" href="#f7" id="id2">2</a>, for example:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">atexit</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;atexit&quot;</span><span class="p">);</span>
 <span class="n">atexit</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;register&quot;</span><span class="p">)(</span><span class="n">py</span><span class="o">::</span><span class="n">cpp_function</span><span class="p">([]()</span> <span class="p">{</span>
     <span class="c1">// perform cleanup here -- this function is called with the GIL held</span>

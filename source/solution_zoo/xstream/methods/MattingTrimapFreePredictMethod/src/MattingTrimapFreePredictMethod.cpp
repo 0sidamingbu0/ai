@@ -1,0 +1,307 @@
+/**
+ * Copyright (c) 2020 Horizon Robotics. All rights reserved.
+ * @File: MattingTrimapFreePredictMethod.cpp
+ * @Brief: definition of the MattingTrimapFreePredictMethod
+ * @Author: zhe.sun
+ * @Email: zhe.sun@horizon.ai
+ * @Date: 2020-12-15 13:15:05
+ * @Last Modified by: zhe.sun
+ * @Last Modified time: 2020-12-15 16:17:08
+ */
+
+#include "MattingTrimapFreePredictMethod/MattingTrimapFreePredictMethod.h"
+#include <string>
+#include <vector>
+#include <fstream>
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "hobotxstream/profiler.h"
+#include "horizon/vision_type/vision_type.hpp"
+#include "hobotxstream/image_tools.h"
+#include "hobotlog/hobotlog.hpp"
+#include "DnnAsyncData.h"
+
+#ifdef X3
+#include "./bpu_predict_x3.h"
+#endif
+namespace xstream {
+
+int MattingTrimapFreePredictMethod::Init(const std::string &cfg_path) {
+  DnnPredictMethod::Init(cfg_path);
+  expansion_ratio_ = config_["expansion_ratio"].isNumeric() ?
+                     config_["expansion_ratio"].asFloat() : expansion_ratio_;
+  return 0;
+}
+
+int MattingTrimapFreePredictMethod::PrepareInputData(
+      const std::vector<BaseDataPtr> &input,
+      const std::vector<InputParamPtr> param,
+      std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
+      std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
+  LOGD << "MattingTrimapFreePredictMethod PrepareInputData";
+  HOBOT_CHECK(input.size() == 2);  // image, box
+
+  auto xstream_img = std::static_pointer_cast<XStreamData<
+      std::shared_ptr<hobot::vision::ImageFrame>>>(input[0]);       // image
+  auto rois = std::static_pointer_cast<BaseDataVector>(input[1]);   // body_box
+
+  std::string img_type = xstream_img->value->type;
+  // CVImageFrame TODO
+  HOBOT_CHECK(img_type == "PymImageFrame") << "not support " << img_type;
+
+  auto pyramid_image = std::static_pointer_cast<
+      hobot::vision::PymImageFrame>(xstream_img->value);
+  // 默认使用pym第0层，box对应0层 TODO
+  const int width = pyramid_image->Width();
+  const int height = pyramid_image->Height();
+
+  int64_t box_num = rois->datas_.size();
+  // 一个roi对应一次预测
+  input_tensors.resize(box_num);
+  output_tensors.resize(box_num);
+
+  for (int32_t roi_idx = 0; roi_idx < box_num; roi_idx++) {
+    auto roi = std::static_pointer_cast<XStreamData<hobot::vision::BBox>>(
+        rois->datas_[roi_idx]);
+    if (roi->state_ != xstream::DataState::VALID) {
+      continue;
+    }
+    float src_roi_height = roi->value.Height();
+    float src_roi_width = roi->value.Width();
+    float expansion_height = src_roi_height * expansion_ratio_;
+    float expansion_width = src_roi_width * expansion_ratio_;
+
+    int ret = 0;
+    BPU_TENSOR_S nv12_tensor;
+    nv12_tensor.data_type = BPU_TYPE_IMG_NV12_SEPARATE;
+    int h_idx, w_idx, c_idx;
+    // 1. prepare nv12 tensor
+    HB_BPU_getHWCIndex(nv12_tensor.data_type, nullptr, &h_idx, &w_idx, &c_idx);
+    {
+      nv12_tensor.data_shape.ndim = 4;
+      nv12_tensor.data_shape.d[0] = 1;
+      nv12_tensor.data_shape.d[h_idx] = height;
+      nv12_tensor.data_shape.d[w_idx] = width;
+      nv12_tensor.data_shape.d[c_idx] = 3;
+      nv12_tensor.aligned_shape = nv12_tensor.data_shape;
+
+      // Copy y data to data0
+      int pym_layer = pyramid_image->pym_layer;
+      #ifdef X2
+      nv12_tensor.data.virAddr = reinterpret_cast<void*>(
+          pyramid_image->img.down_scale[pym_layer].y_vaddr);
+      nv12_tensor.data.phyAddr =
+          pyramid_image->img.down_scale[pym_layer].y_paddr;
+      nv12_tensor.data.memSize =  height * width;
+      // Copy uv data to data_ext
+      nv12_tensor.data_ext.virAddr = reinterpret_cast<void*>(
+          pyramid_image->img.down_scale[pym_layer].c_vaddr);
+      nv12_tensor.data_ext.phyAddr =
+          pyramid_image->img.down_scale[pym_layer].c_paddr;
+      nv12_tensor.data_ext.memSize =  (height + 1) / 2 * width;
+      #endif
+      #ifdef X3
+      nv12_tensor.data.virAddr = reinterpret_cast<void*>(
+          pyramid_image->down_scale[pym_layer].y_vaddr);
+      nv12_tensor.data.phyAddr = pyramid_image->down_scale[pym_layer].y_paddr;
+      nv12_tensor.data.memSize =  height * width;
+      // Copy uv data to data_ext
+      nv12_tensor.data_ext.virAddr = reinterpret_cast<void*>(
+          pyramid_image->down_scale[pym_layer].c_vaddr);
+      nv12_tensor.data_ext.phyAddr =
+          pyramid_image->down_scale[pym_layer].c_paddr;
+      nv12_tensor.data_ext.memSize =  (height + 1) / 2 * width;
+      #endif
+    }
+    // prepare nv12 output tensor
+    float expand_roi_x1 = roi->value.x1 - expansion_width;
+    float expand_roi_y1 = roi->value.y1 - expansion_height;
+    float expand_roi_x2 = roi->value.x2 + expansion_width;
+    float expand_roi_y2 = roi->value.y2 + expansion_height;
+    float expand_roi_height = src_roi_height + 2 * expansion_height;
+    float expand_roi_width = src_roi_width + 2 * expansion_width;
+
+    float resize_ratio = std::min(512 / expand_roi_height,
+                                  512 / expand_roi_width);
+
+    float expand_resize_height = expand_roi_height * resize_ratio;
+    float expand_resize_width = expand_roi_width * resize_ratio;
+
+    BPU_ROI_S input_roi;
+    BPU_TENSOR_S nv12_resize_tensor;
+    int resize_height, resize_width;
+    nv12_resize_tensor.data_type = BPU_TYPE_IMG_NV12_SEPARATE;
+    float h_top = 0, h_bottom = 0, w_left = 0, w_right = 0;
+    {
+    RUN_PROCESS_TIME_PROFILER("BPU_CropAndResize");
+    {
+      if (expand_roi_x1 >= 0) {
+        input_roi.x1 = expand_roi_x1;
+      } else {
+        w_left = -expand_roi_x1;
+        input_roi.x1 = 0;
+      }
+      if (expand_roi_y1 >= 0) {
+        input_roi.y1 = expand_roi_y1;
+      } else {
+        h_top = -expand_roi_y1;
+        input_roi.y1 = 0;
+      }
+      if (expand_roi_x2 < width) {
+        input_roi.x2 = expand_roi_x2;
+      } else {
+        w_right = expand_roi_x2 - width + 1;
+        input_roi.x2 = width - 1;
+      }
+      if (expand_roi_y2 < height) {
+        input_roi.y2 = expand_roi_y2;
+      } else {
+        h_bottom = expand_roi_y2 - height + 1;
+        input_roi.y2 = height - 1;
+      }
+      nv12_resize_tensor.data_shape.ndim = 4;
+      nv12_resize_tensor.data_shape.d[0] = 1;
+
+      float need_padding_height = (h_top + h_bottom) * resize_ratio;
+      float need_padding_width = (w_right + w_left) * resize_ratio;
+
+      resize_height = expand_resize_height - need_padding_height;
+      resize_width = expand_resize_width - need_padding_width;
+      // need AlignEven
+      if (resize_height & (static_cast<int>(0X01) != 0)) {
+        resize_height++;
+      }
+      if (resize_width & (static_cast<int>(0X01) != 0)) {
+        resize_width++;
+      }
+      nv12_resize_tensor.data_shape.d[h_idx] = resize_height;
+      nv12_resize_tensor.data_shape.d[w_idx] = resize_width;
+      nv12_resize_tensor.data_shape.d[c_idx] = 3;
+      nv12_resize_tensor.aligned_shape = nv12_resize_tensor.data_shape;
+      ret = HB_SYS_bpuMemAlloc(
+          "in_data0", resize_height*resize_width,
+          true, &nv12_resize_tensor.data);
+      if (ret != 0) {
+        LOGE << "alloc bpu mem failed, ret: " << ret << ": "
+             << HB_BPU_getErrorName(ret);
+        continue;
+      }
+      ret = HB_SYS_bpuMemAlloc(
+          "in_data1", resize_height/2*resize_width,
+          true, &nv12_resize_tensor.data_ext);
+      if (ret != 0) {
+        HB_SYS_bpuMemFree(&nv12_resize_tensor.data);
+        LOGE << "alloc bpu mem failed, ret: " << ret << ": "
+             << HB_BPU_getErrorName(ret);
+        continue;
+      }
+    }
+
+    BPU_RESIZE_CTRL_S ctrl_param = {
+        BPU_RESIZE_TYPE_BILINEAR,
+        BPU_TYPE_IMG_NV12_SEPARATE,
+        -1};
+    ret = HB_BPU_cropAndResize(
+        &nv12_tensor, &input_roi, &nv12_resize_tensor, &ctrl_param);
+    if (ret != 0) {
+      LOGE << "box index: " << roi_idx
+           << ", HB_BPU_cropAndResize failed, ret: " << ret << ": "
+           << HB_BPU_getErrorName(ret);
+      LOGE << "input_roi (x1,y1,x2,y2): "
+           << input_roi.x1 << ", " << input_roi.y1 << ", "
+           << input_roi.x2 << ", " << input_roi.y2;
+      LOGE << "nv12_resize_tensor.shape, height: "
+           << nv12_resize_tensor.data_shape.d[h_idx]
+           << ", width: " << nv12_resize_tensor.data_shape.d[w_idx];
+      LOGE << "nv12_tensor.shape, height: " << nv12_tensor.data_shape.d[h_idx]
+           << ", width: " << nv12_tensor.data_shape.d[w_idx];
+      // release nv12_resize_tensor
+      HB_SYS_bpuMemFree(&nv12_resize_tensor.data);
+      HB_SYS_bpuMemFree(&nv12_resize_tensor.data_ext);
+      continue;
+    }
+    }
+    // copy nv12_resize_tensor to nv12
+    const uint8_t* input_roi_yuv_data[3] = {
+        reinterpret_cast<uint8_t *>(nv12_resize_tensor.data.virAddr),
+        reinterpret_cast<uint8_t *>(nv12_resize_tensor.data_ext.virAddr),
+        nullptr};
+    const int input_roi_yuv_size[3] = {
+        resize_height * resize_width, resize_height * resize_width / 2, 0};
+    uint8_t *padding_nv12_data = nullptr;
+    int padding_size, padding_height, padding_width;
+    int first_stride, second_stride;
+
+    // need padding to 512x512
+    int top_x = -w_left*resize_ratio;
+    if (top_x & (static_cast<int>(0X01) != 0)) {
+      top_x--;
+    }
+    int top_y = -h_top*resize_ratio;
+    if (top_y & (static_cast<int>(0X01) != 0)) {
+      top_y--;
+    }
+    int bottom_x = top_x + 511;
+    int bottom_y = top_y + 511;
+    {
+    RUN_PROCESS_TIME_PROFILER("padding_nv12");
+    ret = HobotXStreamCropYuvImageWithPaddingBlack(
+        input_roi_yuv_data, input_roi_yuv_size,
+        resize_width, resize_height, resize_width, resize_width,
+        IMAGE_TOOLS_RAW_YUV_NV12,
+        top_x, top_y,
+        bottom_x, bottom_y,
+        &padding_nv12_data, &padding_size,
+        &padding_width, &padding_height,
+        &first_stride, &second_stride);
+    if (ret != 0) {
+      LOGE << "crop and padding nv12 failed, ret: " << ret;
+      LOGE << "input size: " << resize_height << " x " << resize_width;
+      LOGE << "crop scope: (" << top_x << ", " << top_y
+           << ", " << bottom_x << ", " << bottom_y << ")";
+      LOGE << "output size: " << padding_height << "x" << padding_width;
+      // release nv12_resize_tensor
+      HB_SYS_bpuMemFree(&nv12_resize_tensor.data);
+      HB_SYS_bpuMemFree(&nv12_resize_tensor.data_ext);
+      continue;
+    }
+    }
+
+    ret = AllocInputTensor(input_tensors[roi_idx]);
+    if (ret != 0) {
+      LOGE << "ROI index: " << roi_idx << ", Alloc InputTensor failed!";
+      continue;
+    }
+    ret = AllocOutputTensor(output_tensors[roi_idx]);
+    if (ret != 0) {
+      LOGE << "ROI index: " << roi_idx << ", Alloc OutputTensor failed!";
+      continue;
+    }
+    // copy input data to input_tensors
+    HOBOT_CHECK(input_tensors[roi_idx].size() == 1) << "expected input num: 1";
+    {
+      // model input_size: 1x512x512x3, NHWC
+      BPU_TENSOR_S &tensor = input_tensors[roi_idx][0];
+      HOBOT_CHECK(tensor.data_type == BPU_TYPE_IMG_NV12_SEPARATE);
+
+      int model_input_height = tensor.data_shape.d[input_h_idx_];  // 512
+      int model_input_width = tensor.data_shape.d[input_w_idx_];   // 512
+      int model_input_stride = tensor.aligned_shape.d[input_w_idx_];   // 512
+      HOBOT_CHECK(model_input_height == padding_height &&
+                  model_input_width == padding_width);
+      HOBOT_CHECK(model_input_stride == model_input_width);
+
+      uint8_t* src = padding_nv12_data;
+      // copy y data
+      memcpy(tensor.data.virAddr, src, model_input_height * model_input_width);
+      // copy uv data
+      src = padding_nv12_data + model_input_height * model_input_width;
+      memcpy(tensor.data_ext.virAddr, src,
+             model_input_height * model_input_width / 2);
+      HobotXStreamFreeImage(padding_nv12_data);
+      HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
+    }
+  }
+  return 0;
+}
+}  // namespace xstream

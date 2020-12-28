@@ -65,25 +65,14 @@ int MCPlugin::Init() {
                                             std::placeholders::_1));
   RegisterMsg(TYPE_IMAGE_MESSAGE, std::bind(&MCPlugin::OnGetVioResult, this,
                                             std::placeholders::_1));
-  RegisterMsg(TYPE_DROP_MESSAGE, std::bind(&MCPlugin::OnGetVioResult, this,
-                                           std::placeholders::_1));
+  RegisterMsg(TYPE_DROP_IMAGE_MESSAGE, std::bind(&MCPlugin::OnGetVioResult,
+                                                 this, std::placeholders::_1));
   return XPluginAsync::Init();
 }
 
-std::shared_ptr<horizon::vision::VotData_t>
-ConstructVotData(cache_vio_smart_t& vio_smart) {
-  HOBOT_CHECK(vio_smart.smart_ &&
-                      !vio_smart.is_drop_frame_);
-  auto sp_vot_data =
-          std::make_shared<horizon::vision::VotData_t>();
-  auto smart_msg = dynamic_cast<CustomSmartMessage *>(vio_smart.smart_.get());
-  HOBOT_CHECK(smart_msg);
-
-  smart_msg->SetAPMode(true);
-  sp_vot_data->sp_smart_pb_ = std::make_shared<std::string>(
-      smart_msg->Serialize(1920, 1080, 1920, 1080));
-  HOBOT_CHECK(sp_vot_data->sp_smart_pb_);
-
+std::shared_ptr<HorizonVisionImageFrame>
+ConstructVotImgData(const std::shared_ptr<VioMessage>& vio_) {
+  HOBOT_CHECK(vio_);
   // copy img
   auto sp_img = std::shared_ptr<HorizonVisionImageFrame>(
           new HorizonVisionImageFrame,
@@ -98,8 +87,8 @@ ConstructVotData(cache_vio_smart_t& vio_smart) {
               }
           });
   // copy img
-  sp_img->frame_id = vio_smart.vio_->sequence_id_;
-  const auto& pym_info = vio_smart.vio_->image_.front()->down_scale[0];
+  sp_img->frame_id = vio_->sequence_id_;
+  const auto& pym_info = vio_->image_.front()->down_scale[0];
   sp_img->image.data_size =
           pym_info.width * pym_info.height * 3 / 2;
   sp_img->image.height =
@@ -118,8 +107,21 @@ ConstructVotData(cache_vio_smart_t& vio_smart) {
          reinterpret_cast<char*>(pym_info.c_vaddr),
          pym_info.width * pym_info.height / 2);
 
-  sp_vot_data->sp_img_.swap(sp_img);
-  return sp_vot_data;
+  return sp_img;
+}
+
+std::shared_ptr<std::string>
+ConstructVotSmartData(const std::shared_ptr<SmartMessage>& smart_) {
+  HOBOT_CHECK(smart_);
+  auto smart_msg = dynamic_cast<CustomSmartMessage *>(smart_.get());
+  HOBOT_CHECK(smart_msg);
+
+  smart_msg->SetAPMode(true);
+  std::shared_ptr<std::string> sp_smart_pb_ = std::make_shared<std::string>(
+          smart_msg->Serialize(1920, 1080, 1920, 1080));
+  HOBOT_CHECK(sp_smart_pb_);
+
+  return sp_smart_pb_;
 }
 
 int MCPlugin::Start() {
@@ -149,43 +151,46 @@ int MCPlugin::Start() {
       //  feed vo
       auto task = [this] () {
           while (is_running_) {
-            std::map<uint64_t, cache_vio_smart_t>::iterator front;
+            std::map<uint64_t,
+                 std::shared_ptr<horizon::vision::VotData_t>>::iterator front;
             std::shared_ptr<horizon::vision::VotData_t> vot_feed = nullptr;
-            {
-              std::unique_lock<std::mutex> lg(mut_cache_);
-              cv_.wait(lg, [this] () {
-                  return !is_running_ || !cache_vio_smart_.empty();
-              });
-              if (!is_running_) {
-                cache_vio_smart_.clear();
-                break;
-              }
 
-              LOGD << "cache_vio_smart_ size:" << cache_vio_smart_.size();
-              if (cache_vio_smart_.empty()) {
-                continue;
-              }
-              front = cache_vio_smart_.begin();
-              if (front->second.is_drop_frame_) {
-                // need no plot drop frame
-                cache_vio_smart_.erase(front);
-                continue;
-              } else if (front->second.vio_ && front->second.smart_) {
-                // send
-                vot_feed = ConstructVotData(front->second);
-                cache_vio_smart_.erase(front);
-              } else {
-                if (cache_vio_smart_.size() >= cache_len_limit_) {
-                  while (cache_vio_smart_.size() >= cache_len_limit_) {
-                    cache_vio_smart_.erase(cache_vio_smart_.begin());
-                  }
-                }
-              }
+            std::unique_lock<std::mutex> lg(mut_cache_);
+            cv_.wait(lg, [this] () {
+                return !is_running_ || !cache_vot_data_.empty();
+            });
+            if (!is_running_) {
+              cache_vot_data_.clear();
+              break;
             }
 
-            LOGD << "cache_vio_smart_ size:" << cache_vio_smart_.size();
-            if (vot_feed) {
-                horizon::vision::VotModule::Instance()->Input(vot_feed);
+            if (cache_vot_data_.empty()) {
+              continue;
+            }
+
+            front = cache_vot_data_.begin();
+
+            if (((!front->second->is_drop_frame_ &&
+                    front->second->sp_img_ &&
+                    front->second->sp_smart_pb_) ||
+                    (front->second->is_drop_frame_ &&
+                            front->second->sp_img_))) {
+              vot_feed = front->second;
+              cache_vot_data_.erase(front);
+              lg.unlock();
+              horizon::vision::VotModule::Instance()->Input(vot_feed);
+              continue;
+            }
+
+            LOGV << "cache_vio_smart_ size:" << cache_vot_data_.size();
+
+            if (cache_vot_data_.size() >= cache_len_limit_) {
+              // exception occurred
+              vot_feed = front->second;
+              cache_vot_data_.erase(front);
+              lg.unlock();
+              horizon::vision::VotModule::Instance()->Input(vot_feed);
+              continue;
             }
           }
 
@@ -242,7 +247,7 @@ int MCPlugin::Stop() {
 
   {
     std::unique_lock<std::mutex> lg(mut_cache_);
-    cache_vio_smart_.clear();
+    cache_vot_data_.clear();
   }
   LOGD << "cache_vio_smart_ clear";
 
@@ -387,7 +392,8 @@ int MCPlugin::OnGetUvcResult(const XProtoMessagePtr& msg) {
       auto msg_type = InfoMsg.status_().GetTypeName();
       LOGI << "msg_type is " << msg_type;
       auto msg_stat = InfoMsg.status_().run_status_();
-      LOGI << "msg_stat is " << static_cast<int>(msg_stat);
+      LOGI << "msg_stat is " << static_cast<int>(msg_stat)
+           << "  ts " << InfoMsg.status_().timestamp_();
       if (x3::Status::Normal == msg_stat) {
       }
     }
@@ -411,37 +417,36 @@ int MCPlugin::OnGetUvcResult(const XProtoMessagePtr& msg) {
 }
 
 int MCPlugin::OnGetSmarterResult(const XProtoMessagePtr& msg) {
-  if (!is_running_ || !auto_start_) {
+  if (!is_running_ || !auto_start_ || !enable_vot_) {
     return 0;
   }
   auto smartmsg = std::static_pointer_cast<SmartMessage>(msg);
   HOBOT_CHECK(smartmsg);
   auto frame_id = smartmsg->frame_id;
+  LOGD << "smart frame_id:" << frame_id;
+  auto sp_smart = ConstructVotSmartData(smartmsg);
   std::lock_guard<std::mutex> lg(mut_cache_);
-  if (cache_vio_smart_.find(frame_id) == cache_vio_smart_.end()) {
+
+  if (cache_vot_data_.find(frame_id) == cache_vot_data_.end()) {
     // recv vio msg faster than smart msg
     // if run here, noting vio plugin do not send drop frame
-    cache_vio_smart_t cache_vio_smart;
-    cache_vio_smart.is_drop_frame_ = false;
-    cache_vio_smart.smart_ = smartmsg;
-    cache_vio_smart_[frame_id] = cache_vio_smart;
+    auto cache_vio_smart = std::make_shared<horizon::vision::VotData_t>();
+    cache_vio_smart->sp_smart_pb_ = sp_smart;
+    cache_vot_data_[frame_id] = cache_vio_smart;
   } else {
-    cache_vio_smart_[frame_id].smart_ = smartmsg;
-  }
-  if (cache_vio_smart_.size() >= cache_len_limit_) {
-    while (cache_vio_smart_.size() >= cache_len_limit_) {
-      LOGI << "warnning erase cache";
-      cache_vio_smart_.erase(cache_vio_smart_.begin());
+    // filter ware plugin msg
+    if (!cache_vot_data_[frame_id]->sp_smart_pb_) {
+      cache_vot_data_[frame_id]->sp_smart_pb_ = sp_smart;
     }
   }
   cv_.notify_one();
-  LOGD << "cache_vio_smart_ size:" << cache_vio_smart_.size();
+  LOGV << "cache_vio_smart_ size:" << cache_vot_data_.size();
 
   return 0;
 }
 
 int MCPlugin::OnGetVioResult(const XProtoMessagePtr& msg) {
-  if (!is_running_ || !auto_start_) {
+  if (!is_running_ || !auto_start_ || !enable_vot_) {
     return 0;
   }
 
@@ -466,34 +471,33 @@ int MCPlugin::OnGetVioResult(const XProtoMessagePtr& msg) {
        << " seq id:" << valid_frame->sequence_id_
        << " ts:" << valid_frame->time_stamp_;
   auto frame_id = valid_frame->image_.front()->frame_id;
+  LOGI << "vio frame_id:" << frame_id;
   bool is_drop_frame = false;
   if (TYPE_IMAGE_MESSAGE == valid_frame->type()) {
     is_drop_frame = false;
-  } else if (TYPE_DROP_MESSAGE == valid_frame->type()) {
+  } else if (TYPE_DROP_IMAGE_MESSAGE == valid_frame->type()) {
     is_drop_frame = true;
   } else {
     LOGE << "invalid type " << valid_frame->type();
     is_drop_frame = false;
   }
-  std::lock_guard<std::mutex> lg(mut_cache_);
-  if (cache_vio_smart_.find(frame_id) == cache_vio_smart_.end()) {
-    cache_vio_smart_t cache_vio_smart;
-    cache_vio_smart.is_drop_frame_ = is_drop_frame;
-    cache_vio_smart.vio_.swap(valid_frame);
-    cache_vio_smart_[frame_id] = cache_vio_smart;
-  } else {
-    cache_vio_smart_[frame_id].is_drop_frame_ = is_drop_frame;
-    cache_vio_smart_[frame_id].vio_.swap(valid_frame);
-  }
-  if (cache_vio_smart_.size() >= cache_len_limit_) {
-    while (cache_vio_smart_.size() >= cache_len_limit_) {
-      LOGI << "warnning erase cache";
-      cache_vio_smart_.erase(cache_vio_smart_.begin());
-    }
-  }
-  cv_.notify_one();
-  LOGD << "cache_vio_smart_ size:" << cache_vio_smart_.size();
 
+  std::shared_ptr<HorizonVisionImageFrame> sp_img = nullptr;
+  sp_img = ConstructVotImgData(valid_frame);
+  std::lock_guard<std::mutex> lg(mut_cache_);
+
+  if (cache_vot_data_.find(frame_id) == cache_vot_data_.end()) {
+    auto cache_vio_smart = std::make_shared<horizon::vision::VotData_t>();
+    cache_vio_smart->is_drop_frame_ = is_drop_frame;
+    cache_vio_smart->sp_img_ = sp_img;
+    cache_vot_data_[frame_id] = cache_vio_smart;
+  } else {
+    cache_vot_data_[frame_id]->is_drop_frame_ = is_drop_frame;
+    cache_vot_data_[frame_id]->sp_img_ = sp_img;
+  }
+
+  cv_.notify_one();
+  LOGV << "cache_vio_smart_ size:" << cache_vot_data_.size();
   return 0;
 }
 

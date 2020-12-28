@@ -17,40 +17,41 @@
 #include "hobotxsdk/xstream_data.h"
 
 namespace xstream {
-/// Method Info
+// Method info
 struct MethodInfo {
-  /// is thread safe
+  // is thread safe
   bool is_thread_safe_ = false;
-  /// is need reorder, the order of outputdata must be same as the inputdata
+  // is need reorder, the order of outputdata must be same as the inputdata
   bool is_need_reorder = false;
-  /// is dependent on inputdata source
+  // is dependent on inputdata source
   bool is_src_ctx_dept = false;
 };
 
 class Method {
  public:
   virtual ~Method();
-  /// Init
+  // Init
   virtual int Init(const std::string &config_file_path) = 0;
-  // overload Init
-  virtual int InitFromJsonString(const std::string &config) { return -1; }
-  /// Update Method Parameter
-  virtual int UpdateParameter(InputParamPtr ptr) = 0;
-  // Process Func
+  // Process function
   // <parameter> input: input data, input[i][j]: batch i, slot j
   virtual std::vector<std::vector<BaseDataPtr>> DoProcess(
       const std::vector<std::vector<BaseDataPtr>> &input,
       const std::vector<InputParamPtr> &param) = 0;
-  /// grt Method Parameter
-  virtual InputParamPtr GetParameter() const = 0;
-  /// get Method Version
-  virtual std::string GetVersion() const = 0;
-  /// destructor
+  // Finalize
   virtual void Finalize() = 0;
-  /// get MethodInfo
+
+  // Init from json string
+  virtual int InitFromJsonString(const std::string &config);
+  // Update method parameter
+  virtual int UpdateParameter(InputParamPtr ptr);
+  // Get method parameter
+  virtual InputParamPtr GetParameter() const;
+  // Get method version
+  virtual std::string GetVersion() const;
+  // Get method info
   virtual MethodInfo GetMethodInfo();
-  /// change Profiler status
-  virtual void OnProfilerChanged(bool on) = 0;
+  // Change profiler status
+  virtual void OnProfilerChanged(bool on);
 };
 
 typedef std::shared_ptr<Method> MethodPtr;

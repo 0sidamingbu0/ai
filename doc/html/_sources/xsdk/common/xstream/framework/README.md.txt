@@ -7,10 +7,7 @@
     - [XStream Framework驱动引擎](#xstream-framework驱动引擎)
 - [XStream-Framework 用户使用指南](#xstream-framework-用户使用指南)
   - [Build](#build)
-    - [Bazel 编译](#bazel-编译)
-      - [安装 bazel](#安装-bazel)
-      - [本地及交叉编译](#本地及交叉编译)
-    - [Cmake 编译](#cmake-编译)
+    - [准备环境](#准备环境)
       - [安装cmake](#安装cmake)
       - [安装交叉编译工具链](#安装交叉编译工具链)
       - [编译](#编译)
@@ -34,7 +31,7 @@
         - [设置XStream配置初始化](#设置xstream配置初始化)
       - [XStream SDK初始化](#xstream-sdk初始化)
       - [定义和设置 callback](#定义和设置-callback)
-      - [使用性能统计工具-profiler](#性能统计工具-profiler)
+      - [性能统计工具-profiler](#性能统计工具-profiler)
       - [异步运行-输入数据](#异步运行-输入数据)
       - [异步运行](#异步运行)
       - [同步运行-输入数据](#同步运行-输入数据)
@@ -94,84 +91,65 @@ XStream目前底层可以由两种引擎驱动：
 
 # XStream-Framework 用户使用指南
 ## Build
-### Bazel 编译
-#### 安装 bazel
-**以下安装bazelisk和直接安装bazel方法二选一，建议使用bazelisk更方便**
-* 安装 bazelisk
-  * 到官方github网站找到最新版本 https://github.com/bazelbuild/bazelisk/releases, 下载对应操作系统的程序到本地，重命名为bazelisk，放置在环境变量PATH中，重命名bazel。如果已安装bazel, 一般是在PATH中, 创建软连接到路径.bazel/bin/bazel, 将这个bazel软连接改连接到bazelisk即可。
-  代码根目录下的.bazelversion文件中，指定了bazel版本。bazelisk会根据这个bazel版本号下载具体的bazel版本。
-```c
-root@3ebb9bdfca19:/tmp# whereis bazel
-bazel: /etc/bazel.bazelrc /usr/local/bin/bazel /usr/local/lib/bazel
-root@3ebb9bdfca19:/tmp# mv /usr/local/bin/bazel /usr/local/bin/bazel_origin
-root@3ebb9bdfca19:/tmp# wget https://github.com/bazelbuild/bazelisk/releases/download/v1.2.1/bazelisk-linux-amd64 -O /usr/local/bin/bazel
-```
-设置可执行权限并运行，查看是否生效。
-```c
-root@3ebb9bdfca19:/tmp# chmod a+x /usr/local/bin/bazel
-root@3ebb9bdfca19:/tmp# bazel version
-Bazelisk version: 56a03d98104be7cfa57d4bbdc03b4c7cea29a6c9
-Build label: 1.2.0
-Build target: bazel-out/k8-opt/bin/src/main/java/com/google/devtools/build/lib/bazel/BazelServer_deploy.jar
-Build time: Wed Nov 20 15:04:55 2019 (1574262295)
-Build timestamp: 1574262295
-Build timestamp as int: 1574262295
-```
-
-* 安装 bazel (当前建议安装1.2.0) 
-  * Ubuntu
-   参见 [Installing Bazel on Ubuntu](https://docs.bazel.build/versions/master/install-ubuntu.html)
-  * Fedora and CentOS
-   参见 [Installing Bazel on Fedora and CentOS](https://docs.bazel.build/versions/master/install-redhat.html)
-  * macOS
-   参见 [Installing Bazel on macOS](https://docs.bazel.build/versions/master/install-os-x.html)
-**更多Bazel帮助信息请参见[Bazel Documentation](https://docs.bazel.build/)**
-
-#### 本地及交叉编译
-* x86_64     本地编译 XStream Framework库文件
-`bazel build -s  //xstream/framework:xstream  --define cpu=x86_64 --define os=linux`
-其中 `-define cpu=x86_64 --define os=linux` 用于指定CPU类型和OS系统类型
-
-* x86_64     本地编译以及打包 XStream Framework库文件 
-`bazel build -s  //xstream/framework:xstream_zip  --define cpu=x86_64 --define os=linux`
-在build中用cc_library_pkg定语的rule,可以加`_zip`,表示编译并打包。
- 例如:
-```c++
- cc_library_pkg(
-    name = "xstream",
-...
-``` 
-另外`-define cpu=x86_64 --define os=linux` 用于指定CPU类型和OS系统类型
-参见 build_script/build_xstream-framework_x86.sh
-
-* X2J2 64位  交叉编译 XStream Framework库文件
-`bazel build -s   //xstream/framework:xstream --crosstool_top="@hr_bazel_tools//rules_toolchain/toolchain:toolchain" --cpu=x2j2-aarch64 --define cpu=x2j2-aarch64 --verbose_failures   --spawn_strategy=local`
-参见 build_script/build_xstream-framework_aarch.sh
-
-* X2J2 32位  交叉编译 XStream Framework库文件
-`bazel build -s   //xstream/framework:xstream --crosstool_top="@hr_bazel_tools//rules_toolchain/toolchain:toolchain" --cpu=x2j2-armv8l  --define cpu=x2j2-armv8l  --verbose_failures   --spawn_strategy=local`
-
-### Cmake 编译
+### 准备环境
 #### 安装cmake
-* ubunutu 环境
- `sudo apt-get install cmake`
-* centos 环境
- `sudo yum -y install cmake`
+```bash
+wget https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2.tar.gz \
+    && tar -zxvf cmake-3.17.2.tar.gz \
+    && cd cmake-3.17.2 \
+    && ./bootstrap \
+    && make \
+    && sudo make install \
+    && cd .. \
+    && rm -rf cmake-3.17
+```
 
 #### 安装交叉编译工具链
   
   可直接下载：http://releases.linaro.org/components/toolchain/binaries/6.5-2018.12/aarch64-linux-gnu/gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu.tar.xz
-  或者联系地平线技术支持人员获取
+  或者联系地平线技术支持人员获取: [gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu](https://pan.horizon.ai/index.php/s/d3QH3MfzHT5fwd2)
    
 #### 编译
-* X2 交叉编译 
-  `build.properties.local` 默认是 X2交叉编译工具链
 
-* 执行交叉编译
-  推荐创建编译目录，如代码根目录 `mkdir build`
-  `cd build & cmake ../`
-  `make`
+AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。
 
+* CentOS平台
+
+```bash
+cd AI-EXPRESS/source/common/xstream/framework/
+mkdir build && cd build
+cmake .. -DX86_ARCH=ON -DX86_CENTOS=ON 
+make -j && make install
+```
+
+* Ubuntu平台
+
+```bash
+cd AI-EXPRESS/source/common/xstream/framework/
+mkdir build &&  cd build
+cmake .. -DX86_ARCH=ON
+make -j && make install
+```
+
+* Linaro-aarch64平台
+
+```bash
+cd AI-EXPRESS/source/common/xstream/framework/
+mkdir build &&  cd build
+cmake ..
+make -j && make install
+```
+
+默认编译xstream会生成libxstream.a，如果需要生成libxstream.so，可通过修改AI-EXPRESS/source/common/xstream/framework/CMakeLists.txt中的编译选项`BUILD_SHARED_LIBS`为`true`进行编译：
+
+```bash
+set(BUILD_SHARED_LIBS true)
+```
+
+或者在`cmake ..`时，添加-DBUILD_SHARED_LIBS=ON选项，即可。
+
+
+编译结束后，在common/xstream/framework下会生成output目录，output目录包含libxstream.a、头文件和框架说明文档、入门教程文档和教程代码，支持独立使用xstream库。
 ### 编译结果
  * example:
 *bin/bbox_filter_example*   
@@ -205,7 +183,7 @@ Build timestamp as int: 1574262295
 
 ### 环境信息
 Centos： x64 gcc4.8.5   
-X2：64/32位  gcc-linaro-6.5.0   
+X2/X3：64/32位  gcc-linaro-6.5.0   
 
 ## Step by step构建XStream SDK 
 xstream给使用者提供了面向workflow的通用sdk接口，可以获取workflow中每个节点的输出结果。

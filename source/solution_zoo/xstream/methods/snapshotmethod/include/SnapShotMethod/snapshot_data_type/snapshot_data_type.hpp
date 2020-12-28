@@ -75,6 +75,7 @@ struct SnapShotParam : public InputParam {
   unsigned output_height = 0;
   bool snapshot_state_enable = false;
   bool save_original_image_frame = true;
+  std::string snapshot_type = "select";
   Json::Value config_jv;
   std::string Format() override;
 };

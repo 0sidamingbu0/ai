@@ -62,6 +62,7 @@ typedef enum hb_BPU_DATA_TYPE_E {
   BPU_TYPE_TENSOR_F32,         // for float32
   BPU_TYPE_TENSOR_S32,         // for int32
   BPU_TYPE_TENSOR_U32,         // for uint32
+  BPU_TYPE_TENSOR_S64,         // for int64
   BPU_TYPE_MAX,
 } BPU_DATA_TYPE_E;
 

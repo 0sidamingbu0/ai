@@ -1,6 +1,6 @@
 #!/bin/bash
 # copy runtime from release environment
-set -x
+#set -x
 ALL_PROJECT_DIR=$PWD
 RELEASE_DIR=${ALL_PROJECT_DIR}/deploy
 rm ${RELEASE_DIR} -rf
@@ -16,7 +16,6 @@ cp ${ALL_PROJECT_DIR}/build/lib/libwebsocketplugin*.so ${RELEASE_DIR}/lib/ -rf
 if [ ${ARCHITECTURE} == "x3" ]
 then
   cp ${ALL_PROJECT_DIR}/build/lib/libuvcplugin*.so ${RELEASE_DIR}/lib/ -rf
-  cp ${ALL_PROJECT_DIR}/deps/x3_prebuilt/lib/libguvc*.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libxstream-media_codec*.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libmulti*.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libgdcplugin*.so ${RELEASE_DIR}/lib/ -rf
@@ -25,6 +24,8 @@ then
 	cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/displayplugin/deps/lib/*.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libcanplugin.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libanalysisplugin.so ${RELEASE_DIR}/lib/ -rf
+  cp ${ALL_PROJECT_DIR}/build/lib/libexamplewebsocketplugin*.so ${RELEASE_DIR}/lib/ -rf
+  cp ${ALL_PROJECT_DIR}/build/lib/libexamplesmartplugin*.so ${RELEASE_DIR}/lib/ -rf
 fi
 cp ${ALL_PROJECT_DIR}/deps/bpu_predict/${ARCHITECTURE}/lib/* ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/deps/${ARCHITECTURE}_prebuilt/lib/libhbrt_bernoulli_aarch64.so ${RELEASE_DIR}/lib/ -rf
@@ -72,6 +73,9 @@ then
   cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/personMultitask_1024x768/so/personMultitask_1024x768.hbm ${RELEASE_DIR}/models/personMultitask_1024x768.hbm -rf
   # apa models
   cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/models/* ${RELEASE_DIR}/models/ -rf
+  # matting models
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/xstream/methods/models/* ${RELEASE_DIR}/models/ -rf
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/yolov3_mobilenetv2_example/models/* ${RELEASE_DIR}/models/ -rf
 fi
 
 ## solutions
@@ -80,6 +84,7 @@ cp ${ALL_PROJECT_DIR}/output/body_solution ${RELEASE_DIR}/ -rf
 #cp ${ALL_PROJECT_DIR}/output/vehicle_solution ${RELEASE_DIR}/ -rf
 cp ${ALL_PROJECT_DIR}/output/face_body_multisource ${RELEASE_DIR}/ -rf
 cp ${ALL_PROJECT_DIR}/output/xwarehouse_sample ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/output/yolov3_solution ${RELEASE_DIR}/ -rf
 ## ssd_test
 mkdir -p ${RELEASE_DIR}/ssd_test/config/vio_config
 mkdir -p ${RELEASE_DIR}/ssd_test/config/bpu_config
@@ -110,6 +115,8 @@ cp ${ALL_PROJECT_DIR}/webservice ${RELEASE_DIR}/ -rf
 ## vioplugin_test
 mkdir -p ${RELEASE_DIR}/vioplugin_test
 cp -r ${ALL_PROJECT_DIR}/build/bin/vioplugin_sample ${RELEASE_DIR}/vioplugin_test/
+
+echo "generate deploy success"
 
 
 

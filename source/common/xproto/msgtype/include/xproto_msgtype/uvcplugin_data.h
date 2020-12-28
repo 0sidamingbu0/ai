@@ -30,7 +30,13 @@ struct UvcMessage : XProtoMessage {
 
 struct TransportMessage : XProtoMessage {
   explicit TransportMessage(const std::string& proto) {
+    //  这里并不会起到预期右值转移的作用，
+    //  因为const限制了右值转移函数的调用
     proto_ = std::move(proto);
+    type_ = TYPE_TRANSPORT_MESSAGE;
+  }
+  explicit TransportMessage(std::string&& proto) {
+    proto_ = std::forward<std::string>(proto);
     type_ = TYPE_TRANSPORT_MESSAGE;
   }
   std::string Serialize() override { return "Default transport message"; }
@@ -40,6 +46,7 @@ struct TransportMessage : XProtoMessage {
 };
 #ifdef USE_MC
 #define TYPE_APIMAGE_MESSAGE "XPLUGIN_APIMAGE_MESSAGE"
+#define TYPE_MC_UPSTREAM_MESSAGE "XPLUGIN_MC_UPSTREAM_MESSAGE"
 struct APImageMessage : XProtoMessage {
   explicit APImageMessage(const std::string& buff_str,
                           const std::string& img_type,
@@ -71,6 +78,17 @@ struct APImageMessage : XProtoMessage {
   uint64_t sequence_id_ = 0;
   std::string img_name;
 };
+
+struct APRespMessage : public XProtoMessage{
+  explicit APRespMessage(uint64_t seq_id) :
+      sequence_id_(seq_id) {
+    type_ = TYPE_MC_UPSTREAM_MESSAGE;
+  }
+  std::string Serialize() { return proto_; }
+  uint64_t sequence_id_ = 0;
+  std::string proto_;
+};
+
 #endif
 
 }  // namespace basic_msgtype

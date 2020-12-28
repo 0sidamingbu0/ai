@@ -238,6 +238,7 @@ struct Layer {
     ELEMENTWISE_MAX,
     SPOOLING_AVG_GLOBAL,
     RESCALE,
+    SLUT,
   };
 
   Layer() = default;
@@ -672,7 +673,7 @@ struct GlobalAvgPoolingLayer : public Layer {
  */
 struct SGlobalAvgPoolingLayer : public Layer {
  public:
-  using Layer::Layer;
+  SGlobalAvgPoolingLayer() = default;
   SGlobalAvgPoolingLayer(std::string name, std::vector<std::shared_ptr<Tensor>> input_tensors,
                          std::vector<std::shared_ptr<Tensor>> output_tensors, std::vector<int32_t> output_scale,
                          std::vector<int8_t> accu_right_shift, std::vector<int8_t> output_right_shift)
@@ -1602,6 +1603,15 @@ struct LutLayer : public Layer {
     // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
     if (version == 1) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr));
+      attr.share_table = false;
+      attr.pointwise_shift = false;
+      attr.dense_min_float = 0;
+      attr.dense_max_float = 0;
+      attr.sparse_min_float = 0;
+      attr.sparse_max_float = 0;
+      attr.x_min_float = 0;
+      attr.x_max_float = 0;
+      attr.use_float_min_max = false;
     } else if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr.dense_shift), CEREAL_NVP(attr.dense_scale),
          CEREAL_NVP(attr.dense_beta), CEREAL_NVP(attr.dense_min), CEREAL_NVP(attr.dense_max),
@@ -1619,6 +1629,7 @@ struct LutLayer : public Layer {
       attr.sparse_max_float = 0;
       attr.x_min_float = 0;
       attr.x_max_float = 0;
+      attr.use_float_min_max = false;
     } else if (version == 3) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr.dense_shift), CEREAL_NVP(attr.dense_scale),
          CEREAL_NVP(attr.dense_beta), CEREAL_NVP(attr.dense_min), CEREAL_NVP(attr.dense_max),
@@ -1631,6 +1642,19 @@ struct LutLayer : public Layer {
          CEREAL_NVP(attr.share_table), CEREAL_NVP(attr.pointwise_shift), CEREAL_NVP(attr.dense_min_float),
          CEREAL_NVP(attr.dense_max_float), CEREAL_NVP(attr.sparse_min_float), CEREAL_NVP(attr.sparse_max_float),
          CEREAL_NVP(attr.x_min_float), CEREAL_NVP(attr.x_max_float));
+      attr.use_float_min_max = false;
+    } else if (version == 4) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr.dense_shift), CEREAL_NVP(attr.dense_scale),
+         CEREAL_NVP(attr.dense_beta), CEREAL_NVP(attr.dense_min), CEREAL_NVP(attr.dense_max),
+         CEREAL_NVP(attr.dense_table), CEREAL_NVP(attr.sparse_shift), CEREAL_NVP(attr.sparse_scale),
+         CEREAL_NVP(attr.sparse_beta), CEREAL_NVP(attr.sparse_min), CEREAL_NVP(attr.sparse_max),
+         CEREAL_NVP(attr.sparse_table), CEREAL_NVP(attr.left_shift), CEREAL_NVP(attr.left_scale),
+         CEREAL_NVP(attr.left_beta), CEREAL_NVP(attr.right_shift), CEREAL_NVP(attr.right_scale),
+         CEREAL_NVP(attr.right_beta), CEREAL_NVP(attr.x_min), CEREAL_NVP(attr.x_max), CEREAL_NVP(attr.enable_symmetry),
+         CEREAL_NVP(attr.symmetry_k), CEREAL_NVP(attr.symmetry_b), CEREAL_NVP(attr.idx_bits),
+         CEREAL_NVP(attr.share_table), CEREAL_NVP(attr.pointwise_shift), CEREAL_NVP(attr.dense_min_float),
+         CEREAL_NVP(attr.dense_max_float), CEREAL_NVP(attr.sparse_min_float), CEREAL_NVP(attr.sparse_max_float),
+         CEREAL_NVP(attr.x_min_float), CEREAL_NVP(attr.x_max_float), CEREAL_NVP(attr.use_float_min_max));
     } else {
       AbortOnVersion(this, version);
     }
@@ -1647,14 +1671,14 @@ struct LutLayer : public Layer {
     int32_t dense_shift;
     int32_t dense_scale;
     int32_t dense_beta;
-    int32_t dense_min;  // Not used, use float version instead
-    int32_t dense_max;  // Not used, use float version instead
+    int32_t dense_min;
+    int32_t dense_max;
     std::vector<int32_t> dense_table;
     int32_t sparse_shift;
     int32_t sparse_scale;
     int32_t sparse_beta;
-    int32_t sparse_min;  // Not used, use float version instead
-    int32_t sparse_max;  // Not used, use float version instead
+    int32_t sparse_min;
+    int32_t sparse_max;
     std::vector<int32_t> sparse_table;
     int32_t left_shift;
     int32_t left_scale;
@@ -1662,8 +1686,8 @@ struct LutLayer : public Layer {
     int32_t right_shift;
     int32_t right_scale;
     int32_t right_beta;
-    int32_t x_min;  // Not used, use float version instead
-    int32_t x_max;  // Not used, use float version instead
+    int32_t x_min;
+    int32_t x_max;
     bool enable_symmetry;
     int32_t symmetry_k;
     int32_t symmetry_b;
@@ -1671,12 +1695,15 @@ struct LutLayer : public Layer {
 
     bool share_table;
     bool pointwise_shift;
+
+    // The following float values are used instead of int version if "use_float_min_max" == true
     float dense_min_float;
     float dense_max_float;
     float sparse_min_float;
     float sparse_max_float;
     float x_min_float;
     float x_max_float;
+    bool use_float_min_max;
 
     template <class Archive>
     void serialize(Archive &ar) {
@@ -1691,6 +1718,68 @@ struct LutLayer : public Layer {
   } attr;
 };
 
+struct SLutLayer : public Layer {
+  struct Attr;
+  SLutLayer() = default;
+  SLutLayer(std::string name, std::vector<std::shared_ptr<Tensor>> input_tensors,
+            std::vector<std::shared_ptr<Tensor>> output_tensors, Attr attr)
+      : Layer(std::move(name), std::move(input_tensors), std::move(output_tensors)), attr(std::move(attr)) {}
+  ~SLutLayer() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::SLUT; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+
+  struct Attr {
+    int32_t dense_k = 0, dense_b = 0, dense_lsh = 0, dense_rsh = 0, dense_min = 0, dense_max = 0, dense_neg_min = 0,
+            dense_neg_max = 0,
+            dense_neg_k = 0;  // line between [x_dense_min, x_dense_max]
+    int32_t sparse_k = 0, sparse_b = 0, sparse_lsh = 0, sparse_rsh = 0, sparse_min = 0, sparse_max = 0,
+            sparse_neg_min = 0, sparse_neg_max = 0,
+            sparse_neg_k = 0;  // line between [x_sparse_min, x_sparse_max]
+    int32_t left_k = 0, left_b = 0, left_lsh = 0, left_rsh = 0, left_min = 0, left_max = 0, left_neg_min = 0,
+            left_neg_max = 0,
+            left_neg_k = 0;  // line between [x_min, min(x_dense_min, x_sparse_min)]
+    int32_t right_k = 0, right_b = 0, right_lsh = 0, right_rsh = 0, right_min = 0, right_max = 0, right_neg_min = 0,
+            right_neg_max = 0,
+            right_neg_k = 0;  // line between [max(x_dense_max, x_dense_min), x_max)]
+    int32_t xmin_k = 0, xmin_b = 0, xmin_lsh = 0, xmin_rsh = 0, xmin_min = 0, xmin_max = 0, xmin_neg_min = 0,
+            xmin_neg_max = 0,
+            xmin_neg_k = 0;  // (horizontal) line between [xmin_min, xmin_max]
+    int32_t xmax_k = 0, xmax_b = 0, xmax_lsh = 0, xmax_rsh = 0, xmax_min = 0, xmax_max = 0, xmax_neg_min = 0,
+            xmax_neg_max = 0,
+            xmax_neg_k = 0;                  // (horizontal) line between [xmax_min, xmax_max]
+    int32_t symmetry_k = 0, symmetry_b = 0;  // k and b to post process negative input value for symmetry mode
+    std::vector<int32_t> sparse_table;
+    std::vector<int32_t> dense_table;
+
+    template <class Archive>
+    void serialize(Archive &ar) {
+      // DO NOT CHANGE THIS CODE, IT IS USED BY VERSION 1
+      ar(CEREAL_NVP(dense_k), CEREAL_NVP(dense_b), CEREAL_NVP(dense_lsh), CEREAL_NVP(dense_rsh), CEREAL_NVP(dense_min),
+         CEREAL_NVP(dense_max), CEREAL_NVP(dense_neg_min), CEREAL_NVP(dense_neg_max), CEREAL_NVP(dense_neg_k),
+         CEREAL_NVP(sparse_k), CEREAL_NVP(sparse_b), CEREAL_NVP(sparse_lsh), CEREAL_NVP(sparse_rsh),
+         CEREAL_NVP(sparse_min), CEREAL_NVP(sparse_max), CEREAL_NVP(sparse_neg_min), CEREAL_NVP(sparse_neg_max),
+         CEREAL_NVP(sparse_neg_k), CEREAL_NVP(left_k), CEREAL_NVP(left_b), CEREAL_NVP(left_lsh), CEREAL_NVP(left_rsh),
+         CEREAL_NVP(left_min), CEREAL_NVP(left_max), CEREAL_NVP(left_neg_min), CEREAL_NVP(left_neg_max),
+         CEREAL_NVP(left_neg_k), CEREAL_NVP(right_k), CEREAL_NVP(right_b), CEREAL_NVP(right_lsh), CEREAL_NVP(right_rsh),
+         CEREAL_NVP(right_min), CEREAL_NVP(right_max), CEREAL_NVP(right_neg_min), CEREAL_NVP(right_neg_max),
+         CEREAL_NVP(right_neg_k), CEREAL_NVP(xmin_k), CEREAL_NVP(xmin_b), CEREAL_NVP(xmin_lsh), CEREAL_NVP(xmin_rsh),
+         CEREAL_NVP(xmin_min), CEREAL_NVP(xmin_max), CEREAL_NVP(xmin_neg_min), CEREAL_NVP(xmin_neg_max),
+         CEREAL_NVP(xmin_neg_k), CEREAL_NVP(xmax_k), CEREAL_NVP(xmax_b), CEREAL_NVP(xmax_lsh), CEREAL_NVP(xmax_rsh),
+         CEREAL_NVP(xmax_min), CEREAL_NVP(xmax_max), CEREAL_NVP(xmax_neg_min), CEREAL_NVP(xmax_neg_max),
+         CEREAL_NVP(xmax_neg_k), CEREAL_NVP(symmetry_k), CEREAL_NVP(symmetry_b), CEREAL_NVP(sparse_table),
+         CEREAL_NVP(dense_table));
+    }
+  } attr;
+};
 /**
  * Reshape Layer
  *
@@ -1845,13 +1934,16 @@ struct NearestUpsample : public Layer {
   template <class Archive>
   void serialize(Archive &ar, std::int32_t const version) {
     // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
-    if (version == 1) {
+    if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(factor));
+    } else if (version == 1) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(deprecated_factor));
     } else {
       AbortOnVersion(this, version);
     }
   }
-  uint8_t factor;
+  std::pair<uint32_t, uint32_t> factor;
+  uint8_t deprecated_factor = 255;
 };
 
 /**
@@ -2212,6 +2304,8 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::MaxPoolingLayer, 2)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::GlobalAvgPoolingLayer, 2)
 // NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SGlobalAvgPoolingLayer, 1)
+// NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::GlobalMaxPoolingLayer, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::RoiResizeLayer, 9)
@@ -2250,7 +2344,7 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::FilterLayer, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SliceLayer, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::LutLayer, 3)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::LutLayer, 4)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ReshapeLayer, 3)
 // NOLINTNEXTLINE
@@ -2266,7 +2360,7 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::LinearPolynomial, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ReluX, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::NearestUpsample, 1)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::NearestUpsample, 2)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ShuffleLayer, 1)
 // NOLINTNEXTLINE
@@ -2289,6 +2383,8 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseMin, 1)
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseMax, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::Rescale, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SLutLayer, 1)
 #undef HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION
 
 #endif  // SWIG

@@ -340,6 +340,16 @@ class UsbCam : public VioProduce {
           jpg_queue_;
   static uint64 jpg_queue_len_limit_;
 };
+
+class FacePicImageList : public JpegImageList {
+ public:
+  FacePicImageList() = delete;
+  explicit FacePicImageList(const char *vio_cfg_file) :
+             JpegImageList(vio_cfg_file) {}
+  virtual ~FacePicImageList() {}
+  int Run() override;
+};
+
 }  // namespace vioplugin
 }  // namespace xproto
 }  // namespace vision

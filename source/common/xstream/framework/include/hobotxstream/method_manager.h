@@ -16,7 +16,9 @@
 #include <vector>
 
 #include "common/rw_mutex.h"
-#include "common/thread_pool.h"
+#include "common/xthread.h"
+#include "common/xthread_pool.h"
+#include "common/thread_manager.h"
 #include "hobotxsdk/xstream_data.h"
 #include "hobotxstream/method.h"
 #include "hobotxstream/profiler.h"

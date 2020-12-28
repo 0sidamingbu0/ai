@@ -66,14 +66,15 @@ struct uvc_context;
  * Generic stuff
  */
 
-/* callback function definitions */
-typedef int (*uvc_prepare_buffer_callback_fn) (struct uvc_context * ctx,
-					       void **buf_to, int *buf_len,
-					       void **entity, void *userdata);
-typedef void (*uvc_release_buffer_callback_fn) (struct uvc_context * ctx,
-						void **entity, void *userdata);
-typedef void (*uvc_streamon_callback_fn) (struct uvc_context * ctx, int is_on,
-					  void *userdata);
+/*
+ * Note: terminal and unit id is form terminal and unit desciptor in uvc dev driver.
+ * so each uvc device has different uvc unit and termial id.
+ */
+#define UVC_CTRL_INTERFACE_ID 0
+#define UVC_CTRL_CAMERA_TERMINAL_ID 1
+#define UVC_CTRL_PROCESSING_UNIT_ID 2
+#define UVC_CTRL_EXTENSION_UNIT_ID 3
+#define UVC_CTRL_OUTPUT_TERMINAL_ID 4
 
 /* h264 nalu enum */
 enum {
@@ -87,6 +88,24 @@ enum io_method {
 	IO_METHOD_MMAP,
 	IO_METHOD_USERPTR,
 };
+
+
+/* callback function definitions */
+typedef int (*uvc_prepare_buffer_callback_fn) (struct uvc_context *ctx,
+					       void **buf_to, int *buf_len,
+					       void **entity, void *userdata);
+typedef void (*uvc_release_buffer_callback_fn) (struct uvc_context *ctx,
+						void **entity, void *userdata);
+typedef void (*uvc_streamon_callback_fn) (struct uvc_context *ctx, int is_on,
+					  void *userdata);
+typedef int (*uvc_event_setup_callback_fn) (struct uvc_context *ctx,
+				uint8_t req, uint8_t cs, uint8_t entity_id,
+				struct uvc_request_data *resp,
+				void *userdata);
+typedef int (*uvc_event_data_callback_fn) (struct uvc_context *ctx,
+				uint8_t req, uint8_t cs, uint8_t entity_id,
+				struct uvc_request_data *data,
+				void *userdata);
 
 /* prepare buffer callback */
 struct uvc_prepare_callback {
@@ -106,11 +125,26 @@ struct uvc_streamon_callback {
 	void *userdata;
 };
 
+/* control event callback */
+struct uvc_event_callback {
+	uvc_event_setup_callback_fn setup_f;
+	uvc_event_data_callback_fn data_f;
+	void *userdata;
+};
+
 /* Buffer representing one video frame */
 struct buffer {
 	struct v4l2_buffer buf;
 	void *start;
 	size_t length;
+};
+
+/* uvc control context structure */
+struct uvc_control_context {
+	uint8_t req;
+	uint8_t cs;
+	uint8_t id;
+	uint8_t intf;
 };
 
 /* ---------------------------------------------------------------------------
@@ -147,9 +181,11 @@ struct uvc_device {
 
 	/* uvc control request specific */
 
+	struct uvc_control_context context;
 	struct uvc_streaming_control probe;
 	struct uvc_streaming_control commit;
 	int control;
+	int event_mask;
 	struct uvc_request_data request_error_code;
 	unsigned int brightness_val;
 
@@ -202,6 +238,7 @@ struct uvc_device {
 	struct uvc_prepare_callback prepare_cb;
 	struct uvc_release_callback release_cb;
 	struct uvc_streamon_callback streamon_cb;
+	struct uvc_event_callback event_cb;
 };
 
 struct uvc_context {

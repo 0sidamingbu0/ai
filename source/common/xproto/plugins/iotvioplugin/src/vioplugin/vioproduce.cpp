@@ -185,6 +185,9 @@ std::shared_ptr<VioProduce> VioProduce::CreateVioProduce(
         config->GetSubConfig("vio_cfg_file")->GetArrayItem(
             "multi_feedback_produce");
     Vio_Produce = std::make_shared<MultiFeedbackProduce>(vio_cfg_files);
+  } else if ("face_pic_image_list" == data_source) {
+    Vio_Produce = std::make_shared<FacePicImageList>(
+        json["vio_cfg_file"]["jpeg_image_list"].asCString());
   } else {
     LOGE << "data source " << data_source << " is unsupported";
     return nullptr;
@@ -627,10 +630,6 @@ bool VioProduce::GetPyramidInfo(std::shared_ptr<VioPipeLine> vio_pipeline,
     return false;
   }
 
-  /* use src image addr instead of pym 0 addr, */
-  /* because pym 0-layer not output data in pym offline mode */
-  feed_back_context->pym_img_info.pym[0] = src_img_info->img_addr;
-
   return true;
 }
 
@@ -662,9 +661,6 @@ bool VioProduce::GetPyramidInfo(pym_buffer_t *pvio_image, char *data, int len) {
     LOGE << "vio pipeline get pym info failed";
     return false;
   }
-  /* use src image addr instead of pym0 addr, */
-  /* because pym 0-layer not output data in pym offline mode */
-  pvio_image->pym[0] = src_img_info.img_addr;
 
   return true;
 }
@@ -996,6 +992,7 @@ int VioCamera::Run() {
             frame_id);
         if (push_data_cb_)
           push_data_cb_(input);
+        LOGD << "create drop vio message, frame_id = " << frame_id;
 
         // push drop image vio message
         auto pym_image_frame_ptr = std::make_shared<PymImageFrame>();
@@ -1620,7 +1617,8 @@ template <typename T>
 bool ImageList::FillVIOImageByImagePath(T *pvio_image,
                                         const std::string &img_name) {
   auto data_source = config_->GetValue("data_source");
-  if (data_source == "jpeg_image_list") {
+  if (data_source == "jpeg_image_list"
+        || data_source == "face_pic_image_list") {
     auto image = GetImageFrame(img_name);
     auto pad_width = std::stoi(config_->GetValue("pad_width"));
     auto pad_height = std::stoi(config_->GetValue("pad_height"));
@@ -1856,6 +1854,8 @@ int UsbCam::convert_yuy2_to_nv12(void *in_frame, void *out_frame,
 
 void UsbCam::got_frame_handler(struct video_frame *frame, void *user_args)
 {
+  static auto start_time = std::chrono::system_clock::now();
+  static int got_frame_num = 0;
   if (!frame || !frame->mem || !user_args || frame->length < 0
       || !recv_usb_cam_)
     return;
@@ -1881,6 +1881,7 @@ void UsbCam::got_frame_handler(struct video_frame *frame, void *user_args)
           p = NULL;
         }
     });
+    ++got_frame_num;
     nv12_queue_.push(sp_nv12);
     if (nv12_queue_.size() > nv12_queue_len_limit_) {
       LOGE << "nv12 queue size " << nv12_queue_.size()
@@ -1899,12 +1900,21 @@ void UsbCam::got_frame_handler(struct video_frame *frame, void *user_args)
     std::vector<unsigned char>
             buf(reinterpret_cast<unsigned char*>(frame->mem),
                 reinterpret_cast<unsigned char*>(frame->mem) + frame->length);
+    ++got_frame_num;
     jpg_queue_.push(std::move(buf));
     if (jpg_queue_.size() > jpg_queue_len_limit_) {
       LOGE << "jpg queue size " << jpg_queue_.size()
            << " exceeds limit " << jpg_queue_len_limit_;
       jpg_queue_.pop();
     }
+  }
+  if (got_frame_num >= 100) {
+    auto curr_time = std::chrono::system_clock::now();
+    auto duration_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+        curr_time - start_time);
+    start_time = curr_time;
+    got_frame_num = 0;
+    LOGW << "usb camera got frame fps: " << 100000 / duration_time.count();
   }
 
   return;
@@ -2003,6 +2013,173 @@ int UsbCam::Finish() {
   LOGI << "usb cam finish";
   recv_usb_cam_ = false;
   return VioProduce::Finish();
+}
+
+int FacePicImageList::Run() {
+  static uint64_t frame_id = 0;
+  std::string image_path;
+  // 每帧的时间间隔 ms
+  int interval_ms = 500;
+  auto json = config_->GetJson();
+  int all_img_count = 0;
+
+  if (is_running_) {
+    return kHorizonVioErrorAlreadyStart;
+  }
+#ifdef USE_MC
+  ap_hg_mode_ = json["ap_hg_mode"].asBool();
+  if (ap_hg_mode_) {
+    std::lock_guard<std::mutex> lock(decod_mut_);
+    is_running_ = true;
+    HOBOT_CHECK(InitDecModule() >= 0 && StartDecModule() >= 0);
+    return kHorizonVioErrorAlreadyStart;
+  }
+#endif
+  // 图像列表文件列表
+  auto list_of_img_list = json["file_path"];
+  auto name_list_loop = json["name_list_loop"].asInt();
+  auto interval_cfg = json["interval"];
+  if (!interval_cfg.isNull()) {
+    interval_ms = interval_cfg.asInt();
+    HOBOT_CHECK(interval_ms >= 0) << "interval must great or equal than 0";
+  }
+
+  if (list_of_img_list.isNull()) {
+    list_of_img_list = Json::Value("");
+  }
+
+  if (list_of_img_list.isString()) {
+    auto file_list_obj = Json::Value();
+    file_list_obj.resize(1);
+    file_list_obj[0] = list_of_img_list.asString();
+
+    list_of_img_list = file_list_obj;
+  }
+
+  // 创建文件列表 vector, 每一个item代表一路
+  std::vector<std::vector<std::string>> image_source_list;
+
+  image_source_list.resize(list_of_img_list.size());
+
+  for (unsigned int i = 0; i < list_of_img_list.size(); ++i) {
+    std::ifstream ifs(list_of_img_list[i].asString());
+
+    if (!ifs.good()) {
+      LOGF << "Open file failed: " << list_of_img_list[i].asString();
+      return kHorizonVisionErrorParam;
+    }
+
+    while (std::getline(ifs, image_path)) {
+      // trim the spaces in the beginning
+      image_path.erase(0, image_path.find_first_not_of(' '));
+      // trim the spaces in the end
+      image_path.erase(image_path.find_last_not_of(' ') + 1, std::string::npos);
+
+      image_source_list[i].emplace_back(image_path);
+    }
+
+    // 记录图片总数
+    all_img_count += image_source_list[i].size();
+
+    ifs.close();
+  }
+
+  is_running_ = true;
+
+  LOGD << "Finish importing images";
+  // auto image_num = image_path_list.size();
+  std::vector<unsigned int> source_img_cnt;
+  source_img_cnt.resize(list_of_img_list.size());
+
+  auto all_img_count_str = all_img_count;
+  while (all_img_count >= 0 && is_running_) {
+    // 循环这些list, 循环读出一个 sid => source id
+    for (unsigned int sid = 0; sid < list_of_img_list.size(); sid++) {
+      if (source_img_cnt[sid] >= image_source_list[sid].size()) {
+        // 当前source已经读完
+        LOGD << "Source: " << sid << " no data left";
+        if (name_list_loop == 1 && list_of_img_list.size() == 1) {
+          LOGD << "only has a source, start attemp loop: " << name_list_loop;
+          all_img_count = all_img_count_str;
+          source_img_cnt[sid] = 0;
+          continue;
+        } else {
+#ifdef X3_IOT_VIO
+          std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+          LOGW << "Feed back is over";
+          vio_pipeline_->Stop();
+          is_running_ = false;
+#endif
+          break;
+        }
+      }
+
+      // 分配Buffer. 等待Buffer可用
+      while (!AllocBuffer()) {
+        LOGV << "NO VIO_FB_BUFFER";
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+        // continue;
+      }
+
+      // 当前图像的路径
+      image_path = image_source_list[sid][source_img_cnt[sid]++];
+      all_img_count--;
+      if (cam_type_ == "mono") {  // 单目
+#if defined(X3_X2_VIO) || defined(X3_IOT_VIO)
+        VioFeedbackContext *feedback_context =
+              reinterpret_cast<VioFeedbackContext *>(
+                  std::calloc(1, sizeof(VioFeedbackContext)));
+        std::vector<std::shared_ptr<PymImageFrame>> pym_images;
+        // 从 image path 填充pvio image
+        auto ret = FillVIOImageByImagePath(feedback_context, image_path);
+#endif
+        if (ret) {
+          auto pym_image_frame_ptr = std::make_shared<PymImageFrame>();
+#if defined(X3_X2_VIO) || defined(X3_IOT_VIO)
+          Convert(&feedback_context->pym_img_info, *pym_image_frame_ptr);
+          pym_image_frame_ptr->channel_id = sid;
+          pym_image_frame_ptr->frame_id = frame_id;
+          pym_image_frame_ptr->time_stamp = frame_id++;
+          pym_image_frame_ptr->image_name = image_path;
+          // set context to feedback_context
+          pym_image_frame_ptr->context =
+              static_cast<void *>(feedback_context);
+#endif
+          pym_images.push_back(pym_image_frame_ptr);
+        } else {
+          std::free(feedback_context);
+          LOGF << "fill vio image failed, ret: " << ret;
+          continue;
+          // HOBOT_CHECK(ret == true);
+        }
+        std::shared_ptr<VioMessage> input(
+            new ImageFacePicMessage(vio_pipeline_, pym_images, 1, ret),
+            [&](ImageFacePicMessage *p) {
+              if (p) {
+#if defined(X3_X2_VIO) || defined(X3_IOT_VIO)
+                p->FreeImage(1);
+#endif
+                FreeBuffer();
+                delete p;
+              }
+              p = nullptr;
+            });
+        if (push_data_cb_)
+          push_data_cb_(input);
+        LOGD << "Push Image message!!!";
+      } else if (cam_type_ == "dual") {  // 双目
+        // todo
+        LOGF << "Don't support type: " << cam_type_;
+      } else {
+        LOGF << "Don't support type: " << cam_type_;
+        is_running_ = false;
+      }
+      // 暂停
+      std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
+    }
+  }
+  is_running_ = false;
+  return kHorizonVisionSuccess;
 }
 
 }  // namespace vioplugin

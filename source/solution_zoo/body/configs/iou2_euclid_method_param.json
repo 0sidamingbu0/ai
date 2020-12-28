@@ -7,7 +7,7 @@
     "time_gap": 40,
     "remove_obsolete_track": 0,
     "iou_thres": 0.2,
-    "euclidean_thres": 200,
+    "euclidean_thres": 300,
     "use_location_gain": 1,
     "max_trajectory_number": 3,
     "min_score": 0.9,

@@ -9,15 +9,14 @@
  */
 #include <string.h>
 #include "iotviomanager/vinmodule.h"
-#include "iotviomanager/vinparams.h"
 #include "iotviomanager/violog.h"
+#include "iotviomanager/vinparams.h"
 #include "hobotlog/hobotlog.hpp"
 
 namespace horizon {
 namespace vision {
 namespace xproto {
 namespace vioplugin {
-
 
 int VinModule::Init() {
   int ret = -1;
@@ -231,8 +230,11 @@ int VinModule::HbSensorInit(int dev_id, int sensor_id, int bus, int port,
   HB_MIPI_SetPort(snsinfo, port);
   HB_MIPI_SensorBindSerdes(snsinfo, sedres_index, sedres_port);
   HB_MIPI_SensorBindMipi(snsinfo, mipi_idx);
-  HbPrintSensorInfo(snsinfo);
+  snsinfo->sensorInfo.gpio_num = vio_cfg_.vin_cfg.sensor_info.gpio_num;
+  snsinfo->sensorInfo.gpio_pin[0] = vio_cfg_.vin_cfg.sensor_info.gpio_pin;
+  snsinfo->sensorInfo.gpio_level[0] = vio_cfg_.vin_cfg.sensor_info.gpio_level;
 
+  HbPrintSensorInfo(snsinfo);
   ret = HB_MIPI_InitSensor(dev_id, snsinfo);
   if (ret < 0) {
     LOGE << "hb mipi init sensor error, ret: " << ret
@@ -641,6 +643,11 @@ int VinModule::HbMipiGetSnsAttrBySns(MipiSensorType sensor_type,
           &SENSOR_S5KGM1SP_30FPS_10BIT_LINEAR_INFO,
           sizeof(MIPI_SENSOR_INFO_S));
       break;
+    case kF37_30FPS_1080P_RAW10_LINEAR:
+      memcpy(pst_sns_attr,
+          &SENSOR_F37_30FPS_10BIT_LINEAR_INFO,
+          sizeof(MIPI_SENSOR_INFO_S));
+      break;
     default:
       LOGE << "not surpport sensor type sensor_type" << sensor_type;
       break;
@@ -682,8 +689,7 @@ int VinModule::HbMipiGetMipiAttrBySns(MipiSensorType sensor_type,
             sizeof(MIPI_ATTR_S));
       } else {
         memcpy(pst_mipi_attr,
-            &MIPI_SENSOR_OS8A10_30FPS_10BIT_LINEAR_ATTR,
-            sizeof(MIPI_ATTR_S));
+            &MIPI_SENSOR_OS8A10_30FPS_10BIT_LINEAR_ATTR, sizeof(MIPI_ATTR_S));
       }
       break;
     case kOS8A10_30FPS_3840P_RAW10_DOL2:
@@ -710,6 +716,16 @@ int VinModule::HbMipiGetMipiAttrBySns(MipiSensorType sensor_type,
       memcpy(pst_mipi_attr,
           &MIPI_SENSOR_S5KGM1SP_30FPS_10BIT_LINEAR_ATTR,
           sizeof(MIPI_ATTR_S));
+      break;
+    case kF37_30FPS_1080P_RAW10_LINEAR:
+      if (need_clk == 1) {
+        memcpy(pst_mipi_attr,
+            &MIPI_SENSOR_F37_30FPS_10BIT_LINEAR_SENSOR_CLK_ATTR,
+            sizeof(MIPI_ATTR_S));
+      } else {
+        memcpy(pst_mipi_attr,
+            &MIPI_SENSOR_F37_30FPS_10BIT_LINEAR_ATTR, sizeof(MIPI_ATTR_S));
+      }
       break;
     default:
       LOGE << "not support sensor type";
@@ -776,6 +792,10 @@ int VinModule::HbVinGetDevAttrBySns(MipiSensorType sensor_type,
       break;
     case kS5KGM1SP_30FPS_4000x3000_RAW10:
       memcpy(pstDevAttr, &DEV_ATTR_S5KGM1SP_LINEAR_BASE,
+          sizeof(VIN_DEV_ATTR_S));
+      break;
+    case kF37_30FPS_1080P_RAW10_LINEAR:
+      memcpy(pstDevAttr, &DEV_ATTR_F37_LINEAR_BASE,
           sizeof(VIN_DEV_ATTR_S));
       break;
     default:
@@ -860,6 +880,10 @@ int VinModule::HbVinGetPipeAttrBySns(MipiSensorType sensor_type,
       break;
     case kS5KGM1SP_30FPS_4000x3000_RAW10:
       memcpy(pstPipeAttr, &PIPE_ATTR_S5KGM1SP_LINEAR_BASE,
+          sizeof(VIN_PIPE_ATTR_S));
+      break;
+    case kF37_30FPS_1080P_RAW10_LINEAR:
+      memcpy(pstPipeAttr, &PIPE_ATTR_F37_LINEAR_BASE,
           sizeof(VIN_PIPE_ATTR_S));
       break;
     default:
@@ -1004,6 +1028,9 @@ void VinModule::HbPrintSensorInfo(MIPI_SENSOR_INFO_S *snsinfo) {
   LOGI << "sensor_addr: " << snsinfo->sensorInfo.sensor_addr;
   LOGI << "serial_addr: " << snsinfo->sensorInfo.serial_addr;
   LOGI << "resolution: " << snsinfo->sensorInfo.resolution;
+  LOGI << "gpio_num: " << snsinfo->sensorInfo.gpio_num;
+  LOGI << "gpio_pin: " << snsinfo->sensorInfo.gpio_pin[0];
+  LOGI << "gpio_level: " << snsinfo->sensorInfo.gpio_level[0];
 
   return;
 }

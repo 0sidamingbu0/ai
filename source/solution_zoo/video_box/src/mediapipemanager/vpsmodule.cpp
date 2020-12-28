@@ -59,6 +59,11 @@ int VpsModule::Init(uint32_t group_id, const PipeModuleInfo *module_info) {
   pym_chn_attr.us_layer_en = 0;
   pym_chn_attr.frame_id = 0;
   pym_chn_attr.frameDepth = module_info->frame_depth;
+  pym_chn_attr.ds_info[1].factor = 32;
+  pym_chn_attr.ds_info[1].roi_x = 0;
+  pym_chn_attr.ds_info[1].roi_y = 0;
+  pym_chn_attr.ds_info[1].roi_width = 1920;
+  pym_chn_attr.ds_info[1].roi_height = 1080;
   pym_chn_attr.ds_info[5].factor = 32;
   pym_chn_attr.ds_info[5].roi_x = 0;
   pym_chn_attr.ds_info[5].roi_y = 0;

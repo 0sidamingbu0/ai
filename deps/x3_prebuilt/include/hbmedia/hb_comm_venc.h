@@ -1763,6 +1763,166 @@ typedef enum HB_VENC_JPEG_ENCODE_MODE_E
   JPEG_ENCODE_SNAP = 1,
   JPEG_ENCODE_BUTT,
 } HB_VENC_JPEG_ENCODE_MODE_E;
+
+typedef struct HB_VENC_3DNR_PARAMS {
+/**
+ * It enables noise reduction algorithm to Y component.
+ * The valid numbers are as follows.
+ *     0 : disable
+ *     1 : enable
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_y_enable;
+
+/**
+ * It enables noise reduction algorithm to Cb component.
+ * The valid numbers are as follows.
+ *     0 : disable
+ *     1 : enable
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_cb_enable;
+
+/**
+ * It enables noise reduction algorithm to Cr component.
+ * The valid numbers are as follows.
+ *	   0 : disable
+ *	   1 : enable
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_cr_enable;
+
+/**
+ * It enables noise estimation for noise reduction. When this is disabled,
+ * host carries out noise estimation with nr_noise_sigmaY/Cb/Cr.
+ * The valid numbers are as follows.
+ *     0 : disable
+ *     1 : enable
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_est_enable;
+
+/**
+ * A weight to Y noise level for intra picture (0 ~ 31).
+ * nr_intra_weight/4 is multiplied to the noise level that has been estimated.
+ * This weight is put for intra frame to be filtered more strongly or
+ * more weakly than just with the estimated noise level.
+ * Values[0~31]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 7;
+ */
+	uint32_t nr_intra_weightY;
+
+/**
+ * A weight to Cb noise level for intra picture (0 ~ 31).
+ * Values[0~31]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 7;
+ */
+	uint32_t nr_intra_weightCb;
+
+/**
+ * A weight to Cr noise level for intra picture (0 ~ 31).
+ * Values[0~31]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 7;
+ */
+	uint32_t nr_intra_weightCr;
+
+/**
+ * A weight to Y noise level for inter picture (0 ~ 31).
+ * nr_inter_weightY/4 is multiplied to the noise level that has been estimated.
+ * This weight is put for inter frame to be filtered more strongly or
+ * more weakly than just with the estimated noise level.
+ * Values[0~31]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 4;
+ */
+	uint32_t nr_inter_weightY;
+
+/**
+ * A weight to Cb noise level for inter picture (0 ~ 31).
+ * Values[0~31]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 4;
+ */
+	uint32_t nr_inter_weightCb;
+
+/**
+ * A weight to Cr noise level for inter picture (0 ~ 31).
+ * Values[0~31]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 4;
+ */
+	uint32_t nr_inter_weightCr;
+
+/**
+ * It specifies Y noise standard deviation when nr_est_enable is 0.
+ * Values[0~255]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_noise_sigmaY;
+
+/**
+ * It specifies Cb noise standard deviation when nr_est_enable is 0.
+ * Values[0~255]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_noise_sigmaCb;
+
+/**
+ * It specifies Cr noise standard deviation when nr_est_enable is 0.
+ * Values[0~255]
+ *
+ * - Note: It's changable parameters in the same sequence.
+ * - Encoding: Support.
+ * - Decoding: Unsupport.
+ * - Default: 0;
+ */
+	uint32_t nr_noise_sigmaCr;
+} VENC_3DNR_PARAMS;
 /*************************VENC_advanced_ATTR_S  end **************************/
 
 #ifdef __cplusplus

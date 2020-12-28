@@ -9,12 +9,26 @@
 
 #include "hobotxstream/method.h"
 
-int xstream::Method::UpdateParameter(xstream::InputParamPtr ptr) {
-  return 0;
-}
+namespace xstream {
 
-xstream::MethodInfo xstream::Method::GetMethodInfo() {
-  return MethodInfo();
-}
+Method::~Method() = default;
 
-xstream::Method::~Method() = default;
+// Init from json string
+int Method::InitFromJsonString(const std::string &config) { return -1; }
+
+// Update method parameter
+int Method::UpdateParameter(InputParamPtr ptr) { return -1; }
+
+// Get method parameter
+InputParamPtr Method::GetParameter() const { return InputParamPtr(); }
+
+// Get method version
+std::string Method::GetVersion() const { return "Method::GetVersion()"; }
+
+// Get method info
+MethodInfo Method::GetMethodInfo() { return MethodInfo(); }
+
+// Change profiler status
+void Method::OnProfilerChanged(bool on) {}
+
+}  // namespace xstream

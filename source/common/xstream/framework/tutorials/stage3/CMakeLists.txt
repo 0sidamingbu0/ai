@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include_directories(./)
 
-set(BASE_LIBRARIES xstream hobotlog jsoncpp pthread)
+set(BASE_LIBRARIES xstream hobotlog jsoncpp pthread rt)
 
 set(SOURCE_FILES
     method/bbox.h

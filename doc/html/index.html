@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>AI Express用户文档(V2.7.0) &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>AI Express用户文档(V2.8.0) &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -89,6 +89,7 @@
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/copyright.html">版权声明</a></li>
@@ -138,7 +139,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>AI Express用户文档(V2.7.0)</li>
+      <li>AI Express用户文档(V2.8.0)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -157,8 +158,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="ai-express-v2-7-0">
-<h1>AI Express用户文档(V2.7.0)<a class="headerlink" href="#ai-express-v2-7-0" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="ai-express-v2-8-0">
+<h1>AI Express用户文档(V2.8.0)<a class="headerlink" href="#ai-express-v2-8-0" title="永久链接至标题">¶</a></h1>
 </div>
 <div class="section" id="id1">
 <h1>目录结构<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
@@ -179,7 +180,7 @@
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#ai-express">1.搭建AI Express开发环境</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#aiexpress">2.AIExpress源码编译与部署运行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#id13">3.运行测试用例</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#xstreamxproto">4.生成xstream和xproto库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#xstreamxproto">4.独立编译生成xstream和xproto库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#id16">5.AIExpress框架文档</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/quick_start.html#id17">6.地平线开发者社区相关资源</a></li>
 </ul>
@@ -189,7 +190,6 @@
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/xstream.html#id1">XStream组成</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/xstream.html#xstream-framework">XStream-Framework用户手册</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/xstream.html#vision-type">内置数据结构vision_type</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/xstream.html#id46">内置Method</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/xstream.html#imagetools">图像处理imagetools</a></li>
 </ul>
 </li>
@@ -207,11 +207,13 @@
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id4">人体结构化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id9">人体行为分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id10">视频盒子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id11">体感游戏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id12">体感游戏</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#usb-camera">usb camera</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#apa">apa自动泊车</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id12">车辆结构化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#id13">车辆结构化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#camera">多路camera</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#ipm">多路IPM图像回灌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/solution.html#method">内置Method</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/tools.html">工具集</a><ul>
@@ -220,17 +222,29 @@
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/tools.html#python-api">Python API</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/integration.html#id1">图像获取</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/integration.html#id2">智能预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/integration.html#id5">效果展示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/integration.html#id6">运行部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/integration.html#id7">模型集成示例说明</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/faq.html">常见问题</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id2">开发板外设连接说明</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#ip">IP设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id4">编译、部署及示例运行</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id8">回灌模式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id4">查看系统镜像版本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#cpubpu">查看CPU、BPU使用率</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#cma">修改cma内存大小</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id5">编译、部署及示例运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id9">回灌模式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#usb-uvcweb">usb智慧电视场景，切换uvc与web模式</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#hdmi">视频盒子使用HDMI显示</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id11">视频盒子本地转发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#ipm">多路IPM图像回灌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/faq.html#id18">视频盒子本地调试</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="BuildAll/doc/version.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/version.html#v2-8-0">V2.8.0版本</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/version.html#v2-7-0">V2.7.0版本</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/version.html#v2-6-0">V2.6.0版本</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BuildAll/doc/version.html#v2-5-0">V2.5.0版本</a></li>

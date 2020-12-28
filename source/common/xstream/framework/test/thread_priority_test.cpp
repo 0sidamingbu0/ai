@@ -58,7 +58,7 @@ class Callback {
     }
   }
 
- private:
+ public:
   clock_t begin_clock = 0;
 };
 
@@ -97,7 +97,7 @@ int BBoxFilterTest(const std::string &config) {
   data->datas_.push_back(BaseDataPtr(bbox2));
   data->name_ = "face_head_box";
   inputdata->datas_.push_back(BaseDataPtr(data));
-  begin_clock = clock();
+  callback.begin_clock = clock();
   std::cout << "***********************" << std::endl
             << "testing synchronous function" << std::endl
             << "***********************" << std::endl;
@@ -141,12 +141,29 @@ int BBoxFilterTest(const std::string &config) {
 #if defined(HR_LINUX) && defined(HR_POSIX)
 TEST(ThreadModel, ThreadPriority_FIFO) {
   ThreadModelPriorityTest::BBoxFilterTest(
-      "./xstream/framework/test/configs/BBoxFilter_schedfifo.json");
+      "./test/configs/BBoxFilter_schedfifo.json");
 }
 
 TEST(ThreadModel, ThreadPriority_RR) {
   ThreadModelPriorityTest::BBoxFilterTest(
-      "./xstream/framework/test/configs/BBoxFilter_schedrr.json");
+      "./test/configs/BBoxFilter_schedrr.json");
 }
+
+
+TEST(ThreadModel, ThreadPriority_IDLE) {
+  ThreadModelPriorityTest::BBoxFilterTest(
+      "./test/configs/BBoxFilter_schedidle.json");
+}
+
+TEST(ThreadModel, ThreadPriority_BATCH) {
+  ThreadModelPriorityTest::BBoxFilterTest(
+      "./test/configs/BBoxFilter_schedbatch.json");
+}
+
+TEST(ThreadModel, ThreadPriority_NORMAL) {
+  ThreadModelPriorityTest::BBoxFilterTest(
+      "./test/configs/BBoxFilter_schednormal.json");
+}
+
 
 #endif

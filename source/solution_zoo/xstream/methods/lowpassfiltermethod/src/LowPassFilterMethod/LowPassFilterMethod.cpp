@@ -125,6 +125,7 @@ void LowPassFilterMethod::RunSingleFrame(
       new_box->value.y2 = box_filter_pairs_[box.id].filter_vector[1]->
       filter_y->filter(box.y2, timestamp);
       new_box->value.score = box.score;
+      new_box->value.id = box.id;
       out_body_box_list->datas_.push_back(new_box);
     } else {
       // insert new id

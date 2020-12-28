@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>概述 &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>概述 &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -38,7 +38,7 @@
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="搜索" href="../../search.html" />
     <link rel="next" title="快速上手" href="quick_start.html" />
-    <link rel="prev" title="AI Express用户文档(V2.7.0)" href="../../index.html" /> 
+    <link rel="prev" title="AI Express用户文档(V2.8.0)" href="../../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -99,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="copyright.html">版权声明</a></li>
@@ -187,24 +188,23 @@
 <ul class="simple">
 <li><p>XStream: 一套独立的算法SDK编程框架。将预测任务拆分到一系列Method中，提供能力将Method串联成Graph，完成基于Graph的计算。可以根据不同的业务场景(不同的workflow)，快速生成对应的预测SDK。</p></li>
 <li><p>XProto: 一套独立的原型应用开发框架。该框架将整个应用划分成一系列的Plugin，各个Plugin之间通过消息总线通信，完成了模块的解耦、复用、可扩展等需求。</p></li>
-<li><p>内置参考解决方案: 沉淀了人脸结构化、人体结构化、人体行为分析、视频盒子、体感游戏、usb camera、apa、车辆结构化、多路camera等示例。可以直接基于这些示例修改，完成客户的产品功能开发。</p></li>
+<li><p>内置参考解决方案: 沉淀了人脸结构化、人体结构化、人体行为分析、视频盒子、体感游戏、usb camera、apa、车辆结构化、多路camera、多路IPM图像回灌等示例。可以直接基于这些示例修改，完成客户的产品功能开发。</p></li>
 </ul>
 </div>
 <div class="section" id="xstreamsdk">
 <h2>XStream算法SDK编程框架<a class="headerlink" href="#xstreamsdk" title="永久链接至标题">¶</a></h2>
 <p>XStream属于一套算法SDK编程框架，Method为框架核心组件，以Graph的方式将Method实例串联起来，XStream框架内部自动完成Method的调度。</p>
-<p>XStream源码由XStream-Framework、tutorials、vision_type、methods、imagetools组成。各个组件的功能描述如下：</p>
+<p>XStream源码由XStream-Framework、tutorials、vision_type、imagetools组成。各个组件的功能描述如下：</p>
 <ul class="simple">
-<li><p>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Metho的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发。</p></li>
+<li><p>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发。</p></li>
 <li><p>tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性。</p></li>
 <li><p>vision_type: 沉淀了XStream-Framework框架下视觉相关的数据结构，比如金字塔图像、矩形框、分割、分类属性等。沉淀的solution中大量使用这些数据结构。客户基于XStream-Framework重新开发，可以不依赖vision_type。</p></li>
-<li><p>methods: 沉淀了XStream-Framework框架下一些Method，比如FasterRCNNMethod、CNNMethod、MotMethod。沉淀的solution中大量使用这些数Method。客户基于XStream-Framework重新开发，可以不依赖这些Method。</p></li>
 <li><p>imagetools: 沉淀了一套图像处理的C++库，内部封装了OpenCV、libyuv、libturbojpeg等开源库，提供图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。客户基于XStream-Framework重新开发，可以不依赖imagetools。</p></li>
 </ul>
 <p>XStream提供<strong>流程配置</strong>功能，支持将各种Method按照业务需求组装成一个个Workflow有向图，并通过XStream内置的<strong>数据驱动</strong>的调度策略，高效完成Workflow的运行和调度，最大限度的利用地平线芯片BPU的计算资源。</p>
 <p>下图是基于XStream开发框架构建的人脸抓拍智能算法SDK示例：</p>
 <p><img alt="框架" src="../../_images/face_snapshot.png" /></p>
-<p>它由XStream内置的四个算法Method组成：<code class="docutils literal notranslate"><span class="pre">FasterRCNNMethod</span></code>,<code class="docutils literal notranslate"><span class="pre">MOTMethod</span></code>,<code class="docutils literal notranslate"><span class="pre">GradingMethod</span></code>和<code class="docutils literal notranslate"><span class="pre">SnapShotMethod</span></code>，整个workflow支持对视频图片帧进行人脸框，人脸关键点，人脸姿态检测，并对检测到人进行跟踪，打分与抓拍。</p>
+<p>它由AI-Express内置的四个算法Method组成：<code class="docutils literal notranslate"><span class="pre">FasterRCNNMethod</span></code>,<code class="docutils literal notranslate"><span class="pre">MOTMethod</span></code>,<code class="docutils literal notranslate"><span class="pre">GradingMethod</span></code>和<code class="docutils literal notranslate"><span class="pre">SnapShotMethod</span></code>，整个workflow支持对视频图片帧进行人脸框，人脸关键点，人脸姿态检测，并对检测到人进行跟踪，打分与抓拍。这些内置的Method代码在solution_zoo/xstream/methods。</p>
 </div>
 <div class="section" id="xproto">
 <h2>XProto原型应用开发框架<a class="headerlink" href="#xproto" title="永久链接至标题">¶</a></h2>
@@ -224,7 +224,7 @@
 <div class="section" id="id2">
 <h2>场景参考解决方案<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>基于XStream和XProto两套框架，我们也将经过地平线各种量产考验的场景解决方案进行开放，这些解决方案通过搭配地平线芯片以及开发板等硬件参考设计，可以实现快速场景应用的落地。</p>
-<p>目前提供了人脸结构化参考方案、人体结构化参考方案、人体行为分析参考方案、视频盒子参考方案、体感游戏参考方案、usb camera参考方案、apa自动泊车参考方案、车辆结构化、多路camera参考方案。提供了工程代码以及配套的参考模型，可以部署运行在地平线XJ3、XJ2开发板。这些参考方案会逐步完全对外开放。</p>
+<p>目前提供了人脸结构化参考方案、人体结构化参考方案、人体行为分析参考方案、视频盒子参考方案、体感游戏参考方案、usb camera参考方案、apa自动泊车参考方案、车辆结构化、多路camera、多路IPM图像回灌参考方案。提供了工程代码以及配套的参考模型，可以部署运行在地平线XJ3、XJ2开发板。这些参考方案会逐步完全对外开放。</p>
 <p>各个参考方案的功能描述如下</p>
 <ul class="simple">
 <li><p>人脸结构化参考方案: 人脸的检测、人脸姿态检测、人脸关键点、人脸跟踪、优先抓拍、人脸特征提取等结构化信息提取。</p></li>
@@ -236,7 +236,9 @@
 <li><p>apa自动泊车: XJ3开发板接入4路sensor，完成4路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框以及停车位分割结果；支持can信号的传输。当摄像头完成实车标定，且实现控车逻辑后，能够完成自动泊车功能。</p></li>
 <li><p>多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框，支持把多路图像和检测结果在web上展示。</p></li>
 <li><p>车辆结构化参考方案: 完成车辆检测、车牌检测与识别、车辆类型等结构化信息提取。</p></li>
+<li><p>多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。</p></li>
 </ul>
+<p>在开发参考方案时，沉淀了不少XStream框架下的Method，比如FasterRCNNMethod、CNNMethod、MotMethod等。</p>
 </div>
 <div class="section" id="ai-expressbpu-predict">
 <h2>AI Express与bpu_predict的区别<a class="headerlink" href="#ai-expressbpu-predict" title="永久链接至标题">¶</a></h2>

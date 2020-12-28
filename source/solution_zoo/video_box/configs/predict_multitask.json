@@ -1,0 +1,7 @@
+{
+  "model_input_width": 960,
+  "model_input_height": 540,
+  "pyramid_layer": 4,
+  "bpu_config_path": "../configs/bpu_config.json",
+  "model_file_path": "../../models/personMultitask.hbm"
+}

@@ -40,6 +40,9 @@ class SmartManager {
                         int dst_image_height) {
     return 0;
   }
+  virtual int FeedDropSmart(uint64_t frame_id) {
+    return 0;
+  }
 };
 
 }  // namespace Uvcplugin

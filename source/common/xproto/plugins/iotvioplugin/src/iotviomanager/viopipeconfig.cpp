@@ -109,6 +109,18 @@ bool VioPipeConfig::ParserConfig() {
     json_[pipe_name]["vin"]["sensor"]["serdes_index"].asInt();
   vio_cfg_.vin_cfg.sensor_info.serdes_port =
     json_[pipe_name]["vin"]["sensor"]["serdes_port"].asInt();
+  if (json_[pipe_name]["vin"]["sensor"].isMember("gpio_num")) {
+    vio_cfg_.vin_cfg.sensor_info.gpio_num =
+      json_[pipe_name]["vin"]["sensor"]["gpio_num"].asInt();
+  }
+  if (json_[pipe_name]["vin"]["sensor"].isMember("gpio_pin")) {
+    vio_cfg_.vin_cfg.sensor_info.gpio_pin =
+      json_[pipe_name]["vin"]["sensor"]["gpio_pin"].asInt();
+  }
+  if (json_[pipe_name]["vin"]["sensor"].isMember("gpio_level")) {
+    vio_cfg_.vin_cfg.sensor_info.gpio_level =
+      json_[pipe_name]["vin"]["sensor"]["gpio_level"].asInt();
+  }
   // 2.2 mipi config
   vio_cfg_.vin_cfg.mipi_info.mipi_index =
     json_[pipe_name]["vin"]["mipi"]["host_index"].asInt();
@@ -299,6 +311,9 @@ bool VioPipeConfig::PrintConfig() {
   LOGI << "need_clk: "     << vio_cfg_.vin_cfg.sensor_info.need_clk;
   LOGI << "serdes_index: " << vio_cfg_.vin_cfg.sensor_info.serdes_index;
   LOGI << "serdes_port: "  << vio_cfg_.vin_cfg.sensor_info.serdes_port;
+  LOGI << "gpio_num: "  << vio_cfg_.vin_cfg.sensor_info.gpio_num;
+  LOGI << "gpio_pin: "  << vio_cfg_.vin_cfg.sensor_info.gpio_pin;
+  LOGI << "gpio_level: "  << vio_cfg_.vin_cfg.sensor_info.gpio_level;
   // 2.2 mipi config
   LOGI << "mipi_index: "   << vio_cfg_.vin_cfg.mipi_info.mipi_index;
   LOGI << "vc_index: "     << vio_cfg_.vin_cfg.mipi_info.vc_index;

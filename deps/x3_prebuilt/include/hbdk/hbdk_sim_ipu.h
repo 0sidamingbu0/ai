@@ -524,6 +524,8 @@ HBDK_PUBLIC hbrt_error_t hbsimOpticalFlowProcessAyers(hbsim_optical_flow_handle 
                                                       void **flow_output_addr, void **harris_output_addr,
                                                       void **conf_output_addr);
 
+HBDK_PUBLIC int64_t hbsimOpticalFlowReadAPB(hbsim_optical_flow_handle handle);
+
 HBDK_PUBLIC hbrt_error_t hbsimOpticalFlowReleaseAyers(hbsim_optical_flow_handle handle);
 
 #ifdef __cplusplus

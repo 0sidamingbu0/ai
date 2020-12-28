@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>XStream API文档 &mdash; AI Express用户手册 2.8.0 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xstream.html">XStream算法SDK编程框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xproto.html">XProto原型应用开发框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solution.html">场景参考解决方案</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">如何集成模型至AI-EXPRESS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="copyright.html">版权声明</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AI Express用户手册</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>XStream API文档</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/BuildAll/doc/xstream_interface.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="xstream-api">
+<h1>XStream API文档<a class="headerlink" href="#xstream-api" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>数据结构体定义<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>本节内容描述XStream API接口中需要的数据结构。</p>
+<div class="section" id="datastate">
+<h3>DataState<a class="headerlink" href="#datastate" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">DataState</span> <span class="p">{</span>
+  <span class="c1">/// valid</span>
+  <span class="n">VALID</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="c1">/// filtered</span>
+  <span class="n">FILTERED</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="c1">/// invisible</span>
+  <span class="n">INVISIBLE</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="c1">/// disappeared</span>
+  <span class="n">DISAPPEARED</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="c1">/// invalid</span>
+  <span class="n">INVALID</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>DataState定义了数据的几种基本状态。在业务开发过程中，对数据处理时，可能会依赖这些状态。数据正常有效，应该设置为VALID。</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="basedata">
+<h3>BaseData<a class="headerlink" href="#basedata" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">BaseData</span> <span class="p">{</span>
+  <span class="n">BaseData</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="o">~</span><span class="n">BaseData</span><span class="p">();</span>
+  <span class="c1">/// type</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="c1">/// name</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="c1">/// error code</span>
+  <span class="kt">int</span> <span class="n">error_code_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="c1">/// error detail info</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">error_detail_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="c1">/// context of C structure</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CContext</span><span class="o">&gt;</span> <span class="n">c_data_</span><span class="p">;</span>
+  <span class="c1">/// data status</span>
+  <span class="n">DataState</span> <span class="n">state_</span> <span class="o">=</span> <span class="n">DataState</span><span class="o">::</span><span class="n">VALID</span><span class="p">;</span>
+
+  <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">BaseData</span><span class="o">&gt;</span> <span class="n">BaseDataPtr</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>BaseData结构体描述了框架内部数据流的基本信息。<strong>Method之间传递的数据，必须是从BaseData派生出来</strong>。BaseData数据成员包括：</p>
+<ul class="simple">
+<li><p>数据类型type_: 用户自定义数据的描述信息，如”box”等，该字段当前无特殊作用，可不关注；</p></li>
+<li><p>数据名称name_: 数据的别名。框架运行过程中，会将数据的name_赋值为workflow配置文件中配置的名字。对于InputData，需要外部指定数据的name_,指定的name_需要和workflow配置中配置的名字一致；</p></li>
+<li><p>错误码error_code_: 数据错误码；</p></li>
+<li><p>错误信息error_detail_: 错误信息描述；</p></li>
+<li><p>CContext c_data_: 扩展的C数据结构，可不关注；</p></li>
+<li><p>数据状态state_: 该数据的状态，默认为有效。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="basedatavector">
+<h3>BaseDataVector<a class="headerlink" href="#basedatavector" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">BaseDataVector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+  <span class="n">BaseDataVector</span><span class="p">();</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>BaseDataVector为BaseData的一个派生类，用于表示数组类数据，比如保存一帧图像中的所有的人体检测框，datas_数组中每个成员指向一个人体检测框数据。</p>
+<ul class="simple">
+<li><p>datas_: 用于保存数组中每个值。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="xstreamdata">
+<h3>XStreamData<a class="headerlink" href="#xstreamdata" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">/// Wrap other data structures into derived classes of BaseData</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Dtype</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">XStreamData</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+  <span class="n">Dtype</span> <span class="n">value</span><span class="p">;</span>
+  <span class="n">XStreamData</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="k">explicit</span> <span class="n">XStreamData</span><span class="p">(</span><span class="k">const</span> <span class="n">Dtype</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">)</span> <span class="p">{</span> <span class="n">value</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>XStreamData用于将其他非BaseData继承的数据结构，通过模板类封装，封装后的具体类继承自BaseData，可以用于Method之间数据传递。</p>
+<p>封装后的具体类包含一个成员value，用于保存原始数据结构的值。</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="inputparam">
+<h3>InputParam<a class="headerlink" href="#inputparam" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">InputParam</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="k">explicit</span> <span class="n">InputParam</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">unique_name_</span> <span class="o">=</span> <span class="n">unique_name</span><span class="p">;</span>
+    <span class="n">is_json_format_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="n">is_enable_this_method_</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">virtual</span> <span class="o">~</span><span class="n">InputParam</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Format</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">bool</span> <span class="n">is_json_format_</span><span class="p">;</span>
+  <span class="kt">bool</span> <span class="n">is_enable_this_method_</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">unique_name_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">InputParam</span><span class="o">&gt;</span> <span class="n">InputParamPtr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>InputParam是输入数据参数的数据结构。包括：</p>
+<ul class="simple">
+<li><p>unique_name_：表示该参数作用在具体节点的唯一性标识，对应workflow配置中的Method名字。</p></li>
+<li><p>is_json_format_：表示输入参数是否是json字符串。若是，可以通过Format()接口获取json字符串；</p></li>
+<li><p>is_enable_this_method_：表示是否使能该节点。若为true，则将本参数传递入节点，且节点正常运算；若为false，则跳过该节点运算。</p></li>
+</ul>
+<p>当准备InputData时，可以通过InputParam，更新Method的配置参数。用户可以继承该类，定义具体的参数类型，然后相关的Method使用新定义的数据类型解析配置参数。</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="disableparam">
+<h3>DisableParam<a class="headerlink" href="#disableparam" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DisableParam</span> <span class="o">:</span> <span class="k">public</span> <span class="n">InputParam</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="k">enum</span> <span class="k">class</span> <span class="nc">Mode</span> <span class="p">{</span>
+    <span class="c1">/// passthrough mode: use inputdata as outputdata;</span>
+    <span class="c1">/// slot size of outputdata and inputdata must be equal;</span>
+    <span class="n">PassThrough</span><span class="p">,</span>
+    <span class="c1">/// use pre-difined data as outputdata;</span>
+    <span class="c1">/// slot size of predifine data and outputdata must be equal;</span>
+    <span class="n">UsePreDefine</span><span class="p">,</span>
+    <span class="c1">/// set outputdata status as DataState::INVALID</span>
+    <span class="n">Invalid</span><span class="p">,</span>
+    <span class="c1">/// flexibly passthrough mode</span>
+    <span class="c1">/// 1. passthrough inputdata to outputdata in order</span>
+    <span class="c1">/// 2. if slot size of inputdata greater than outputdata,</span>
+    <span class="c1">///    only use the first few slots.</span>
+    <span class="c1">/// 3. if slot size of inputdata less than outputdata,</span>
+    <span class="c1">///    set status of last few slots invalid.</span>
+    <span class="n">BestEffortPassThrough</span>
+  <span class="p">};</span>
+  <span class="k">explicit</span> <span class="nf">DisableParam</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">,</span>
+                        <span class="n">Mode</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">Mode</span><span class="o">::</span><span class="n">Invalid</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">InputParam</span><span class="p">(</span><span class="n">unique_name</span><span class="p">),</span> <span class="n">mode_</span><span class="p">{</span><span class="n">mode</span><span class="p">}</span> <span class="p">{</span>
+    <span class="n">is_enable_this_method_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">virtual</span> <span class="o">~</span><span class="n">DisableParam</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Format</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">unique_name_</span> <span class="o">+</span> <span class="s">&quot; : disabled&quot;</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">Mode</span> <span class="n">mode_</span><span class="p">;</span>
+  <span class="c1">/// pre-difined data, used in Mode::UsePreDefine</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">pre_datas_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DisableParam</span><span class="o">&gt;</span> <span class="n">DisableParamPtr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>DisableParam继承自InputParam，用于workflow节点旁路控制：</p>
+<ul class="simple">
+<li><p>mode_：指定节点旁路的模式，具体模式说明可以参考用户文档或者xstream tutorials。</p></li>
+<li><p>pre_datas__：UsePreDefine模式，使用用户传入的值代替节点的输出值</p></li>
+</ul>
+<p>当准备InputData时，可以通过设置DisableParam，临时跳过一些节点的计算。</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="sdkcommparam">
+<h3>SdkCommParam<a class="headerlink" href="#sdkcommparam" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SdkCommParam</span> <span class="o">:</span> <span class="k">public</span> <span class="n">InputParam</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="n">SdkCommParam</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">param</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">InputParam</span><span class="p">(</span><span class="n">unique_name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">param_</span> <span class="o">=</span> <span class="n">param</span><span class="p">;</span>
+    <span class="n">is_json_format_</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Format</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">param_</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">virtual</span> <span class="o">~</span><span class="n">SdkCommParam</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+
+ <span class="k">public</span><span class="o">:</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">param_</span><span class="p">;</span>  <span class="c1">// json format</span>
+<span class="p">};</span>
+<span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SdkCommParam</span><span class="o">&gt;</span> <span class="n">CommParamPtr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>SdkCommParam继承自InputParam，常规的json方式描述参数。通过调用Format接口获取json字符串。</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="inputdata">
+<h3>InputData<a class="headerlink" href="#inputdata" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">InputData</span> <span class="p">{</span>
+  <span class="c1">/// input data, such as image, timestamp, box..</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
+  <span class="c1">/// InputParam</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">params_</span><span class="p">;</span>
+  <span class="c1">/// input_data source id, used in multi-input; default value 0(single-input)</span>
+  <span class="kt">uint32_t</span> <span class="n">source_id_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="c1">/// context_ pasthroughed to OutputData::context_</span>
+  <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">context_</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>InputData结构体描述了框架的输入数据流基本信息。包括：</p>
+<ul class="simple">
+<li><p>数据流datas_：BaseData数组，表示一帧计算输入的数据；</p></li>
+<li><p>参数params_：InputParam数组，注意参数params_和输入数据datas_无位置对应关系，InputParam中有成员描述该InputParam配置具体对应到哪个Method；</p></li>
+<li><p>输入源source_id_：输入源编号，表示输入源的唯一标志，多输入源从0开始编号，单输入源默认为0，用于支持多路；</p></li>
+<li><p>透传数据context_：透传数据，该数据会透传到OutputData，可用于业务特殊需求。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="outputdata">
+<h3>OutputData<a class="headerlink" href="#outputdata" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">OutputData</span> <span class="p">{</span>
+  <span class="c1">/// error code</span>
+  <span class="kt">int</span> <span class="n">error_code_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="c1">/// error info</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">error_detail_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="c1">/// used in Node&#39;s outputdata, represents node&#39;s name</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">unique_name_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="c1">/// outputdata name</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">output_type_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="c1">/// output data, such as detection_box, landmarks..</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
+  <span class="c1">/// passthroughed from inputdata</span>
+  <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">context_</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+  <span class="c1">/// sequence_id in single-input</span>
+  <span class="kt">int64_t</span> <span class="n">sequence_id_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="c1">/// input_data source id, used in multi-input; default value 0(single-input)</span>
+  <span class="kt">uint32_t</span> <span class="n">source_id_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kt">uint64_t</span> <span class="n">global_sequence_id_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>OutputData结构体描述了框架的输出数据流基本信息。包括：</p>
+<ul class="simple">
+<li><p>error_code_：表示错误码，非0表示预测出现错误；</p></li>
+<li><p>error_detail_：表示错误描述信息；</p></li>
+<li><p>unique_name_：表示该输出数据是某具体节点的输出数据，unique_name_对应workflow配置中产生该数据的Method的名字；</p></li>
+<li><p>output_type_：多路输出中表示该组输出数据的名称，单路输出时默认是”<strong>NODE_WHOLE_OUTPUT</strong>”；</p></li>
+<li><p>datas_：表示一帧预测计算的所有输出数据；</p></li>
+<li><p>context_：透传字段，由该帧数据的输入数据InputData.context_传入；</p></li>
+<li><p>sequence_id_: 表示该输出数据对应输入源的输入帧的序列号，从0开始依次累加；</p></li>
+<li><p>source_id_: 表示多输入源情况下输入源的编号；</p></li>
+<li><p>global_sequence_id_: 表示多输入源情况下，对应输入帧的总序列号；单输入源情况下，与sequence_id_相同。</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>XStream API说明<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="setconfig">
+<h3>SetConfig<a class="headerlink" href="#setconfig" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">SetConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">key</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：用于设置整个workflow的配置，目前支持的配置有workflow配置文件、性能统计profiler相关功能、超时告警以及帧内中间数据的释放。</p></li>
+<li><p>输入：</p>
+<p>1）key为”config_file”，value设置为workflow的配置文件路径，它定义整个workflow数据流。</p>
+<p>2）key为”profiler”，value为”on”，表示打开性能统计功能。”off”表示关闭, 默认为关闭。</p>
+<p>3）key为”profiler_file”,value为性能统计输出文件路径，用于设置性能统计文件的路径名称。当打开性能统计功能，需要设置输出文件路径。</p>
+<p>4）key为”profiler_time_interval”,value为统计耗时的最小时间间隔，单位为微秒。若某处统计的耗时小于value，则此耗时记录不会添加到性能统计结果。默认值是3000微秒，即3毫秒。</p>
+<p>5）key为”profiler_fps_interval”,value为统计帧率的最小时间间隔，单位为微秒。若某处统计Fps的耗时小于value，则此fps记录不会添加到性能统计结果。默认200*1000微秒，即200毫秒。</p>
+<p>6）key为”free_framedata”, value为”on”, 表示尽早地释放掉在后面node节点中不再需要使用的框架中的某项中间数据，打开此项配置,可以减少峰值内存使用。默认关闭。</p>
+<p>7）key为”time_monitor”, value为输入框架的每帧数据处理的最大时长, 单位毫秒。设置value非0，则打开超时告警功能。value默认为0，即关闭超时告警功能。</p>
+</li>
+<li><p>返回：接口返回0表示设置成功，返回-1表示设置失败；</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="init">
+<h3>Init<a class="headerlink" href="#init" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">Init</span><span class="p">();</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：用于初始化XStream对象，注意必须在调用SetConfig之后执行Init()。</p></li>
+<li><p>返回：接口返回0表示初始化成功，否则表示初始化失败。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="setcallback">
+<h3>SetCallback<a class="headerlink" href="#setcallback" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">OutputDataPtr</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">XStreamCallback</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">SetCallback</span><span class="p">(</span><span class="n">XStreamCallback</span> <span class="n">callback</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：用于回调函数的设置，用于异步预测的使用。使用同步接口时，该接口无效。注意必须在调用Init后执行SetCallback，否则节点等信息还未完善，设置回调函数会失败。</p></li>
+<li><p>输入：</p>
+<p>1）callback：表示设置的回调函数。</p>
+<p>2）name: 默认为空，表示设置整个workflow的输出数据的回调函数；当name设置为某个节点的unique名字，设置该节点输出数据的回调函数。</p>
+</li>
+<li><p>返回：接口返回0表示设置成功，否则表示设置失败；</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="getconfig">
+<h3>GetConfig<a class="headerlink" href="#getconfig" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">InputParamPtr</span> <span class="nf">GetConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：获取某个节点的参数。</p></li>
+<li><p>输入：</p>
+<p>1）unique_name: 某个节点的unique名字（对应workflow配置中的节点名字），表示获取该节点的参数</p>
+</li>
+<li><p>返回：InputParamPtr</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="updateconfig">
+<h3>UpdateConfig<a class="headerlink" href="#updateconfig" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">UpdateConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">,</span> <span class="n">InputParamPtr</span> <span class="n">ptr</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：用于设置或更新节点的参数。</p></li>
+<li><p>输入：</p>
+<p>1）unique_name: 某个节点的unique名字（对应workflow配置中的节点名字），表示更新或设置该节点的参数。</p>
+<p>2）ptr：更新的参数信息。</p>
+</li>
+<li><p>返回：返回0表示参数更新成功，否则失败。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="syncpredict">
+<h3>SyncPredict<a class="headerlink" href="#syncpredict" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">OutputDataPtr</span> <span class="nf">SyncPredict</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：同步运行接口，传⼊数据，接口会阻塞住，直到整个workflow处理完成，将workflow的输出结果通过函数返回值返回。</p></li>
+<li><p>输入：</p>
+<p>1）input: 待处理的输入数据，需要用户自己封装。</p>
+</li>
+<li><p>返回：返回OutputDataPtr，输出workflow的输出结果。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="syncpredict2">
+<h3>SyncPredict2<a class="headerlink" href="#syncpredict2" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">OutputDataPtr</span><span class="o">&gt;</span> <span class="n">SyncPredict2</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：用于多组输出的同步运行接口，传⼊数据，接口会阻塞住，直到整个workflow处理完成，将workflow的输出结果通过函数返回值返回。</p></li>
+<li><p>输入：</p>
+<p>1）input: 待处理的输入数据，需要用户自己封装。</p>
+</li>
+<li><p>返回：返回OutputDataPtr数组，输出workflow的多组输出结果。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="asyncpredict">
+<h3>AsyncPredict<a class="headerlink" href="#asyncpredict" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int64_t</span> <span class="nf">AsyncPredict</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：异步运行接口，AsyncPredict接口调用后立即返回，workflow的输出结果通过回调函数处理。</p></li>
+<li><p>输入：</p>
+<p>1）input: 待处理的输入数据，需要用户自己封装。</p>
+</li>
+<li><p>返回：接口返回值大于等于0，则表示该任务成功加入队列，且返回码表示该路输入源的sequence_id；若接口返回值小于0，表示任务队列已满，添加任务失败。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="gettasknum">
+<h3>GetTaskNum<a class="headerlink" href="#gettasknum" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int64_t</span> <span class="nf">GetTaskNum</span><span class="p">();</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：用于获取框架中当前任务队列的长度，即未完成的任务数量。</p></li>
+<li><p>返回：返回未完成的任务数量。</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="method-api">
+<h2>Method API说明<a class="headerlink" href="#method-api" title="永久链接至标题">¶</a></h2>
+<div class="section" id="methodinfo">
+<h3>MethodInfo属性说明<a class="headerlink" href="#methodinfo" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">MethodInfo</span> <span class="p">{</span>
+  <span class="c1">/// is thread safe</span>
+  <span class="kt">bool</span> <span class="n">is_thread_safe_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="c1">/// is need reorder, the order of outputdata must be same as the inputdata</span>
+  <span class="kt">bool</span> <span class="n">is_need_reorder</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="c1">/// is dependent on inputdata source</span>
+  <span class="kt">bool</span> <span class="n">is_src_ctx_dept</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>描述：</p>
+<p>MethodInfo结构体定义了Method的属性信息，包括：</p>
+<ul class="simple">
+<li><p>is_thread_safe_: Method是否为线程安全，默认值是false。在Workflow定义时候，支持配置Node的线程数。如果线程数配置大于1，若Method的计算过程是非线程安全的，则多线程下会定义多个Method实例；否则多线程复用一个Method实例。</p></li>
+<li><p>is_need_reorder: 是否要求数据按顺逐帧调用Method处理。比如一些目标跟踪场景，要求输出数据是有序的。默认是false，表示不要求有序。<strong>注意：在is_need_reorder=true的method，由于有前后帧序依赖，线程数只允许为1</strong>。同时is_need_reorder=true会一定程度上降低执行效率。</p></li>
+<li><p>is_src_ctx_dept: 对输入数据的处理是否依赖输入源。比如目标跟踪场景，会记录前几帧数据并分配track_id，这类Method需要将属性设置为<code class="docutils literal notranslate"><span class="pre">is_src_ctx_dept</span> <span class="pre">=</span> <span class="pre">true</span></code>。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="id3">
+<h3>Method API<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h4>Init<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">Init</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">config_file_path</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：Method的初始化函数，一般包括配置文件的加载、配置参数的获取，关键变量的设置等。</p></li>
+<li><p>输入：</p>
+<p>1）config_file_path: Method对应的配置文件路径。</p>
+</li>
+<li><p>返回：接口返回0表示初始化成功，否则表示初始化失败；</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="initfromjsonstring">
+<h4>InitFromJsonString<a class="headerlink" href="#initfromjsonstring" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">InitFromJsonString</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：Method的初始化函数，与Init函数的区别在于，传入的参数是Json格式的配置内容，而非文件路径。</p></li>
+<li><p>输入：</p>
+<p>config: Method对应的配置内容，Json格式。</p>
+</li>
+<li><p>返回：接口返回0表示初始化成功，否则表示初始化失败；</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="finalize">
+<h4>Finalize<a class="headerlink" href="#finalize" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">Finalize</span><span class="p">();</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：Method对象销毁前需要处理的内容，包括关键变量的释放等。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="updateparameter">
+<h4>UpdateParameter<a class="headerlink" href="#updateparameter" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">UpdateParameter</span><span class="p">(</span><span class="n">InputParamPtr</span> <span class="n">ptr</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul>
+<li><p>描述：更新Method的参数。</p></li>
+<li><p>输入：</p>
+<p>ptr: 待更新的参数；</p>
+</li>
+<li><p>返回：接口返回0表示更新成功，否则表示更新失败；</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="getparameter">
+<h4>GetParameter<a class="headerlink" href="#getparameter" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">InputParamPtr</span> <span class="nf">GetParameter</span><span class="p">();</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：获取Method的参数。</p></li>
+<li><p>返回：接口返回InputParam。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="getversion">
+<h4>GetVersion<a class="headerlink" href="#getversion" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">GetVersion</span><span class="p">();</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：获取Method的版本信息。</p></li>
+<li><p>返回：接口返回Method的版本信息。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="getmethodinfo">
+<h4>GetMethodInfo<a class="headerlink" href="#getmethodinfo" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">MethodInfo</span> <span class="nf">GetMethodInfo</span><span class="p">();</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：获取Method的属性信息。</p></li>
+<li><p>返回：接口返回Method的属性信息MethodInfo。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="onprofilerchanged">
+<h4>OnProfilerChanged<a class="headerlink" href="#onprofilerchanged" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">OnProfilerChanged</span><span class="p">(</span><span class="kt">bool</span> <span class="n">on</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：用于告知Method Profiler状态的更改。</p></li>
+<li><p>输入：
+on：表示Profiler的状态。</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="doprocess">
+<h4>DoProcess<a class="headerlink" href="#doprocess" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;&gt;</span> <span class="n">DoProcess</span><span class="p">(</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">param</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>描述：Method的核心处理函数。</p></li>
+<li><p>输入：
+1）input：表示待处理的数据，input[i]表示Batch i的数据，目前仅支持i=0。
+2）param：表示Method的参数，param[i]表示处理Batch i数据的参数。</p></li>
+<li><p>返回：接口返回Method的输出结果output，output[i]表示Batch i的输出数据。</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 版权所有 2020, Horizon Robotics
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

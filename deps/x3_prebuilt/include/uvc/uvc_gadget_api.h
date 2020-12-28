@@ -17,6 +17,16 @@ extern "C" {
 
 #include "uvc_gadget.h"
 
+/*
+ * Note: terminal and unit id is form terminal and unit desciptor in uvc dev driver.
+ * so each uvc device has different uvc unit and termial id.
+ */
+#define UVC_CTRL_INTERFACE_EVENT (1 << UVC_CTRL_INTERFACE_ID)
+#define UVC_CTRL_CAMERA_TERMINAL_EVENT (1 << UVC_CTRL_CAMERA_TERMINAL_ID)
+#define UVC_CTRL_PROCESSING_UNIT_EVENT (1 << UVC_CTRL_PROCESSING_UNIT_ID)
+#define UVC_CTRL_EXTENSION_UNIT_EVENT (1 << UVC_CTRL_EXTENSION_UNIT_ID)
+#define UVC_CTRL_OUTPUT_TERMINAL_EVENT (1 << UVC_CTRL_OUTPUT_TERMINAL_ID)
+
 /* pix format supported */
 enum uvc_fourcc_format {
 	UVC_FORMAT_YUY2 = 0,
@@ -68,7 +78,7 @@ void uvc_gadget_user_params_init(struct uvc_params *params);
 /**
  * uvc_gadget_init - init uvc gadget context according to user params
  * @pctx: uvc context, just pass a pointer, context will be allocated in lib.
- * @uvc_devname: uvc device name, for example, xj3 use /dev/video0 now.
+ * @uvc_devname: uvc device name, for example, xj3 use /dev/video8 now.
  *		suggest using NULL, as lib will auto-find the uvc device.
  * @v4l2_devname: frontend v4l2 device, like vivid, v4l2-encoder...
  *		for xj3, just NULL... as encoder doesn't use v4l2 framework
@@ -134,6 +144,30 @@ void uvc_set_prepare_data_handler(struct uvc_context *ctx,
  */
 void uvc_set_release_data_handler(struct uvc_context *ctx,
 				  uvc_release_buffer_callback_fn cb_fn,
+				  void *userdata);
+
+/**
+ * uvc_set_event_handler - set control event handler
+ * @ctx: uvc context
+ * @setup_fn: camera terminal, processing unit & extension unit setup event
+ *		callback handler. uvc-gadget application needs to do the
+ *		specify operations.
+ * @data_fn: camera terminal, processing unit & extension unit data event
+ *		callback handler. uvc-gadget application needs to do the
+ *		specify operations.
+ * @mask: event mask which user is interested in.
+ * @userdata: a (void *) pointer, that user could pass some user data,
+ *		which usually will be re-used in callback function.
+ *
+ * control event handler, including camera terminal, processing unit and
+ * extension unit event, just handle them.
+ *
+ * prepare & release buffer needs to be implemented as a pair!!
+ */
+void uvc_set_event_handler(struct uvc_context *ctx,
+				  uvc_event_setup_callback_fn setup_f,
+				  uvc_event_data_callback_fn data_f,
+				  unsigned int mask,
 				  void *userdata);
 
 /**

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python types &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>Python types &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -162,9 +163,9 @@
 <h2>Available wrappers<a class="headerlink" href="#available-wrappers" title="永久链接至标题">¶</a></h2>
 <p>All major Python types are available as thin C++ wrapper classes. These
 can also be used as function parameters – see <a class="reference internal" href="../functions.html#python-objects-as-args"><span class="std std-ref">Python objects as arguments</span></a>.</p>
-<p>Available types include <code class="xref py py-class docutils literal notranslate"><span class="pre">handle</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool_</span></code>,
-<code class="xref py py-class docutils literal notranslate"><span class="pre">int_</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float_</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>,
-<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">none</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">capsule</span></code>,
+<p>Available types include <code class="xref py py-class docutils literal notranslate"><span class="pre">handle</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool_</span></code>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">int_</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float_</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>,
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(在 Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">none</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">capsule</span></code>,
 <code class="xref py py-class docutils literal notranslate"><span class="pre">iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">iterator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">function</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">buffer</span></code>,
 <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, and <code class="xref py py-class docutils literal notranslate"><span class="pre">array_t</span></code>.</p>
 </div>

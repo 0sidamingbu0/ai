@@ -20,6 +20,16 @@ bash deploy.sh
  ```
 运行run.sh，选择video_box选项即可。
  ```
+## 入库
+1.更换./configs/vio_face_pic的jpg图片。
+2.修改name_jpg.list的文件列表。
+3.运行run.sh e ruku，选择video_box选项即可。(其中e为错误级别的log，可选f/e/i/w/d)
+
+## 删除底库
+运行run.sh e db_drop_table，选择video_box选项即可。
+
+## 查询底库
+运行run.sh i db_list，选择video_box选项即可。
 
 ## 配置文件说明
 
@@ -82,11 +92,13 @@ bash deploy.sh
 {
   "vo": {
     "enable": true,											// 是否开启VO输出
-    "display_mode": 0 									  	// 显示模式，0: auto, 1: 9 pictures
+    "display_mode": 0, 									// 显示模式，0: auto, 1: 9 pictures
+    "transition_support": 0             // 是否支持动态融合
   },
   "rtsp": {
     "stream_1080p": false,									// 是否开启1080P RTSP码流推送
-    "stream_720p": false									// 是否开启720P RTSP码流推送
+    "stream_720p": false,									// 是否开启720P RTSP码流推送
+    "encode_smart_info": true             // 编码码流是否包括智能信息
   }
 }
 ```

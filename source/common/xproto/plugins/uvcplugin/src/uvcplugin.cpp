@@ -164,7 +164,7 @@ int UvcPlugin::DeInit() {
   }
 
   LOGD << "uvc hid_manager_ deinit done";
-  return 0;
+  return XPluginAsync::DeInit();
 }
 
 int UvcPlugin::Reset() {
@@ -424,6 +424,12 @@ int UvcPlugin::FeedVideo(XProtoMessagePtr msg) {
 int UvcPlugin::FeedVideoDrop(XProtoMessagePtr msg) {
   if (!run_flag_) {
     return 0;
+  }
+  {
+    auto vio_msg = std::dynamic_pointer_cast<VioMessage>(msg);
+    if (vio_msg != nullptr) {
+      smart_manager_->FeedDropSmart(vio_msg->sequence_id_);
+    }
   }
   if (!uvc_server_->IsUvcStreamOn()) {
     return 0;

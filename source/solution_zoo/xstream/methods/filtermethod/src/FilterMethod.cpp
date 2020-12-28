@@ -466,7 +466,6 @@ int FilterMethod::FaceValid(const int &input_size,
     } else if ("landmark" == data_info.type) {
       auto lmk = std::static_pointer_cast<XStreamLandmarks>(
           input_slot[i]->datas_[idx]);
-      LOGE << "face filter method:";
       if (lmk->state_ == DataState::VALID) {
         lmk_pass = LmkVerification(lmk);
         if (!lmk_pass) {
@@ -486,7 +485,7 @@ int FilterMethod::FaceValid(const int &input_size,
           return filter_param_->age_err_code;
         }
       }
-    } else if ("uppper_limit" == data_info.type) {
+    } else if ("upper_limit" == data_info.type) {
       float upper_score = 0;
       auto attribute = std::static_pointer_cast<XStreamAttribute>(
           input_slot[i]->datas_[idx]);
@@ -850,7 +849,7 @@ BaseDataVectorPtr FilterMethod::CopySlot(const BaseDataVectorPtr &attr,
       *copy_data = *actual_data;
       out->datas_.push_back(std::static_pointer_cast<BaseData>(copy_data));
     } else if ("upper_limit" == data_type || "lower_limit" == data_type ||
-               "range" == data_type) {
+               "range_limit" == data_type) {
       auto actual_data = std::static_pointer_cast<XStreamAttribute>(data);
       std::shared_ptr<XStreamAttribute> copy_data =
           std::make_shared<XStreamAttribute>();

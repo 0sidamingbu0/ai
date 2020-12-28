@@ -243,6 +243,7 @@ Boolean H264Sink::isNeedToWait(unsigned frameSize) {
       data_len_ += frameSize;
       int nNal1 = 0;
       nNal1 |= (video_buffer_[4] & 0x1f);
+      LOGW << "channel:" << channel_ << " recv nal 1:" << nNal1;
       if (nNal1 == 0x07) {
         LOGW << "channel:" << channel_ << " to analytics sps info";
         int width = 0;

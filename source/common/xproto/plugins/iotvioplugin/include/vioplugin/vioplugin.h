@@ -21,9 +21,6 @@
 
 #include "horizon/vision_type/vision_type.hpp"
 #include "hobot_vision/blocking_queue.hpp"
-#ifdef PYAPI
-#include "pybind11/pybind11.h"
-#endif
 
 #define VIO_CAMERA "vio_camera"
 #define VIO_FEEDBACK "vio_feedback"
@@ -52,9 +49,6 @@ class VioPlugin : public xproto::XPluginAsync {
     is_sync_mode_ = is_sync_mode;
     return 0;
   }
-#ifdef PYAPI
-  int AddMsgCB(const std::string msg_type, pybind11::function callback);
-#endif
 
  private:
   std::shared_ptr<VioConfig> GetConfigFromFile(const std::string &path);

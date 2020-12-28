@@ -125,7 +125,8 @@ typedef enum HB_RGN_FONT_COLOR_ATTR_E   /*font color*/
 
 typedef enum HB_PIXEL_FORMAT_ATTR_E     /*pixel format*/
 {
-    PIXEL_FORMAT_VGA_4
+    PIXEL_FORMAT_VGA_4,
+    PIXEL_FORMAT_YUV420SP
 } RGN_PIXEL_FORMAT_E;
 
 typedef int32_t RGN_HANDLE;            /*region handle*/

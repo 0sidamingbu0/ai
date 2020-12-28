@@ -36,6 +36,11 @@ private:
   uint32_t frameDepth_;
   uint32_t buffer_index_;
   std::vector<VIDEO_FRAME_S> buffers_;
+
+  int in_fps_ = 0;
+  int out_fps_ = 0;
+  std::chrono::high_resolution_clock::time_point in_start_tp_;
+  std::chrono::high_resolution_clock::time_point out_start_tp_;
 };
 
 }  // namespace vision
