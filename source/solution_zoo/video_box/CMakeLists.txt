@@ -14,6 +14,7 @@ file(GLOB PROJECT_SRC
     "src/rtspclient/*.c"
     "src/rtspplugin/*.cpp"
     "src/smartplugin_box/*.cpp"
+    "src/xwareplugin/*.cpp"
 )
 
 set(SOURCE_FILES
@@ -33,10 +34,12 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 if (${PLATFORM_X3})
 set(BASE_LIBRARIES FasterRCNNMethod CNNMethod visualplugin
 xstream xproto xproto_msgtype MOTMethod FilterMethod MergeMethod vote_method BehaviorMethod
+        FaceSnapFilterMethod SnapShotMethod GradingMethod
         FilterSkipFrameMethod
         plate_vote_method
         vote_method
         VehiclePlateMatchMethod
+        MultitaskPredictMethod MultitaskPostProcessMethod
         bpu_predict ipc_tracking xstream-imagetools hobotlog vision_type_util jsoncpp opencv_world vio cam pthread)
 
 set(LIVE_LIB BasicUsageEnvironment groupsock liveMedia UsageEnvironment turbojpeg)
@@ -44,7 +47,7 @@ set(LIVE_LIB BasicUsageEnvironment groupsock liveMedia UsageEnvironment turbojpe
 set(X3_HAPI_LIB isp iar isp_algo tinyalsa multimedia hbmedia z avformat )
 endif()
 
-target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES} ${LIVE_LIB} ${X3_HAPI_LIB} )
+target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES} ${LIVE_LIB} ${X3_HAPI_LIB} xwarehouse )
 
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME}/)
 install(DIRECTORY

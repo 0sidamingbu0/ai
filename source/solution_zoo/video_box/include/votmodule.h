@@ -8,16 +8,20 @@
 #define INCLUDE_VOTMODULE_H_
 
 #include <array>
+#include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "hb_vio_interface.h"
+#include "hobot_vision/blocking_queue.hpp"
 #include "hobotxsdk/xstream_data.h"
 #include "mediapipemanager/basicmediamoudle.h"
 #include "opencv2/opencv.hpp"
 #include "smartplugin_box/character_font.h"
 #include "smartplugin_box/traffic_info.h"
+#include "video_box_common.h"
 #include "xstream/vision_type/include/horizon/vision_type/vision_type.h"
 
 using horizon::vision::xproto::smartplugin::VehicleInfo;
@@ -25,36 +29,15 @@ using horizon::vision::xproto::smartplugin::VehicleInfo;
 namespace horizon {
 namespace vision {
 
-struct VotData {
-  uint32_t channel;
-  std::vector<std::array<int, 4>> boxes;
-  std::vector<std::array<int, 2>> points;
-  std::vector<VehicleInfo> vehicle_infos;
-  char *y_virtual_addr;
-  char *uv_virtual_addr;
-  uint32_t width;
-  uint32_t height;
-};
-
-typedef struct smart_vo_s {
-  float box_face_thr = 0.95;
-  float box_head_thr = 0.95;
-  float box_body_thr = 0.95;
-  float lmk_thr = 0.0;
-  float kps_thr = 0.50;
-  float box_veh_thr = 0.995;
-  bool plot_fps = false;
-} smart_vo_cfg_t;
-
 class VotModule {
  public:
   VotModule();
   ~VotModule();
-  int Init(uint32_t group_id, const PipeModuleInfo *module_info,
-           const smart_vo_cfg_t &smart_vo_cfg);
+  int Init(uint32_t group_id, const smart_vo_cfg_t &smart_vo_cfg);
   int Start();
-  int Input(void *data);
-  int Input(void *data, const xstream::OutputDataPtr &xstream_out);
+  int Input(std::shared_ptr<VideoData> video_data,
+            const bool transition = false);
+
   int Output(void **data);
   int OutputBufferFree(void *data);
   int Stop();
@@ -70,7 +53,15 @@ class VotModule {
   uint32_t image_height_;
   uint32_t display_mode_;
   uint32_t channel_num_;
+
+  static uint64_t frame_id_;
+  static std::mutex frame_id_mtx_;
+
+  uint32_t frame_interval_;
+  uint32_t frame_transition_;
+  bool display_chn_hide_;
   char *buffer_;
+  char *buffer1_;
   smart_vo_cfg_t vo_plot_cfg_;
 
   typedef struct logo_img_cache_s {
@@ -91,35 +82,38 @@ class VotModule {
     cv::Mat bottom_bgr_mat_mid_;
   } logo_img_cache_t;
   logo_img_cache_t logo_img_cache_;
-  int ParseLogoImg(const std::string& file_name_top,
-                   const std::string& file_name_bottom,
-                   int pad_width = 1920, int pad_height = 1080);
-  int ParseBottomLogoImg(const std::string& file_name_bottom_left,
-                   const std::string& file_name_bottom_rigth);
+  int ParseLogoImg(const std::string &file_name_top,
+                   const std::string &file_name_bottom, int pad_width = 1920,
+                   int pad_height = 1080);
+  int ParseBottomLogoImg(const std::string &file_name_bottom_left,
+                         const std::string &file_name_bottom_rigth);
   void padding_logo(char *buf, int pad_width = 1920, int pad_height = 1080);
 
   int PlotFont(char *y, const char *font_buf, int x0, int y0,
                int bg_width = 1920, int bg_height = 1080);
-
-  // create 960*540 bgr
-  int PlotSmartData(cv::Mat &bgr, bool face, bool head, bool body, bool kps,
-                    bool veh, VotData *vot_data,
-                    const xstream::OutputDataPtr &xstream_out);
-  // padding 540p bgr to 1080p nv12
-  void bgr_540p_to_nv12(cv::Mat &bgr_mat, char *buf, int channel);
-  // convert 540p bgr to 540p nv12
-  void bgr_to_nv12(uint8_t *bgr, uint8_t *buf);
 
   // position 0:top, 1:bottom
   // left_right 0:left, 1:right
   int Drawlogo(const cv::Mat &logo, cv::Mat *bgr, int position,
                int left_right = 0);
   void DrawLogo(cv::Mat *bgr, const int channel);
-  void bgr_540p_to_nv12_ex(const uint32_t src_width, const uint32_t src_height,
-                           cv::Mat &bgr_mat, char *buf, int channel,
-                           bool &resize);
-  void bgr_to_nv12_ex(uint8_t *bgr, uint8_t *buf, const uint32_t width,
-                      const uint32_t height);
+
+  void DataToBuffer(const uint32_t src_width, const uint32_t src_height,
+                    cv::Mat &bgr_mat, char *buf, int channel, bool &resize);
+  void bgr_to_nv12(uint8_t *bgr, uint8_t *buf, const uint32_t width,
+                   const uint32_t height);
+  int HandleData();
+  int Transition(std::shared_ptr<VideoData> video_data);
+
+ private:
+  bool start_ = false;
+  bool init_ = false;
+  bool running_ = false;
+
+  hobot::vision::BlockingQueue<std::shared_ptr<VideoData>> in_queue_;
+  uint32_t in_queue_len_max_ = 40;
+  // std::mutex cache_mtx_;
+  std::thread plot_task_;
 };
 
 }  // namespace vision

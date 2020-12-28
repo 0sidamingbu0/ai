@@ -25,6 +25,8 @@ extern int hb_vin_iar_bypass(uint32_t port, uint32_t enable, uint32_t enable_fra
 extern int hb_vin_set_bypass(uint32_t port, uint32_t enable);
 extern int hb_vin_pre_request(uint32_t entry_num, uint32_t type, uint32_t timeout);
 extern int hb_vin_pre_result(uint32_t entry_num, uint32_t type, uint32_t result);
+extern int hb_vin_ipi_reset(uint32_t entry_num, int32_t ipi, uint32_t enable);
+extern int hb_vin_ipi_fatal(uint32_t entry_num, int32_t ipi);
 
 #ifdef __cplusplus
 }

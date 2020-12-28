@@ -29,12 +29,12 @@ TEST(MethodInitTest, ConfigPath) {
 
 TEST(MethodInitTest, ConfigContent) {
   auto config = std::make_shared<xstream::XStreamConfig>();
-  EXPECT_EQ(-1,
+  EXPECT_EQ(0,
             config->LoadFile("./test/configs/config_Init_ConfigContent.json"));
   xstream::XStreamSDK *flow = xstream::XStreamSDK::CreateSDK();
   flow->SetConfig("config_file",
                   "./test/configs/config_Init_ConfigContent.json");
-  EXPECT_EQ(-1, flow->Init());
+  EXPECT_EQ(0, flow->Init());
 }
 
 TEST(MethodInitTest, ConfigIncludeContent) {

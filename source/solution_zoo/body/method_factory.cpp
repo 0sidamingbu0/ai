@@ -19,6 +19,10 @@
 #include "BehaviorMethod/BehaviorMethod.h"
 #include "FilterMethod/FilterMethod.h"
 #include "LowPassFilterMethod/LowPassFilterMethod.h"
+#include "MattingPredictMethod/MattingPredictMethod.h"
+#include "MattingPostProcessMethod/MattingPostProcessMethod.h"
+#include "MattingTrimapFreePredictMethod/MattingTrimapFreePredictMethod.h"
+#include "MattingTrimapFreePostProcessMethod/MattingTrimapFreePostProcessMethod.h"
 
 namespace xstream {
 namespace method_factory {
@@ -39,6 +43,14 @@ MethodPtr CreateMethod(const std::string &method_name) {
     return MethodPtr(new FilterMethod());
   } else if ("LowPassFilterMethod" == method_name) {
     return MethodPtr(new LowPassFilterMethod());
+  } else if ("MattingPredictMethod" == method_name) {
+    return MethodPtr(new MattingPredictMethod());
+  } else if ("MattingPostProcessMethod" == method_name) {
+    return MethodPtr(new MattingPostProcessMethod());
+  } else if ("MattingTrimapFreePredictMethod" == method_name) {
+    return MethodPtr(new MattingTrimapFreePredictMethod());
+  } else if ("MattingTrimapFreePostProcessMethod" == method_name) {
+    return MethodPtr(new MattingTrimapFreePostProcessMethod());
   } else {
     return MethodPtr();
   }

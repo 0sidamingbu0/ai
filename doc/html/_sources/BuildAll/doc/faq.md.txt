@@ -29,6 +29,10 @@ ls /sys/class/video4linux/ -all
 ```
 此目录下如果新增了video*设备，表示usb摄像头连接正常。
 
+如下图红框，表示usb摄像头硬件连接正常。
+
+![检查](./image/usb_camera_detected_successfully.png "红框中内容存在，表示摄像头连接正常")
+
 ## IP设置
 使用系统自带的工具设置IP地址
 ```C++
@@ -40,6 +44,37 @@ hrut_ipfull s 192.168.1.100 255.255.255.0 192.168.1.1
 ```
 命令设置完后，重启系统即可生效
 
+## 查看系统镜像版本
+
+```C++
+cat /etc/version
+uname -a
+```
+
+## 查看CPU、BPU使用率
+
+```C++
+查看cpu使用率：top
+查看bpu使用率：hrut_somstatus
+```
+
+## 修改cma内存大小
+cma内存用于vio图像链路以及bpu内存，若程序运行起来，提示bpu malloc failed，一种可能是代码实现过程中未及时释放bpu内存，还有一种可能情况是场景复杂，cma内存确实不足。
+
+查看系统cma内存的方式：使用memstat命令，看cma_reserved的大小。
+
+程序运行过程中，可以通过如下命令查看当前系统正在运行的所有程序占用的cma内存大小：
+
+```
+watch -n 1 cat  /sys/kernel/debug/ion/heaps/ion_cma
+```
+
+若需要修改cma内存大小，则需要连接串口，在系统启动时进入uboot模式，进入uboot模式，运行如下两个命令,则将cma内存设置为1024MB
+
+```
+setenv ion_size  1024
+saveenv
+```
 
 ## 编译、部署及示例运行
 ### 编译
@@ -95,7 +130,7 @@ X3版本回灌支持3种模式，分别为cache， jpg与nv12这3个模式，区
 | 回灌方式       |   回灌图像配置   |
 | ----------    | ------  |
 |cache| **configs/vio_config.json.x3dev.fb**中image_list字段|
-|jpg| **configs/vio_config.json.x3dev.fb**中配置的file_path，默认为**configs/vio_hg/name.list**|
+|jpg| **configs/vio_config.json.x3dev.fb**中配置的file_path，默认为**configs/vio_hg/name_jpg.list**|
 |nv12| **configs/vio_config.json.x3dev.fb**中配置的file_path，默认为**configs/vio_hg/name_nv12.list**|
 
 ### 回灌示例
@@ -150,85 +185,47 @@ aiexpress的部署包默认是web模式，运行solution后，使用Chrome浏览
 | 1 | web模式 |
 | 2 | uvc模式 |
 
-## 视频盒子使用HDMI显示
-运行视频盒子示例，需要使用HDMI显示。系统默认未开启HDMI显示功能，系统烧录成功后，可以参考如下方法，开启HDMI显示。
+## 多路IPM图像回灌
+multi_input_hapi_ipm参考方案支持回灌多路IPM图像，IPM图像格式支持nv12和jpg，分辨率为256*512(注：模型输入分辨率)
+回灌步骤：
 
-使用串口连接开发板，然后重启X3设备，重启后根据提示随意按任意键进入uboot模式。在uboot模式中敲入如下两个命令：
-```
-setenv bootargs earlycon console=ttyS0,921600 clk_ignore_unused video=hobot:x3sdb-hdmi kgdboc=ttyS0
+### jpg格式回灌
+发布版本中，默认时jpg回灌模式
+进入到`deploy/configs/vio_hg/multi_fb/name_jpg_256x512`目录
+替换图片并修改对应的fb_pipex.list文件即可
+#### 1、准备回灌图片
+images_pipe0存放第1路回灌图片，images_pipe1存放第2路回灌图片，以此类推，把需要回灌的图片放入对应目录
+#### 2、修改回灌文件列表
+fb_pipe0.list文件中填写第1路回灌图片路径列表，fb_pipe1.list对应第2路回灌图片路径列表，以此类推，修改成需要回灌的图片路径即可
 
-saveenv
-```
+### nv12格式回灌
+进入到`deploy/configs/vio_hg/multi_fb/name_nv12_256x512`目录
+#### 1、准备回灌图片
+images_pipe0存放第1路回灌图片，images_pipe1存放第2路回灌图片，以此类推，把需要回灌的图片放入对应目录
+#### 2、修改回灌文件列表
+fb_pipe0.list文件中填写第1路回灌图片路径列表，fb_pipe1.list对应第2路回灌图片路径列表，以此类推，修改成需要回灌的图片路径即可
+#### 3、修改配置
+修改`deploy/configs/vio_config.json.j3dev.multi_fb_sync.256x512`配置中multi_feedback_mode字段为nv12_image_list;
+配置中file_path字段修改为回灌图片的路径。
 
-系统重启后，HDMI显示器上显示地平线LOGO，则说明HDMI显示设置成功。
-
-## 视频盒子本地转发
-视频盒子可使用本地264文件，实现文件转发功能。使用本地转发h264文件前，修改display_mode和local_forward配置。
-
-|display_mode字段|模式|
+|multi_feedback_mode字段|模式|
 | -------- | ----- |
-| 0 | rtsp模式 |
+| nv12_image_list | nv12图片回灌 |
+| jpeg_image_list | jpg图片回灌 |
 
-|local_forward字段|模式|
-| -------- | ----- |
-| 1 | 本地转发 |
-| 0 | 远程IPC |
+### 说明
+多路回灌时，要求每一路的图片数量必须相同。
+比如第一路回灌，fb_pipe0.list中填写N个图片路径，那么第二、三、四路回灌，也必须填写N个图片路径。
 
-目前支持一路和多路的本地转发功能，使用本地转发功能时，需要先修改`deploy/video_box/config/rtsp.json`中的url为：rtsp://ip:555/inputfilename。
+## 视频盒子本地调试
 
-`inputfilename`为deploy下的h264文件，例如x3 ip地址为10.64.35.193，默认h264文件为test.264,则url为 rtsp://10.64.35.193:555/test.264。
+在使用vlc调试本地RTSP视频流时，可能也会遇到视频码流花屏的情况，这里建议vlc播放器也选择tcp协议。
+vlc使用tcp协议具体设置如下：
 
-`channel_num`字段表示几路本地转发，如果只想使用1路本地转发，置1即可，目前最多支持4路。
+选择工具，偏好设置
 
-`tcp`字段表示传输协议，置1。
+![设置](./image/vlc_rtsp_local01.png "vlc设置tcp协议01")
 
-完整deploy/video_box/configs/rtsp.json本地转发rtsp配置示例如下：
-```bash
-{
-  "channel_num": 1,
-  "channel0": {
-    "rtsp_link": "rtsp://10.64.35.193:555/test.264",
-    "tcp": 1,
-    "frame_max_size": 1024, // 200K
-    "save_stream": 0
-  },
-  "channel1": {
-    "rtsp_link": "rtsp://10.64.35.194:555/test.264",
-    "tcp": 1,
-    "frame_max_size": 1024, // 200K
-    "save_stream": 0
-  },
-  "channel2": {
-    "rtsp_link": "rtsp://10.64.35.195:555/test.264",
-    "tcp": 1,
-    "frame_max_size": 1024, // 200K
-    "save_stream": 0
-  },
-  "channel3": {
-    "rtsp_link": "rtsp://10.64.35.196:555/test.264",
-    "tcp": 1,
-    "frame_max_size": 1024, // 200K
-    "save_stream": 0
-  }
-}
-```
+然后选择输入/编解码器，选中RTP over RTSP(TCP)，然后保存。
 
-然后修改`deploy/video_box/configs/visualplugin_video_box.json`配置中的display_mode，input_h264_filename和local_forward字段。
-
-`display_mode`:0, 表示使用rtsp模式。
-`input_h264_filename`:"test.264",表示本地264文件名为test.264。
-`local_forward`:1,表示开启视频盒子本地转发功能。
-
-完整deploy/video_box/configs/visualplugin_video_box.json配置示例如下：
-```bash
-{
-  "auth_mode": 0,
-  "display_mode": 0,
-  "user": "admin",
-  "password": "123456",
-  "data_buf_size": 3110400,
-  "packet_size": 102400,
-  "input_h264_filename": "test.264",
-  "local_forward": 1
-}
-```
+![设置](./image/vlc_rtsp_local02.png "vlc设置tcp协议02")

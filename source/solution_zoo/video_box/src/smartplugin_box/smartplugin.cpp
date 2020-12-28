@@ -30,6 +30,7 @@
 #include "smartplugin_box/displayinfo.h"
 #include "smartplugin_box/runtime_monitor.h"
 #include "smartplugin_box/smart_config.h"
+#include "video_box_common.h"
 #include "votmodule.h"
 #include "xproto/message/pluginflow/flowmsg.h"
 #include "xproto/message/pluginflow/msg_registry.h"
@@ -37,6 +38,7 @@
 #include "xproto_msgtype/protobuf/x2.pb.h"
 #include "xproto_msgtype/protobuf/x3.pb.h"
 #include "xproto_msgtype/vioplugin_data.h"
+#include "xwareplugin/waremessage.h"
 
 namespace horizon {
 namespace vision {
@@ -46,6 +48,7 @@ namespace smartplugin_multiplebox {
 using horizon::vision::xproto::XPluginAsync;
 using horizon::vision::xproto::XProtoMessage;
 using horizon::vision::xproto::XProtoMessagePtr;
+using horizon::vision::xproto::wareplugin::WarePluginRecogMessage;
 
 using horizon::vision::xproto::basic_msgtype::VioMessage;
 using ImageFramePtr = std::shared_ptr<hobot::vision::ImageFrame>;
@@ -64,31 +67,16 @@ SmartPlugin::SmartPlugin(const std::string &smart_config_file) {
 
   LOGI << "smart config file:" << smart_config_file_;
   monitor_.reset(new RuntimeMonitor());
-  Json::Value cfg_jv;
-  std::ifstream infile(smart_config_file_);
-  infile >> cfg_jv;
-  config_.reset(new JsonConfigWrapper(cfg_jv));
-  ParseConfig();
-
-  running_vot_ = true;
-  GetDisplayConfigFromFile(display_config_file_);
-
-  if (running_vot_) {
-    vot_module_ = std::make_shared<VotModule>();
-  }
-
-  if (running_venc_1080p_) {
-    venc_module_1080p_ = std::make_shared<VencModule>();
-  }
-
-  if (running_venc_720p_) {
-    venc_module_720p_ = std::make_shared<VencModule>();
-  }
+  video_processor_ = std::make_shared<VideoProcessor>();
 }
 
 void SmartPlugin::ParseConfig() {
   xstream_workflow_cfg_file_ =
       config_->GetSTDStringValue("xstream_workflow_file");
+  xstream_workflow_cfg_pic_file_ =
+      config_->GetSTDStringValue("xstream_workflow_file_pic");
+  xstream_workflow_cfg_feature_file_ =
+      config_->GetSTDStringValue("xstream_workflow_file_feature");
   enable_profile_ = config_->GetBoolValue("enable_profile");
   profile_log_file_ = config_->GetSTDStringValue("profile_log_path");
   if (config_->HasMember("enable_result_to_json")) {
@@ -126,6 +114,13 @@ void SmartPlugin::ParseConfig() {
 }
 
 int SmartPlugin::Init() {
+  Json::Value cfg_jv;
+  std::ifstream infile(smart_config_file_);
+  infile >> cfg_jv;
+  config_.reset(new JsonConfigWrapper(cfg_jv));
+  ParseConfig();
+
+  GetDisplayConfigFromFile(display_config_file_);
   GetRtspConfigFromFile(rtsp_config_file_);
   LOGD << "get channel_num from file is:" << channel_num_;
 
@@ -148,37 +143,31 @@ int SmartPlugin::Init() {
   RegisterMsg(TYPE_IMAGE_MESSAGE,
               std::bind(&SmartPlugin::Feed, this, std::placeholders::_1));
 
-  if (running_vot_) {
-    PipeModuleInfo module_info;
-    vot_module_->SetDisplayMode(display_mode_);
-    vot_module_->SetChannelNum(channel_num_);
-    vot_module_->Init(0, &module_info, smart_vo_cfg_);
+  pic_sdk_.reset(xstream::XStreamSDK::CreateSDK());
+  pic_sdk_->SetConfig("config_file", xstream_workflow_cfg_pic_file_);
+  if (pic_sdk_->Init() != 0) {
+    LOGE << "smart plugin init failed!!!";
+    return kHorizonVisionInitFail;
   }
 
-  smart_venc_cfg_.input_num = channel_num_;
-
-  if (running_venc_1080p_) {
-    VencModuleInfo module_info_venc;
-    module_info_venc.width = 1920;
-    module_info_venc.height = 1080;
-    module_info_venc.type = 1;
-    module_info_venc.bits = 2000;
-
-    venc_module_1080p_->Init(0, &module_info_venc, smart_venc_cfg_);
-    venc_module_1080p_->Start();
+  pic_sdk_->SetCallback(
+      std::bind(&SmartPlugin::OnCallbackPic, this, std::placeholders::_1));
+  feature_sdk_.reset(xstream::XStreamSDK::CreateSDK());
+  feature_sdk_->SetConfig("config_file", xstream_workflow_cfg_feature_file_);
+  if (feature_sdk_->Init() != 0) {
+    LOGE << "smart plugin init failed!!!";
+    return kHorizonVisionInitFail;
   }
 
-  if (running_venc_720p_) {
-    VencModuleInfo module_info_venc;
-    module_info_venc.width = 1280;
-    module_info_venc.height = 720;
-    module_info_venc.type = 1;
-    module_info_venc.bits = 2000;
-
-    venc_module_720p_->Init(1, &module_info_venc, smart_venc_cfg_);
-    venc_module_720p_->Start();
-  }
-
+  feature_sdk_->SetCallback(
+      std::bind(&SmartPlugin::OnCallbackFeature, this, std::placeholders::_1));
+  RegisterMsg(TYPE_FACE_PIC_IMAGE_MESSAGE,
+              std::bind(&SmartPlugin::FeedPic, this, std::placeholders::_1));
+  RegisterMsg(TYPE_RECOG_MESSAGE,
+              std::bind(&SmartPlugin::FeedRecog, this, std::placeholders::_1));
+  video_processor_->Init(channel_num_, display_mode_, smart_vo_cfg_,
+                         encode_smart_, running_venc_1080p_, running_venc_720p_,
+                         running_vot_);
   return XPluginAsync::Init();
 }
 
@@ -215,10 +204,31 @@ int SmartPlugin::Feed(XProtoMessagePtr msg) {
   return 0;
 }
 
+
+int SmartPlugin::FeedPic(XProtoMessagePtr msg) {
+  // parse valid frame from msg
+  LOGD << "smart plugin got one msg";
+  std::cout << "FeedPic,smart plugin got one msg" << std::endl;
+  auto valid_frame = std::static_pointer_cast<VioMessage>(msg);
+  xstream::InputDataPtr input = Convertor::ConvertInput(valid_frame.get());
+  if (pic_sdk_->AsyncPredict(input) != 0) {
+    return kHorizonVisionFailure;
+  }
+  return 0;
+}
+
+int SmartPlugin::FeedRecog(XProtoMessagePtr msg) {
+  auto recog_msg = std::static_pointer_cast<WarePluginRecogMessage>(msg);
+  auto cach = recog_msg->GetMessageData();
+  std::lock_guard<std::mutex> lk(cache_mtx_);
+  recog_cache_[cach->ch_id][cach->track_id] = cach;
+  return 0;
+}
+
 int SmartPlugin::Start() {
   LOGI << "SmartPlugin Start";
   root.clear();
-
+  video_processor_->Start();
   running_ = true;
   smartframe_ = 0;
   // read_thread_ = std::thread(&SmartPlugin::ComputeFpsThread, this);
@@ -228,17 +238,7 @@ int SmartPlugin::Start() {
 int SmartPlugin::Stop() {
   running_ = false;
   // read_thread_.join();
-  if (running_vot_) {
-    vot_module_->Stop();
-  }
-
-  if (running_venc_1080p_) {
-    venc_module_1080p_->Stop();
-  }
-  if (running_venc_720p_) {
-    venc_module_720p_->Stop();
-  }
-
+  video_processor_->Stop();
   if (result_to_json) {
     remove("smart_data.json");
     Json::StreamWriterBuilder builder;
@@ -253,80 +253,189 @@ int SmartPlugin::Stop() {
 void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
   // On xstream async-predict returned,
   // transform xstream standard output to smart message.
-  LOGI << "smart plugin got one smart result";
+  LOGD << "smart plugin got one smart result";
   HOBOT_CHECK(!xstream_out->datas_.empty()) << "Empty XStream Output";
   XStreamImageFramePtr *rgb_image = nullptr;
-
+  int channel_id = static_cast<int>((uintptr_t)xstream_out->context_);
   for (const auto &output : xstream_out->datas_) {
     LOGD << output->name_ << ", type is " << output->type_;
     if (output->name_ == "rgb_image" || output->name_ == "image") {
       rgb_image = dynamic_cast<XStreamImageFramePtr *>(output.get());
+    } else if (output->name_ == "snap_list") {
+      auto snap_v =
+          std::dynamic_pointer_cast<xstream::BaseDataVector>(output);
+      if (snap_v->datas_.size() > 0) {
+        LOGE << "snap_v size:" << snap_v->datas_.size();
+        xstream::InputDataPtr input = std::make_shared<xstream::InputData>();
+        input->datas_.emplace_back(output);
+        input->context_ = (const void *)((uintptr_t)channel_id);
+        feature_sdk_->AsyncPredict(input);
+      }
     }
   }
   HOBOT_CHECK(rgb_image);
 
   smartframe_++;
-  int channel_id = static_cast<int>((uintptr_t)xstream_out->context_);
   LOGD << "OnCallback channel id " << channel_id << " frame_id "
        << rgb_image->value->frame_id;
-
-  if (running_vot_) {
+  if ((running_vot_ && !smart_vo_cfg_.transition_support)
+       || running_venc_1080p_) {
     int layer =
         DisplayInfo::computePymLayer(display_mode_, channel_num_, channel_id);
-    VotData vot_data;
-    vot_data.y_virtual_addr = reinterpret_cast<char *>(
+    auto video_data = std::make_shared<horizon::vision::VideoData>();
+    HorizonVisionAllocSmartFrame(&video_data->smart_frame);
+    // HorizonVisionCopySmartFrame(smart_frame, video_data->smart_frame);
+    Convertor::ConvertOutputToSmartFrame(xstream_out, video_data->smart_frame);
+    uint32_t width_tmp =
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .width;
+    uint32_t height_tmp =
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .height;
+    char *y_addr = reinterpret_cast<char *>(
         ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
             ->down_scale[layer]
             .y_vaddr);
-    vot_data.uv_virtual_addr = reinterpret_cast<char *>(
+    char *uv_addr = reinterpret_cast<char *>(
         ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
             ->down_scale[layer]
             .c_vaddr);
+    video_data->channel = channel_id;
+    video_data->width = width_tmp;
+    video_data->height = height_tmp;
+    video_data->data_len = width_tmp * height_tmp * 3 / 2;
+    video_data->buffer =
+        static_cast<char *>(malloc(width_tmp * height_tmp * 3 / 2));
+    for (uint32_t i = 0; i < height_tmp; ++i) {
+      memcpy(video_data->buffer + i * width_tmp, y_addr + i * width_tmp,
+             width_tmp);
+    }
 
-    vot_data.channel = channel_id;
-    vot_data.width = ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
-                         ->down_scale[layer]
-                         .width;
-    vot_data.height = ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
-                          ->down_scale[layer]
-                          .height;
-    vot_module_->Input(&vot_data, xstream_out);
-  }
-
-  if (running_venc_1080p_) {
-    VencData venc_data;
-    venc_data.width = 960;
-    venc_data.height = 540;
-    venc_data.y_virtual_addr = reinterpret_cast<char *>(
-        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
-            ->down_scale[4]
-            .y_vaddr);
-    venc_data.uv_virtual_addr = reinterpret_cast<char *>(
-        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
-            ->down_scale[4]
-            .c_vaddr);
-    venc_data.channel = channel_id;
-    venc_module_1080p_->Input(&venc_data, xstream_out);
+    for (uint32_t i = 0; i < (height_tmp / 2); ++i) {
+      memcpy(video_data->buffer + (i + height_tmp) * width_tmp,
+             uv_addr + i * width_tmp, width_tmp);
+    }
+    video_data->recog_cache = recog_cache_[channel_id];
+    video_processor_->Input(video_data);
   }
 
   if (running_venc_720p_) {
-    VencData venc_data;
-    venc_data.width = 640;
-    venc_data.height = 360;
-    venc_data.y_virtual_addr = reinterpret_cast<char *>(
+    int layer = DisplayInfo::computePymLayer(display_mode_, channel_num_,
+                                             channel_id, true);
+    auto video_data = std::make_shared<horizon::vision::VideoData>();
+    HorizonVisionAllocSmartFrame(&video_data->smart_frame);
+    Convertor::ConvertOutputToSmartFrame(xstream_out, video_data->smart_frame);
+    uint32_t width_tmp =
         ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
-            ->down_scale[5]
+            ->down_scale[layer]
+            .width;
+    uint32_t height_tmp =
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .height;
+    video_data->channel = channel_id;
+    video_data->width = width_tmp;
+    video_data->height = height_tmp;
+    video_data->data_len = width_tmp * height_tmp * 3 / 2;
+    video_data->buffer =
+        static_cast<char *>(malloc(width_tmp * height_tmp * 3 / 2));
+    char *y_addr = reinterpret_cast<char *>(
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
             .y_vaddr);
-    venc_data.uv_virtual_addr = reinterpret_cast<char *>(
+    char *uv_addr = reinterpret_cast<char *>(
         ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
-            ->down_scale[5]
+            ->down_scale[layer]
             .c_vaddr);
-    venc_data.channel = channel_id;
-    venc_module_720p_->Input(&venc_data, xstream_out);
+    for (uint32_t i = 0; i < height_tmp; ++i) {
+      memcpy(video_data->buffer + i * width_tmp, y_addr + i * width_tmp,
+             width_tmp);
+    }
+
+    for (uint32_t i = 0; i < (height_tmp / 2); ++i) {
+      memcpy(video_data->buffer + (i + height_tmp) * width_tmp,
+             uv_addr + i * width_tmp, width_tmp);
+    }
+    video_processor_->Input(video_data, true);
+  }
+
+  if (smart_vo_cfg_.transition_support) {
+    int layer = 0;
+    auto video_data = std::make_shared<horizon::vision::VideoData>();
+    uint32_t width_tmp =
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .width;
+    uint32_t height_tmp =
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .height;
+    video_data->channel = channel_id;
+    video_data->width = width_tmp;
+    video_data->height = height_tmp;
+    video_data->data_len = width_tmp * height_tmp * 3 / 2;
+    video_data->y_virtual_addr = reinterpret_cast<char *>(
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .y_vaddr);
+    video_data->uv_virtual_addr = reinterpret_cast<char *>(
+        ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
+            ->down_scale[layer]
+            .c_vaddr);
+    video_processor_->Input(video_data, false, true);
   }
 
   auto input = monitor_->PopFrame(rgb_image->value->frame_id, channel_id);
   delete static_cast<SmartInput *>(input.context);
+}
+
+
+void SmartPlugin::OnCallbackPic(xstream::OutputDataPtr xstream_out) {
+  LOGI << "OnCallbackPic smart plugin got one smart result";
+  HOBOT_CHECK(!xstream_out->datas_.empty()) << "Empty XStream Output";
+  XStreamImageFramePtr *rgb_image = nullptr;
+  for (const auto &output : xstream_out->datas_) {
+    LOGI << output->name_ << ", type is " << output->type_;
+    if (output->name_ == "rgb_image" || output->name_ == "image") {
+      rgb_image = dynamic_cast<XStreamImageFramePtr *>(output.get());
+    }
+    HOBOT_CHECK(rgb_image);
+    if (output->name_ == "face_feature") {
+      std::shared_ptr<FeatureFrameMessage> feat_msg =
+             std::make_shared<FeatureFrameMessage>();
+      Convertor::ConvertOutput(xstream_out, *feat_msg.get());
+      if (feat_msg->error_code_ == 0) {
+        auto feature_msg = std::make_shared<SmartFeatureMessage>(feat_msg);
+        feature_msg->SetMessageType("Pic_Face");
+        PushMsg(feature_msg);
+      }
+    }
+  }
+}
+
+
+void SmartPlugin::OnCallbackFeature(xstream::OutputDataPtr xstream_out) {
+  int channel_id = static_cast<int>((uintptr_t)xstream_out->context_);
+  for (const auto &output : xstream_out->datas_) {
+    if (output->name_ == "face_feature") {
+      auto features_v =
+              std::dynamic_pointer_cast<xstream::BaseDataVector>(output);
+      if (features_v->datas_.size() > 0) {
+        LOGD << "OnCallback   face_feature";
+        std::shared_ptr<FeatureFrameMessage> feat_msg =
+               std::make_shared<FeatureFrameMessage>();
+        Convertor::ConvertOutput(xstream_out, *feat_msg.get());
+        feat_msg->ch_id_ = channel_id;
+        if (feat_msg->error_code_ == 0) {
+          auto feature_msg = std::make_shared<SmartFeatureMessage>(feat_msg);
+          feature_msg->SetMessageType("Real_Face");
+          PushMsg(feature_msg);
+        }
+      }
+    }
+  }
 }
 
 void SmartPlugin::GetRtspConfigFromFile(const std::string &path) {
@@ -344,11 +453,6 @@ void SmartPlugin::GetRtspConfigFromFile(const std::string &path) {
     LOGE << "Can not find key: channel_num";
   }
   channel_num_ = value_js.asInt();
-
-  value_js = config_["display_mode"];
-  if (value_js.isNull()) {
-    LOGE << "Can not find key: display_mode";
-  }
 }
 
 void SmartPlugin::GetDisplayConfigFromFile(const std::string &path) {
@@ -363,9 +467,12 @@ void SmartPlugin::GetDisplayConfigFromFile(const std::string &path) {
 
   running_vot_ = config_["vo"]["enable"].asBool();
   display_mode_ = config_["vo"]["display_mode"].asInt();
+  smart_vo_cfg_.transition_support =
+      config_["vo"]["transition_support"].asBool();
 
   running_venc_1080p_ = config_["rtsp"]["stream_1080p"].asBool();
   running_venc_720p_ = config_["rtsp"]["stream_720p"].asBool();
+  encode_smart_ = config_["rtsp"]["encode_smart_info"].asBool();
 }
 
 void SmartPlugin::ComputeFpsThread(void *param) {

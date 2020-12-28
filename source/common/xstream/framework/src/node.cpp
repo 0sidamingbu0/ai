@@ -359,6 +359,7 @@ std::vector<InputParamPtr> Node::GetInputParams(
   return ret;
 }
 
+#if 0
 void Node::CheckResult(const FrameworkData &frame_data) {
   for (auto in_slot : input_slots_) {
     for (auto out_slot : output_slots_) {
@@ -370,6 +371,7 @@ void Node::CheckResult(const FrameworkData &frame_data) {
     }
   }
 }
+#endif
 
 void Node::SetOutputData(FrameworkDataBatchPtr frame_data,
                          const std::vector<std::vector<BaseDataPtr>> &data) {
@@ -396,6 +398,7 @@ void Node::SetOutputData(FrameworkDataBatchPtr frame_data,
   }
 }
 
+#if 0
 void Node::SetOutputDataTimeout(FrameworkDataBatchPtr frame_data) {
   LOGE << unique_name_ << ": Process Time Out!!!";
   auto &frames = frame_data->datas_;
@@ -412,6 +415,7 @@ void Node::SetOutputDataTimeout(FrameworkDataBatchPtr frame_data) {
     }
   }
 }
+#endif
 
 int Node::SetParameter(InputParamPtr ptr) {
   return method_manager_.UpdateParameter(ptr);

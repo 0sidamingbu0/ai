@@ -52,8 +52,24 @@ static void signal_handle(int param) {
 }
 
 int main(int argc, char **argv) {
-  mallopt(M_TRIM_THRESHOLD, 128 * 1024);
-  HB_BPU_setGlobalConfig(BPU_GLOBAL_ENGINE_TYPE, "native");
+  auto mallopt_option = getenv("MALLOC");
+  auto bpu_engine_option = getenv("BPU_ENGINE");
+  if (mallopt_option && !strcmp(mallopt_option, "OFF")) {
+    std::cout << "turn off mallopt" << std::endl;
+  } else {
+    // default use mallopt
+    std::cout << "turn on mallopt" << std::endl;
+    mallopt(M_TRIM_THRESHOLD, 128 * 1024);
+  }
+  if (bpu_engine_option && !strcmp(bpu_engine_option, "group")) {
+    std::cout << "use bpu group engine" << std::endl;
+    HB_BPU_setGlobalConfig(BPU_GLOBAL_ENGINE_TYPE, "group");
+  } else {
+    // default use native engine
+    std::cout << "use bpu native engine" << std::endl;
+    HB_BPU_setGlobalConfig(BPU_GLOBAL_ENGINE_TYPE, "native");
+  }
+
   std::string run_mode = "ut";
 
   if (argc < 5) {

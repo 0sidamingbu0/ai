@@ -895,6 +895,36 @@ int32_t HB_VENC_SetModParam(VENC_CHN VeChn,
  *****************************************************************************/
 int32_t HB_VENC_GetModParam(VENC_CHN VeChn, VENC_PARAM_MOD_S *pstModParam);
 
+/*****************************************************************************
+ * 函数描述:。
+ * 输入参数:
+ *    VeChn:视频编码通道号，[0, VENC_MAX_CHN_NUM)
+ *    averageQp:
+ * 输出参数:
+ *     无
+ * 返回值：
+ *     0：成功
+ *   非0：失败，参照错误码
+ * 说明: 
+ *****************************************************************************/
+int32_t HB_VENC_SetAverageQp(VENC_CHN VeChn, int averageQp);
+
+/*****************************************************************************
+ * 函数描述:。
+ * 输入参数:
+ *    VeChn:视频编码通道号，[0, VENC_MAX_CHN_NUM)  
+ * 输出参数:
+ *     无
+ * 返回值：
+ *     0：成功
+ *   非0：失败，参照错误码
+ * 说明:
+ *****************************************************************************/
+int32_t HB_VENC_GetAverageQp(VENC_CHN VeChn, int *averageQp);
+
+int32_t HB_VENC_Get3DNRParam(VENC_CHN VeChn, VENC_3DNR_PARAMS *param);
+int32_t HB_VENC_Set3DNRParam(VENC_CHN VeChn, VENC_3DNR_PARAMS *param);
+
 // int32_t HB_VENC_GetRoiAttrEx(VENC_CHN VeChn, HB_U32 u32Index,
 // VENC_ROI_ATTR_EX_S *pstRoiAttrEx);
 

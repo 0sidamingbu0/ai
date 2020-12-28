@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>XProto原型应用开发框架开发指南 &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>XProto原型应用开发框架开发指南 &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -101,7 +101,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#id6">消息基础类</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#plugin">Plugin接口描述</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plugin">Plugin描述</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id7">XProto开发示例</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#stage1">stage1 消息的订阅和发布</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stage2">stage2 插件的最大消息队列</a></li>
@@ -128,6 +128,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="copyright.html">版权声明</a></li>
@@ -209,7 +210,7 @@
 </div>
 <div class="section" id="id2">
 <h2>XProto组成<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
-<p>XProto主要由XProto-Framework， msgtype， plugins等部分组成。其中XProto-Framework为框架本身内容，msgtype与plugins均是实现参考示例时的实现参考；客户基于XProto开发，可以不依赖msgtype与plugins</p>
+<p>XProto主要由XProto-Framework， msgtype， plugins等部分组成。其中XProto-Framework为框架本身内容，msgtype与plugins为实现参考解决方案时的实现的派生类。</p>
 <div class="section" id="xproto-framework">
 <h3>XProto-Framework<a class="headerlink" href="#xproto-framework" title="永久链接至标题">¶</a></h3>
 <p>XProto Framework原型框架主要包括Plugin插件管理和消息分发两个部分。Plugin插件是一个任务实体，所有的Plugin插件都连接到XProto消息总线中，当一个Plugin插件产生消息并把消息Push到总线之后，其他订阅该消息的Plugin插件就可以被调用。</p>
@@ -246,71 +247,45 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">XProtoMessage</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XProtoMessage</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type_</span> <span class="o">=</span> <span class="s">&quot;NONE&quot;</span><span class="p">;</span>
-
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">param_</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
-
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">type_</span><span class="p">;</span> <span class="p">}</span>
-
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Serialize</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ConvertData</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c1">// need call delete() to release the output</span>
-    <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
-  <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">using</span> <span class="n">XProtoMessagePtr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>消息的声明与定义：</p>
-<ul class="simple">
-<li><p>使用宏XPLUGIN_REGISTER_MSG_TYPE,自定义消息类型，每个消息名字唯一；</p></li>
-<li><p>监听消息的插件需要：</p>
-<ul>
-<li><p>实现消息处理函数；</p></li>
-<li><p>覆盖Init函数，在其中完成监听消息注册，并绑定对应的消息处理函数，</p></li>
-<li><p>及其他初始化工作，同时在函数返回前需要调用父plugin的Init方法，</p></li>
-<li><p>通常是XPluginAsync::Init()。</p></li>
-</ul>
-</li>
-</ul>
-<p>相关接口定义如下：</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// 声明消息类型;每一类消息都有一个字符串形式的消息类型和结构体来表示.</span>
-<span class="c1">// 该接口为一个宏, 参数MSG_TYPE用来表示声明的消息类型, 需要直接使用标识符的格式书写, 宏内部会将其转成字符串.  </span>
-<span class="c1">// 需要在消费者Plugin调用订阅消息接口之前调用该接口声明消息类型,一般将该宏放在全局变量声明的位置.</span>
-<span class="c1">// 参数：MSGTYPE: 消息类型</span>
-<span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">MSG_TYPE</span><span class="p">)</span>
+<p>使用宏XPLUGIN_REGISTER_MSG_TYPE,自定义消息类型，每个消息名字唯一；</p>
+<p>消息定义实例：</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define TYPE_SAMPLE_MESSAGE &quot;XPLUGIN_SAMPLE_MESSAGE&quot;  </span><span class="c1">// 消息类型</span>
+<span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">XPLUGIN_SAMPLE_MESSAGE</span><span class="p">)</span>     <span class="c1">// 注册消息</span>
 
-<span class="c1">// 初始化Plugin</span>
-<span class="c1">// 该接口需要继承XPluginAsync类的自定义Plugin实现该接口定义. 该接口用来初始化Plugin，自定义Plugin一般在该接口内调用订阅消息接口, 然后继续调用XPluginAsync::Init接口以初始化父类.</span>
-<span class="c1">// 返回值：0: 成功；非0: 失败</span>
-<span class="kt">int</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">Init</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
-
-<span class="c1">// 发布消息</span>
-<span class="c1">// 该接口用来将消息发布到XProto内部总线上. 接收一个类型为XProtoMessage的结构体指针, XProto的所有消息都继承于该类型.</span>
-<span class="c1">// 参数：XProtoMessagePtr msg: 发布到总线的消息. </span>
-<span class="kt">void</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">PushMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">);</span>
-
-<span class="c1">// 订阅消息</span>
-<span class="c1">// 订阅指定类型的消息. 监听总线, 当指定的消息类型发布时, 调用回调函数.  </span>
-<span class="c1">// 自定义的Plugin需要在Init函数中，调用XPluginAsync::Init之前调用该接口完成监听消息注册。</span>
-<span class="c1">// 参数：const std::string&amp; type: 消息类型字符串.</span>
-<span class="c1">// 参数：XProtoMessageFunc callback: 该类型消息的回调函数.</span>
-<span class="kt">void</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">RegisterMsg</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">type</span><span class="p">,</span> <span class="n">XProtoMessageFunc</span> <span class="n">callback</span><span class="p">);</span>
+<span class="k">struct</span> <span class="nc">NumberProdMessage</span> <span class="o">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>            <span class="c1">// 自定义消息</span>
+  <span class="kt">float</span> <span class="n">num_</span><span class="p">;</span>
+  <span class="k">explicit</span> <span class="nf">NumberProdMessage</span><span class="p">(</span><span class="kt">float</span> <span class="n">num</span><span class="p">)</span> <span class="o">:</span><span class="n">num_</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">type_</span> <span class="o">=</span> <span class="n">TYPE_SAMPLE_MESSAGE</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Serialize</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">ss</span><span class="p">;</span>
+    <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="n">num_</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
+  <span class="p">}</span>
+<span class="p">};</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="plugin">
-<h3>Plugin接口描述<a class="headerlink" href="#plugin" title="永久链接至标题">¶</a></h3>
-<p>一个plugin代表一个单独的功能模块，可以向总线订阅和发布消息，通过消息驱动方式来实现整个原型应用的落地。
-插件可能会生产消息或者向总线注册监听某类消息。如果生产消息需要调用PushMsg()将消息发送到总线分发;如果监听消息，需要实现消息处理函数，并在Init函数中注册需要监听的消息类型，绑定对应的消息处理函数，同时在Init函数返回前调用父plugin的Init方法，通常是XPluginAsync::Init()。
-插件提供了两个基础类XPlugin和XPluginAsync，继承这两个基础类之一可实现一个新的plugin，通过override的函数包括:<code class="docutils literal notranslate"><span class="pre">Init()、Start()、Stop()、Desc();</span></code>等接口来管理插件的生命周期。两个plugin基类功能上有些差异：</p>
+<h3>Plugin描述<a class="headerlink" href="#plugin" title="永久链接至标题">¶</a></h3>
+<p>一个plugin代表一个单独的功能模块，可以向总线订阅和发布消息，通过消息驱动方式来实现整个原型应用的落地。</p>
+<p>插件可能会生产消息或者向总线注册监听某类消息。如果生产消息需要调用PushMsg()将消息发送到总线分发;如果监听消息，需要实现消息处理函数，并在Init函数中注册需要监听的消息类型，绑定对应的消息处理函数。</p>
+<p>注意：Plugin派生类中在Init函数返回前需要调用父plugin的Init方法，通常是XPluginAsync::Init()。</p>
+<p>插件提供了两个基础类XPlugin和XPluginAsync，继承这两个基础类之一可实现一个新的plugin，通过override的函数包括:<code class="docutils literal notranslate"><span class="pre">Init()、Start()、Stop()、Desc();</span></code>等接口来管理插件的生命周期。</p>
+<p>两个plugin基类功能上有些差异：</p>
 <ul class="simple">
-<li><p>XPlugin类：定义了管理周期的相关接口以及发送接收消息的接口，接收到的消息需要自己管理分发</p></li>
-<li><p>XPluginAsync类：在XPlugin的基础上，增加了消息的分发功能和流量管理，用户只需要实现消息回调函数即可</p></li>
+<li><p>XPlugin类：定义了管理周期的相关接口以及发送接收消息的接口，派生类通过overide OnMsg接口，处理plugin感兴趣的消息。消息总线处理消息，会同步调用OnMsg接口，若OnMsg处理耗时，会影响整个消息总线的处理能力。</p></li>
+<li><p>XPluginAsync类：在XPlugin的基础上，对OnMsg接口做了实现，提供了消息处理的回调接口注册能力。OnMsg内部将plugin感兴趣的消息放入任务队列，由注册的回调处理消息，这样可以避免消息总线处理性能下降的风险。</p></li>
 </ul>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">XPlugin</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XPlugin</span><span class="o">&gt;</span> <span class="p">{</span>
  <span class="k">public</span><span class="o">:</span>
@@ -319,19 +294,11 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
   <span class="c1">// 完成register msg和workflow的初始化操作</span>
   <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">DeInit</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="p">}</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">DeInit</span><span class="p">();</span>
   <span class="c1">// 处理register的msg类型，如有需要，push自己的msg到总线</span>
   <span class="k">virtual</span> <span class="kt">void</span> <span class="n">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="c1">// 用于流量管理</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgCount</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgLimit</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">desc</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="s">&quot;XPlugin&quot;</span><span class="p">;</span>
-  <span class="p">}</span>
+  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">desc</span><span class="p">();</span>
 
  <span class="k">protected</span><span class="o">:</span>
   <span class="c1">// 向总线注册监听消息类型</span>
@@ -350,23 +317,12 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
   <span class="c1">// 注册监听消息类型到总线+plugin的初始化</span>
   <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
   <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
-  <span class="c1">// 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制</span>
+  <span class="c1">// 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制，派生类不需要override OnMsg</span>
   <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">);</span>
-  <span class="kt">int</span> <span class="nf">GetPluginMsgCount</span><span class="p">();</span>
-  <span class="kt">int</span> <span class="nf">GetPluginMsgLimit</span><span class="p">();</span>
-  <span class="kt">void</span> <span class="nf">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
   <span class="c1">// 启动Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Start</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="p">}</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Start</span><span class="p">();</span>
   <span class="c1">// 停止Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Stop</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="cp">#ifdef PYAPI</span>
-  <span class="kt">void</span> <span class="n">RegMsg</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">type</span><span class="p">,</span>
-              <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">pybind11</span><span class="o">::</span><span class="n">object</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">cb</span><span class="p">);</span>
-<span class="cp">#endif</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Stop</span><span class="p">();</span>
 
  <span class="k">protected</span><span class="o">:</span>
   <span class="k">using</span> <span class="n">XProtoMessageFunc</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="n">XProtoMessagePtr</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
@@ -377,48 +333,24 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
   <span class="kt">void</span> <span class="nf">RegisterMsg</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">type</span><span class="p">,</span> <span class="n">XProtoMessageFunc</span> <span class="n">callback</span><span class="p">);</span>
 
  <span class="k">private</span><span class="o">:</span>
-  <span class="c1">// 消息处理下半部分，分发消息并调用对应的callback函数</span>
+  <span class="c1">// 消息处理下半部分，分发消息并调用对应的callback函数，派生类不需要override OnMsgDown</span>
   <span class="kt">void</span> <span class="n">OnMsgDown</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">);</span>
 
   <span class="n">hobot</span><span class="o">::</span><span class="n">CThreadPool</span> <span class="n">msg_handle_</span><span class="p">;</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">msg_mutex_</span><span class="p">;</span>
-  <span class="kt">int</span> <span class="n">msg_limit_count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">msg_limit_mutex_</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">XProtoMessageFunc</span><span class="o">&gt;</span> <span class="n">msg_map_</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>相关接口描述如下：</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// 初始化Plugin</span>
-<span class="c1">// 该接口需要继承XPluginAsync类的自定义Plugin实现该接口定义. 该接口用来初始化Plugin，自定义Plugin一般在该接口内调用订阅消息接口, 然后继续调用XPluginAsync::Init接口以初始化父类.</span>
-<span class="c1">// 返回值：0: 成功；非0: 失败</span>
-<span class="kt">int</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">Init</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
-
-<span class="c1">// 启动Plugin</span>
-<span class="c1">// 该接口需要继承XPluginAsync类的自定义Plugin实现该接口定义. 该接口用来启动Plugin. </span>
-<span class="c1">// 返回值：0: 成功；非0: 失败</span>
-<span class="kt">int</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">Start</span><span class="p">();</span>
-
-<span class="c1">// 停止Plugin</span>
-<span class="c1">// 该接口需要继承XPluginAsync类的自定义Plugin实现该接口定义. 该接口用来停止Plugin. </span>
-<span class="c1">// 返回值：0: 成功；非0: 失败</span>
-<span class="kt">int</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">Stop</span><span class="p">();</span>
-
-<span class="c1">// 反初始化Plugin</span>
-<span class="c1">// 该接口需要继承XPluginAsync类的自定义Plugin实现该接口定义. 该接口用来反初始化Plugin.  继承自XPluginAsync子plugin类，在完成自己的反初始化任务后，最后需要调用XPluginAsync::DeInit接口以反初始化父类.</span>
-<span class="c1">// 返回值：0: 成功；非0: 失败</span>
-<span class="kt">int</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">DeInit</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
-
-<span class="c1">// 插件描述信息</span>
-<span class="c1">// 该接口需要继承XPluginAsync类的自定义Plugin实现该接口定义. </span>
-<span class="c1">// 返回值：描述当前自定义Plugin的字符串.</span>
-<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">XPluginAsync</span><span class="o">::</span><span class="n">desc</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</pre></div>
-</div>
+<p>建议基于XPluginAsync开发。XPluginAsync的功能特性如下：</p>
+<ul class="simple">
+<li><p>基于消息队列+线程，处理感兴趣的消息</p></li>
+<li><p>设置Plugin缓存的消息数量的大小限制</p></li>
+<li><p>Plugin处理消息超时预警</p></li>
+</ul>
 </div>
 <div class="section" id="id7">
 <h3>XProto开发示例<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
-<p>XProto提供了一系列的开发示例，基于XProto实现了简单的功能，介绍<code class="docutils literal notranslate"><span class="pre">消息</span></code>和<code class="docutils literal notranslate"><span class="pre">插件</span></code>的基本使用，和XProto消息管理的高阶功能。</p>
+<p>XProto提供了一系列的开发示例，基于XProto实现了简单的功能，介绍<code class="docutils literal notranslate"><span class="pre">消息</span></code>和<code class="docutils literal notranslate"><span class="pre">插件</span></code>的基本使用，和XProto消息管理的高阶功能。程序在xproto/framework/tutorials。</p>
 <div class="section" id="stage1">
 <h4>stage1 消息的订阅和发布<a class="headerlink" href="#stage1" title="永久链接至标题">¶</a></h4>
 <p>本节将介绍如何使用Xproto框架实现不同插件之间消息的发布和订阅。
@@ -453,11 +385,11 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <h2>内置plugin<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
 <div class="section" id="smart-plugin">
 <h3>1. Smart Plugin<a class="headerlink" href="#smart-plugin" title="永久链接至标题">¶</a></h3>
-<p>Getting Started with smartplugin</p>
 <div class="section" id="id10">
 <h4>简介<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
-<p>Smartplugin是基于XStream通用sdk接口开发的通用智能化sdk运行框架。
-Smartplugin监听viomessage，调用XStream通用sdk接口得到智能化结果，并把智能化结果以protobuf的方式序列化之后以smartmessage的消息格式发送到总线(xproto)。</p>
+<p>Smartplugin是基于XStream通用sdk接口开发的通用智能化sdk运行框架。</p>
+<p>Smartplugin监听消息总线上viomessage，获得图像输入；</p>
+<p>Smartplugin的消息处理函数调用XStream sdk接口得对输入图像进行预测；获得预测结果后将智能化结果以protobuf的方式序列化之后，封装为smartmessage消息格式，发送到xproto消息总线供其他plugin使用。</p>
 </div>
 <div class="section" id="id11">
 <h4>定制开发<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
@@ -678,7 +610,11 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </div>
 <div class="section" id="hbipcplugin">
 <h3>2. HbipcPlugin<a class="headerlink" href="#hbipcplugin" title="永久链接至标题">¶</a></h3>
-<p>HbipcPlugin为跨板传输插件，主要负责实现AP与地平线CP端的双向通信功能，CP端通过HbipcPlugin将智能帧等数据发送到AP端，或者通过HbipcPlugin接收AP端发过来的配置数据与命令数据。</p>
+<p>HbipcPlugin为跨板传输插件，主要负责实现AP与地平线CP端的双向通信功能。</p>
+<p>HbipcPlugin内部基于地平线HBIPC通信框架，基于BIFSPI/BIFSD硬件链路，完成XJ3与主控AP的通信。</p>
+<p>XJ3端通过HbipcPlugin将智能帧等数据发送到AP端，或者通过HbipcPlugin接收AP端发过来的配置数据与命令数据。</p>
+<p>HbipcPlugin会从xproto消息总线获取智能数据消息、图像消息等，对图像与消息进行序列化后，通过HBIPC框架发给AP；</p>
+<p>HbipcPlugin会通过HBIPC框架接收AP发送来的消息，然后反序列化，解析封装成CustomHbipcMessage，发送到xproto消息总线，供其他plugin使用。</p>
 <p>HbipcPlugin是基于地平线HBIPC框架实现，使用之前需要先提供一个HBIPC的配置参数：</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;domain_name&quot;</span><span class="p">:</span> <span class="s2">&quot;X2SD001&quot;</span><span class="p">,</span>
@@ -750,6 +686,8 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <div class="section" id="websocketplugin">
 <h3>3.WebsocketPlugin<a class="headerlink" href="#websocketplugin" title="永久链接至标题">¶</a></h3>
 <p>WebsocketPlugin为web多媒体传输方式插件，基于开源项目uwebsocket开发，用于通过web浏览器展示视频和算法效果。</p>
+<p>WebsocketPlugin会从xproto消息总线中获取图像消息、智能结果消息；</p>
+<p>WebsocketPlugin内部会对图像进行jpg编码压缩；对图像与感知结果进行同步；最终将图像与感知结果序列化后，通过websocket协议，发送给web前端展示。</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
   &quot;auth_mode&quot;: 0,
   &quot;display_mode&quot;: 1,
@@ -803,6 +741,9 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <div class="section" id="uvcplugin">
 <h3>4.UvcPlugin<a class="headerlink" href="#uvcplugin" title="永久链接至标题">¶</a></h3>
 <p>UvcPlugin为usb传输插件，基于uvc 1.0和hid 1.01协议开发，用于通过usb向客户端播放器发送视频和智能数据。可通过PC端potplayer,amcap等或者android端usb camera等第三方app预览视频，或通过地平线自研的安卓app预览视频和智能效果。</p>
+<p>UvcPlugin会从xproto消息总线中获取图像消息、智能结果消息；</p>
+<p>UvcPlugin内部会使能uvc协议，根据uvc host端请求的视频格式，对视频进行编码，通过uvc协议，将视频发给uvc host；</p>
+<p>UvcPlugin内部会对智能结果做序列化，通过HID协议，将智能结果通过usb硬件链路发送给host端。</p>
 <p>UvcPlugin负责将VioPlugin和SmartPlugin产生的消息发送到web端，所以它需要监听总线上面的<code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>、<code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>和<code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>。</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</p></li>
@@ -855,7 +796,9 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </div>
 <div class="section" id="iotvioplugin">
 <h3>5. IoTVioPlugin<a class="headerlink" href="#iotvioplugin" title="永久链接至标题">¶</a></h3>
-<p>IoTVioPlugin的的应用场景是用于X3系统，整体框架、消息总线传输机制实际是和X2 VIOPlugin的功能类似。主要功能负责获取、转换图像数据并控制图像数据获取速率，然后将图像数据或丢帧消息推送给消息总线。针对于接口层，最主要的区别是IoTVioPlugin不仅支持与X2 VioPlugin相同的原生接口，还是支持与海思一样类似的接口。IoTVioPlugin同样分为两个部分：</p>
+<p>IoTVioPlugin主要功能负责获取、转换图像数据并控制图像数据获取速率，然后将图像数据或丢帧消息推送给消息总线。</p>
+<p>IoTVioPlugin支持获取MIPI camera图像、本地回灌图像、外接usb camera图像，基于硬件生成图像金字塔，向xproto消息总线发送图像消息，用于其他plugin使用。</p>
+<p>IoTVioPlugin分为两个部分：</p>
 <ul class="simple">
 <li><p>图像数据的获取：图像来源可以分为SIF（摄像头）、JPEG回灌图片和NV12回灌图片。</p></li>
 <li><p>控制图像数据获取速率：VioPlugin中通过定长buffer来实现速率控制。buffer大小可以通过JSON文件进行配置。单输入图像源的情况下理论最多可达6个，当智能帧产生速率过慢，buffer耗尽时，VioPlugin产生主动丢帧数据</p></li>

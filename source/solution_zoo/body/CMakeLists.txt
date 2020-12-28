@@ -9,7 +9,10 @@ set(SOURCE_FILES
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 set(BASE_LIBRARIES vioplugin smartplugin visualplugin FasterRCNNMethod
-        MOTMethod FilterMethod MergeMethod vote_method BehaviorMethod LowPassFilterMethod 
+        CNNMethod MOTMethod FilterMethod MergeMethod vote_method BehaviorMethod LowPassFilterMethod
+        DnnPredictMethod DnnPostProcessMethod
+        MattingPredictMethod MattingPostProcessMethod
+        MattingTrimapFreePredictMethod MattingTrimapFreePostProcessMethod
         bpu_predict ipc_tracking xstream
         xstream-imagetools hobotlog vision_type_util jsoncpp opencv_world websocketplugin)
 

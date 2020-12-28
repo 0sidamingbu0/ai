@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>场景参考解决方案 &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>场景参考解决方案 &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -101,15 +101,39 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id9">人体行为分析</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id10">视频盒子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id11">体感游戏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">视频盒子</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hdmi">视频盒子使用HDMI显示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rtsp">视频盒子通过从远端获取RTSP视频流配置说明：</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">视频盒子本地转发</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">体感游戏</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usb-camera">usb camera</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#apa">apa自动泊车</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">车辆结构化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">车辆结构化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#camera">多路camera</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ipm">多路IPM图像回灌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method">内置Method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fasterrcnnmethod">FasterRCNNMethod</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id14">配置文件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cnnmethod">CNNMethod</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id15">配置文件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#motmethod">MotMethod</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id16">输入</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">输出</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">配置文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="copyright.html">版权声明</a></li>
@@ -181,12 +205,13 @@
   <div class="section" id="id1">
 <h1>场景参考解决方案<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <p>本页主要介绍AI EXPRESS沉淀的参考解决方案。解决方案包含IOT以及驾驶相关的场景。相关示例的使用，可以参考<strong>常见问题</strong>部分。</p>
+<p>此外也会简单介绍参考解决方案中沉淀的XStream Method实现。</p>
 <div class="section" id="id2">
 <h2>整体概述<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>场景参考解决方案是在天工开物模型仓库(Model Zoo)中的产品算法之上，将地平线各种量产场景方案进行开放。下图是“天工开物”模型仓库（Model Zoo）产品算法开放列表。</p>
 <p><img alt="模型仓库" src="../../_images/model-zoo.png" /></p>
 <p>这些产品算法涉及人脸、人体、车辆等多种类别，具备极高的算法质量和精度，可有效避免合作伙伴“重复发明轮子”，大幅节省算法训练和开发的时间与成本。</p>
-<p>当前我们选取人脸、人体、车辆部分核心算法模型，沉淀了<strong>人脸结构化参考方案</strong>,<strong>人体结构化参考方案</strong>,<strong>人体行为分析参考方案</strong>,<strong>视频盒子参考方案</strong>,<strong>体感游戏参考方案</strong>,<strong>usb camera参考方案</strong>,<strong>apa自动泊车参考方案</strong>,<strong>车辆结构化参考方案</strong>,<strong>多路camera参考方案</strong> 九个解决方案。</p>
+<p>当前我们选取人脸、人体、车辆部分核心算法模型，沉淀了<strong>人脸结构化参考方案</strong>,<strong>人体结构化参考方案</strong>,<strong>人体行为分析参考方案</strong>,<strong>视频盒子参考方案</strong>,<strong>体感游戏参考方案</strong>,<strong>usb camera参考方案</strong>,<strong>apa自动泊车参考方案</strong>,<strong>车辆结构化参考方案</strong>,<strong>多路camera参考方案</strong>,<strong>多路IPM图像回灌</strong> 十个解决方案。</p>
 <p>这些参考方案在地平线XJ3系列开发板上可以直接部署运行；大部分解决方案也可以在XJ2系列开发板上直接部署运行。您也可以将这些参考方案轻松迁移到基于地平线芯片的其他硬件设备中。</p>
 <p>注意：这些参考方案当前未全部在GitHub上开源，若需要源码与参考模块，可以<a class="reference external" href="forum-bd&#64;horizon.ai">联系地平线</a>。</p>
 <p>参考方案的功能概述如下：</p>
@@ -200,6 +225,7 @@
 <li><p>apa自动泊车： XJ3开发板接入4路sensor，完成4路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框以及停车位分割结果；支持can信号的传输。当摄像头完成实车标定，且实现控车逻辑后，能够完成自动泊车功能； 未开源，计划开源。</p></li>
 <li><p>车辆结构化参考方案： 完成车辆检测、车牌检测与识别、车辆类型识别等结构化信息提取； 未开源。</p></li>
 <li><p>多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测狂、停车位检测框，支持把多路图像和检测结果在web上展示。</p></li>
+<li><p>多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。</p></li>
 </ul>
 </div>
 <div class="section" id="id3">
@@ -255,14 +281,14 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li><p><a class="reference internal" href="../../xsdk/common/xstream/methods/fasterrcnnmethod/README.html"><span class="doc">FasterRCNNMethod</span></a>算法方法，我们采用多任务(MultiTask)实现方式，同时挂载<strong>人脸检测</strong>，<strong>人脸5关键点</strong>，<strong>人脸姿态</strong>三个模型。它可以针对输入图片进行结构化，输出图片中每个目标的人脸框、关键点、姿态.</p></li>
-<li><p><a class="reference internal" href="../../xsdk/common/xstream/methods/motmethod/README.html"><span class="doc">MOTMethod</span></a>：采用了基于IOU策略的MOT跟踪算法，它对输入时序化的人脸框进行跟踪，输出带有trackID的人脸框和消失目标的集合。</p></li>
+<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/fasterrcnnmethod/README.html"><span class="doc">FasterRCNNMethod</span></a>算法方法，我们采用多任务(MultiTask)实现方式，同时挂载<strong>人脸检测</strong>，<strong>人脸5关键点</strong>，<strong>人脸姿态</strong>三个模型。它可以针对输入图片进行结构化，输出图片中每个目标的人脸框、关键点、姿态.</p></li>
+<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/motmethod/README.html"><span class="doc">MOTMethod</span></a>：采用了基于IOU策略的MOT跟踪算法，它对输入时序化的人脸框进行跟踪，输出带有trackID的人脸框和消失目标的集合。</p></li>
 <li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/gradingmethod/README.html"><span class="doc">GradingMethod</span></a>：是一个人脸框打分的策略模块，它综合考虑人脸框大小、关键点置信度，遮挡以及姿态等信息，输出单个目标的人脸框图片置信分数，用于后续优选抓拍。</p></li>
 <li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/snapshotmethod/README.html"><span class="doc">SnapshotMethod</span></a>：是一个抓拍的策略模块，基于MotMethod输出Tacklet以及GradingMethod输出的人脸框打分信息，在内存维持一个优选帧序列，针对一个Tracklet输出它的的抓拍图。</p></li>
-<li><p><a class="reference internal" href="../../xsdk/common/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>算法方法，包括<strong>年龄性别</strong>，<strong>口罩检测</strong>以及<strong>人脸特征提取</strong>三种模型，可以对输入的检测框或抓拍列表，输出图片中目标的属性。</p></li>
+<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>算法方法，包括<strong>年龄性别</strong>，<strong>口罩检测</strong>以及<strong>人脸特征提取</strong>三种模型，可以对输入的检测框或抓拍列表，输出图片中目标的属性。</p></li>
 </ul>
 <p>在人脸抓拍workflow上，除了目前提供的<strong>性别/年龄属性</strong>，<strong>口罩检测</strong>等模型，还可以继续追加<strong>人脸活体</strong>、<strong>人脸质量</strong>等模型，进而丰富整个人脸结构化数据流。</p>
-<p>在人脸结构化参考方案中，我们也提供了一个人脸识别Workflow，通过在SnapshotMethod抓拍策略后，追加<a class="reference internal" href="../../xsdk/common/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>来实现对抓拍人脸图的特征提取。</p>
+<p>在人脸结构化参考方案中，我们也提供了一个人脸识别Workflow，通过在SnapshotMethod抓拍策略后，追加<a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>来实现对抓拍人脸图的特征提取。</p>
 <p><img alt="框架" src="../../_images/face_rego.png" /></p>
 <p>关于人脸结构化参考方案，详细参考<a class="reference internal" href="../../xsdk/solution_zoo/face/README.html"><span class="doc">README</span></a>。</p>
 </div>
@@ -392,18 +418,107 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 <p>Decode可以根据需要配置H264解码或者H265解码，也可以根据需要配置只解码I帧和P帧，或者只解码I帧以减少带宽占用减轻压力。</p>
 <p>Crop+Pym这里为什么需要对图像进行剪裁？对于1080P分辨路的码流，Decode解码出来的图像并非1920<em>1080大小，而是1920</em>1088，而在涉及模型的时候一般认为输入的大小，是1920<em>1080或者960</em>540。为了匹配模型的输入分辨率限制这里对解码出来的图片进行剪裁和金字塔缩放。金字塔缩放比较灵活，基础层宽、高分辨率均是上一层的一半，基础层之间还有三个可配置分辨率的层。Crop+Pym的功能实现在X3的VPS模块中。</p>
 <p>Smart是负责对图片进行处理获得结构化数据，目前每一路的视频输入都是对应一个独立的samrt处理，这意味着可以根据实际需要每一路做不同的处理方式，比如有的用来做人头、人脸、人体检测，有的用来做分割，等等。</p>
-<p>为了直观显示智能数据处理结果，这里将处理后的图像直接通过VOT模块输出至HDMI，将1080P分辨的显示器连接到开发板上即可看见结果。</p>
 <p>图像处理的具体流程如下图所示：
 <img alt="框架" src="../../_images/video_box_process.png" /></p>
-<p>视频盒子的代码在solution_zoo/video_box。配置文件在solution_zoo/configs/rtsp.json以及video_box/configs/body_solution.json。
-AI EXPRESS版本包编译部署后，在J3上可以直接使用如下命令运行：</p>
+<p>为了直观显示智能数据处理结果，这里将处理后的图像直接通过VOT模块输出至HDMI，将1080P分辨的显示器连接到开发板上即可看见结果。</p>
+<div class="section" id="hdmi">
+<h3>视频盒子使用HDMI显示<a class="headerlink" href="#hdmi" title="永久链接至标题">¶</a></h3>
+<p>运行视频盒子示例前，需要使用HDMI显示。系统默认未开启HDMI显示功能，系统烧录成功后，可以参考如下方法，开启HDMI显示。
+使用串口连接开发板，然后重启X3设备，重启后根据提示随意按任意键进入uboot模式。在uboot模式中敲入如下命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setenv</span> <span class="n">bootargs</span> <span class="n">earlycon</span> <span class="n">console</span><span class="o">=</span><span class="n">ttyS0</span><span class="p">,</span><span class="mi">921600</span> <span class="n">clk_ignore_unused</span> <span class="n">video</span><span class="o">=</span><span class="n">hobot</span><span class="p">:</span><span class="n">x3sdb</span><span class="o">-</span><span class="n">hdmi</span> <span class="n">kgdboc</span><span class="o">=</span><span class="n">ttyS0</span>
+
+<span class="n">saveenv</span>
+
+<span class="n">boot</span>
+</pre></div>
+</div>
+<p>系统重启后，HDMI显示器上显示地平线LOGO，则说明HDMI显示设置成功。</p>
+<p>视频盒子的代码在solution_zoo/video_box。配置文件是solution_zoo/video_box/configs/rtsp.json以及solution_zoo/video_box/configs/body_solution.json。</p>
+</div>
+<div class="section" id="rtsp">
+<h3>视频盒子通过从远端获取RTSP视频流配置说明：<a class="headerlink" href="#rtsp" title="永久链接至标题">¶</a></h3>
+<p>1.使用本地转发功能前，需要先修改配置文件。修改deplpy/video_box/configs/rtsp.json配置文件，配置视频源：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+  &quot;channel_num&quot;: 4,
+  &quot;channel0&quot;: {
+    &quot;rtsp_link&quot;: &quot;rtsp://admin:admin123@10.96.35.66:554/0&quot;,
+    &quot;tcp&quot;: 1,
+    &quot;frame_max_size&quot;: 200, // 200K
+    &quot;save_stream&quot;: 0
+  },
+  &quot;channel1&quot;: {
+    &quot;rtsp_link&quot;: &quot;rtsp://admin:admin123@10.96.35.67:554/0&quot;,
+    &quot;tcp&quot;: 1,
+    &quot;frame_max_size&quot;: 200, // 200K
+    &quot;save_stream&quot;: 0
+  },
+  &quot;channel2&quot;: {
+    &quot;rtsp_link&quot;: &quot;rtsp://admin:admin123@10.96.35.68:554/0&quot;,
+    &quot;tcp&quot;: 1,
+    &quot;frame_max_size&quot;: 200, // 200K
+    &quot;save_stream&quot;: 0
+  },
+  &quot;channel3&quot;: {
+    &quot;rtsp_link&quot;: &quot;rtsp://admin:admin123@10.96.35.69:554/0&quot;,
+    &quot;tcp&quot;: 1,
+    &quot;frame_max_size&quot;: 200, // 200K
+    &quot;save_stream&quot;: 0
+  }
+}
+</pre></div>
+</div>
+<p>rtsp.json配置文件关键字段说明：
+<code class="docutils literal notranslate"><span class="pre">channel_num</span></code>:表示当前有几路视频。最大支持8路RTSP码流。
+<code class="docutils literal notranslate"><span class="pre">rtsp_link</span></code>：表示RTSP视频源，admin为用户名，admin123为密码，10.96.35.x表示远端提供RTSP视频流的IPC的ip。端口默认使用554。
+<code class="docutils literal notranslate"><span class="pre">tcp</span></code>字段表示传输协议，置1表示使用tcp，置0会采用udp，如果存在丢包的情况，会导致视频花屏，推荐使用tcp。</p>
+<p>2.修改deploy/video_box/configs/visualplugin_video_box.json，设置展示模式：</p>
+<p>视频盒子可使用本地264文件，实现文件转发功能。使用本地转发h264文件前，修改display_mode和local_forward字段。</p>
+<p><code class="docutils literal notranslate"><span class="pre">display_mode</span></code>字段：置0，使用rtsp模式。</p>
+<p><code class="docutils literal notranslate"><span class="pre">local_forward</span></code>字段：置0，使用从远端IPC获取RTSP视频流模式。</p>
+</div>
+<div class="section" id="id11">
+<h3>视频盒子本地转发<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>1.目前支持一路或者多路的本地转发功能。视频盒子通过使用本地264文件，实现文件转发功能。使用本地转发功能前，需要先修改<code class="docutils literal notranslate"><span class="pre">deploy/video_box/configs/rtsp.json</span></code>中的url为：rtsp://ip:555/inputfilename。</p>
+<p>完整deploy/video_box/configs/rtsp.json本地转发rtsp配置示例如下：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span>
+  <span class="s2">&quot;channel_num&quot;</span>: <span class="m">1</span>,
+  <span class="s2">&quot;channel0&quot;</span>: <span class="o">{</span>
+    <span class="s2">&quot;rtsp_link&quot;</span>: <span class="s2">&quot;rtsp://10.64.35.193:555/test.264&quot;</span>,
+    <span class="s2">&quot;tcp&quot;</span>: <span class="m">1</span>,
+    <span class="s2">&quot;frame_max_size&quot;</span>: <span class="m">200</span>, // 200K
+    <span class="s2">&quot;save_stream&quot;</span>: <span class="m">0</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">inputfilename</span></code>为deploy下的h264文件，例如x3 ip地址为10.64.35.193，端口默认为555，默认h264文件为test.264,则url为 rtsp://10.64.35.193:555/test.264。</p>
+<p><code class="docutils literal notranslate"><span class="pre">channel_num</span></code>字段表示几路本地转发，如果只想使用1路本地转发，置1即可，目前最多支持4路。</p>
+<p><code class="docutils literal notranslate"><span class="pre">tcp</span></code>字段表示传输协议，置1表示使用tcp，置0会采用udp，如果存在丢包的情况，会导致视频花屏，推荐使用tcp。</p>
+<p>2.修改<code class="docutils literal notranslate"><span class="pre">deploy/video_box/configs/visualplugin_video_box.json</span></code>配置中的display_mode，input_h264_filename</p>
+<p>将”display_mode”设置为0, 即在x3上启动rtsp服务器,然后修改”input_h264_filename”为”test.264”,即可通过url
+“rtsp://ip:555/test.264”从当前x3拉取rtsp视频流。</p>
+<p>完整deploy/video_box/configs/visualplugin_video_box.json配置示例如下：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">{</span>
+  <span class="s2">&quot;auth_mode&quot;</span>: <span class="m">0</span>,
+  <span class="s2">&quot;display_mode&quot;</span>: <span class="m">0</span>,
+  <span class="s2">&quot;user&quot;</span>: <span class="s2">&quot;admin&quot;</span>,
+  <span class="s2">&quot;password&quot;</span>: <span class="s2">&quot;123456&quot;</span>,
+  <span class="s2">&quot;data_buf_size&quot;</span>: <span class="m">3110400</span>,
+  <span class="s2">&quot;packet_size&quot;</span>: <span class="m">102400</span>,
+  <span class="s2">&quot;input_h264_filename&quot;</span>: <span class="s2">&quot;test.264&quot;</span>,
+  <span class="s2">&quot;local_forward&quot;</span>: <span class="m">1</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>AI EXPRESS版本包编译并生成deploy部署包后，在X3上可以直接使用如下命令运行：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">run</span><span class="o">.</span><span class="n">sh</span>
 <span class="o">//</span> <span class="n">后续根据提示完成</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id11">
-<h2>体感游戏<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id12">
+<h2>体感游戏<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
 <p>体感游戏是一款通过肢体控制游戏角色的互动类智能游戏。
 通过视觉分析实时画面中人员的跳跃、跑步等动作，游戏app获取人员的动作数据进行控制游戏角色的跳跃、攻击。
 目前支持CrappyBird、PandaRun两款游戏，支持跳跃以及攻击等行为。</p>
@@ -532,8 +647,8 @@ AI EXPRESS版本包编译部署后，在J3上可以直接使用如下命令运�
 </tr>
 </tbody>
 </table></div>
-<div class="section" id="id12">
-<h2>车辆结构化<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id13">
+<h2>车辆结构化<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
 <p><strong>本方案暂未对外开放</strong><br />车辆结构化参考方案是地平线在车路协同领域的沉淀，参考方案框图如下所示：</p>
 <p><img alt="车辆结构化参考方案框图" src="../../_images/vehicle_solution.png" /></p>
 <p>VIO处理图像输入。BPU使用工具链嵌入式预测库bpu-predict完成基于视觉的模型预测。模型后处理运行在J2 ARM，解析感知结果。感知结果（和图像）将被发送到web展示端或AP侧。<br />目前，车辆结构化支持的功能如下：</p>
@@ -556,12 +671,405 @@ AI EXPRESS版本包编译部署后，在J3上可以直接使用如下命令运�
 <h2>多路camera<a class="headerlink" href="#camera" title="永久链接至标题">¶</a></h2>
 <p>本方案支持多路camera输入、视觉图像处理、多路智能结果在web端展示等，最多支持8路。
 视觉图像预测部分采用了apa的workflow作为示例
-多路camera参考方案基于XProto应用开发框架，，使用了如下组件：</p>
+多路camera参考方案基于XProto应用开发框架，使用了如下组件：</p>
 <ul class="simple">
 <li><p>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据，支持获取多路camera数据。</p></li>
 <li><p>MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同camera数据单独完成预测、结果处理。</p></li>
 <li><p>MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据，最多支持8路。</p></li>
 </ul>
+</div>
+<div class="section" id="ipm">
+<h2>多路IPM图像回灌<a class="headerlink" href="#ipm" title="永久链接至标题">¶</a></h2>
+<p>XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。
+图像预测部分采用了apa的workflow作为示例
+多路IPM图回灌参考方案基于XProto应用开发框架，使用了如下组件：</p>
+<ul class="simple">
+<li><p>VioPlugin 接入回灌IPM图像，获取图像的金字塔数据，支持获取多路IPM图像数据。</p></li>
+<li><p>MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同IPM图数据单独完成预测、结果处理。</p></li>
+<li><p>MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据。</p></li>
+</ul>
+</div>
+<div class="section" id="method">
+<h2>内置Method<a class="headerlink" href="#method" title="永久链接至标题">¶</a></h2>
+<p>本节主要介绍参考解决方案实现过程中，实现的一些XStream框架下的算法Method和策略Method。</p>
+<p>智能业务中Method类型通常可以分为两类：</p>
+<ol class="simple">
+<li><p>算法Method：该类Method主要完成load模型、前处理并送给BPU完成预测、获取预测结果、完成结果解析等。</p></li>
+<li><p>策略Method:　该类Method无算法模型相关处理，是业务相关的策略模型，如过滤策略Method、融合策略Method、优选策略Method等。</p></li>
+</ol>
+<p>目前XStream中将一些常见Method沉淀，其中算法Method如FasterRCNNMethod、CNNMethod，策略Method如MotMethod等。这些Method只为用户提供参考，在提供的参考样例代码中会用到其中的Method。基于XStream框架开发时，如果不想使用内置Method，可以根据自己的需求(例如，不同的模型输入预处理、不同的模型和模型输出后处理等)，参考已有的Method，独立开发自定义的Method。</p>
+<div class="section" id="fasterrcnnmethod">
+<h3>FasterRCNNMethod<a class="headerlink" href="#fasterrcnnmethod" title="永久链接至标题">¶</a></h3>
+<p>FasterRCNNMethod主要是对fasterrcnn检测算法模型的集成。通常，FasterRCNNMethod的输入是类型为PymImageFrame或CVImageFrame的图像，具体可以参考<a class="reference external" href="#%E5%86%85%E7%BD%AE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84vision_type">内置数据结构vision_type</a>。预处理将图像数据resize成模型输入大小并做格式转换，模型预测通过调用BPU相关接口实现，后处理主要是对多种输出的解析，如检测框、关键点、分割等。</p>
+<div class="section" id="id14">
+<h4>配置文件<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
+<p>使用FasterRCNNMethod时，首先要清楚模型每层的输出是什么，更改对应的配置文件进行适配。配置中的主要参数如下：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>net_info</td>
+<td>和模型相关的信息</td>
+</tr>
+<tr>
+<td>model_name</td>
+<td>编译出的hbm文件中模型的名字</td>
+</tr>
+<tr>
+<td>model_version</td>
+<td>模型的版本号，GetVersion接口返回的就是这个值</td>
+</tr>
+<tr>
+<td>pyramid_layer</td>
+<td>模型用到的金字塔图像数据的第几层</td>
+</tr>
+<tr>
+<td>method_outs</td>
+<td>method的实际输出，与workflow中Node的输出对应，可以配置为该模型输出能力的子集</td>
+</tr>
+<tr>
+<td>model_file_path</td>
+<td>模型文件的路径</td>
+</tr>
+<tr>
+<td>face_pv_thr</td>
+<td>人脸的置信度阈值，没达到置信度阈值的face_box及关联的人脸lmk和人脸pose一并不输出，默认阈值为0</td>
+</tr>
+<tr>
+<td>model_input_width</td>
+<td>模型输入的宽</td>
+</tr>
+<tr>
+<td>model_input_height</td>
+<td>模型输入的高</td>
+</tr>
+<tr>
+<td>model_out_sequence</td>
+<td>模型输出各分支的信息，我们需要根据model_out_sequence来进行模型结果的后处理</td>
+</tr>
+</tbody>
+</table><p>对于”model_out_sequence”,其内部个参数含义如下：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>输出的名字</td>
+</tr>
+<tr>
+<td>type</td>
+<td>输出的类型</td>
+</tr>
+<tr>
+<td>box_name</td>
+<td>依赖的box的名字</td>
+</tr>
+</tbody>
+</table><p>FasterRCNNMethod配置文件示例：</p>
+<p>示例中检测模型输入数据大小是540x960，输出共5层，分别是人体框、人头框、人脸框、人体骨骼点和人体分割。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;net_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;personMultitask&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;model_out_sequence&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;body_box&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bbox&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;head_box&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bbox&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;face_box&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bbox&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;kps&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;kps&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;box_name&quot;</span><span class="p">:</span> <span class="s2">&quot;body_box&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mask&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;mask&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;box_name&quot;</span><span class="p">:</span> <span class="s2">&quot;body_box&quot;</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;model_input_width&quot;</span><span class="p">:</span> <span class="mi">960</span><span class="p">,</span>
+    <span class="nt">&quot;model_input_height&quot;</span><span class="p">:</span> <span class="mi">540</span><span class="p">,</span>
+    <span class="nt">&quot;pyramid_layer&quot;</span><span class="p">:</span> <span class="mi">4</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;method_outs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;face_box&quot;</span><span class="p">,</span> <span class="s2">&quot;head_box&quot;</span><span class="p">,</span> <span class="s2">&quot;body_box&quot;</span><span class="p">,</span><span class="s2">&quot;kps&quot;</span><span class="p">,</span><span class="s2">&quot;mask&quot;</span><span class="p">],</span>
+  <span class="nt">&quot;model_file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;../models/IPCModel.hbm&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cnnmethod">
+<h3>CNNMethod<a class="headerlink" href="#cnnmethod" title="永久链接至标题">¶</a></h3>
+<p>CNNMethod主要是对检测框的属性进行预测，比如年龄性别、人脸识别、手势识别、摔倒检测、车辆属性等。</p>
+<p>CNNMethod处理的任务和FasterRCNNMethod的区别：FasterRCNNMethod一般是对全图做检测分析；CNNMethod一般是基于图像+检测物体ROI，完成一帧图像所有ROI区域的预测任务。</p>
+<div class="section" id="id15">
+<h4>配置文件<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<p>同理，使用CNNMethod时需要清楚用到的模型的输入数据类型，以及后处理的类型。</p>
+<p>目前支持的输入数据类型包括rect、lmk、img、plate_num_img、lmk_seq、vid，其中rect与img都表示矩形框数据，区别在于rect输入需要对应模型的编译选项是resizer、img输入对应模型的编译选项是pyramid；lmk在矩形框数据基础上包括了人脸关键点；plate_num_img用于车牌框数据，与img的区别在于检测框的预处理；lmk_seq表示关键点序列，用于摔倒检测与手势识别；vid表示raw data，目前用于表示体感游戏中人体骨骼特征。</p>
+<p>后处理类型包括：face_feature、antispoofing、face_quality、binary_classify、lmk_pose、age_gender、vehicle_type、vehicle_color、plate_num、classify、act_det、back_bone、vid、common_lmk。</p>
+<p>face_feature表示人脸特征；</p>
+<p>antispoofing表示活体识别；</p>
+<p>face_quality表示人脸质量；</p>
+<p>binary_classify表示二元分类；</p>
+<p>lmk_pose表示人脸关键点以及人脸3d位置；</p>
+<p>age_gender表示年龄性别；</p>
+<p>vehicle_type表示车辆类型；</p>
+<p>vehicle_color表示车辆颜色；</p>
+<p>plate_num表示车牌号字符串输出；</p>
+<p>classify表示车牌号整型输出；</p>
+<p>act_det表示行为识别，目前支持摔倒检测和手势识别；</p>
+<p>back_bone表示人体骨骼特征，目前用于体感游戏；</p>
+<p>common_lmk表示关键点检测，目前用于手关键点检测。</p>
+<p>配置中主要参数如下：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>配置名</th>
+<th>说明</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model_name</td>
+<td>编译模型时指定的模型名字</td>
+<td></td>
+</tr>
+<tr>
+<td>model_version</td>
+<td>模型版本号</td>
+<td></td>
+</tr>
+<tr>
+<td>model_file_path</td>
+<td>模型文件地址</td>
+<td></td>
+</tr>
+<tr>
+<td>in_msg_type</td>
+<td>模型的处理方式（resizer或者pyramid或者ddr）</td>
+<td>rect/img(resizer/pyramid)/lmk_seq</td>
+</tr>
+<tr>
+<td>norm_method</td>
+<td>pyramid方式必填</td>
+<td>norm_by_width_length<br />norm_by_width_ratio<br />norm_by_height_rario<br />norm_by_lside_ratio<br />norm_by_height_length<br />norm_by_lside_length<br />norm_by_lside_square<br />norm_by_diagonal_square<br />norm_by_nothing</td>
+</tr>
+<tr>
+<td>filter_method</td>
+<td>pyramid方式必填</td>
+<td>out_of_range<br />no_filter</td>
+</tr>
+<tr>
+<td>expand_scale</td>
+<td>pyramid方式必填</td>
+<td>外扩系数</td>
+</tr>
+<tr>
+<td>post_fn</td>
+<td>后处理方式</td>
+<td>face_feature<br />antispoofing<br />lmk_pose<br />age_gender<br />face_quality<br />act_det</td>
+</tr>
+<tr>
+<td>threshold</td>
+<td>阈值</td>
+<td></td>
+</tr>
+<tr>
+<td>input_shift</td>
+<td>输入转浮点时参数</td>
+<td></td>
+</tr>
+<tr>
+<td>seq_len</td>
+<td>输入序列长度</td>
+<td></td>
+</tr>
+<tr>
+<td>stride</td>
+<td>序列步长</td>
+<td></td>
+</tr>
+<tr>
+<td>max_gap</td>
+<td>步长允许误差范围</td>
+<td></td>
+</tr>
+<tr>
+<td>buf_len</td>
+<td>缓存buffer长度</td>
+<td></td>
+</tr>
+<tr>
+<td>norm_kps_conf</td>
+<td>是否强制进行关键点置信度归一化</td>
+<td></td>
+</tr>
+<tr>
+<td>kps_norm_scale</td>
+<td>关键点置信度归一化参数</td>
+<td></td>
+</tr>
+<tr>
+<td>merge_groups</td>
+<td>类别融合</td>
+<td>字符串，需要保证格式为"[group1_idx1,group1_idx2];[group2_idx1,group_idx2]"</td>
+</tr>
+<tr>
+<td>target_group_idx</td>
+<td>目标类别index</td>
+<td></td>
+</tr>
+<tr>
+<td>max_handle_num</td>
+<td>最大处理数量</td>
+<td>负数表示无限制</td>
+</tr>
+<tr>
+<td>output_size</td>
+<td>输出槽的个数</td>
+<td></td>
+</tr>
+</tbody>
+</table><p>配置文件示例：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+  &quot;model_name&quot;: &quot;faceAntiSpfRGB&quot;,
+  &quot;model_version&quot;: &quot;x2.1.0.11&quot;,
+  &quot;model_file_path&quot;: &quot;../models/PanelBoard.hbm&quot;,
+  &quot;in_msg_type&quot;: &quot;img&quot;,     # 输入类型，决定前处理方式和使用的bpu-predict接口
+  &quot;norm_method&quot;: &quot;norm_by_lside_square&quot;,    # normalize方法，需要和算法对齐
+  &quot;filter_method&quot;: &quot;no_filter&quot;,
+  &quot;expand_scale&quot;: 1.5,
+  &quot;post_fn&quot;: &quot;antispoofing&quot;,  # 后处理函数
+  &quot;threshold&quot;: 0.1,
+  &quot;max_handle_num&quot;: -1,
+  &quot;output_size&quot;: 2
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="motmethod">
+<h3>MotMethod<a class="headerlink" href="#motmethod" title="永久链接至标题">¶</a></h3>
+<p>MotMethod属于策略Method，用于多目标跟踪，实现检测框的跟踪和ID分配功能。</p>
+<div class="section" id="id16">
+<h4>输入<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="center">Slot</th>
+<th align="center">内容</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">0</td>
+<td align="center">XStreamBBox_list</td>
+<td align="center">必要项</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="id17">
+<h4>输出<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="center">Slot</th>
+<th align="center">内容</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">0</td>
+<td align="center">XStreamBBox_list</td>
+<td align="center">带track_id</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">XStreamUint32_List</td>
+<td align="center">disappeared_track_id_list</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="id18">
+<h4>配置文件<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="center">字段</th>
+<th>描述</th>
+<th align="center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">tracker_type</td>
+<td>MOT工作模式，目前仅支持IOU based MOT</td>
+<td align="center">IOU</td>
+</tr>
+<tr>
+<td align="center">device</td>
+<td>设备名称，若设置为X1，最大track_id为255，用以比对一致性</td>
+<td align="center">X2</td>
+</tr>
+<tr>
+<td align="center">update_no_target_predict</td>
+<td>无检测框输入更新状态机track预测框，设置为true对主体连续运动且有遮挡的场景效果好，设置为false对主体不移动且有遮挡的场景效果好</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">support_hungarian</td>
+<td>匈牙利匹配开关，打开匈牙利匹配id召回多，准确率下降；关闭则id召回少，准确率提升</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">need_check_merge</td>
+<td>每组输入框IOU大于一定阈值做融合，该操作会影响输出数量，检测框融合多在检测模块完成，一般情况置为false</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">original_bbox</td>
+<td>是否使用卡尔曼滤波器预测框，true为不使用，输出原始框坐标</td>
+<td align="center">true</td>
+</tr>
+<tr>
+<td align="center">max_track_target_num</td>
+<td>状态机保存最大track数</td>
+<td align="center">512</td>
+</tr>
+<tr>
+<td align="center">max_det_target_num</td>
+<td>输入框最大计算数</td>
+<td align="center">512</td>
+</tr>
+<tr>
+<td align="center">vanish_frame_count</td>
+<td>消失帧数</td>
+<td align="center">30</td>
+</tr>
+</tbody>
+</table></div>
+</div>
 </div>
 </div>
 

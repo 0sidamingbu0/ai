@@ -16,6 +16,7 @@
 #include <chrono>
 #include <random>
 #if defined(HR_POSIX)
+#include <linux/sched.h>
 #include <pthread.h>
 #endif
 #include "hobotxstream/data_types/bbox.h"
@@ -104,7 +105,29 @@ std::vector<std::vector<BaseDataPtr>> BBoxFilter::DoProcess(
       << ", priority=" << thr_priority_ << ", but "
       << "actually policy:" << old_policy
       << ",priority=" << sch.sched_priority;
+    } else if (thr_policy_ == "SCHED_IDLE") {
+      HOBOT_CHECK(old_policy == SCHED_IDLE &&
+      sch.sched_priority == thr_priority_)
+      << "Thread policy should be " << thr_policy_
+      << ", priority=" << thr_priority_ << ", but "
+      << "actually policy:" << old_policy
+      << ",priority=" << sch.sched_priority;
+    } else if (thr_policy_ == "SCHED_BATCH") {
+      HOBOT_CHECK(old_policy == SCHED_BATCH &&
+      sch.sched_priority == thr_priority_)
+      << "Thread policy should be " << thr_policy_
+      << ", priority=" << thr_priority_ << ", but "
+      << "actually policy:" << old_policy
+      << ",priority=" << sch.sched_priority;
+    } else if (thr_policy_ == "SCHED_NORMAL") {
+      HOBOT_CHECK(old_policy == SCHED_NORMAL &&
+      sch.sched_priority == thr_priority_)
+      << "Thread policy should be " << thr_policy_
+      << ", priority=" << thr_priority_ << ", but "
+      << "actually policy:" << old_policy
+      << ",priority=" << sch.sched_priority;
     }
+
   #endif
   }
 

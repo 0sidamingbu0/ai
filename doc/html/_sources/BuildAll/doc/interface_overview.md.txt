@@ -1,0 +1,18 @@
+# 接口概述
+AI Express，中文名称AI应用开发中间件，是地平线芯片“天工开物”（Horizon OpenExplorer™️ Platform）AI开发平台的一部分。
+
+AI Express包含两套框架，分别为**XStream开发框架**，**XProto原型框架**。
+
+* XStream: 一套独立的算法SDK编程框架。将预测任务拆分到一系列Method中，提供能力将Method串联成Graph，完成基于Graph的计算。可以根据不同的业务场景(不同的workflow)，快速生成对应的预测SDK。
+
+* XProto: 一套独立的原型应用开发框架。该框架将整个应用划分成一系列的Plugin，各个Plugin之间通过消息总线通信，完成了模块的解耦、复用、可扩展等需求。
+
+## XStream算法SDK编程框架
+XStream属于一套算法SDK编程框架，Method为框架核心组件，以Graph的方式将Method实例串联起来，XStream框架内部自动完成Method的调度。框架核心为XStream-Framework。
+
+* XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性。
+
+## XProto原型应用开发框架
+XProto原型应用开发框架是一套基于消息总线交互的可扩展框架，框架定义了基础的消息类型、Plugin基础类定义以及消息发布订阅的处理逻辑。开发者通过开发Plugin，以及这些Plugin之间交互的消息，降低了模块的耦合。框架核心为XProto-Framework。
+
+* XProto-Framework: 一种简易的消息发布订阅开发框架，定义了消息基础类以及可扩展插件Plugin。Plugin之间通过消息总线通信，Plugin可以向总线发布消息，也可以从总线上订阅感兴趣的类型的消息。框架负责消息的订阅分发。

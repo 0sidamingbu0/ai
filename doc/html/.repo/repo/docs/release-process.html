@@ -1,0 +1,981 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repo release process &mdash; AI Express用户手册 2.8.0 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/overview.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xstream.html">XStream算法SDK编程框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/faq.html">常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/version.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/copyright.html">版权声明</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AI Express用户手册</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>repo release process</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/.repo/repo/docs/release-process.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="repo-release-process">
+<h1>repo release process<a class="headerlink" href="#repo-release-process" title="永久链接至标题">¶</a></h1>
+<p>This is the process for creating a new release of repo, as well as all the
+related topics and flows.</p>
+<p>[TOC]</p>
+<div class="section" id="launcher-script">
+<h2>Launcher script<a class="headerlink" href="#launcher-script" title="永久链接至标题">¶</a></h2>
+<p>The main repo script serves as a standalone program and is often referred to as
+the “launcher script”.
+This makes it easy to copy around and install as you don’t have to install any
+other files from the git repo.</p>
+<p>Whenever major changes are made to the launcher script, you should increment the
+<code class="docutils literal notranslate"><span class="pre">VERSION</span></code> variable in the launcher itself.
+At runtime, repo will check this to see if it needs to be updated (and notify
+the user automatically).</p>
+</div>
+<div class="section" id="key-management">
+<h2>Key management<a class="headerlink" href="#key-management" title="永久链接至标题">¶</a></h2>
+<p>Every release has a git tag that is signed with a key that repo recognizes.
+Those keys are hardcoded inside of the repo launcher itself – look for the
+<code class="docutils literal notranslate"><span class="pre">KEYRING_VERSION</span></code> and <code class="docutils literal notranslate"><span class="pre">MAINTAINER_KEYS</span></code> settings.</p>
+<p>Adding new keys to the repo launcher will allow tags to be recognized by new
+keys, but only people using that updated version will be able to.
+Since the majority of users will be using an official launcher version, their
+version will simply ignore any new signed tags.</p>
+<p>If you want to add new keys, it’s best to register them long ahead of time,
+and then wait for that updated launcher to make its way out to everyone.
+Even then, there will be a long tail of users with outdated launchers, so be
+prepared for people asking questions.</p>
+<div class="section" id="registering-a-new-key">
+<h3>Registering a new key<a class="headerlink" href="#registering-a-new-key" title="永久链接至标题">¶</a></h3>
+<p>The process of actually adding a new key is quite simple.</p>
+<ol class="simple">
+<li><p>Add the public half of the key to <code class="docutils literal notranslate"><span class="pre">MAINTAINER_KEYS</span></code>.</p></li>
+<li><p>Increment <code class="docutils literal notranslate"><span class="pre">KEYRING_VERSION</span></code> so repo knows it needs to update.</p></li>
+<li><p>Wait a long time after that version is in a release (~months) before trying
+to create a new release using those new keys.</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="self-update-algorithm">
+<h2>Self update algorithm<a class="headerlink" href="#self-update-algorithm" title="永久链接至标题">¶</a></h2>
+<p>When creating a new repo checkout with <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">init</span></code>, there are a few options that
+control how repo finds updates:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--repo-url</span></code>: This tells repo where to clone the full repo project itself.
+It defaults to the official project (<code class="docutils literal notranslate"><span class="pre">REPO_URL</span></code> in the launcher script).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--repo-rev</span></code>: This tells repo which branch to use for the full project.
+It defaults to the <code class="docutils literal notranslate"><span class="pre">stable</span></code> branch (<code class="docutils literal notranslate"><span class="pre">REPO_REV</span></code> in the launcher script).</p></li>
+</ul>
+<p>Whenever <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">sync</span></code> is run, repo will check to see if an update is available.
+It fetches the latest repo-rev from the repo-url.
+Then it verifies that the latest commit in the branch has a valid signed tag
+using <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-v</span></code> (which uses gpg).
+If the tag is valid, then repo will update its internal checkout to it.</p>
+<p>If the latest commit doesn’t have a signed tag, repo will fall back to the
+most recent tag it can find (via <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">describe</span></code>).
+If that tag is valid, then repo will warn and use that commit instead.</p>
+<p>If that tag cannot be verified, it gives up and forces the user to resolve.</p>
+</div>
+<div class="section" id="branch-management">
+<h2>Branch management<a class="headerlink" href="#branch-management" title="永久链接至标题">¶</a></h2>
+<p>All development happens on the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch and should generally be stable.</p>
+<p>Since the repo launcher defaults to tracking the <code class="docutils literal notranslate"><span class="pre">stable</span></code> branch, it is not
+normally updated until a new release is available.
+If something goes wrong with a new release, an older release can be force pushed
+and clients will automatically downgrade.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">maint</span></code> branch is used to track the previous major release of repo.
+It is not normally meant to be used by people as <code class="docutils literal notranslate"><span class="pre">stable</span></code> should be good enough.
+Once a new major release is pushed to the <code class="docutils literal notranslate"><span class="pre">stable</span></code> branch, then the previous
+major release can be pushed to <code class="docutils literal notranslate"><span class="pre">maint</span></code>.
+For example, when <code class="docutils literal notranslate"><span class="pre">stable</span></code> moves from <code class="docutils literal notranslate"><span class="pre">v1.10.x</span></code> to <code class="docutils literal notranslate"><span class="pre">v1.11.x</span></code>, then the <code class="docutils literal notranslate"><span class="pre">maint</span></code>
+branch will be updated from <code class="docutils literal notranslate"><span class="pre">v1.9.x</span></code> to <code class="docutils literal notranslate"><span class="pre">v1.10.x</span></code>.</p>
+<p>We don’t have parallel release branches/series.
+Typically all tags are made against the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch and then pushed to the
+<code class="docutils literal notranslate"><span class="pre">stable</span></code> branch to make it available to the rest of the world.
+Since repo doesn’t typically see a lot of changes, this tends to be OK.</p>
+</div>
+<div class="section" id="creating-a-new-release">
+<h2>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="永久链接至标题">¶</a></h2>
+<p>When you want to create a new release, you’ll need to select a good version and
+create a signed tag using a key registered in repo itself.
+Typically we just tag the latest version of the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch.
+The tag could be pushed now, but it won’t be used by clients normally (since the
+default <code class="docutils literal notranslate"><span class="pre">repo-rev</span></code> setting is <code class="docutils literal notranslate"><span class="pre">stable</span></code>).
+This would allow some early testing on systems who explicitly select <code class="docutils literal notranslate"><span class="pre">master</span></code>.</p>
+<div class="section" id="creating-a-signed-tag">
+<h3>Creating a signed tag<a class="headerlink" href="#creating-a-signed-tag" title="永久链接至标题">¶</a></h3>
+<p>Lets assume your keys live in a dedicated directory, e.g. <code class="docutils literal notranslate"><span class="pre">~/.gnupg/repo/</span></code>.</p>
+<p>*** note
+If you need access to the official keys, check out the internal documentation
+at <a class="reference external" href="https://goto.google.com/repo-release">go/repo-release</a>.
+Note that only official maintainers of repo will have access as it describes
+internal processes for accessing the restricted keys.</p>
+<hr class="docutils" />
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the gpg key directory.</span>
+$ <span class="nb">export</span> <span class="nv">GNUPGHOME</span><span class="o">=</span>~/.gnupg/repo/
+
+<span class="c1"># Verify the listed key is “Repo Maintainer”.</span>
+$ gpg -K
+
+<span class="c1"># Pick whatever branch or commit you want to tag.</span>
+$ <span class="nv">r</span><span class="o">=</span>master
+
+<span class="c1"># Pick the new version.</span>
+$ <span class="nv">t</span><span class="o">=</span><span class="m">1</span>.12.10
+
+<span class="c1"># Create the signed tag.</span>
+$ git tag -s v<span class="nv">$t</span> -u <span class="s2">&quot;Repo Maintainer &lt;repo@android.kernel.org&gt;&quot;</span> -m <span class="s2">&quot;repo </span><span class="nv">$t</span><span class="s2">&quot;</span> <span class="nv">$r</span>
+
+<span class="c1"># Verify the signed tag.</span>
+$ git show v<span class="nv">$t</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="push-the-new-release">
+<h3>Push the new release<a class="headerlink" href="#push-the-new-release" title="永久链接至标题">¶</a></h3>
+<p>Once you’re ready to make the release available to everyone, push it to the
+<code class="docutils literal notranslate"><span class="pre">stable</span></code> branch.</p>
+<p>Make sure you never push the tag itself to the stable branch!
+Only push the commit – notice the use of <code class="docutils literal notranslate"><span class="pre">$t</span></code> and <code class="docutils literal notranslate"><span class="pre">$r</span></code> below.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git push https://gerrit-review.googlesource.com/git-repo v<span class="nv">$t</span>
+$ git push https://gerrit-review.googlesource.com/git-repo <span class="nv">$r</span>:stable
+</pre></div>
+</div>
+<p>If something goes horribly wrong, you can force push the previous version to the
+<code class="docutils literal notranslate"><span class="pre">stable</span></code> branch and people should automatically recover.
+Again, make sure you never push the tag itself!</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="nv">oldrev</span><span class="o">=</span><span class="s2">&quot;whatever-old-commit&quot;</span>
+$ git push https://gerrit-review.googlesource.com/git-repo <span class="nv">$oldrev</span>:stable --force
+</pre></div>
+</div>
+</div>
+<div class="section" id="announce-the-release">
+<h3>Announce the release<a class="headerlink" href="#announce-the-release" title="永久链接至标题">¶</a></h3>
+<p>Once you do push a new release to <code class="docutils literal notranslate"><span class="pre">stable</span></code>, make sure to announce it on the
+<a class="reference external" href="https://groups.google.com/forum/#%21forum/repo-discuss">repo-discuss&#64;googlegroups.com</a> group.
+Here is an <a class="reference external" href="https://groups.google.com/d/topic/repo-discuss/UGBNismWo1M/discussion">example announcement</a>.</p>
+<p>You can create a short changelog using the command:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you haven&#39;t pushed to the stable branch yet, you can use origin/stable.</span>
+<span class="c1"># If you have pushed, change origin/stable to the previous release tag.</span>
+$ git log --format<span class="o">=</span><span class="s2">&quot;%h (%aN) %s&quot;</span> --no-merges origin/stable..<span class="nv">$r</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="project-references">
+<h2>Project References<a class="headerlink" href="#project-references" title="永久链接至标题">¶</a></h2>
+<p>Here’s a table showing the relationship of major tools, their EOL dates, and
+their status in Ubuntu &amp; Debian.
+Those distros tend to be good indicators of how long we need to support things.</p>
+<p>Things in bold indicate stuff to take note of, but does not guarantee that we
+still support them.
+Things in italics are things we used to care about but probably don’t anymore.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="center">Date</th>
+<th align="center">EOL</th>
+<th>[Git][rel-g]</th>
+<th>[Python][rel-p]</th>
+<th>[Ubuntu][rel-u] / [Debian][rel-d]</th>
+<th>Git</th>
+<th>Python</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">Oct 2008</td>
+<td align="center"><em>Oct 2013</em></td>
+<td></td>
+<td>2.6.0</td>
+<td><em>10.04 Lucid</em> - 10.10 Maverick / <em>Squeeze</em></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Dec 2008</td>
+<td align="center"><em>Feb 2009</em></td>
+<td></td>
+<td>3.0.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Feb 2009</td>
+<td align="center"><em>Mar 2012</em></td>
+<td></td>
+<td></td>
+<td>Debian 5 Lenny</td>
+<td>1.5.6.5</td>
+<td>2.5.2</td>
+</tr>
+<tr>
+<td align="center">Jun 2009</td>
+<td align="center"><em>Jun 2016</em></td>
+<td></td>
+<td>3.1.0</td>
+<td><em>10.04 Lucid</em> - 10.10 Maverick / <em>Squeeze</em></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Feb 2010</td>
+<td align="center"><em>Oct 2012</em></td>
+<td>1.7.0</td>
+<td></td>
+<td><em>10.04 Lucid</em> - <em>12.04 Precise</em> - 12.10 Quantal</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2010</td>
+<td align="center"><em>Apr 2015</em></td>
+<td></td>
+<td></td>
+<td><em>10.04 Lucid</em></td>
+<td>1.7.0.4</td>
+<td>2.6.5 3.1.2</td>
+</tr>
+<tr>
+<td align="center">Jul 2010</td>
+<td align="center"><em>Dec 2019</em></td>
+<td></td>
+<td><strong>2.7.0</strong></td>
+<td>11.04 Natty - <strong><current></strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2010</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>10.10 Maverick</td>
+<td>1.7.1</td>
+<td>2.6.6 3.1.3</td>
+</tr>
+<tr>
+<td align="center">Feb 2011</td>
+<td align="center"><em>Feb 2016</em></td>
+<td></td>
+<td></td>
+<td>Debian 6 Squeeze</td>
+<td>1.7.2.5</td>
+<td>2.6.6 3.1.3</td>
+</tr>
+<tr>
+<td align="center">Apr 2011</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>11.04 Natty</td>
+<td>1.7.4</td>
+<td>2.7.1 3.2.0</td>
+</tr>
+<tr>
+<td align="center">Oct 2011</td>
+<td align="center"><em>Feb 2016</em></td>
+<td></td>
+<td>3.2.0</td>
+<td>11.04 Natty - 12.10 Quantal</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2011</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>11.10 Ocelot</td>
+<td>1.7.5.4</td>
+<td>2.7.2 3.2.2</td>
+</tr>
+<tr>
+<td align="center">Apr 2012</td>
+<td align="center"><em>Apr 2019</em></td>
+<td></td>
+<td></td>
+<td><em>12.04 Precise</em></td>
+<td>1.7.9.5</td>
+<td>2.7.3 3.2.3</td>
+</tr>
+<tr>
+<td align="center">Sep 2012</td>
+<td align="center"><em>Sep 2017</em></td>
+<td></td>
+<td>3.3.0</td>
+<td>13.04 Raring - 13.10 Saucy</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2012</td>
+<td align="center"><em>Dec 2014</em></td>
+<td>1.8.0</td>
+<td></td>
+<td>13.04 Raring - 13.10 Saucy</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2012</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>12.10 Quantal</td>
+<td>1.7.10.4</td>
+<td>2.7.3 3.2.3</td>
+</tr>
+<tr>
+<td align="center">Apr 2013</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>13.04 Raring</td>
+<td>1.8.1.2</td>
+<td>2.7.4 3.3.1</td>
+</tr>
+<tr>
+<td align="center">May 2013</td>
+<td align="center"><em>May 2018</em></td>
+<td></td>
+<td></td>
+<td>Debian 7 Wheezy</td>
+<td>1.7.10.4</td>
+<td>2.7.3 3.2.3</td>
+</tr>
+<tr>
+<td align="center">Oct 2013</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>13.10 Saucy</td>
+<td>1.8.3.2</td>
+<td>2.7.5 3.3.2</td>
+</tr>
+<tr>
+<td align="center">Feb 2014</td>
+<td align="center"><em>Dec 2014</em></td>
+<td><strong>1.9.0</strong></td>
+<td></td>
+<td><strong>14.04 Trusty</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Mar 2014</td>
+<td align="center"><em>Mar 2019</em></td>
+<td></td>
+<td><strong>3.4.0</strong></td>
+<td><strong>14.04 Trusty</strong> - 15.10 Wily / <strong>Jessie</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2014</td>
+<td align="center"><strong>Apr 2022</strong></td>
+<td></td>
+<td></td>
+<td><strong>14.04 Trusty</strong></td>
+<td>1.9.1</td>
+<td>2.7.5 3.4.0</td>
+</tr>
+<tr>
+<td align="center">May 2014</td>
+<td align="center"><em>Dec 2014</em></td>
+<td>2.0.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Aug 2014</td>
+<td align="center"><em>Dec 2014</em></td>
+<td><strong>2.1.0</strong></td>
+<td></td>
+<td>14.10 Utopic - 15.04 Vivid / <strong>Jessie</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2014</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>14.10 Utopic</td>
+<td>2.1.0</td>
+<td>2.7.8 3.4.2</td>
+</tr>
+<tr>
+<td align="center">Nov 2014</td>
+<td align="center"><em>Sep 2015</em></td>
+<td>2.2.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Feb 2015</td>
+<td align="center"><em>Sep 2015</em></td>
+<td>2.3.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2015</td>
+<td align="center"><em>May 2017</em></td>
+<td>2.4.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2015</td>
+<td align="center"><strong>Jun 2020</strong></td>
+<td></td>
+<td></td>
+<td><strong>Debian 8 Jessie</strong></td>
+<td>2.1.4</td>
+<td>2.7.9 3.4.2</td>
+</tr>
+<tr>
+<td align="center">Apr 2015</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>15.04 Vivid</td>
+<td>2.1.4</td>
+<td>2.7.9 3.4.3</td>
+</tr>
+<tr>
+<td align="center">Jul 2015</td>
+<td align="center"><em>May 2017</em></td>
+<td>2.5.0</td>
+<td></td>
+<td>15.10 Wily</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Sep 2015</td>
+<td align="center"><em>May 2017</em></td>
+<td>2.6.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Sep 2015</td>
+<td align="center"><strong>Sep 2020</strong></td>
+<td></td>
+<td><strong>3.5.0</strong></td>
+<td><strong>16.04 Xenial</strong> - 17.04 Zesty / <strong>Stretch</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2015</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>15.10 Wily</td>
+<td>2.5.0</td>
+<td>2.7.9 3.4.3</td>
+</tr>
+<tr>
+<td align="center">Jan 2016</td>
+<td align="center"><em>Jul 2017</em></td>
+<td><strong>2.7.0</strong></td>
+<td></td>
+<td><strong>16.04 Xenial</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Mar 2016</td>
+<td align="center"><em>Jul 2017</em></td>
+<td>2.8.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2016</td>
+<td align="center"><strong>Apr 2024</strong></td>
+<td></td>
+<td></td>
+<td><strong>16.04 Xenial</strong></td>
+<td>2.7.4</td>
+<td>2.7.11 3.5.1</td>
+</tr>
+<tr>
+<td align="center">Jun 2016</td>
+<td align="center"><em>Jul 2017</em></td>
+<td>2.9.0</td>
+<td></td>
+<td>16.10 Yakkety</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Sep 2016</td>
+<td align="center"><em>Sep 2017</em></td>
+<td>2.10.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2016</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>16.10 Yakkety</td>
+<td>2.9.3</td>
+<td>2.7.11 3.5.1</td>
+</tr>
+<tr>
+<td align="center">Nov 2016</td>
+<td align="center"><em>Sep 2017</em></td>
+<td><strong>2.11.0</strong></td>
+<td></td>
+<td>17.04 Zesty / <strong>Stretch</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Dec 2016</td>
+<td align="center"><strong>Dec 2021</strong></td>
+<td></td>
+<td><strong>3.6.0</strong></td>
+<td>17.10 Artful - <strong>18.04 Bionic</strong> - 18.10 Cosmic</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Feb 2017</td>
+<td align="center"><em>Sep 2017</em></td>
+<td>2.12.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2017</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>17.04 Zesty</td>
+<td>2.11.0</td>
+<td>2.7.13 3.5.3</td>
+</tr>
+<tr>
+<td align="center">May 2017</td>
+<td align="center"><em>May 2018</em></td>
+<td>2.13.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Jun 2017</td>
+<td align="center"><strong>Jun 2022</strong></td>
+<td></td>
+<td></td>
+<td><strong>Debian 9 Stretch</strong></td>
+<td>2.11.0</td>
+<td>2.7.13 3.5.3</td>
+</tr>
+<tr>
+<td align="center">Aug 2017</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.14.0</td>
+<td></td>
+<td>17.10 Artful</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2017</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.15.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2017</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>17.10 Artful</td>
+<td>2.14.1</td>
+<td>2.7.14 3.6.3</td>
+</tr>
+<tr>
+<td align="center">Jan 2018</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.16.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2018</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.17.0</td>
+<td></td>
+<td><strong>18.04 Bionic</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2018</td>
+<td align="center"><strong>Apr 2028</strong></td>
+<td></td>
+<td></td>
+<td><strong>18.04 Bionic</strong></td>
+<td>2.17.0</td>
+<td>2.7.15 3.6.5</td>
+</tr>
+<tr>
+<td align="center">Jun 2018</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.18.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Jun 2018</td>
+<td align="center"><strong>Jun 2023</strong></td>
+<td></td>
+<td>3.7.0</td>
+<td>19.04 Disco - <strong>20.04 Focal</strong> / <strong>Buster</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Sep 2018</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.19.0</td>
+<td></td>
+<td>18.10 Cosmic</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2018</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>18.10 Cosmic</td>
+<td>2.19.1</td>
+<td>2.7.15 3.6.6</td>
+</tr>
+<tr>
+<td align="center">Dec 2018</td>
+<td align="center"><em>Dec 2019</em></td>
+<td><strong>2.20.0</strong></td>
+<td></td>
+<td>19.04 Disco / <strong>Buster</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Feb 2019</td>
+<td align="center"><em>Dec 2019</em></td>
+<td>2.21.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2019</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>19.04 Disco</td>
+<td>2.20.1</td>
+<td>2.7.16 3.7.3</td>
+</tr>
+<tr>
+<td align="center">Jun 2019</td>
+<td align="center"></td>
+<td>2.22.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Jul 2019</td>
+<td align="center"><strong>Jul 2024</strong></td>
+<td></td>
+<td></td>
+<td><strong>Debian 10 Buster</strong></td>
+<td>2.20.1</td>
+<td>2.7.16 3.7.3</td>
+</tr>
+<tr>
+<td align="center">Aug 2019</td>
+<td align="center"></td>
+<td>2.23.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2019</td>
+<td align="center"><strong>Oct 2024</strong></td>
+<td></td>
+<td>3.8.0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Oct 2019</td>
+<td align="center"></td>
+<td></td>
+<td></td>
+<td>19.10 Eoan</td>
+<td>2.20.1</td>
+<td>2.7.17 3.7.5</td>
+</tr>
+<tr>
+<td align="center">Nov 2019</td>
+<td align="center"></td>
+<td>2.24.0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Jan 2020</td>
+<td align="center"></td>
+<td>2.25.0</td>
+<td></td>
+<td><strong>20.04 Focal</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="center">Apr 2020</td>
+<td align="center"><strong>Apr 2030</strong></td>
+<td></td>
+<td></td>
+<td><strong>20.04 Focal</strong></td>
+<td>2.25.0</td>
+<td>2.7.17 3.7.5</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 版权所有 2020, Horizon Robotics
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

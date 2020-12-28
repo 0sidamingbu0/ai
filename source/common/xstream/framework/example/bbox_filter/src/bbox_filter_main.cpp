@@ -58,10 +58,10 @@ int main(int argc, char const *argv[]) {
   using xstream::BaseDataVector;
   using xstream::InputData;
   using xstream::InputDataPtr;
-  if (argc < 2) {
-    printf("Usage : ./bbox_filter_main config (multipuloutput_flag)\n");
-    printf("Example : ./bbox_filter_main ./config/filter.json\n");
-    printf("Example : ./bbox_filter_main ./config/filter_multioutput.json 1\n");
+  if (argc != 3) {
+    printf("Usage : ./bbox_filter_main config  single_output/multiple_output\n");
+    printf("Example : ./bbox_filter_main ./config/filter.json single_output\n");
+    printf("Example : ./bbox_filter_main ./config/filter_multioutput.json multiple_output\n");
     return -1;
   }
   auto config = argv[1];
@@ -97,7 +97,8 @@ int main(int argc, char const *argv[]) {
   data->name_ = "face_head_box";
   inputdata->datas_.push_back(BaseDataPtr(data));
   begin_clock = clock();
-  if (argc == 2) {
+  std::string output_type = argv[2];
+  if (output_type == "single_output") {
     std::cout << "***********************" << std::endl
               << "testing synchronous function" << std::endl
               << "***********************" << std::endl;
@@ -112,22 +113,28 @@ int main(int argc, char const *argv[]) {
         flow->UpdateConfig(ptr->unique_name_, ptr);
       }
     }
-  }
-  std::cout << "***********************" << std::endl
-            << "testing multi_output synchronous function" << std::endl
-            << "***********************" << std::endl;
-  for (int i = 0; i < 10; i++) {
-    auto out = flow->SyncPredict2(inputdata);
-    for (auto single_out : out) {
-      callback.OnCallback(single_out);
+  }else if (output_type == "multiple_output") {
+    std::cout << "***********************" << std::endl
+              << "testing multi_output synchronous function" << std::endl
+              << "***********************" << std::endl;
+    for (int i = 0; i < 10; i++) {
+      auto out = flow->SyncPredict2(inputdata);
+      for (auto single_out : out) {
+        callback.OnCallback(single_out);
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      if (i == 5) {
+        std::string unique_name("BBoxFilter_1");
+        auto ptr = std::make_shared<xstream::FilterParam>(unique_name);
+        ptr->SetThreshold(90.0);
+        flow->UpdateConfig(ptr->unique_name_, ptr);
+      }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    if (i == 5) {
-      std::string unique_name("BBoxFilter_1");
-      auto ptr = std::make_shared<xstream::FilterParam>(unique_name);
-      ptr->SetThreshold(90.0);
-      flow->UpdateConfig(ptr->unique_name_, ptr);
-    }
+  } else {
+    printf("Usage : ./bbox_filter_main config  single_output/multiple_output\n");
+    printf("Example : ./bbox_filter_main ./config/filter.json single_output\n");
+    printf("Example : ./bbox_filter_main ./config/filter_multioutput.json multiple_output\n");
+    return -1;
   }
   std::cout << "***********************" << std::endl
             << "testing aysnc function" << std::endl

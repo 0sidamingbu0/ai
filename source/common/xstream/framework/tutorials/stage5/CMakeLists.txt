@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # 设置头文件搜索路径
 include_directories(./)
 
-set(BASE_LIBRARIES xstream hobotlog jsoncpp pthread)
+set(BASE_LIBRARIES xstream hobotlog jsoncpp pthread rt)
 
 set(SOURCE_FILES
   method/alarm_method.cpp

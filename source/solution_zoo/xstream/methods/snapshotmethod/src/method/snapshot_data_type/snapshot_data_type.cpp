@@ -46,6 +46,7 @@ int SnapShotParam::UpdateParameter(const std::string &content) {
     SET_SNAPSHOT_METHOD_PARAM(json_var, UInt, output_height);
     SET_SNAPSHOT_METHOD_PARAM(json_var, Bool, save_original_image_frame);
     SET_SNAPSHOT_METHOD_PARAM(json_var, Bool, snapshot_state_enable);
+    SET_SNAPSHOT_METHOD_PARAM(json_var, String, snapshot_type);
 
     LOGD << "scale_rate: " << scale_rate;
     LOGD << "need_resize: " << need_resize;

@@ -29,10 +29,10 @@
       ]
     },
     "method_outs": ["parking_box", "mask", "corner"],
-	"iou_threshold": 0.5,
+	"iou_threshold": 0.3,
 	"pre_nms_top_n": 4095,
 	"post_nms_top_n": 100,
-	"box_score_thresh": 0.55,
+	"box_score_thresh": 0.5,
 	"corner_score_threshold": 0.3,
     "mask_confidence": 0,
     "model_file_path": "../../models/apa_box_corner_mask.hbm"

@@ -6,7 +6,8 @@
       "image",
       "face_bbox_list",
       "snap_list",
-      "face_feature"
+      "face_feature",
+      "lmk_106pts"
     ],
     "workflow": [
       {
@@ -38,6 +39,20 @@
       },
       {
         "method_type": "CNNMethod",
+        "unique_name": "lmk_106pts",
+        "timeout_duration": 2000,
+        "thread_count": 2,
+        "inputs": [
+          "face_bbox_list",
+          "image"
+        ],
+        "outputs": [
+          "lmk_106pts"
+        ],
+        "method_config_file": "lmk_106pts.json"
+      },
+      {
+        "method_type": "CNNMethod",
         "unique_name": "face_quality",
         "inputs": [
           "face_bbox_list",
@@ -62,7 +77,7 @@
         "method_config_file": "face_quality.json"
       },
       {
-        "method_type": "FaceSnapFilterMethod",
+        "method_type": "FilterMethod",
         "unique_name": "filter",
         "inputs": [
           "face_bbox_list",
@@ -101,9 +116,10 @@
           "right_cheek_after_filter",
           "nose_after_filter",
           "mouth_after_filter",
-          "jaw_after_filter"
+          "jaw_after_filter",
+	      "bound_rect_filter"
         ],
-        "method_config_file": "rgb_filter_1080p.json"
+        "method_config_file": "filter_config.json"
       },
       {
         "method_type": "GradingMethod",
@@ -136,7 +152,7 @@
         ],
         "method_config_file": "snapshot.json"
       },
-      {      
+      {
         "method_type": "CNNMethod",
         "unique_name": "feature",
         "inputs": [

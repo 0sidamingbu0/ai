@@ -74,10 +74,10 @@ class ourRTSPClient : public RTSPClient {
 
  public:
   StreamClientState scs;
+  int channel_;
 
  private:
   std::string file_name_;
-  int channel_;
   bool tcp_flag_;
   int frame_max_size_;
   bool has_shut_down;

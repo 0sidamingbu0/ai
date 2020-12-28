@@ -29,6 +29,7 @@
 #include "xproto_msgtype/protobuf/x3.pb.h"
 #include "xproto_msgtype/uvcplugin_data.h"
 #include "xproto/plugin/xpluginasync.h"
+#include "utils/votmodule.h"
 
 namespace horizon {
 namespace vision {
@@ -54,12 +55,6 @@ class PluginContext : public hobot::CSingleton<PluginContext> {
   uint32_t basic_plugin_cnt = 3;
   std::vector<std::shared_ptr<XPluginAsync>> plugins;
 };
-
-typedef struct {
-  bool is_drop_frame_;
-  std::shared_ptr<SmartMessage> smart_ = nullptr;
-  std::shared_ptr<VioMessage> vio_ = nullptr;
-} cache_vio_smart_t;
 
 class MCPlugin : public XPluginAsync {
  public:
@@ -106,13 +101,13 @@ class MCPlugin : public XPluginAsync {
 
   bool auto_start_ = false;
   bool enable_vot_ = false;
-  std::map<uint64_t, cache_vio_smart_t> cache_vio_smart_;
+  std::map<uint64_t, std::shared_ptr<horizon::vision::VotData_t>>
+          cache_vot_data_;
   std::mutex mut_cache_;
   std::condition_variable cv_;
-  // must <= vio buffer + 1
-  uint64_t cache_len_limit_ = 2;
+  uint64_t cache_len_limit_ = 10;
   std::vector<std::shared_ptr<std::thread>> feed_vo_thread_;
-  int feed_vo_thread_num_ = 2;
+  int feed_vo_thread_num_ = 1;
 
   std::shared_ptr<std::thread> status_monitor_thread_ = nullptr;
   std::atomic_int unrecv_ap_count_;

@@ -81,7 +81,7 @@ struct HorizonRecogInfo {
   /// 特征距离
   float distance = 0;
   /// 特征相似度
-  float similar = 0;
+  float similar = -1;
 };
 
 class DB {
@@ -141,6 +141,9 @@ class DB {
   static std::shared_ptr<DB> instance_;
   static std::string lib_name_;
   static std::string model_name_;
+  void SetSimilarThres(float value) {
+    similar_thres_ = value;
+  }
 
  private:
   class SearchHelper {
@@ -173,7 +176,7 @@ class DB {
   DB &operator=(const DB &db) = delete;
 
   ware_param_t search_param_;
-  float similar_thres_ = 0.7;
+  float similar_thres_ = 0.74;
   std::string table_path_;
 };
 

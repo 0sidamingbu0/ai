@@ -1,0 +1,52 @@
+{
+    "max_running_count": 10000,
+    "inputs": ["image"],
+    "outputs": ["detect_box", "classify"],
+    "workflow": [
+      {
+        "method_type": "Yolov3PredictMethod",
+        "unique_name": "Yolov3PredictMethod",
+        "inputs": [
+          "image"
+        ],
+        "outputs": [
+          "dnn_yolo"
+        ],
+        "method_config_file": "../method/Yolov3PredictMethod/yolov3_predict_method.json"
+      },
+      {
+        "method_type": "Yolov3PostProcessMethod",
+        "unique_name": "Yolov3PostProcessMethod",
+        "inputs": [
+          "dnn_yolo"
+        ],
+        "outputs": [
+          "detect_box"
+        ],
+        "method_config_file": "../method/Yolov3PostProcessMethod/yolov3_post_process_method.json"
+      },
+      {
+        "method_type": "Mobilenetv2PredictMethod",
+        "unique_name": "Mobilenetv2PredictMethod",
+        "inputs": [
+          "image",
+          "detect_box"
+        ],
+        "outputs": [
+          "dnn_mobilenet"
+        ],
+        "method_config_file": "../method/Mobilenetv2PredictMethod/mobilenetv2_predict_method.json"
+      },
+      {
+        "method_type": "Mobilenetv2PostProcessMethod",
+        "unique_name": "Mobilenetv2PostProcessMethod",
+        "inputs": [
+          "dnn_mobilenet"
+        ],
+        "outputs": [
+          "classify"
+        ],
+        "method_config_file": "../method/Mobilenetv2PostProcessMethod/mobilenetv2_post_process_method.json"
+      }
+    ]
+}

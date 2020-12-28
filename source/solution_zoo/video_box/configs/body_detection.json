@@ -10,15 +10,28 @@
     "disappeared_track_id",
     "pose",
     "lmk",
-    "kps"
+    "kps",
+    "snap_list"
   ],
   "workflow": [
     {
       "thread_count": 3,
-      "method_type": "FasterRCNNMethod",
-      "unique_name": "multi_task",
+      "method_type": "MultitaskPredictMethod",
+      "unique_name": "predict_multitask",
       "inputs": [
         "image"
+      ],
+      "outputs": [
+        "dnn_data"
+      ],
+      "method_config_file": "predict_multitask.json"
+    },
+    {
+      "thread_count": 3,
+      "method_type": "MultitaskPostProcessMethod",
+      "unique_name": "postprocess_multitask",
+      "inputs": [
+        "dnn_data"
       ],
       "outputs": [
         "body_box",
@@ -28,7 +41,7 @@
         "pose",
         "kps"
       ],
-      "method_config_file": "multitask_config.json"
+      "method_config_file": "postprocess_multitask.json"
     },
     {
       "thread_count": 1,
@@ -88,6 +101,51 @@
         "disappeared_track_id"
       ],
       "method_config_file": "merge_head_body.json"
+    },
+    {
+      "method_type": "FaceSnapFilterMethod",
+      "unique_name": "filter",
+      "inputs": [
+        "face_final_box",
+        "pose",
+        "lmk"
+      ],
+      "outputs": [
+        "filter_info",
+        "rgb_bbox_list_final",
+        "pose_after_filter",
+        "lmk_after_filter"
+      ],
+      "method_config_file": "snapshot_filter.json"
+    },
+    {
+      "method_type": "GradingMethod",
+      "unique_name": "grading",
+      "inputs": [
+        "rgb_bbox_list_final",
+        "pose_after_filter",
+        "lmk_after_filter"
+      ],
+      "outputs": [
+        "select_score_list"
+      ],
+      "method_config_file": "grading.json"
+    },
+    {
+      "method_type": "SnapShotMethod",
+      "unique_name": "snapshot",
+      "inputs": [
+        "image",
+        "rgb_bbox_list_final",
+        "select_score_list",
+        "disappeared_track_id",
+        "pose_after_filter",
+        "lmk_after_filter"
+      ],
+      "outputs": [
+        "snap_list"
+      ],
+      "method_config_file": "snapshot.json"
     }
   ]
 }

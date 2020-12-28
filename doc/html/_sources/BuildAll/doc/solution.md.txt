@@ -1,6 +1,8 @@
 # 场景参考解决方案
 本页主要介绍AI EXPRESS沉淀的参考解决方案。解决方案包含IOT以及驾驶相关的场景。相关示例的使用，可以参考**常见问题**部分。
 
+此外也会简单介绍参考解决方案中沉淀的XStream Method实现。
+
 ## 整体概述
 场景参考解决方案是在天工开物模型仓库(Model Zoo)中的产品算法之上，将地平线各种量产场景方案进行开放。下图是“天工开物”模型仓库（Model Zoo）产品算法开放列表。
 
@@ -8,7 +10,7 @@
 
 这些产品算法涉及人脸、人体、车辆等多种类别，具备极高的算法质量和精度，可有效避免合作伙伴“重复发明轮子”，大幅节省算法训练和开发的时间与成本。
 
-当前我们选取人脸、人体、车辆部分核心算法模型，沉淀了**人脸结构化参考方案**,**人体结构化参考方案**,**人体行为分析参考方案**,**视频盒子参考方案**,**体感游戏参考方案**,**usb camera参考方案**,**apa自动泊车参考方案**,**车辆结构化参考方案**,**多路camera参考方案** 九个解决方案。
+当前我们选取人脸、人体、车辆部分核心算法模型，沉淀了**人脸结构化参考方案**,**人体结构化参考方案**,**人体行为分析参考方案**,**视频盒子参考方案**,**体感游戏参考方案**,**usb camera参考方案**,**apa自动泊车参考方案**,**车辆结构化参考方案**,**多路camera参考方案**,**多路IPM图像回灌** 十个解决方案。
 
 这些参考方案在地平线XJ3系列开发板上可以直接部署运行；大部分解决方案也可以在XJ2系列开发板上直接部署运行。您也可以将这些参考方案轻松迁移到基于地平线芯片的其他硬件设备中。
 
@@ -34,6 +36,8 @@
 
 * 多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测狂、停车位检测框，支持把多路图像和检测结果在web上展示。
 
+* 多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。
+
 ## 人脸结构化
 我们选取**人脸检测**，**人脸5关键点**，**人脸姿态**，**年龄性别**，**口罩检测**五个产品模型，附加**MOT人脸跟踪，人脸打分以及人脸抓拍**三个业务策略，构建一个完整的人脸抓拍Workflow。
 
@@ -50,15 +54,15 @@
 |SnapshotMethod|策略|图像帧、人脸框、目标优选分值|抓拍图列表|
 |CNNMethod|算法|抓拍图列表|人脸特征|
 
-* [FasterRCNNMethod](../../xsdk/common/xstream/methods/fasterrcnnmethod/README.md)算法方法，我们采用多任务(MultiTask)实现方式，同时挂载**人脸检测**，**人脸5关键点**，**人脸姿态**三个模型。它可以针对输入图片进行结构化，输出图片中每个目标的人脸框、关键点、姿态.
-* [MOTMethod](../../xsdk/common/xstream/methods/motmethod/README.md)：采用了基于IOU策略的MOT跟踪算法，它对输入时序化的人脸框进行跟踪，输出带有trackID的人脸框和消失目标的集合。
+* [FasterRCNNMethod](../../xsdk/solution_zoo/xstream/methods/fasterrcnnmethod/README.md)算法方法，我们采用多任务(MultiTask)实现方式，同时挂载**人脸检测**，**人脸5关键点**，**人脸姿态**三个模型。它可以针对输入图片进行结构化，输出图片中每个目标的人脸框、关键点、姿态.
+* [MOTMethod](../../xsdk/solution_zoo/xstream/methods/motmethod/README.md)：采用了基于IOU策略的MOT跟踪算法，它对输入时序化的人脸框进行跟踪，输出带有trackID的人脸框和消失目标的集合。
 * [GradingMethod](../../xsdk/solution_zoo/xstream/methods/gradingmethod/README.md)：是一个人脸框打分的策略模块，它综合考虑人脸框大小、关键点置信度，遮挡以及姿态等信息，输出单个目标的人脸框图片置信分数，用于后续优选抓拍。
 * [SnapshotMethod](../../xsdk/solution_zoo/xstream/methods/snapshotmethod/README.md)：是一个抓拍的策略模块，基于MotMethod输出Tacklet以及GradingMethod输出的人脸框打分信息，在内存维持一个优选帧序列，针对一个Tracklet输出它的的抓拍图。
-* [CNNMethod](../../xsdk/common/xstream/methods/cnnmethod/README.md)算法方法，包括**年龄性别**，**口罩检测**以及**人脸特征提取**三种模型，可以对输入的检测框或抓拍列表，输出图片中目标的属性。
+* [CNNMethod](../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.md)算法方法，包括**年龄性别**，**口罩检测**以及**人脸特征提取**三种模型，可以对输入的检测框或抓拍列表，输出图片中目标的属性。
 
 在人脸抓拍workflow上，除了目前提供的**性别/年龄属性**，**口罩检测**等模型，还可以继续追加**人脸活体**、**人脸质量**等模型，进而丰富整个人脸结构化数据流。
 
-在人脸结构化参考方案中，我们也提供了一个人脸识别Workflow，通过在SnapshotMethod抓拍策略后，追加[CNNMethod](../../xsdk/common/xstream/methods/cnnmethod/README.md)来实现对抓拍人脸图的特征提取。
+在人脸结构化参考方案中，我们也提供了一个人脸识别Workflow，通过在SnapshotMethod抓拍策略后，追加[CNNMethod](../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.md)来实现对抓拍人脸图的特征提取。
 
 ![框架](./image/face_rego.png "")
 
@@ -173,13 +177,120 @@ Crop+Pym这里为什么需要对图像进行剪裁？对于1080P分辨路的码�
 
 Smart是负责对图片进行处理获得结构化数据，目前每一路的视频输入都是对应一个独立的samrt处理，这意味着可以根据实际需要每一路做不同的处理方式，比如有的用来做人头、人脸、人体检测，有的用来做分割，等等。
 
-为了直观显示智能数据处理结果，这里将处理后的图像直接通过VOT模块输出至HDMI，将1080P分辨的显示器连接到开发板上即可看见结果。
-
 图像处理的具体流程如下图所示：
 ![框架](./image/video_box_process.png "")
 
-视频盒子的代码在solution_zoo/video_box。配置文件在solution_zoo/configs/rtsp.json以及video_box/configs/body_solution.json。
-AI EXPRESS版本包编译部署后，在J3上可以直接使用如下命令运行：
+为了直观显示智能数据处理结果，这里将处理后的图像直接通过VOT模块输出至HDMI，将1080P分辨的显示器连接到开发板上即可看见结果。
+
+### 视频盒子使用HDMI显示
+运行视频盒子示例前，需要使用HDMI显示。系统默认未开启HDMI显示功能，系统烧录成功后，可以参考如下方法，开启HDMI显示。
+使用串口连接开发板，然后重启X3设备，重启后根据提示随意按任意键进入uboot模式。在uboot模式中敲入如下命令：
+
+```
+setenv bootargs earlycon console=ttyS0,921600 clk_ignore_unused video=hobot:x3sdb-hdmi kgdboc=ttyS0
+
+saveenv
+
+boot
+```
+
+系统重启后，HDMI显示器上显示地平线LOGO，则说明HDMI显示设置成功。
+
+
+视频盒子的代码在solution_zoo/video_box。配置文件是solution_zoo/video_box/configs/rtsp.json以及solution_zoo/video_box/configs/body_solution.json。
+
+### 视频盒子通过从远端获取RTSP视频流配置说明：
+
+1.使用本地转发功能前，需要先修改配置文件。修改deplpy/video_box/configs/rtsp.json配置文件，配置视频源：
+
+```json
+{
+  "channel_num": 4,
+  "channel0": {
+    "rtsp_link": "rtsp://admin:admin123@10.96.35.66:554/0",
+    "tcp": 1,
+    "frame_max_size": 200, // 200K
+    "save_stream": 0
+  },
+  "channel1": {
+    "rtsp_link": "rtsp://admin:admin123@10.96.35.67:554/0",
+    "tcp": 1,
+    "frame_max_size": 200, // 200K
+    "save_stream": 0
+  },
+  "channel2": {
+    "rtsp_link": "rtsp://admin:admin123@10.96.35.68:554/0",
+    "tcp": 1,
+    "frame_max_size": 200, // 200K
+    "save_stream": 0
+  },
+  "channel3": {
+    "rtsp_link": "rtsp://admin:admin123@10.96.35.69:554/0",
+    "tcp": 1,
+    "frame_max_size": 200, // 200K
+    "save_stream": 0
+  }
+}
+
+```
+
+rtsp.json配置文件关键字段说明：
+`channel_num`:表示当前有几路视频。最大支持8路RTSP码流。
+`rtsp_link`：表示RTSP视频源，admin为用户名，admin123为密码，10.96.35.x表示远端提供RTSP视频流的IPC的ip。端口默认使用554。
+`tcp`字段表示传输协议，置1表示使用tcp，置0会采用udp，如果存在丢包的情况，会导致视频花屏，推荐使用tcp。
+
+2.修改deploy/video_box/configs/visualplugin_video_box.json，设置展示模式：
+
+视频盒子可使用本地264文件，实现文件转发功能。使用本地转发h264文件前，修改display_mode和local_forward字段。
+
+`display_mode`字段：置0，使用rtsp模式。
+
+`local_forward`字段：置0，使用从远端IPC获取RTSP视频流模式。
+
+### 视频盒子本地转发
+
+1.目前支持一路或者多路的本地转发功能。视频盒子通过使用本地264文件，实现文件转发功能。使用本地转发功能前，需要先修改`deploy/video_box/configs/rtsp.json`中的url为：rtsp://ip:555/inputfilename。
+
+
+完整deploy/video_box/configs/rtsp.json本地转发rtsp配置示例如下：
+```bash
+{
+  "channel_num": 1,
+  "channel0": {
+    "rtsp_link": "rtsp://10.64.35.193:555/test.264",
+    "tcp": 1,
+    "frame_max_size": 200, // 200K
+    "save_stream": 0
+  }
+}
+```
+`inputfilename`为deploy下的h264文件，例如x3 ip地址为10.64.35.193，端口默认为555，默认h264文件为test.264,则url为 rtsp://10.64.35.193:555/test.264。
+
+`channel_num`字段表示几路本地转发，如果只想使用1路本地转发，置1即可，目前最多支持4路。
+
+`tcp`字段表示传输协议，置1表示使用tcp，置0会采用udp，如果存在丢包的情况，会导致视频花屏，推荐使用tcp。
+
+
+2.修改`deploy/video_box/configs/visualplugin_video_box.json`配置中的display_mode，input_h264_filename
+
+将"display_mode"设置为0, 即在x3上启动rtsp服务器,然后修改"input_h264_filename"为"test.264",即可通过url
+"rtsp://ip:555/test.264"从当前x3拉取rtsp视频流。
+
+完整deploy/video_box/configs/visualplugin_video_box.json配置示例如下：
+```bash
+{
+  "auth_mode": 0,
+  "display_mode": 0,
+  "user": "admin",
+  "password": "123456",
+  "data_buf_size": 3110400,
+  "packet_size": 102400,
+  "input_h264_filename": "test.264",
+  "local_forward": 1
+}
+```
+
+AI EXPRESS版本包编译并生成deploy部署包后，在X3上可以直接使用如下命令运行：
 ```
 sh run.sh
 // 后续根据提示完成
@@ -309,7 +420,205 @@ VIO处理图像输入。BPU使用工具链嵌入式预测库bpu-predict完成基
 ## 多路camera
 本方案支持多路camera输入、视觉图像处理、多路智能结果在web端展示等，最多支持8路。
 视觉图像预测部分采用了apa的workflow作为示例
-多路camera参考方案基于XProto应用开发框架，，使用了如下组件：
+多路camera参考方案基于XProto应用开发框架，使用了如下组件：
 - VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据，支持获取多路camera数据。
 - MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同camera数据单独完成预测、结果处理。
 - MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据，最多支持8路。
+
+## 多路IPM图像回灌
+XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。
+图像预测部分采用了apa的workflow作为示例
+多路IPM图回灌参考方案基于XProto应用开发框架，使用了如下组件：
+- VioPlugin 接入回灌IPM图像，获取图像的金字塔数据，支持获取多路IPM图像数据。
+- MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同IPM图数据单独完成预测、结果处理。
+- MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据。
+
+
+
+## 内置Method
+
+本节主要介绍参考解决方案实现过程中，实现的一些XStream框架下的算法Method和策略Method。
+
+智能业务中Method类型通常可以分为两类：
+1) 算法Method：该类Method主要完成load模型、前处理并送给BPU完成预测、获取预测结果、完成结果解析等。
+2) 策略Method:　该类Method无算法模型相关处理，是业务相关的策略模型，如过滤策略Method、融合策略Method、优选策略Method等。
+
+目前XStream中将一些常见Method沉淀，其中算法Method如FasterRCNNMethod、CNNMethod，策略Method如MotMethod等。这些Method只为用户提供参考，在提供的参考样例代码中会用到其中的Method。基于XStream框架开发时，如果不想使用内置Method，可以根据自己的需求(例如，不同的模型输入预处理、不同的模型和模型输出后处理等)，参考已有的Method，独立开发自定义的Method。
+
+### FasterRCNNMethod
+FasterRCNNMethod主要是对fasterrcnn检测算法模型的集成。通常，FasterRCNNMethod的输入是类型为PymImageFrame或CVImageFrame的图像，具体可以参考[内置数据结构vision_type](#内置数据结构vision_type)。预处理将图像数据resize成模型输入大小并做格式转换，模型预测通过调用BPU相关接口实现，后处理主要是对多种输出的解析，如检测框、关键点、分割等。
+
+#### 配置文件
+使用FasterRCNNMethod时，首先要清楚模型每层的输出是什么，更改对应的配置文件进行适配。配置中的主要参数如下：
+
+|  字段  | 含义|
+|  ---- | ----  |
+| net_info | 和模型相关的信息|
+| model_name | 编译出的hbm文件中模型的名字 |
+| model_version | 模型的版本号，GetVersion接口返回的就是这个值 |
+| pyramid_layer | 模型用到的金字塔图像数据的第几层 |
+| method_outs | method的实际输出，与workflow中Node的输出对应，可以配置为该模型输出能力的子集 |
+| model_file_path | 模型文件的路径 |
+| face_pv_thr | 人脸的置信度阈值，没达到置信度阈值的face_box及关联的人脸lmk和人脸pose一并不输出，默认阈值为0 |
+| model_input_width | 模型输入的宽 |
+| model_input_height | 模型输入的高 |
+| model_out_sequence | 模型输出各分支的信息，我们需要根据model_out_sequence来进行模型结果的后处理 |
+
+对于"model_out_sequence",其内部个参数含义如下：
+
+|  字段  | 含义|
+|  ---- | ----  |
+| name | 输出的名字 |
+| type | 输出的类型 |
+| box_name |依赖的box的名字 |
+
+FasterRCNNMethod配置文件示例：
+
+示例中检测模型输入数据大小是540x960，输出共5层，分别是人体框、人头框、人脸框、人体骨骼点和人体分割。
+```json
+{
+  "net_info": {
+    "model_name": "personMultitask",
+    "model_version": "1.0.0",
+    "model_out_sequence": [
+      {
+        "name": "body_box",
+        "type": "bbox"
+      },
+      {
+        "name": "head_box",
+        "type": "bbox"
+      },
+      {
+        "name": "face_box",
+        "type": "bbox"
+      },
+      {
+        "name": "kps",
+        "type": "kps",
+        "box_name": "body_box"
+      },
+      {
+        "name": "mask",
+        "type": "mask",
+        "box_name": "body_box"
+      }
+    ],
+    "model_input_width": 960,
+    "model_input_height": 540,
+    "pyramid_layer": 4
+  },
+  "method_outs": ["face_box", "head_box", "body_box","kps","mask"],
+  "model_file_path": "../models/IPCModel.hbm"
+}
+```
+
+### CNNMethod
+CNNMethod主要是对检测框的属性进行预测，比如年龄性别、人脸识别、手势识别、摔倒检测、车辆属性等。
+
+CNNMethod处理的任务和FasterRCNNMethod的区别：FasterRCNNMethod一般是对全图做检测分析；CNNMethod一般是基于图像+检测物体ROI，完成一帧图像所有ROI区域的预测任务。
+
+#### 配置文件
+同理，使用CNNMethod时需要清楚用到的模型的输入数据类型，以及后处理的类型。
+
+目前支持的输入数据类型包括rect、lmk、img、plate_num_img、lmk_seq、vid，其中rect与img都表示矩形框数据，区别在于rect输入需要对应模型的编译选项是resizer、img输入对应模型的编译选项是pyramid；lmk在矩形框数据基础上包括了人脸关键点；plate_num_img用于车牌框数据，与img的区别在于检测框的预处理；lmk_seq表示关键点序列，用于摔倒检测与手势识别；vid表示raw data，目前用于表示体感游戏中人体骨骼特征。
+
+后处理类型包括：face_feature、antispoofing、face_quality、binary_classify、lmk_pose、age_gender、vehicle_type、vehicle_color、plate_num、classify、act_det、back_bone、vid、common_lmk。
+
+face_feature表示人脸特征；
+
+antispoofing表示活体识别；
+
+face_quality表示人脸质量；
+
+binary_classify表示二元分类；
+
+lmk_pose表示人脸关键点以及人脸3d位置；
+
+age_gender表示年龄性别；
+
+vehicle_type表示车辆类型；
+
+vehicle_color表示车辆颜色；
+
+plate_num表示车牌号字符串输出；
+
+classify表示车牌号整型输出；
+
+act_det表示行为识别，目前支持摔倒检测和手势识别；
+
+back_bone表示人体骨骼特征，目前用于体感游戏；
+
+common_lmk表示关键点检测，目前用于手关键点检测。
+
+配置中主要参数如下：
+
+| 配置名          | 说明      | 备注     |
+| --------------- | ------------------------------------ | ------------------------------------------------------------ |
+| model_name      | 编译模型时指定的模型名字             |                                                              |
+| model_version   | 模型版本号                           |                                                              |
+| model_file_path | 模型文件地址                         |                                                              |
+| in_msg_type     | 模型的处理方式（resizer或者pyramid或者ddr） | rect/img(resizer/pyramid)/lmk_seq                             |
+| norm_method     | pyramid方式必填                      | norm_by_width_length<br />norm_by_width_ratio<br />norm_by_height_rario<br />norm_by_lside_ratio<br />norm_by_height_length<br />norm_by_lside_length<br />norm_by_lside_square<br />norm_by_diagonal_square<br />norm_by_nothing |
+| filter_method   | pyramid方式必填                      | out_of_range<br />no_filter                                  |
+| expand_scale    | pyramid方式必填                      | 外扩系数                                                     |
+| post_fn         | 后处理方式                           | face_feature<br />antispoofing<br />lmk_pose<br />age_gender<br />face_quality<br />act_det |
+| threshold       | 阈值                                 |                                                              |
+| input_shift     | 输入转浮点时参数                      |                                                              |
+| seq_len         | 输入序列长度                          |                                                              |
+| stride          | 序列步长                             |  |
+| max_gap         | 步长允许误差范围                      |  |
+| buf_len         | 缓存buffer长度                       |                                                              |
+| norm_kps_conf   | 是否强制进行关键点置信度归一化       |                                                              |
+| kps_norm_scale  | 关键点置信度归一化参数                |                                                              |
+| merge_groups    | 类别融合                             | 字符串，需要保证格式为"[group1_idx1,group1_idx2];[group2_idx1,group_idx2]"  |
+| target_group_idx| 目标类别index                        |                                                              |
+| max_handle_num       | 最大处理数量             |    负数表示无限制                                                 |
+| output_size     | 输出槽的个数                         |                                                              |
+
+配置文件示例：
+```json
+{
+  "model_name": "faceAntiSpfRGB",
+  "model_version": "x2.1.0.11",
+  "model_file_path": "../models/PanelBoard.hbm",
+  "in_msg_type": "img",     # 输入类型，决定前处理方式和使用的bpu-predict接口
+  "norm_method": "norm_by_lside_square",    # normalize方法，需要和算法对齐
+  "filter_method": "no_filter",
+  "expand_scale": 1.5,
+  "post_fn": "antispoofing",  # 后处理函数
+  "threshold": 0.1,
+  "max_handle_num": -1,
+  "output_size": 2
+}
+```
+
+### MotMethod
+MotMethod属于策略Method，用于多目标跟踪，实现检测框的跟踪和ID分配功能。
+
+#### 输入
+
+|Slot |内容 |备注 |
+|:---:|:---------------:|:--------------:|
+0 | XStreamBBox_list | 必要项
+
+#### 输出
+
+|Slot |内容 |备注 |
+|:---:|:--------------------:|:---------------------------:|
+0 | XStreamBBox_list | 带track_id
+1 | XStreamUint32_List | disappeared_track_id_list
+
+#### 配置文件
+
+|字段      |描述     |默认值     |
+|:-----------------------:|-----------------------------------------------------|:------:|
+tracker_type|MOT工作模式，目前仅支持IOU based MOT|IOU
+device|设备名称，若设置为X1，最大track_id为255，用以比对一致性|X2
+update_no_target_predict|无检测框输入更新状态机track预测框，设置为true对主体连续运动且有遮挡的场景效果好，设置为false对主体不移动且有遮挡的场景效果好|false
+support_hungarian|匈牙利匹配开关，打开匈牙利匹配id召回多，准确率下降；关闭则id召回少，准确率提升|false
+need_check_merge|每组输入框IOU大于一定阈值做融合，该操作会影响输出数量，检测框融合多在检测模块完成，一般情况置为false|false
+original_bbox|是否使用卡尔曼滤波器预测框，true为不使用，输出原始框坐标|true
+max_track_target_num|状态机保存最大track数|512
+max_det_target_num|输入框最大计算数|512
+vanish_frame_count|消失帧数|30

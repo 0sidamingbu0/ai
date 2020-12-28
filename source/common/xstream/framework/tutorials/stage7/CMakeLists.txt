@@ -4,7 +4,7 @@ include_directories(
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
-set(BASE_LIBRARIES xstream hobotlog jsoncpp pthread dl)
+set(BASE_LIBRARIES xstream hobotlog jsoncpp pthread dl rt)
 
 add_executable(stage7_main
   ${CMAKE_CURRENT_LIST_DIR}/include/method/bbox.h

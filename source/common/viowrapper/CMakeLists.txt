@@ -96,6 +96,7 @@ elseif (${PLATFORM_X3})
     set(X3_HAPI_LIB isp iar isp_algo tinyalsa multimedia z avformat hbmedia)
     file(GLOB PROJECT_SRC
       "${IOT_VIO_SRC}/src/iotviomanager/*.cpp"
+      "${IOT_VIO_SRC}/src/iotviomanager/camera/*.cpp"
       )
     file(GLOB PROJECT_INC
       "${IOT_VIO_SRC}/include/iotviomanager/*.h"

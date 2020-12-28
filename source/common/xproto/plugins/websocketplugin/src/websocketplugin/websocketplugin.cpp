@@ -64,8 +64,8 @@ int WebsocketPlugin::Init() {
   LOGI << "attribute_description_path: " << config_->attr_des_file_;
   AttributeConvert::Instance().Init(config_->attr_des_file_);
 
-  RegisterMsg(TYPE_SMART_MESSAGE, std::bind(&WebsocketPlugin::FeedSmart, this,
-                                            std::placeholders::_1));
+  RegisterMsg(GetSmartMessageType(), std::bind(&WebsocketPlugin::FeedSmart,
+                                               this, std::placeholders::_1));
   RegisterMsg(TYPE_IMAGE_MESSAGE, std::bind(&WebsocketPlugin::FeedVideo, this,
                                             std::placeholders::_1));
   // 调用父类初始化成员函数注册信息

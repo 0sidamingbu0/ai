@@ -18,7 +18,7 @@
 #include <vector>
 
 #include <thread>
-
+#include <unordered_map>
 #include "xproto/message/pluginflow/flowmsg.h"
 #include "xproto/plugin/xpluginasync.h"
 
@@ -29,6 +29,7 @@
 #include "votmodule.h"
 #include "xproto_msgtype/smartplugin_data.h"
 #include "vencmodule.h"
+#include "videoprocessor.h"
 
 namespace horizon {
 namespace vision {
@@ -74,6 +75,27 @@ private:
   xstream::OutputDataPtr smart_result;
 };
 
+#define TYPE_FEATURE_MESSAGE "XPLUGIN_FEATURE_MESSAGE"
+
+class SmartFeatureMessage : public XProtoMessage {
+ public:
+  explicit SmartFeatureMessage(std::shared_ptr<FeatureFrameMessage> features) {
+    type_ = TYPE_FEATURE_MESSAGE;
+    features_ = features;
+  }
+  ~SmartFeatureMessage() = default;
+  std::shared_ptr<FeatureFrameMessage> GetMessageData() { return features_; }
+  std::string& GetMessageType() { return message_type_; }
+  void SetMessageType(std::string msg_type) { message_type_ = msg_type; }
+  std::string Serialize() override { return "no need serial";}
+
+ private:
+  std::shared_ptr<FeatureFrameMessage> features_;
+  std::string message_type_;
+};
+
+using SmartFeatureMessagePtr = std::shared_ptr<SmartFeatureMessage>;
+
 class SmartPlugin : public XPluginAsync {
  public:
   SmartPlugin() = default;
@@ -91,12 +113,18 @@ class SmartPlugin : public XPluginAsync {
  private:
   int Feed(XProtoMessagePtr msg);
   void OnCallback(xstream::OutputDataPtr out);
+  int FeedPic(XProtoMessagePtr msg);
+  void OnCallbackPic(xstream::OutputDataPtr out);
+  void OnCallbackFeature(xstream::OutputDataPtr out);
+  int FeedRecog(XProtoMessagePtr msg);
 
   void ParseConfig();
   void GetRtspConfigFromFile(const std::string &path);
   void GetDisplayConfigFromFile(const std::string &path);
 
   std::vector<std::shared_ptr<XStreamSDK>> sdk_;
+  std::shared_ptr<XStreamSDK> pic_sdk_;
+  std::shared_ptr<XStreamSDK> feature_sdk_;
 
   std::string smart_config_file_;
   std::string rtsp_config_file_;
@@ -104,28 +132,31 @@ class SmartPlugin : public XPluginAsync {
   std::shared_ptr<RuntimeMonitor> monitor_;
   std::shared_ptr<JsonConfigWrapper> config_;
   std::string xstream_workflow_cfg_file_;
+  std::string xstream_workflow_cfg_pic_file_;
+  std::string xstream_workflow_cfg_feature_file_;
   bool enable_profile_{false};
   std::string profile_log_file_;
   bool result_to_json{false};
   Json::Value root;
-  std::shared_ptr<VotModule> vot_module_;
-  std::shared_ptr<VencModule> venc_module_1080p_;
-  std::shared_ptr<VencModule> venc_module_720p_;
-  bool running_venc_1080p_;
-  bool running_venc_720p_;
-  bool running_vot_;
+  std::shared_ptr<VideoProcessor> video_processor_;
+  bool running_venc_1080p_ = false;
+  bool running_venc_720p_ = false;
+  bool running_vot_ = true;
+  bool encode_smart_ = true;
 
   int channel_num_ = 0;
   int display_mode_ = 0;
 
   smart_vo_cfg_t smart_vo_cfg_;
-  VencConfig smart_venc_cfg_;
 
   //for test fps
   static void ComputeFpsThread(void *param);
   uint64_t smartframe_ = 0;
   std::thread read_thread_;
   bool running_;
+  std::unordered_map<uint64_t, std::unordered_map<uint64_t,
+      std::shared_ptr<RecogResult_t>>> recog_cache_;
+  std::mutex cache_mtx_;
 };
 
 }  // namespace smartplugin_multiplebox

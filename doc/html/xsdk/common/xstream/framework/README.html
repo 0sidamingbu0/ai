@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>Overview &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -172,13 +173,7 @@
 <ul>
 <li><p><a class="reference external" href="#build">Build</a></p>
 <ul>
-<li><p><a class="reference external" href="#bazel-%E7%BC%96%E8%AF%91">Bazel 编译</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E5%AE%89%E8%A3%85-bazel">安装 bazel</a></p></li>
-<li><p><a class="reference external" href="#%E6%9C%AC%E5%9C%B0%E5%8F%8A%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91">本地及交叉编译</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference external" href="#cmake-%E7%BC%96%E8%AF%91">Cmake 编译</a></p>
+<li><p><a class="reference external" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83">准备环境</a></p>
 <ul>
 <li><p><a class="reference external" href="#%E5%AE%89%E8%A3%85cmake">安装cmake</a></p></li>
 <li><p><a class="reference external" href="#%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE">安装交叉编译工具链</a></p></li>
@@ -218,7 +213,7 @@
 </li>
 <li><p><a class="reference external" href="#xstream-sdk%E5%88%9D%E5%A7%8B%E5%8C%96">XStream SDK初始化</a></p></li>
 <li><p><a class="reference external" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E8%AE%BE%E7%BD%AE-callback">定义和设置 callback</a></p></li>
-<li><p><a class="reference external" href="#%E6%80%A7%E8%83%BD%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7-profiler">使用性能统计工具-profiler</a></p></li>
+<li><p><a class="reference external" href="#%E6%80%A7%E8%83%BD%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7-profiler">性能统计工具-profiler</a></p></li>
 <li><p><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE">异步运行-输入数据</a></p></li>
 <li><p><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C">异步运行</a></p></li>
 <li><p><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE">同步运行-输入数据</a></p></li>
@@ -324,107 +319,66 @@
 <h1>XStream-Framework 用户使用指南<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h1>
 <div class="section" id="build">
 <h2>Build<a class="headerlink" href="#build" title="永久链接至标题">¶</a></h2>
-<div class="section" id="bazel">
-<h3>Bazel 编译<a class="headerlink" href="#bazel" title="永久链接至标题">¶</a></h3>
 <div class="section" id="id4">
-<h4>安装 bazel<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
-<p><strong>以下安装bazelisk和直接安装bazel方法二选一，建议使用bazelisk更方便</strong></p>
-<ul class="simple">
-<li><p>安装 bazelisk</p>
-<ul>
-<li><p>到官方github网站找到最新版本 https://github.com/bazelbuild/bazelisk/releases, 下载对应操作系统的程序到本地，重命名为bazelisk，放置在环境变量PATH中，重命名bazel。如果已安装bazel, 一般是在PATH中, 创建软连接到路径.bazel/bin/bazel, 将这个bazel软连接改连接到bazelisk即可。
-代码根目录下的.bazelversion文件中，指定了bazel版本。bazelisk会根据这个bazel版本号下载具体的bazel版本。</p></li>
-</ul>
-</li>
-</ul>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span>root@3ebb9bdfca19:/tmp# whereis bazel
-bazel: /etc/bazel.bazelrc /usr/local/bin/bazel /usr/local/lib/bazel
-root@3ebb9bdfca19:/tmp# mv /usr/local/bin/bazel /usr/local/bin/bazel_origin
-root@3ebb9bdfca19:/tmp# wget https://github.com/bazelbuild/bazelisk/releases/download/v1.2.1/bazelisk-linux-amd64 -O /usr/local/bin/bazel
+<h3>准备环境<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="cmake">
+<h4>安装cmake<a class="headerlink" href="#cmake" title="永久链接至标题">¶</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2.tar.gz <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> tar -zxvf cmake-3.17.2.tar.gz <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> <span class="nb">cd</span> cmake-3.17.2 <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> ./bootstrap <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> make <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> sudo make install <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> <span class="nb">cd</span> .. <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> rm -rf cmake-3.17
 </pre></div>
 </div>
-<p>设置可执行权限并运行，查看是否生效。</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span>root@3ebb9bdfca19:/tmp# chmod a+x /usr/local/bin/bazel
-root@3ebb9bdfca19:/tmp# bazel version
-Bazelisk version: 56a03d98104be7cfa57d4bbdc03b4c7cea29a6c9
-Build label: 1.2.0
-Build target: bazel-out/k8-opt/bin/src/main/java/com/google/devtools/build/lib/bazel/BazelServer_deploy.jar
-Build time: Wed Nov 20 15:04:55 2019 (1574262295)
-Build timestamp: 1574262295
-Build timestamp as int: 1574262295
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>安装 bazel (当前建议安装1.2.0)</p>
-<ul>
-<li><p>Ubuntu
-参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-ubuntu.html">Installing Bazel on Ubuntu</a></p></li>
-<li><p>Fedora and CentOS
-参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-redhat.html">Installing Bazel on Fedora and CentOS</a></p></li>
-<li><p>macOS
-参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-os-x.html">Installing Bazel on macOS</a>
-<strong>更多Bazel帮助信息请参见<a class="reference external" href="https://docs.bazel.build/">Bazel Documentation</a></strong></p></li>
-</ul>
-</li>
-</ul>
 </div>
 <div class="section" id="id5">
-<h4>本地及交叉编译<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<h4>安装交叉编译工具链<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p>可直接下载：http://releases.linaro.org/components/toolchain/binaries/6.5-2018.12/aarch64-linux-gnu/gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu.tar.xz
+或者联系地平线技术支持人员获取: <a class="reference external" href="https://pan.horizon.ai/index.php/s/d3QH3MfzHT5fwd2">gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu</a></p>
+</div>
+<div class="section" id="id6">
+<h4>编译<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>x86_64     本地编译 XStream Framework库文件
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">-s</span>&#160; <span class="pre">//xstream/framework:xstream</span>&#160; <span class="pre">--define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span></code>
-其中 <code class="docutils literal notranslate"><span class="pre">-define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span></code> 用于指定CPU类型和OS系统类型</p></li>
-<li><p>x86_64     本地编译以及打包 XStream Framework库文件
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">-s</span>&#160; <span class="pre">//xstream/framework:xstream_zip</span>&#160; <span class="pre">--define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span></code>
-在build中用cc_library_pkg定语的rule,可以加<code class="docutils literal notranslate"><span class="pre">_zip</span></code>,表示编译并打包。
-例如:</p></li>
+<li><p>CentOS平台</p></li>
 </ul>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span> <span class="n">cc_library_pkg</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;xstream&quot;</span><span class="p">,</span>
-<span class="p">...</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
+mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+cmake .. -DX86_ARCH<span class="o">=</span>ON -DX86_CENTOS<span class="o">=</span>ON 
+make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
-<p>另外<code class="docutils literal notranslate"><span class="pre">-define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span></code> 用于指定CPU类型和OS系统类型
-参见 build_script/build_xstream-framework_x86.sh</p>
 <ul class="simple">
-<li><p>X2J2 64位  交叉编译 XStream Framework库文件
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">-s</span>&#160;&#160; <span class="pre">//xstream/framework:xstream</span> <span class="pre">--crosstool_top=&quot;&#64;hr_bazel_tools//rules_toolchain/toolchain:toolchain&quot;</span> <span class="pre">--cpu=x2j2-aarch64</span> <span class="pre">--define</span> <span class="pre">cpu=x2j2-aarch64</span> <span class="pre">--verbose_failures</span>&#160;&#160; <span class="pre">--spawn_strategy=local</span></code>
-参见 build_script/build_xstream-framework_aarch.sh</p></li>
-<li><p>X2J2 32位  交叉编译 XStream Framework库文件
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">-s</span>&#160;&#160; <span class="pre">//xstream/framework:xstream</span> <span class="pre">--crosstool_top=&quot;&#64;hr_bazel_tools//rules_toolchain/toolchain:toolchain&quot;</span> <span class="pre">--cpu=x2j2-armv8l</span>&#160; <span class="pre">--define</span> <span class="pre">cpu=x2j2-armv8l</span>&#160; <span class="pre">--verbose_failures</span>&#160;&#160; <span class="pre">--spawn_strategy=local</span></code></p></li>
+<li><p>Ubuntu平台</p></li>
 </ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
+mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
+cmake .. -DX86_ARCH<span class="o">=</span>ON
+make -j <span class="o">&amp;&amp;</span> make install
+</pre></div>
 </div>
-</div>
-<div class="section" id="cmake">
-<h3>Cmake 编译<a class="headerlink" href="#cmake" title="永久链接至标题">¶</a></h3>
-<div class="section" id="id6">
-<h4>安装cmake<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>ubunutu 环境
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">cmake</span></code></p></li>
-<li><p>centos 环境
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">yum</span> <span class="pre">-y</span> <span class="pre">install</span> <span class="pre">cmake</span></code></p></li>
+<li><p>Linaro-aarch64平台</p></li>
 </ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
+mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
+cmake ..
+make -j <span class="o">&amp;&amp;</span> make install
+</pre></div>
+</div>
+<p>默认编译xstream会生成libxstream.a，如果需要生成libxstream.so，可通过修改AI-EXPRESS/source/common/xstream/framework/CMakeLists.txt中的编译选项<code class="docutils literal notranslate"><span class="pre">BUILD_SHARED_LIBS</span></code>为<code class="docutils literal notranslate"><span class="pre">true</span></code>进行编译：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>set<span class="o">(</span>BUILD_SHARED_LIBS <span class="nb">true</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>或者在<code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">..</span></code>时，添加-DBUILD_SHARED_LIBS=ON选项，即可。</p>
+<p>编译结束后，在common/xstream/framework下会生成output目录，output目录包含libxstream.a、头文件和框架说明文档、入门教程文档和教程代码，支持独立使用xstream库。</p>
+</div>
 </div>
 <div class="section" id="id7">
-<h4>安装交叉编译工具链<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
-<p>可直接下载：http://releases.linaro.org/components/toolchain/binaries/6.5-2018.12/aarch64-linux-gnu/gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu.tar.xz
-或者联系地平线技术支持人员获取</p>
-</div>
-<div class="section" id="id8">
-<h4>编译<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
-<ul class="simple">
-<li><p>X2 交叉编译
-<code class="docutils literal notranslate"><span class="pre">build.properties.local</span></code> 默认是 X2交叉编译工具链</p></li>
-<li><p>执行交叉编译
-推荐创建编译目录，如代码根目录 <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">build</span></code>
-<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">build</span> <span class="pre">&amp;</span> <span class="pre">cmake</span> <span class="pre">../</span></code>
-<code class="docutils literal notranslate"><span class="pre">make</span></code></p></li>
-</ul>
-</div>
-</div>
-<div class="section" id="id9">
-<h3>编译结果<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<h3>编译结果<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
 <li><p>example:
 <em>bin/bbox_filter_example</em><br />——以HobotXStream::BBox为数据类型, 基于XStream C++语言API编写的Example案例
@@ -452,9 +406,9 @@ Build timestamp as int: 1574262295
 —— XStream 诊断记录的单元测试</p></li>
 </ul>
 </div>
-<div class="section" id="id10">
-<h3>环境信息<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
-<p>Centos： x64 gcc4.8.5<br />X2：64/32位  gcc-linaro-6.5.0</p>
+<div class="section" id="id8">
+<h3>环境信息<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>Centos： x64 gcc4.8.5<br />X2/X3：64/32位  gcc-linaro-6.5.0</p>
 </div>
 </div>
 <div class="section" id="step-by-stepxstream-sdk">
@@ -521,8 +475,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id11">
-<h3>XStream SDK接口说明<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id9">
+<h3>XStream SDK接口说明<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
 <div class="section" id="createsdk">
 <h4>CreateSDK<a class="headerlink" href="#createsdk" title="永久链接至标题">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">static</span> <span class="pre">XStreamSDK</span> <span class="pre">*CreateSDK();</span></code><br />说明：通过该接口创建XStream的实例。</p>
@@ -541,8 +495,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <p><code class="docutils literal notranslate"><span class="pre">virtual</span> <span class="pre">int</span> <span class="pre">UpdateConfig(const</span> <span class="pre">std::string</span> <span class="pre">&amp;unique_name,</span> <span class="pre">InputParamPtr</span> <span class="pre">ptr)</span> <span class="pre">=</span> <span class="pre">0;</span></code><br />说明：用于设置node的参数，最终会通过调用对应的node管理的method实例的UpdateParameter(InputParamPtr ptr)接口，完成参数的更新。
 形参unique_name传入node的名字；形参ptr为该node对应的配置信息</p>
 </div>
-<div class="section" id="id12">
-<h4>SetConfig<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id10">
+<h4>SetConfig<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">virtual</span> <span class="pre">InputParamPtr</span> <span class="pre">GetConfig(const</span> <span class="pre">std::string</span> <span class="pre">&amp;unique_name)</span> <span class="pre">const</span> <span class="pre">=</span> <span class="pre">0;</span></code><br />说明：获取某个node的参数，最终会调用对应的node管理的method实例的GetParameter()返回配置信息。</p>
 </div>
 <div class="section" id="getversion">
@@ -575,8 +529,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </div>
 </div>
 </div>
-<div class="section" id="id13">
-<h3>XStream SDK使用<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id11">
+<h3>XStream SDK使用<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
 <li><p>Example 异步运行模式<br /><strong>以下代码中出现的ASSERT_TRUE, EXPECT_EQ, ASSERT_EQ等，来源于googletest。</strong>
 <strong>用于对返回值结果等做一些检查，实际应用中不需要使用。</strong><br />如以下代码所示:</p></li>
@@ -662,8 +616,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </div>
 </div>
 </div>
-<div class="section" id="id14">
-<h4>XStream SDK初始化<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id12">
+<h4>XStream SDK初始化<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
 <p>根据前面几步的配置，初始化XStream。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">xstream</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">()</span>
 </pre></div>
@@ -736,8 +690,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <p>用户打开性能统计后，若统计结果输出到文件”profiler.txt”，可以通过访问<code class="docutils literal notranslate"><span class="pre">chrome://tracing/</span></code>，通过页面的<code class="docutils literal notranslate"><span class="pre">Load</span></code>按钮将文件加载，即可看到统计数据可视化界面。以下图为例，页面上的横坐标表示”时间”；前两行纵坐标表示对应Method处理的帧数；后两行纵坐标表示不同线程”thread_id”，同时页面左下角提供了工具以便用户查看数据细节。</p>
 <p><img alt="统计数据可视化" src="../../../../_images/profiler3.png" /></p>
 </div>
-<div class="section" id="id15">
-<h4>异步运行-输入数据<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id13">
+<h4>异步运行-输入数据<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
 <li><p>datas_: workflow输入的数据数组，要求非空。vector中每个数据对应一个数据slot，会送给workflow的
 相关node，作为它们的输入。 在CV场景下，输入数据一般来源于senser或ISP处理后的视频帧数据。</p></li>
@@ -773,8 +727,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id16">
-<h4>异步运行<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id14">
+<h4>异步运行<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
 <li><p>异步运行</p></li>
 </ul>
@@ -783,8 +737,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id17">
-<h4>同步运行-输入数据<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id15">
+<h4>同步运行-输入数据<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
 <p>与异步模式相比, 处理结果直接通过SyncPredict返回。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>  <span class="n">xstream</span><span class="o">::</span><span class="n">InputDataPtr</span> <span class="n">inputdata</span><span class="p">(</span><span class="n">new</span> <span class="n">xstream</span><span class="o">::</span><span class="n">InputData</span><span class="p">());</span>
   <span class="k">auto</span> <span class="n">xstream_input_data</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">xstream</span><span class="o">::</span><span class="n">BaseData</span><span class="o">&gt;</span><span class="p">();</span>
@@ -794,8 +748,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id18">
-<h4>同步运行-输出数据<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id16">
+<h4>同步运行-输出数据<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
 <p>调用 SyncPredict，直接返回运行的结果</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>  <span class="k">auto</span> <span class="n">output</span> <span class="o">=</span> <span class="n">xstream</span><span class="o">-&gt;</span><span class="n">SyncPredict</span><span class="p">(</span><span class="n">inputdata</span><span class="p">);</span>
 </pre></div>
@@ -825,12 +779,12 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id19">
-<h4>异步运行-多路输出数据<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id17">
+<h4>异步运行-多路输出数据<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
 <p>在接口使用上，与普通方式下没有区别，仅在回调函数如OnCallback中需注意，需要对output-&gt;datas_遍历，通过 output-&gt;output_type判断是否是目标group结果数据。</p>
 </div>
-<div class="section" id="id20">
-<h4>同步运行-多路输出数据<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id18">
+<h4>同步运行-多路输出数据<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
 <p>调用同步多路预测接口SyncPredict2，接口会阻塞住，直到整个workflow处理完成返回output的数组。里面包括多路数据结果，可以通过OutputData的output_type_字段区分。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span> <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">auto</span> <span class="n">out</span> <span class="o">=</span> <span class="n">flow</span><span class="o">-&gt;</span><span class="n">SyncPredict2</span><span class="p">(</span><span class="n">inputdata</span><span class="p">);</span>
@@ -929,8 +883,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </div>
 <div class="section" id="configworkflow">
 <h3>通过Config文件定义workflow<a class="headerlink" href="#configworkflow" title="永久链接至标题">¶</a></h3>
-<div class="section" id="id21">
-<h4>常用配置<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id19">
+<h4>常用配置<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;face_head_box&quot;</span><span class="p">],</span>
   <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;face_head_box_filter2&quot;</span><span class="p">],</span>
@@ -1003,8 +957,8 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </pre></div>
 </div>
 </div>
-<div class="section" id="id22">
-<h4>指定线程优先级的配置<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id20">
+<h4>指定线程优先级的配置<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
 <p>以下的workflow config文件中，对thread线程的设置与上面不同，通过thread_list设置node的执行线程数，并可通过thread_priority来设置不同的线程优先级。</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;face_head_box&quot;</span><span class="p">],</span>
@@ -1102,17 +1056,17 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </tr>
 </tbody>
 </table><p><strong>optional</strong><br /><strong>——sched_upper</strong> : workflow调度线程<br /><strong>——sched_down</strong> :  workflow中node的公共守护线程   ***<br /><em><strong>如果设置线程优先级，建议这两个线程的优先级高于每个node的线程优先级</strong></em><br /><em><strong>node</strong></em><br /><strong>——thread_list</strong> :  指定了node执行线程index的数组，基于thread_list可以实现多个node之间共享执行线程。<br /><strong>——thread_priority</strong> : 线程的优先级设置。</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>&quot;thread_list&quot;: [0],
-      &quot;thread_priority&quot;:
-      {
-        &quot;policy&quot;: &quot;SCHED_FIFO&quot;,
-        &quot;priority&quot;: 10
-      },
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;thread_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+      <span class="nt">&quot;thread_priority&quot;</span><span class="p">:</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;policy&quot;</span><span class="p">:</span> <span class="s2">&quot;SCHED_FIFO&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;priority&quot;</span><span class="p">:</span> <span class="mi">10</span>
+      <span class="p">},</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id23">
-<h4>多路输出配置<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id21">
+<h4>多路输出配置<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
 <p>多路输出应用于这样的场景: FrameWork数据在一些node运行结束后，产生了一些workflow所需的output数据。这些output数据，如果按通常的配置方法，要等到所有workflow中所有node运行完成后，XStream的调用者才能通过异步回调，或者同步运行后获取结果。这样，调用者获得目标结果的数据会相对比较晚。多路输出功能，为缩短一些output数据的返回时间，提供这样的机制，用户可以将输出数据分为多路输出，但某路数据经过一些node，达到完成状态时，即可通过回调函数返回结果，即使这路数据还要参与后续的node计算。多路输出一般配合XStream SDK的异步调用方式使用。</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;face_head_box&quot;</span><span class="p">],</span>
@@ -1157,24 +1111,24 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </div>
 <p>每帧数据FrameWork Data有序列号sequence_id标记，还需增加每路输出OutputData的唯一标记output_type_，在config文件中获取。
 多路输出的Json配置方式为：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span> &quot;outputs&quot;: [
-    {
-      &quot;output_type&quot;: &quot;out1&quot;,
-      &quot;outputs&quot;:[&quot;face_head_box_filter&quot;]
-    },
-    {
-      &quot;output_type&quot;: &quot;out2&quot;,
-      &quot;outputs&quot;:[&quot;face_head_box_filter2&quot;]
-    }
-  ],
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span> <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;output_type&quot;</span><span class="p">:</span> <span class="s2">&quot;out1&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;outputs&quot;</span><span class="p">:[</span><span class="s2">&quot;face_head_box_filter&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;output_type&quot;</span><span class="p">:</span> <span class="s2">&quot;out2&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;outputs&quot;</span><span class="p">:[</span><span class="s2">&quot;face_head_box_filter2&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="id24">
-<h3>数据类型<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
-<div class="section" id="id25">
-<h4>错误码<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id22">
+<h3>数据类型<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id23">
+<h4>错误码<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// xstream_error.h</span>
 <span class="cp">#define HOBOTXSTREAM_ERROR_CODE_OK  0</span>
 
@@ -1187,8 +1141,8 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </pre></div>
 </div>
 </div>
-<div class="section" id="id26">
-<h4>基础数据结构<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id24">
+<h4>基础数据结构<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h4>
 <div class="section" id="datastate">
 <h5>DataState<a class="headerlink" href="#datastate" title="永久链接至标题">¶</a></h5>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// xstream_data.h</span>

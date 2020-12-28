@@ -26,7 +26,7 @@ if (NOT ${PARENT_BUILD})
 	option(X86_CENTOS "centos release" OFF)
 
 	# build separately install directory
-  set(OUTPUT_ROOT ${CMAKE_SOURCE_DIR}/output/)
+  set(OUTPUT_ROOT ${CMAKE_SOURCE_DIR}/output)
 endif()
 
 option(XSTREAM_HOBOTSDK_ENGINE "choose hobotsdk engine" OFF)
@@ -150,13 +150,15 @@ else()
 		src/timer/timer.cpp
 		src/node.cpp
 		src/scheduler.cpp
-		src/thread_pool.cpp
+		src/xthread.cpp
+		src/thread_manager.cpp
+		src/xthread_pool.cpp
 	)
 	set(SOURCE_FILES ${SOURCE_FILES} ${NATIVE_ENGINE_SOURCES})
 endif()
 
 
-set(BUILD_SHARED_LIBS false)
+option(BUILD_SHARED_LIBS "build shared libs" OFF)
 add_library(xstream ${SOURCE_FILES})
 
 target_link_libraries(xstream
@@ -184,17 +186,43 @@ add_subdirectory(tutorials/stage7)
 add_subdirectory(tutorials/stage8)
 add_subdirectory(tutorials/stage9)
 
+if (${BUILD_DNNMETHOD})
+  add_subdirectory(methods/DnnPredictMethod)
+  add_subdirectory(methods/DnnPostProcessMethod)
+  add_subdirectory(tutorials/stage10)
+endif()
+
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME})
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxsdk
-	DESTINATION ${MY_OUTPUT_ROOT}/include/
-	FILES_MATCHING PATTERN "*.h"
+install(
+  FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxsdk/version.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxsdk/xstream_data.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxsdk/xstream_error.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxsdk/xstream_sdk.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/hobotxsdk
 )
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream
-	DESTINATION ${MY_OUTPUT_ROOT}/include/
-	FILES_MATCHING PATTERN "*.h"
+install(
+  FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/json_key.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/method_factory.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/method.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/profiler.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/xstream_config.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/hobotxstream
 )
 
 install(TARGETS ${PROJECT_NAME}
 	DESTINATION ${MY_OUTPUT_ROOT}/lib)
 
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+	DESTINATION ${MY_OUTPUT_ROOT}/
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tutorials
+	DESTINATION ${MY_OUTPUT_ROOT}/
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+	DESTINATION ${MY_OUTPUT_ROOT}/tutorials
+)

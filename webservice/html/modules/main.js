@@ -15,6 +15,18 @@ changeCheckboxSelect();
 protobufInit();
 multipathInit();
 
+function fullFloatMatrix(width, height) {
+  let widths  = [...new Array(width).keys()];
+  let heights  = [...new Array(height).keys()];
+  let FullFloatMatrix = []
+  widths.map(() => {
+    heights.map(() => {
+      FullFloatMatrix.push(255, 255, 255, 255)
+    })
+  })
+  return FullFloatMatrix;
+}
+
 function getVideoNum() {
   let num = 1;
   let obj = {};
@@ -55,13 +67,13 @@ function createVideo() {
   
   const videocontHtml = document.getElementById('wrapper-cnt');
   const performanceHtml = document.getElementById('performance-message');
+  // <img class="logo1" src="../assets/images/usbcam-top.png" alt="">
   pathNumArr.map(i => {
     const port = 8080 + i * 2;
     const str = `
       <div class="${names}" id="video-wrap-${port}" style="width: ${w}%; height: ${h}%;">
         <div class="cont">
           <div class="cam" id="cam">
-            <img class="logo1" src="../assets/images/usbcam-top.png" alt="">
             <img class="logo2" src="../assets/images/aionhorizon.png" alt="">
             <img src="" class="layer" id="video-${port}" alt="">
             <canvas class="canvas" id="canvas-${port}-1"></canvas>
@@ -162,10 +174,7 @@ function wsInit(i, port) {
   socketIP = hostport.replace(/_/g, '.');
   socket = new ReconnectingWebSocket(`ws://${socketIP}:${port}`, null, { binaryType: 'arraybuffer' });
   // 本地开发用
-  // let ip = 
-  // // '10.64.35.114'
-  // // '10.64.35.121'
-  // '10.103.74.106'
+  // let ip = '10.103.74.106'
   // let socket = new ReconnectingWebSocket(`ws://${ip}:${port}`, null, { binaryType: 'arraybuffer' });
 
   socket.onopen = function (e) {
@@ -222,8 +231,8 @@ function transformData(buffer) {
   // console.log(3333, object);
 
   let imageBlob;
-  let imageWidth;
-  let imageHeight;
+  let imageWidth = 1920;
+  let imageHeight = 1080;
   let performance = [];
   let smartMsgData = [];
   if (object) {
@@ -239,6 +248,10 @@ function transformData(buffer) {
         object['img_']['buf_'] &&
         object['img_']['buf_'].length
     ) {
+      // if (imageWidth !== object['img_']['width_'] || imageHeight !== object['img_']['height_']) {
+      //   // console.log(111, imageWidth)
+      //   FullFloatMatrix = fullFloatMatrix(imageWidth, imageHeight);
+      // }
       imageBlob = new Blob([object['img_']['buf_']], { type: 'image/jpeg' });
       imageWidth = object['img_']['width_'] || 1920
       imageHeight = object['img_']['height_'] || 1080
@@ -248,10 +261,14 @@ function transformData(buffer) {
         object['smartMsg_']['targets_'] &&
         object['smartMsg_']['targets_'].length
     ) {
+      let FullFloatMatrix = null;
+      if (messageShowSelect.floatMatrixsMatting) {
+        FullFloatMatrix = fullFloatMatrix(imageWidth, imageHeight);
+      }
       object['smartMsg_']['targets_'].map(item => {
         if (item) {
           let obj = {
-            id: item['trackId_'],
+            id: messageShowSelect.trackId ? item['trackId_'] : undefined,
             boxes: [],
             attributes: { attributes: [], type: item['type_'] },
             fall: { fallShow: false },
@@ -260,15 +277,21 @@ function transformData(buffer) {
           }
           let labelStart = 0;
           let labelCount = 20;
+          let labelBodyBox = null
+
           // 检测框
           if (messageShowSelect.boxes && item['boxes_'] && item['boxes_'].length ) {
             item['boxes_'].map((val, ind) => {
               let boxs = transformBoxes(val)
               if (boxs) {
                 obj.boxes.push({ type: val['type_'] || '', p1: boxs.box1, p2: boxs.box2 });
+
                 if (ind === 0) {
                   obj.attributes.box = { p1: boxs.box1, p2: boxs.box2 }
                   obj.fall.box = { p1: boxs.box1, p2: boxs.box2 }
+                }
+                if (val['type_'] === 'body') {
+                  labelBodyBox = boxs
                 }
                 boxs = null;
               }
@@ -300,7 +323,7 @@ function transformData(buffer) {
                   }
                 }  else if (val['type_'] === 'lmk_106pts') {
                   if (messageShowSelect.face) {
-                    obj.points.push({ type: val['type_'], diameterSize: 2, skeletonPoints: transformPoints(val['points_'])})
+                    obj.points.push({ type: val['type_'], skeletonPoints: transformPoints(val['points_']), diameterSize: 2 })
                   }
                 } else if (val['type_'] === 'parking') {
                   if (messageShowSelect.boxes) {
@@ -369,33 +392,72 @@ function transformData(buffer) {
             })
           }
           // 全图分割 segmentation parking_mask
-          if (messageShowSelect.floatMatrixs &&
+          if (
               item['floatMatrixs_'] &&
               item['floatMatrixs_'].length
           ) {
-            let color = [];
-            let step = 255 * 3 / labelCount;
-            for (let i = 0; i < labelCount; ++i) {
-              let R = (labelStart / 3 * 3) % 256;
-              let G = (labelStart / 3 * 2) % 256;
-              let B = (labelStart / 3) % 256;
-              color.push([R, G, B]);
-              labelStart += step;
-            }
-            if (color.length) {
-              let floatdata = []
-              item['floatMatrixs_'][0]['arrays_'].map(values => {
-                values['value_'].map(index => {
-                  let colors = color[Math.trunc(index)]
-                  floatdata.push(colors[0], colors[1], colors[2], 155)
+            if (item['floatMatrixs_'][0]['type_'] === 'segmentation' && messageShowSelect.floatMatrixs) {
+              let color = [];
+              let step = 255 * 3 / labelCount;
+              for (let i = 0; i < labelCount; ++i) {
+                let R = (labelStart / 3 * 3) % 256;
+                let G = (labelStart / 3 * 2) % 256;
+                let B = (labelStart / 3) % 256;
+                color.push([R, G, B]);
+                labelStart += step;
+              }
+              if (color.length) {
+                let floatdata = []
+                item['floatMatrixs_'][0]['arrays_'].map(values => {
+                  values['value_'].map(index => {
+                    let colors = color[Math.trunc(index)]
+                    floatdata.push(colors[0], colors[1], colors[2], 155)
+                  })
+                })
+                obj.segmentation.push({
+                  type: 'full_img',
+                  w: item['floatMatrixs_'][0]['arrays_'][0]['value_'].length,
+                  h: item['floatMatrixs_'][0]['arrays_'].length,
+                  data: floatdata
+                })
+              }
+            } else if (item['floatMatrixs_'][0]['type_'] === 'matting' && messageShowSelect.floatMatrixsMatting && labelBodyBox && FullFloatMatrix) {
+              let floatdata = FullFloatMatrix;
+              let labelWidth = labelBodyBox.box2.x - labelBodyBox.box1.x;
+              let labelHeight = labelBodyBox.box2.y - labelBodyBox.box1.y;
+              let dataWidth = Math.trunc(item['floatMatrixs_'][0]['arrays_'][0]['value_'].length * labelWidth / 224)
+              let dataHeight = Math.trunc(item['floatMatrixs_'][0]['arrays_'].length * labelHeight / 224)
+
+              let datas = scaleData(dataWidth, dataHeight, item['floatMatrixs_'][0]['arrays_'])
+              // console.log(555, dataWidth, dataHeight, datas)
+              
+              datas.map((values, i) => {
+                values['value_'].map((valuess, j) => {
+                  if (valuess > 0) {
+                    let col = j;
+                    let row = i;
+                    let x = (col - labelWidth / 224 * 16) + labelBodyBox.box1.x;
+                    let y = (row - labelHeight / 224 * 16) + labelBodyBox.box1.y;
+                    let index = Math.trunc(y) * 1920 * 4 + Math.trunc(x) * 4 + 3
+                    floatdata[index] = 255 - valuess
+                  }
                 })
               })
-              obj.segmentation.push({
-                type: 'full_img',
-                w: item['floatMatrixs_'][0]['arrays_'][0]['value_'].length,
-                h: item['floatMatrixs_'][0]['arrays_'].length,
-                data: floatdata
-              })
+
+              obj.segmentation.push({ type: 'full_img', w: imageWidth, h: imageHeight, data: floatdata })
+
+              // let floatdata = []
+              // item['floatMatrixs_'][0]['arrays_'].map(values => {
+              //   values['value_'].map(index => {
+              //     floatdata.push(255, 255, 255, 255-index)
+              //   })
+              // })
+              // obj.segmentation.push({
+              //   type: 'full_img',
+              //   w: item['floatMatrixs_'][0]['arrays_'][0]['value_'].length,
+              //   h: item['floatMatrixs_'][0]['arrays_'].length,
+              //   data: floatdata
+              // })
             }
           }
           smartMsgData.push(obj);
@@ -445,3 +507,53 @@ function transformPoints(points) {
   });
   return skeletonPoints;
 };
+
+function scaleData(w, h, data) {
+	let resData = new Array(h);
+	
+	for (let j = 0; j < h; j++) {
+		let line = new Array(w);
+		for (let i = 0; i < w; i++) {
+      let v = bilinearInter(w, h, i, j, data);
+			line[i] = Math.round(v);
+		}
+		resData[j] = { value_: line };
+	}
+	
+	return resData;
+}
+
+function bilinearInter(sw, sh, x_, y_, data) {
+	let w = data[0]['value_'].length;
+	let h = data.length;
+	
+	let x = (x_ + 0.5) * w / sw - 0.5;
+  let y = (y_ + 0.5) * h / sh - 0.5;
+	
+	let x1 = Math.floor(x);
+	let x2 = Math.floor(x + 0.5);
+	let y1 = Math.floor(y);
+	let y2 = Math.floor(y + 0.5);
+	
+	x1 = x1 < 0 ? 0 : x1;
+	y1 = y1 < 0 ? 0 : y1;
+	
+	x1 = x1 < w - 1 ? x1 : w - 1;
+	y1 = y1 < h - 1 ? y1 : h - 1;
+	
+	x2 = x2 < w - 1 ? x2 : w - 1;
+  y2 = y2 < h - 1 ? y2 : h - 1;
+  
+	let f11 = data[y1]['value_'][x1];
+	let f21 = data[y1]['value_'][x2];
+	let f12 = data[y2]['value_'][x1];
+  let f22 = data[y2]['value_'][x2];
+  
+	let xm = x - x1;
+	let ym = y - y1;
+	let r1 = (1 - xm) * f11 + xm * f21;
+  let r2 = (1 - xm) * f12 + xm * f22;
+	let value = (1-ym) * r1 + ym * r2;
+	
+	return value;
+}

@@ -28,6 +28,9 @@ int hb_vin_mipi_dev_stop(entry_t *e);
 int hb_vin_mipi_dev_init(entry_t *e);
 int hb_vin_mipi_dev_deinit(entry_t *e);
 int hb_vin_mipi_dev_parser_config(void *root, entry_t *e);
+int hb_vin_mipi_dev_ipi_fatal(entry_t *e, int32_t ipi);
+int hb_vin_mipi_dev_ipi_get_info(entry_t *e, int32_t ipi, mipi_dev_ipi_info_t *info);
+int hb_vin_mipi_dev_ipi_set_info(entry_t *e, int32_t ipi, mipi_dev_ipi_info_t *info);
 
 #ifdef __cplusplus
 }

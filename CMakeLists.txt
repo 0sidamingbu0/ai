@@ -14,6 +14,7 @@ option(PLATFORM_X3 "x3 platform" OFF)
 option(IOT_VIO_API "iot vio api" ON)
 option(X3_MEDIA_CODEC "x3 media codec" ON)
 option(BGR2I420_WITH_LIBYUV "bgr to i420 with libyuv" OFF)
+option(BUILD_DNNMETHOD "build dnn method" ON)
 
 project(build_all)
 
@@ -98,11 +99,11 @@ include_directories(
         source/common/xproto/plugins/websocketplugin/include/
         source/common/xproto/plugins/uvcplugin/include/
         source/common/xstream/vision_type/include
-        source/common/xstream/media_codec/include
+        source/common/xproto/plugins/media_codec/include
         source/common/viowrapper/include
         # methods
-        source/common/xstream/methods/cnnmethod/include
-        source/common/xstream/methods/fasterrcnnmethod/include
+        source/solution_zoo/xstream/methods/cnnmethod/include
+        source/solution_zoo/xstream/methods/fasterrcnnmethod/include
         source/solution_zoo/xstream/methods/gradingmethod/include
         source/solution_zoo/xstream/methods/filtermethod/include
         source/solution_zoo/xstream/methods/snapshotmethod/include
@@ -110,7 +111,7 @@ include_directories(
         source/solution_zoo/xstream/methods/behavior_method/include
         source/solution_zoo/xstream/methods/predictmethod/include
         source/solution_zoo/xstream/methods/postprocessmethod/include
-        source/common/xstream/methods/motmethod/include
+        source/solution_zoo/xstream/methods/motmethod/include
         source/solution_zoo/xstream/methods/vehicle_snap_method/include
         source/solution_zoo/xstream/methods/vehicle_plate_match_method/include
         source/solution_zoo/xstream/methods/plate_vote_method/include
@@ -119,8 +120,20 @@ include_directories(
         source/solution_zoo/xstream/methods/ssd_method/include
         source/solution_zoo/xstream/methods/FaceSnapFilterMethod/include
         source/solution_zoo/xstream/methods/lowpassfiltermethod/include
+        source/common/xstream/framework/methods/DnnAsyncData
+        source/common/xstream/framework/methods/dnn_util/include
+        source/common/xstream/framework/methods/DnnPostProcessMethod/include
+        source/common/xstream/framework/methods/DnnPredictMethod/include
+        source/solution_zoo/xstream/methods/MattingPostProcessMethod/include
+        source/solution_zoo/xstream/methods/MattingPredictMethod/include
+        source/solution_zoo/xstream/methods/MultitaskPostProcessMethod/include
+        source/solution_zoo/xstream/methods/MultitaskPredictMethod/include
+        source/solution_zoo/xstream/methods/MattingTrimapFreePostProcessMethod/include
+        source/solution_zoo/xstream/methods/MattingTrimapFreePredictMethod/include
+
         # other utilities
         source/common/xstream/imagetools/include
+        deps/aes/include
         deps/ipc_tracking/include
         deps/bpu_predict/${ARCHITECTURE}/include
         deps/jsoncpp/include
@@ -178,16 +191,16 @@ if (${PLATFORM_X3})
 add_subdirectory(source/common/xproto/plugins/uvcplugin)
 add_subdirectory(source/solution_zoo/video_box/)
 if (${X3_MEDIA_CODEC})
-add_subdirectory(source/common/xstream/media_codec)
+add_subdirectory(source/common/xproto/plugins/media_codec)
 endif()
 endif()
 add_subdirectory(source/common/xstream/framework)
 add_subdirectory(source/common/xstream/vision_type)
-add_subdirectory(source/common/xstream/methods/fasterrcnnmethod)
+add_subdirectory(source/solution_zoo/xstream/methods/fasterrcnnmethod)
 add_subdirectory(source/common/xstream/imagetools)
 add_subdirectory(source/common/viowrapper)
-add_subdirectory(source/common/xstream/methods/cnnmethod)
-add_subdirectory(source/common/xstream/methods/motmethod)
+add_subdirectory(source/solution_zoo/xstream/methods/cnnmethod)
+add_subdirectory(source/solution_zoo/xstream/methods/motmethod)
 
 add_subdirectory(source/solution_zoo/xstream/methods/gradingmethod)
 add_subdirectory(source/solution_zoo/xstream/methods/filtermethod)
@@ -203,7 +216,16 @@ add_subdirectory(source/solution_zoo/xstream/methods/vote_method)
 add_subdirectory(source/solution_zoo/xstream/methods/ssd_method)
 add_subdirectory(source/solution_zoo/xstream/methods/FaceSnapFilterMethod)
 add_subdirectory(source/solution_zoo/xstream/methods/lowpassfiltermethod)
+add_subdirectory(source/solution_zoo/xstream/methods/MattingPostProcessMethod)
+add_subdirectory(source/solution_zoo/xstream/methods/MattingPredictMethod)
+add_subdirectory(source/solution_zoo/xstream/methods/MultitaskPostProcessMethod)
+add_subdirectory(source/solution_zoo/xstream/methods/MultitaskPredictMethod)
+add_subdirectory(source/solution_zoo/xstream/methods/MattingTrimapFreePostProcessMethod)
+add_subdirectory(source/solution_zoo/xstream/methods/MattingTrimapFreePredictMethod)
 
 add_subdirectory(source/solution_zoo/face/)
 add_subdirectory(source/solution_zoo/body/)
 add_subdirectory(source/solution_zoo/face_body_multisource/)
+add_subdirectory(source/solution_zoo/yolov3_mobilenetv2_example/)
+add_subdirectory(source/solution_zoo/yolov3_mobilenetv2_example/ExampleWebsocketPlugin)
+add_subdirectory(source/solution_zoo/yolov3_mobilenetv2_example/ExampleSmartPlugin)

@@ -83,15 +83,15 @@ SchedulerConfig::SchedulerConfig(XStreamConfigPtr config) {
   // 判断单路or多路输出
   HOBOT_CHECK(outputs[0].isObject() || outputs[0].isString())
       << "sdk output error, please check config output";
-  bool is_multipul_output = true;
+  bool is_multiple_output = true;
   if (outputs[0].isObject()) {  // 判断是否多路输出
-    is_multipul_output = true;
+    is_multiple_output = true;
   } else if (outputs[0].isString()) {
-    is_multipul_output = false;
+    is_multiple_output = false;
   }
 
   // 多路输出flow_outputs_
-  if (is_multipul_output) {
+  if (is_multiple_output) {
     for (uint i = 0; i < outputs.size(); ++i) {
       Json::Value output = outputs[i];
       std::vector<std::string> single_outputs;

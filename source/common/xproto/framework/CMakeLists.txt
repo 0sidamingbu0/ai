@@ -115,7 +115,7 @@ set(SOURCE_FILES
   ${PROJECT_INC}
 )
 
-set(BUILD_SHARED_LIBS false)
+option(BUILD_SHARED_LIBS "build shared libs" OFF)
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
 
 add_subdirectory(test)
@@ -127,15 +127,52 @@ add_subdirectory(tutorials/stage2)
 set(OUTPUT_ROOT ${PROJECT_SOURCE_DIR}/output)
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/xproto)
 
-install(DIRECTORY
-  ${PROJECT_SOURCE_DIR}/include/xproto/message/pluginflow
-  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/message)
-install(DIRECTORY
-  ${PROJECT_SOURCE_DIR}/include/xproto/plugin
-  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/)
-install(DIRECTORY
-  ${PROJECT_SOURCE_DIR}/include/xproto/threads
-  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/)
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/manager/msg_manager.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/manager
+)
+
+install(
+  FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/plugin/xplugin.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/plugin/xpluginasync.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/plugin
+)
+
+install(
+  FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/message/pluginflow/flowmsg.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/message/pluginflow/msg_registry.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/message/pluginflow
+)
+
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/threads/threadpool.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/threads
+)
+
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/utils/singleton.h
+  DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/utils
+)
+
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+  DESTINATION ${MY_OUTPUT_ROOT}/
+)
+
+install(
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/document
+  DESTINATION ${MY_OUTPUT_ROOT}/
+)
 
 install(TARGETS ${PROJECT_NAME}
-  DESTINATION ${MY_OUTPUT_ROOT}/lib)
+	DESTINATION ${MY_OUTPUT_ROOT}/lib)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tutorials
+	DESTINATION ${MY_OUTPUT_ROOT}/
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+	DESTINATION ${MY_OUTPUT_ROOT}/tutorials
+)

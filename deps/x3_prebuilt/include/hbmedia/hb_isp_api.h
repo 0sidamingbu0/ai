@@ -26,6 +26,17 @@ typedef enum HB_ISP_FW_STATE_E {
 	ISP_FW_STATE_FREEZE,
 } ISP_FW_STATE_E;
 
+typedef struct HB_ISP_CTRL_PARAM_ATTR_S {
+	uint32_t u32Thresh;
+	uint32_t u32Offset;
+	uint32_t u32Slope;
+} ISP_CTRL_PARAM_ATTR_S;
+
+typedef struct HB_ISP_CTRL_PARAMA_ATTR_S {
+	uint32_t u32Thresh;
+	uint32_t u32Slope;
+} ISP_CTRL_PARAMA_ATTR_S;
+
 typedef union HB_ISP_MODULE_CTRL_U {
 	uint64_t u64Value;
 	struct {
@@ -115,7 +126,7 @@ typedef struct _ae_acamera_output_ {
 	uint16_t sensor_ctrl_enable;
 	ae_out_info_t ae_out_info;
 	ae_1024bin_weight_t ae_1024bin_weight;
-} ae_acamera_output_t; 
+} ae_acamera_output_t;
 
 typedef struct HB_ISP_AE_FUNC_S {
 	void *(*init_func)(uint32_t ctx_id);
@@ -233,6 +244,8 @@ typedef struct HB_ISP_AE_ATTR_S {
 	ISP_OP_TYPE_E enOpType;
 } ISP_AE_ATTR_S;
 
+
+
 /*AF*/ // cmd
 typedef struct HB_ISP_AF_ATTR_S {
 	uint32_t u32ZoomPos;
@@ -260,15 +273,45 @@ typedef struct HB_ISP_DEMOSAIC_ATTR_S {
 	uint32_t u32FcSlope;
 	uint32_t u32FcAliasSlope;
 	uint32_t u32FcAliasThresh;
+	ISP_CTRL_PARAM_ATTR_S VhParam;
+	ISP_CTRL_PARAM_ATTR_S AaParam;
+	ISP_CTRL_PARAM_ATTR_S VaParam;
+	ISP_CTRL_PARAM_ATTR_S UuParam;
+	ISP_CTRL_PARAM_ATTR_S UuShParam;
+	ISP_CTRL_PARAM_ATTR_S SharpLumaLowD;
+	ISP_CTRL_PARAMA_ATTR_S SharpLumaHighD;
+	ISP_CTRL_PARAM_ATTR_S SharpLumaLowUD;
+	ISP_CTRL_PARAMA_ATTR_S SharpLumaHighUD;
 	uint16_t u16NpOffset[ISP_AUTO_ISO_STRENGTH_NUM][2];
 } ISP_DEMOSAIC_ATTR_S;
 
 /* Sharpen */ //lut
-typedef struct HB_ISP_SHARPEN_ATTR_S {
+typedef struct HB_ISP_SHARPEN_AUTO_ATTR_S {
 	uint16_t u16SharpFR[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint16_t u16SharpAltD[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint16_t u16SharpAltDU[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint16_t u16SharpAltUD[ISP_AUTO_ISO_STRENGTH_NUM][2];
+} ISP_SHARPEN_AUTO_ATTR_S;
+
+typedef struct HB_ISP_SHARPEN_MANUAL_ATTR_S {
+	uint32_t u32Strength;
+	uint32_t u32SharpAltD;
+	uint32_t u32SharpAltUd;
+        uint32_t u32SharpAltLd;
+        uint32_t u32SharpAltLdu;
+        uint32_t u32SharpAltLu;
+} ISP_SHARPEN_MANUAL_ATTR_S;
+
+typedef struct HB_ISP_SHARPEN_ATTR_S {
+	ISP_CTRL_PARAM_ATTR_S LumaLow;
+	ISP_CTRL_PARAM_ATTR_S LumaHigh;
+	uint32_t u32ClipStrMax;
+	uint32_t u32ClipStrMin;
+	uint32_t u32AlphaUndershoot;
+	uint32_t u32SadAmp;
+	ISP_SHARPEN_MANUAL_ATTR_S stManual;
+	ISP_SHARPEN_AUTO_ATTR_S stAuto;
+	ISP_OP_TYPE_E enOpType;
 } ISP_SHARPEN_ATTR_S;
 
 /* Gamma */ //lut
@@ -305,11 +348,34 @@ typedef struct HB_ISP_CNR_ATTR_S {
 } ISP_CNR_ATTR_S;
 
 /* Sinter */ //lut
-typedef struct HB_ISP_SINTER_ATTR_S {
+typedef struct HB_ISP_SINTER_AUTO_ATTR_S {
 	uint16_t aau16Strength[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint16_t aau16Strength1[ISP_AUTO_ISO_STRENGTH_NUM][2];
+	uint16_t aau16Strength4[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint16_t aau16Thresh1[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint16_t aau16Thresh4[ISP_AUTO_ISO_STRENGTH_NUM][2];
+} ISP_SINTER_AUTO_ATTR_S;
+
+typedef struct HB_ISP_SINTER_MANUAL_PARAM_ATTR_S {
+	uint32_t u32GlobalStrength;
+	uint32_t u32Thresh1h;
+	uint32_t u32Thresh4h;
+	uint32_t u32Thresh1v;
+	uint32_t u32Thresh4v;
+	uint32_t u32Strength1;
+	uint32_t u32Strength4;
+	uint32_t u32NoiseLevel0;
+	uint32_t u32NoiseLevel1;
+	uint32_t u32NoiseLevel2;
+	uint32_t u32NoiseLevel3;
+	uint32_t u32IntConfig;
+	uint32_t u32SadFiltThresh;
+} ISP_SINTER_MANUAL_PARAM_ATTR_S;
+
+typedef struct HB_ISP_SINTER_ATTR_S {
+	ISP_OP_TYPE_E enOpType;
+	ISP_SINTER_AUTO_ATTR_S stAuto;
+	ISP_SINTER_MANUAL_PARAM_ATTR_S stManual;
 } ISP_SINTER_ATTR_S;
 
 /* Temper */ //lut + reg
@@ -324,7 +390,7 @@ typedef struct HB_ISP_SCENE_MODES_ATTR_S {
 	uint32_t u32BrightnessStrength;
 	uint32_t u32ContrastStrength;
 	uint32_t u32SaturationStrength;
-	uint32_t u32SharpeningStrength;
+	uint32_t u32HueTheta;
 } ISP_SCENE_MODES_ATTR_S;
 
 /* Mesh Shading */ //reg
@@ -388,6 +454,10 @@ extern int HB_ISP_GetAeAttr(uint8_t pipeId, ISP_AE_ATTR_S *pstAeAttr);
 extern int HB_ISP_SetAwbAttr(uint8_t pipeId, const ISP_AWB_ATTR_S *pstAwbAttr);
 extern int HB_ISP_GetAwbAttr(uint8_t pipeId, ISP_AWB_ATTR_S *pstAwbAttr);
 
+/* AF */
+extern int HB_ISP_SetAfAttr(uint8_t pipeId, ISP_AF_ATTR_S *pstAfAttr);
+extern int HB_ISP_GetAfAttr(uint8_t pipeId, ISP_AF_ATTR_S *pstAfAttr);
+
 /* Black Level */
 extern int HB_ISP_SetBlackLevelAttr(uint8_t pipeId, const ISP_BLACK_LEVEL_ATTR_S *pstBlackLevelAttr);
 extern int HB_ISP_GetBlackLevelAttr(uint8_t pipeId, ISP_BLACK_LEVEL_ATTR_S *pstBlackLevelAttr);
@@ -448,6 +518,7 @@ typedef struct HB_ISP_ZONE_ATTR_S {
 	uint8_t u8Vert;
 } ISP_ZONE_ATTR_S;
 
+
 extern int HB_ISP_GetAwbZoneInfo(uint8_t pipeId, ISP_ZONE_ATTR_S *awbZoneInfo);
 extern int HB_ISP_GetAfZoneInfo(uint8_t pipeId, ISP_ZONE_ATTR_S *afZoneInfo);
 extern int HB_ISP_GetAe5binZoneInfo(uint8_t pipeId, ISP_ZONE_ATTR_S *ae5binZoneInfo);
@@ -484,5 +555,52 @@ extern int HB_ISP_ApiCtrl(uint8_t pipeId, uint8_t direction, int type, int cmd, 
 extern int HB_ISP_GetVDTTimeOut(uint8_t pipeId, uint8_t vdt_type, uint64_t timeout);
 extern int HB_ISP_GetAfKernelInfo(uint8_t pipeId, uint32_t *af_kernel);
 extern int HB_ISP_SetAfKernelInfo(uint8_t pipeId, uint32_t af_kernel);
+
+/* AE new param */
+typedef struct HB_ISP_AE_PARAM_S {
+	uint32_t u32TotalGain;
+	ISP_OP_TYPE_E GainOpType;
+	uint32_t u32IntegrationTime;
+	uint32_t u32ExposureRatio;
+	ISP_OP_TYPE_E IntegrationOpType;
+} ISP_AE_PARAM_S;
+
+extern int HB_ISP_SetAeParam(uint8_t pipeId, const ISP_AE_PARAM_S *pstAeParam);
+extern int HB_ISP_GetAeParam(uint8_t pipeId, ISP_AE_PARAM_S *pstAeParam);
+
+/* ae roi info */
+typedef struct HB_ISP_AE_ROI_ATTR_S {
+	uint8_t u8XStart;
+	uint8_t u8YStart;
+	uint8_t u8XEnd;
+	uint8_t u8YEnd;
+} ISP_AE_ROI_ATTR_S;
+
+extern int HB_ISP_SetAeRoiInfo(uint8_t pipeId, ISP_AE_ROI_ATTR_S aeRoiInfo);
+extern int HB_ISP_GetAeRoiInfo(uint8_t pipeId, ISP_AE_ROI_ATTR_S *aeRoiInfo);
+
+typedef struct HB_ISP_STATISTICS_LUMVAR_ZONE_ATTR_S {
+	uint16_t u16Var;
+	uint16_t u16Mean;
+} ISP_STATISTICS_LUMVAR_ZONE_ATTR_S;
+
+extern int HB_ISP_GetLumaZoneHist(uint8_t pipeId, ISP_STATISTICS_LUMVAR_ZONE_ATTR_S *pst32Luma);
+
+/* awb statistical selection area */
+typedef struct HB_ISP_AWB_STAT_AREA_ATTR_S {
+	uint16_t u32WhiteLevel;
+	uint16_t u32BlackLevel;
+	uint16_t u32CrRefMax;
+	uint16_t u32CrRefMin;
+	uint16_t u32CbRefMax;
+	uint16_t u32CbRefMin;
+	uint16_t u32CrRefHigh;
+	uint16_t u32CrRefLow;
+	uint16_t u32CbRefHigh;
+	uint16_t u32CbRefLow;
+} ISP_AWB_STAT_AREA_ATTR_S;
+
+extern int HB_ISP_GetAwbStatAreaAttr(uint8_t pipeId, ISP_AWB_STAT_AREA_ATTR_S *pstAwbStatAreaAttr);
+extern int HB_ISP_SetAwbStatAreaAttr(uint8_t pipeId, ISP_AWB_STAT_AREA_ATTR_S *pstAwbStatAreaAttr);
 
 #endif

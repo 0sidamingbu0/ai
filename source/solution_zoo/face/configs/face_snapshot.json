@@ -12,17 +12,29 @@
   "workflow": [
     {
       "thread_count": 1,
-      "method_type": "FasterRCNNMethod",
-      "unique_name": "multi_task",
+      "method_type": "MultitaskPredictMethod",
+      "unique_name": "predict_multi_task",
       "inputs": [
         "image"
+      ],
+      "outputs": [
+        "dnn_data"
+      ],
+      "method_config_file": "predict_face_pose_lmk.json"
+    },
+    {
+      "thread_count": 1,
+      "method_type": "MultitaskPostProcessMethod",
+      "unique_name": "postprocess_multi_task",
+      "inputs": [
+        "dnn_data"
       ],
       "outputs": [
         "rgb_face_box",
         "rgb_lmk",
         "rgb_pose"
       ],
-      "method_config_file": "face_pose_lmk.json"
+      "method_config_file": "postprocess_face_pose_lmk.json"
     },
     {
       "method_type": "MOTMethod",
@@ -102,7 +114,7 @@
       "method_config_file": "face_quality.json"
     },
     {
-      "method_type": "FaceSnapFilterMethod",
+      "method_type": "FilterMethod",
       "unique_name": "filter",
       "inputs": [
         "face_bbox_list",
@@ -141,9 +153,10 @@
         "right_cheek_after_filter",
         "nose_after_filter",
         "mouth_after_filter",
-        "jaw_after_filter"
+        "jaw_after_filter",
+        "bound_rect_filter"
       ],
-      "method_config_file": "rgb_filter_1080p.json"
+      "method_config_file": "filter_config.json"
     },
     {
       "method_type": "GradingMethod",

@@ -100,16 +100,10 @@ int VioPlugin::Init() {
   VioProduceHandle_->SetConfig(config_);
 
   if (!is_sync_mode_) {
-#ifndef PYAPI
     // 注册智能帧结果
     RegisterMsg(TYPE_HBIPC_MESSAGE,
                 std::bind(&VioPlugin::OnGetHbipcResult, this,
                           std::placeholders::_1));
-#else
-    for (auto const& it : message_cb_) {
-      RegisterMsg(it.first, it.second);
-    }
-#endif  // end PYAPI
     // 调用父类初始化成员函数注册信息
     XPluginAsync::Init();
   } else {
@@ -226,19 +220,6 @@ void VioPlugin::ClearAllQueue() {
   drop_msg_queue_.clear();
 }
 
-#ifdef PYAPI
-int VioPlugin::AddMsgCB(const std::string msg_type, pybind11::function cb) {
-  // wrap python callback into XProtoMessageFunc
-  auto callback = [=](XProtoMessagePtr msg) -> int {
-    // TODO(shiyu.fu): handle specific message
-    pybind11::object py_input = pybind11::cast(msg);
-    cb(py_input);
-    return 0;
-  };
-  message_cb_[msg_type] = callback;
-  return 0;
-}
-#endif
 
 }  // namespace vioplugin
 }  // namespace xproto

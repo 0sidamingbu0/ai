@@ -19,7 +19,8 @@
 #include <vector>
 
 #include "common/concurrency_queue.h"
-#include "common/thread_pool.h"
+#include "common/xthread.h"
+#include "common/thread_manager.h"
 #include "hobotxstream/framework_data_shell.h"
 #include "hobotxstream/method.h"
 #include "hobotxstream/method_manager.h"
@@ -126,10 +127,10 @@ class Node : public std::enable_shared_from_this<Node> {
   void SetOutputData(FrameworkDataBatchPtr frameData,
                      const std::vector<std::vector<BaseDataPtr>> &data);
 
-  // set FrameworkDataBatch.datas_ as Time out
-  void SetOutputDataTimeout(FrameworkDataBatchPtr frameData);
+  // // set FrameworkDataBatch.datas_ as Time out
+  // void SetOutputDataTimeout(FrameworkDataBatchPtr frameData);
 
-  void CheckResult(const FrameworkData &frame_data);
+  // void CheckResult(const FrameworkData &frame_data);
 
   // Node is disabled, schedule next node
   void OnFakeResult(FrameworkDataPtr result);

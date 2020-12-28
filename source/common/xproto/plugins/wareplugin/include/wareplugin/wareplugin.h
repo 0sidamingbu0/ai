@@ -11,16 +11,20 @@
 
 #include <string>
 #include <memory>
+#include <utility>
 #include "smartplugin/smartplugin.h"
 #include "wareplugin/waredb.h"
 #include "wareplugin/utils/jsonConfigWrapper.h"
-
+#include "xproto_msgtype/uvcplugin_data.h"
+#include "xproto_msgtype/protobuf/x3ware.pb.h"
 #ifndef INCLUDE_WAREPLUGIN_WAREPLUGIN_H_
 #define INCLUDE_WAREPLUGIN_WAREPLUGIN_H_
 namespace horizon {
 namespace vision {
 namespace xproto {
 namespace wareplugin {
+
+using horizon::vision::xproto::basic_msgtype::TransportMessage;
 
 using SnapshotInfoXStreamBaseData =
 hobot::vision::SnapshotInfo<xstream::BaseDataPtr>;
@@ -29,13 +33,41 @@ std::shared_ptr<SnapshotInfoXStreamBaseData>;
 using XStreamSnapshotInfo =
 xstream::XStreamData<SnapshotInfoXStreamBaseDataPtr>;
 using XStreamSnapshotInfoPtr = std::shared_ptr<XStreamSnapshotInfo>;
-
-struct SnapSmartMessage : public smartplugin::CustomSmartMessage {
-  explicit SnapSmartMessage(
+struct WareSmartMessage : public smartplugin::CustomSmartMessage {
+  explicit WareSmartMessage(
       xstream::OutputDataPtr out) : CustomSmartMessage(out) {
   }
+  explicit WareSmartMessage(const CustomSmartMessage& smart_message) :
+      CustomSmartMessage(smart_message) { }
+};
+
+struct WareLibRecordMessage : public WareSmartMessage {
+  explicit WareLibRecordMessage(x3ware::WareMessage&& waremessage,
+      uint64_t ware_seq_id) :  WareSmartMessage(nullptr),
+      ware_seq_id_(ware_seq_id) {
+    ware_msg_fromap_ = std::forward<x3ware::WareMessage>(waremessage);
+  }
+  std::string Serialize(int ori_w, int ori_h, int dst_w, int dst_h) override;
+
+ private:
+  x3ware::WareMessage ware_msg_fromap_;
+  uint64_t ware_seq_id_;
+
+ private:
+  void UnknownMsgType(x3ware::WareMessage *ware_msg_res);
+  int WareSearchRecord(x3ware::WareMessage *ware_msg_res);
+  int WareTableOperation(x3ware::WareMessage_Oper msg_oper,
+      x3ware::WareMessage *ware_msg_res);
+  int WareRecordOperation(x3ware::WareMessage_Oper msg_oper,
+      x3ware::WareMessage *ware_msg_res);
+};
+
+struct SnapSmartMessage : public WareSmartMessage {
+  explicit SnapSmartMessage(
+      xstream::OutputDataPtr out) : WareSmartMessage(out) {
+  }
   explicit SnapSmartMessage(const CustomSmartMessage& smart_message) :
-  CustomSmartMessage(smart_message) { }
+      WareSmartMessage(smart_message) { }
 
   std::string Serialize(int ori_w, int ori_h, int dst_w, int dst_h) override;
 
@@ -77,6 +109,7 @@ class WarePlugin : public XPluginAsync {
   int Init() override;
   int Start() override;
   int Stop() override;
+  int DeInit() override;
   std::string desc() const { return "WarePlugin"; }
 
  private:
@@ -89,8 +122,9 @@ class WarePlugin : public XPluginAsync {
  private:
   bool is_recognize_ = false;
   bool is_add_record_ = false;
-
+  float similar_thres_ = 0.74;
   bool isinit_ = false;
+  int OnGetAPMessage(const XProtoMessagePtr &msg);
 };
 
 }   //  namespace wareplugin

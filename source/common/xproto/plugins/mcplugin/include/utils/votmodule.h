@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <array>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <atomic>
@@ -32,11 +33,21 @@ struct RecogResult_t {
 
 struct VotData_t {
   // only supports pym0
-//  uint32_t channel = 0;
+  bool is_drop_frame_ = false;
   std::shared_ptr<HorizonVisionImageFrame> sp_img_ = nullptr;
-//  HorizonVisionSmartFrame* smart_frame = nullptr;
   std::shared_ptr<RecogResult_t> sp_recog_ = nullptr;
   std::shared_ptr<std::string> sp_smart_pb_ = nullptr;
+};
+
+struct VotDrawCtrl_t {
+  bool draw_hand_lmk = true;
+  bool draw_face_box = true;
+  bool draw_head_box = false;
+  bool draw_body_box = false;
+  bool draw_face_lmk = false;
+  bool draw_age_gender_dist = true;
+  bool draw_body_kps = false;
+  bool draw_id = false;
 };
 
 class VotModule
@@ -75,8 +86,11 @@ class VotModule
 
  private:
   // display buffer
-  hobot::vision::BlockingQueue<std::shared_ptr<char>> queue_;
-  uint32_t queue_len_max_ = 10;
+  // key is frame id and is used for sort
+  std::map<uint64_t, std::shared_ptr<char>> send_vot_cache_;
+  std::mutex send_vot_mtx_;
+  std::condition_variable send_vot_cv_;
+  uint64_t need_send_vot_id_ = 0;
   std::shared_ptr<std::thread> send_vot_task_ = nullptr;
 
   std::shared_ptr<std::thread> display_task_ = nullptr;
@@ -90,8 +104,49 @@ class VotModule
   std::vector<std::shared_ptr<std::thread>> plot_tasks_;
 
   // recog res cache
-  std::unordered_map<uint64_t, std::shared_ptr<RecogResult_t>> recog_res_cache_;
+  std::unordered_map<uint64_t, std::shared_ptr<RecogResult_t>>
+          recog_res_cache_;
   std::mutex cache_mtx_;
+
+  // true: convert nv12 to bgr and plot on bgr img,
+  // the convert task is time-cost
+  // false: plot on nv12 img directly
+  bool plot_color_ = false;
+  // true: plot vio drop img, which has no smart data
+  // false: do not plot vio drop img
+  bool plot_drop_img_ = false;
+
+  int frame_fps_ = -1;
+
+  VotDrawCtrl_t vot_draw_ctrl_;
+
+  enum class output_gesture_type {
+    Background,
+    FingerHeart,
+    ThumbUp,
+    Victory,
+    Mute,  // 4
+    PalmMove,  // 5
+    IndexFingerRotateAntiClockwise,  // mirror image
+    IndexFingerRotateClockwise,
+    Pinch,
+    Palmpat,  // 9
+    Palm
+  };
+
+  std::vector<std::string> gesture_type_str {
+    "Background",
+    "FingerHeart",
+    "ThumbUp",
+    "Victory",
+    "Mute",  // 4
+    "PalmMove",
+    "AntiClockwise",  // mirror image
+    "Clockwise",
+    "Pinch",  // 8
+    "Palmpat",
+    "Palm"
+  };
 };
 
 }  // namespace vision

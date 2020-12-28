@@ -20,7 +20,7 @@ endif()
 
 set(BASE_LIBRARIES xstream xproto xproto_msgtype
     vision_type_util hobotlog jsoncpp protobuf opencv_world
-    CNNMethod FasterRCNNMethod MOTMethod yuv turbojpeg)
+    yuv turbojpeg pthread)
 target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES} ${X3_HAPI_LIB})
 
 add_subdirectory(test)

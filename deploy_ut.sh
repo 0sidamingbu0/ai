@@ -16,7 +16,7 @@ function CopyXProto(){
   mkdir -p ${UT_DIR}/xproto
   XPROTO_UT_DIR=${UT_DIR}/xproto
   cp ${ALL_PROJECT_DIR}/source/common/xproto/plugins/vioplugin/configs/ ${XPROTO_UT_DIR} -rf
-  cp ${ALL_PROJECT_DIR}/build/bin/unit_test ${XPROTO_UT_DIR} -rf
+  cp ${ALL_PROJECT_DIR}/build/bin/xproto_unit_test ${XPROTO_UT_DIR} -rf
   # To check
   # cp ${ALL_PROJECT_DIR}/build/bin/vioplugin_test ${XPROTO_UT_DIR} -rf
 }
@@ -61,10 +61,10 @@ function CopyCNNMethod(){
   mkdir -p ${UT_DIR}/cnn_method/config/bpu_config
   mkdir -p ${UT_DIR}/cnn_method/config/configs
   mkdir -p ${UT_DIR}/cnn_method/config/vio_config
-  cp source/common/xstream/methods/cnnmethod/example/config/*.json ${UT_DIR}/cnn_method/config/ -rf
-  cp source/common/xstream/methods/cnnmethod/example/config/method_conf ${UT_DIR}/cnn_method/config/ -rf
+  cp source/solution_zoo/xstream/methods/cnnmethod/example/config/*.json ${UT_DIR}/cnn_method/config/ -rf
+  cp source/solution_zoo/xstream/methods/cnnmethod/example/config/method_conf ${UT_DIR}/cnn_method/config/ -rf
   ln -s deploy/models ${UT_DIR}/cnn_method/config/models/
-  cp  source/common/xstream/methods/cnnmethod/example/data ${UT_DIR}/cnn_method -rf
+  cp  source/solution_zoo/xstream/methods/cnnmethod/example/data ${UT_DIR}/cnn_method -rf
   if [ ${1} == "x2" ]
   then
     cp deploy/configs/vio/* ${UT_DIR}/cnn_method/config/vio_config -rf
@@ -81,53 +81,6 @@ function CopyCNNMethod(){
   cp build/bin/CNNMethod_unit_test ${UT_DIR}/cnn_method/ -rf
 }
 
-function RunCNNMultistageMethod(){
-rm config -rf
-mkdir -p config/models
-mkdir -p config/configs
-mkdir -p config/vio_config
-cp xsdk/common/xstream/methods/cnnmethod_multistage/example/config/* ./config/ -rf
-ln  models/download_model/${ARCHITECTURE}/*/so/*.hbm config/models/
-cp  xsdk/common/xstream/methods/cnnmethod/example/data ./ -rf
-cp common/bpu-predict/config/bpu_config.json ./config/configs -rf
-if [ ${1} == "x2" ]
-then
-  cp deploy_dev/configs/vio/vio_onsemi0230_fb.json ./config/vio_config -rf
-  VIO_CONFIG_FILE=./config/vio_config/vio_onsemi0230_fb.json
-elif [ ${1} == "x3" ]
-then
-  if [ ${2} == "VIO_NORMAL" ]
-  then
-    cp deploy_dev/configs/hb_vio_x3_1080_fb.json ./config/vio_config -rf
-    VIO_CONFIG_FILE=./config/vio_config/hb_vio_x3_1080_fb.json
-  elif [ ${2} == "VIO_HAPI" ]
-  then
-    cp deploy_dev/configs/* ./config/vio_config -rf
-    VIO_CONFIG_FILE=./config/vio_config/vio/x3dev/iot_vio_x3_1080_fb.json
-  else
-    echo "${2} vio interface is unknown"
-    exit 1
-  fi
-else
-  echo "${1} architecture is unknown"
-  exit 1
-fi
-#pose_lmk
-./build/bin/CNNMethod_Multistage_example do_fb_rect_cnn pose_lmk config/rect_pose_lmk.json ${VIO_CONFIG_FILE} data/rect_cnn/pose_lmk/lmk_label.txt data/rect_cnn/pose_lmk/cnn_out.txt
-#antispf
-./build/bin/CNNMethod_Multistage_example do_fb_rect_cnn anti_spf config/img_antispf.json ${VIO_CONFIG_FILE} data/rect_cnn/pose_lmk/lmk_label.txt data/rect_cnn/pose_lmk/cnn_out.txt
-#age_gender
-./build/bin/CNNMethod_Multistage_example do_fb_rect_cnn age_gender config/rect_age_gender.json ${VIO_CONFIG_FILE} data/rect_cnn/pose_lmk/lmk_label.txt data/rect_cnn/age_gender/cnn_out.txt
-#face_quality
-./build/bin/CNNMethod_Multistage_example do_fb_rect_cnn face_quality config/img_facequality.json ${VIO_CONFIG_FILE} data/rect_cnn/pose_lmk/lmk_label.txt data/rect_cnn/face_quality/cnn_out.txt
-#face_feature
-./build/bin/CNNMethod_Multistage_example do_fb_feature config/lmk_faceId.json data/cnn_feature/feature_img_list.txt data/cnn_feature/feature_out.txt
-
-CheckRet "run cnn_multistage test"
-rm config -rf
-rm data -rf
-}
-
 function CopyFasterrcnnMethod(){
   mkdir -p ${UT_DIR}/fasterrcnn_method
   # mkdir -p ${UT_DIR}/fasterrcnn_method/models
@@ -136,8 +89,8 @@ function CopyFasterrcnnMethod(){
   cp models/${ARCHITECTURE}/multitask/so/multitask.hbm ${FASTERRCNN_DIR}/models/ -rf
   cp models/${ARCHITECTURE}/personMultitask/so/personMultitask.hbm ${FASTERRCNN_DIR}/models/ -rf
   cp models/${ARCHITECTURE}/vehicleSolutionModels/so/vehicle_multitask.hbm ${FASTERRCNN_DIR}/models/ -rf
-  cp source/common/xstream/methods/fasterrcnnmethod/test/ ${FASTERRCNN_DIR} -rf
-  cp source/common/xstream/methods/fasterrcnnmethod/configs/ ${FASTERRCNN_DIR} -rf
+  cp source/solution_zoo/xstream/methods/fasterrcnnmethod/test/ ${FASTERRCNN_DIR} -rf
+  cp source/solution_zoo/xstream/methods/fasterrcnnmethod/configs/ ${FASTERRCNN_DIR} -rf
   cp deps/bpu_predict/${ARCHITECTURE}/config/bpu_config.json ${FASTERRCNN_DIR}/configs/ -rf
   cp source/common/xproto/plugins/vioplugin/configs/vio/vio_onsemi0230_fb.json ${FASTERRCNN_DIR}/configs/ -rf
   if [ ${1} == "x2" ]
@@ -172,8 +125,8 @@ function CopyMerge(){
 function CopyMot(){
   mkdir -p ${UT_DIR}/mot_method
   MOT_DIR=${UT_DIR}/mot_method
-  cp source/common/xstream/methods/motmethod/config ${MOT_DIR} -rf
-  cp source/common/xstream/methods/motmethod/test ${MOT_DIR} -rf
+  cp source/solution_zoo/xstream/methods/motmethod/config ${MOT_DIR} -rf
+  cp source/solution_zoo/xstream/methods/motmethod/test ${MOT_DIR} -rf
   cp ${ALL_PROJECT_DIR}/build/bin/gtest_mot ${MOT_DIR} -rf
 }
 
@@ -265,7 +218,6 @@ CopyMot
 CopySSDMethod ${ARCHITECTURE}
 
 # CopyCNNMethod ${ARCHITECTURE}
-# RunCNNMultistageMethod ${ARCHITECTURE}
 # CopyFasterrcnnMethod ${ARCHITECTURE}
 # CopyVoteMehtod
 

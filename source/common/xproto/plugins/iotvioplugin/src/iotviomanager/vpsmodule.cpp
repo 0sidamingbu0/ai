@@ -1130,9 +1130,14 @@ int VpsModule::VpsGetInfo(int info_type, void *buf) {
         return chret;
       }
       if (vps_dump_num_-- > 0) {
-        HbDumpPymData(grp_id, pym_valid_chn, pym_buf);
-        if (vps_layer_dump >=0 && vps_layer_dump < MAX_PYM_DS_NUM)
+        if (vps_layer_dump == MAX_PYM_DS_NUM) {
+          // dump all pym base layer
+          HbDumpPymData(grp_id, pym_valid_chn, pym_buf);
+        }
+        if (vps_layer_dump >=0 && vps_layer_dump < MAX_PYM_DS_NUM) {
+          // dump any one pym layer(including base and roi layer)
           HbDumpPymLayerData(grp_id, pym_valid_chn, vps_layer_dump, pym_buf);
+        }
       }
       break;
     }

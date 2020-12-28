@@ -27,6 +27,7 @@
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_IMAGE_MESSAGE)
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_DROP_MESSAGE)
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_DROP_IMAGE_MESSAGE)
+XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_FACE_PIC_IMAGE_MESSAGE)
 namespace horizon {
 namespace vision {
 namespace xproto {
@@ -129,16 +130,10 @@ int VioPlugin::Init() {
                         std::placeholders::_1));
 #endif
   if (!is_sync_mode_) {
-#ifndef PYAPI
     // 注册智能帧结果
     RegisterMsg(TYPE_HBIPC_MESSAGE,
                 std::bind(&VioPlugin::OnGetHbipcResult, this,
                           std::placeholders::_1));
-#else
-    for (auto const& it : message_cb_) {
-      RegisterMsg(it.first, it.second);
-    }
-#endif  // end PYAPI
     // 调用父类初始化成员函数注册信息
     XPluginAsync::Init();
   } else {
@@ -278,19 +273,6 @@ int VioPlugin::OnGetAPImage(XProtoMessagePtr msg) {
     viosp->OnGetAPImage(msg);
   }
   return kHorizonVisionSuccess;
-}
-#endif
-#ifdef PYAPI
-int VioPlugin::AddMsgCB(const std::string msg_type, pybind11::function cb) {
-  // wrap python callback into XProtoMessageFunc
-  auto callback = [=](XProtoMessagePtr msg) -> int {
-    // TODO(shiyu.fu): handle specific message
-    pybind11::object py_input = pybind11::cast(msg);
-    cb(py_input);
-    return 0;
-  };
-  message_cb_[msg_type] = callback;
-  return 0;
 }
 #endif
 

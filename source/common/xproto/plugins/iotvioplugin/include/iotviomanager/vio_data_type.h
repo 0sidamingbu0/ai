@@ -66,6 +66,7 @@ typedef enum MipiSensorType {
   kSIF_TEST_PATTERN_4K,               // 13
   kS5KGM1SP_30FPS_4000x3000_RAW10,    // 14
   kOV10635_30FPS_720p_960_YUV_LINE_CONCATENATED,  // 15
+  kF37_30FPS_1080P_RAW10_LINEAR,      // 16
   kSAMPLE_SENOSR_ID_MAX
 } MipiSensorTypeE;
 
@@ -137,6 +138,9 @@ typedef struct VioSensorInfo {
   int serdes_index;
   int serdes_port;
   int extra_mode;
+  int gpio_num;
+  int gpio_pin;
+  int gpio_level;
 } IotVioSensorInfo;
 
 typedef struct VioMipiInfo {

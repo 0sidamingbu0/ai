@@ -9,12 +9,12 @@
  * @Last Modified by: Songshan Gong
  * @Last Modified time: 2019-08-02 06:26:01
  */
+#include "smartplugin/convert.h"
 #include <turbojpeg.h>
+#include <string>
 #include "hobotxsdk/xstream_data.h"
 #include "horizon/vision/util.h"
-
 #include "hobotlog/hobotlog.hpp"
-#include "smartplugin/convert.h"
 #include "xproto_msgtype/vioplugin_data.h"
 using ImageFramePtr = std::shared_ptr<hobot::vision::ImageFrame>;
 namespace horizon {
@@ -23,7 +23,8 @@ namespace iot {
 using horizon::vision::util::ImageFrameConversion;
 int Convertor::image_compress_quality = 50;
 
-xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
+xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input,
+                                              std::string input_name) {
   xstream::InputDataPtr inputdata(new xstream::InputData());
   HOBOT_CHECK(input != nullptr && input->num_ > 0 && input->is_valid_uri_);
 
@@ -64,11 +65,13 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
 
     if (image_index == uint32_t{0}) {
       if (input->num_ == 1) {
-        xstream_input_data->name_ = "image";
+        xstream_input_data->name_ = input_name;  // default is image
       } else {
+        LOGW << "image input name may has error";
         xstream_input_data->name_ = "rgb_image";
       }
     } else {
+      LOGW << "image input name may has error";
       xstream_input_data->name_ = "nir_image";
     }
     LOGI << "input name:" << xstream_input_data->name_;

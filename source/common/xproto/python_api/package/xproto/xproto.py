@@ -9,7 +9,7 @@ sys.setdlopenflags(os.RTLD_LAZY)
 import xstream   # noqa
 import vision_type as vt    # noqa
 from .global_var import GlobalVar   # noqa
-from native_xproto import XPlgAsync, NativeVioPlg   # noqa
+from native_xproto import XPlgAsync, NativeVioPlg, XPlgAsyncHelper   # noqa
 from native_xproto import SmartHelper   # noqa
 
 __all__ = [
@@ -29,10 +29,11 @@ class XPluginAsync:
     def __init__(self, num=0):
         print("xpluginasync init")
         self.native_xplgasync_ = XPlgAsync() if num == 0 else XPlgAsync(num)
+        self._xplgasync_helper_ = XPlgAsyncHelper()
 
     def reg_msg(self, msg_type, func):
         # check type
-        self.native_xplgasync_.register_msg(msg_type, func)
+        self._xplgasync_helper_.register_msg(msg_type, func)
 
     def init(self):
         self.native_xplgasync_.init()

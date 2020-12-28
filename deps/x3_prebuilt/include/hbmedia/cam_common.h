@@ -15,7 +15,7 @@ extern "C" {
 
 #define CAM_MAX_NUM	8
 #define GPIO_NUMBER 6
-#define DESERIAL_NUMBER 2
+#define SERDES_NUMBER 2
 #define MAX_NUM_LENGTH 128
 #define ENTRY_NUM 4
 #define PWM_PIN_NUM  4
@@ -45,10 +45,10 @@ enum HB_CAM_ERROR_CODE {
     HB_CAM_I2C_READ_BLOCK_FAIL,
     HB_CAM_DYNAMIC_SWITCH_FAIL,
     HB_CAM_DYNAMIC_SWITCH_FPS_FAIL,
-    HB_CAM_S954_POWERON_FAIL,
-    HB_CAM_S954_CONFIG_FAIL,
-    HB_CAM_S954_STREAM_ON_FAIL,
-    HB_CAM_S954_STREAM_OFF_FAIL,
+    HB_CAM_SERDES_POWERON_FAIL,
+    HB_CAM_SERDES_CONFIG_FAIL,
+    HB_CAM_SERDES_STREAM_ON_FAIL,
+    HB_CAM_SERDES_STREAM_OFF_FAIL,
     HB_CAM_SENSOR_POWERON_FAIL,
     HB_CAM_SENSOR_POWEROFF_FAIL,
     HB_CAM_START_PHYSICAL_FAIL,
@@ -167,7 +167,7 @@ typedef struct board_info_s {
 	int  deserial_num;
 	int  port_number;
 	lpwm_info_t lpwm_info;
-	deserial_info_t deserial_info[DESERIAL_NUMBER];
+	deserial_info_t deserial_info[SERDES_NUMBER];
 	sensor_info_t sensor_info[CAM_MAX_NUM];
 }board_info_t;
 

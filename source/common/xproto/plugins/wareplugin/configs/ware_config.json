@@ -1,4 +1,5 @@
 {
     "is_recognize": false,
-    "is_add_record": false
+    "is_add_record": false,
+    "similar_thres": 0.74
 }

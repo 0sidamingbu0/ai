@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Short Version &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>Short Version &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -156,12 +157,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="short-version">
+  <p>[TOC]</p>
+<div class="section" id="short-version">
 <h1>Short Version<a class="headerlink" href="#short-version" title="永久链接至标题">¶</a></h1>
 <ul>
 <li><p>Make small logical changes.</p></li>
 <li><p>Provide a meaningful commit message.</p></li>
-<li><p>Check for coding errors and style nits with pyflakes and flake8</p></li>
+<li><p>Check for coding errors and style nits with flake8.</p></li>
 <li><p>Make sure all code is under the Apache License, 2.0.</p></li>
 <li><p>Publish your changes for review.</p></li>
 <li><p>Make corrections if requested.</p></li>
@@ -189,32 +191,58 @@ It is a good discipline.</p>
 <p>If your description starts to get too long, that’s a sign that you
 probably need to split up your commit to finer grained pieces.</p>
 </div>
-<div class="section" id="check-for-coding-errors-and-style-nits-with-pyflakes-and-flake8">
-<h2>Check for coding errors and style nits with pyflakes and flake8<a class="headerlink" href="#check-for-coding-errors-and-style-nits-with-pyflakes-and-flake8" title="永久链接至标题">¶</a></h2>
-<div class="section" id="coding-errors">
-<h3>Coding errors<a class="headerlink" href="#coding-errors" title="永久链接至标题">¶</a></h3>
-<p>Run <code class="docutils literal notranslate"><span class="pre">pyflakes</span></code> on changed modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pyflakes</span> <span class="n">file</span><span class="o">.</span><span class="n">py</span>
-</pre></div>
-</div>
-<p>Ideally there should be no new errors or warnings introduced.</p>
-</div>
-<div class="section" id="style-violations">
-<h3>Style violations<a class="headerlink" href="#style-violations" title="永久链接至标题">¶</a></h3>
-<p>Run <code class="docutils literal notranslate"><span class="pre">flake8</span></code> on changes modules:</p>
+<div class="section" id="check-for-coding-errors-and-style-violations-with-flake8">
+<h2>Check for coding errors and style violations with flake8<a class="headerlink" href="#check-for-coding-errors-and-style-violations-with-flake8" title="永久链接至标题">¶</a></h2>
+<p>Run <code class="docutils literal notranslate"><span class="pre">flake8</span></code> on changed modules:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">flake8</span> <span class="n">file</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>Note that repo generally follows [Google’s python style guide]
-(https://google.github.io/styleguide/pyguide.html) rather than [PEP 8]
-(https://www.python.org/dev/peps/pep-0008/), so it’s possible that
-the output of <code class="docutils literal notranslate"><span class="pre">flake8</span></code> will be quite noisy. It’s not mandatory to
-avoid all warnings, but at least the maximum line length should be
-followed.</p>
-<p>If there are many occurrences of the same warning that cannot be
-avoided without going against the Google style guide, these may be
-suppressed in the included <code class="docutils literal notranslate"><span class="pre">.flake8</span></code> file.</p>
+<p>Note that repo generally follows <a class="reference external" href="https://google.github.io/styleguide/pyguide.html">Google’s Python Style Guide</a> rather than
+<a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>, with a couple of notable exceptions:</p>
+<ul class="simple">
+<li><p>Indentation is at 2 columns rather than 4</p></li>
+<li><p>The maximum line length is 100 columns rather than 80</p></li>
+</ul>
+<p>There should be no new errors or warnings introduced.</p>
+<p>Warnings that cannot be avoided without going against the Google Style Guide
+may be suppressed inline individally using a <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">noqa</span></code> comment as described
+in the <a class="reference external" href="https://flake8.pycqa.org/en/3.1.1/user/ignoring-errors.html#in-line-ignoring-errors">flake8 documentation</a>.</p>
+<p>If there are many occurrences of the same warning, these may be suppressed for
+the entire project in the included <code class="docutils literal notranslate"><span class="pre">.flake8</span></code> file.</p>
 </div>
+<div class="section" id="running-tests">
+<h2>Running tests<a class="headerlink" href="#running-tests" title="永久链接至标题">¶</a></h2>
+<p>We use <a class="reference external" href="https://pytest.org/">pytest</a> and <a class="reference external" href="https://tox.readthedocs.io/">tox</a> for
+running tests.  You should make sure to install those first.</p>
+<p>To run the full suite against all supported Python versions, simply execute:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ tox -p auto
+</pre></div>
+</div>
+<p>We have <a class="reference external" href="./run_tests"><code class="docutils literal notranslate"><span class="pre">./run_tests</span></code></a> which is a simple wrapper around <code class="docutils literal notranslate"><span class="pre">pytest</span></code>:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run the full suite against the default Python version.</span>
+$ ./run_tests
+<span class="c1"># List each test as it runs.</span>
+$ ./run_tests -v
+
+<span class="c1"># Run a specific unittest module (and all tests in it).</span>
+$ ./run_tests tests/test_git_command.py
+
+<span class="c1"># Run a specific testsuite in a specific unittest module.</span>
+$ ./run_tests tests/test_editor.py::EditString
+
+<span class="c1"># Run a single test.</span>
+$ ./run_tests tests/test_editor.py::EditString::test_cat_editor
+
+<span class="c1"># List all available tests.</span>
+$ ./run_tests --collect-only
+
+<span class="c1"># Run a single test using substring match.</span>
+$ ./run_tests -k test_cat_editor
+</pre></div>
+</div>
+<p>The coverage isn’t great currently, but it should still be run for all commits.
+Adding more unittests for changes you make would be greatly appreciated :).
+Check out the <a class="reference external" href="./tests/">tests/</a> subdirectory for more details.</p>
 </div>
 <div class="section" id="check-the-license">
 <h2>Check the license<a class="headerlink" href="#check-the-license" title="永久链接至标题">¶</a></h2>

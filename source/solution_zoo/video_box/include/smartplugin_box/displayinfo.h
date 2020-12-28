@@ -17,14 +17,17 @@ class DisplayInfo {
 
   static void computeXYPossition(const int dispaly_mode, const int channel_num,
                                  const int channel_id, int &x_offset,
-                                 int &y_offset);
+                                 int &y_offset,
+                                 const bool display_720p = false);
 
   static void computeResolution(const int dispaly_mode, const int channel_num,
                                 const int channel_id, uint32_t &width,
-                                uint32_t &height);
+                                uint32_t &height,
+                                const bool display_720p = false);
 
   static int computePymLayer(const int dispaly_mode, const int channel_num,
-                             const int channel_id);
+                             const int channel_id,
+                             const bool display_720p = false);
 };
 
 }  // namespace vision

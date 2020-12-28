@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>智能计算盒参考方案 &mdash; AI Express用户手册 2.7.0 文档</title>
+  <title>智能计算盒参考方案 &mdash; AI Express用户手册 2.8.0 文档</title>
   
 
   
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/faq.html">常见问题</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/version.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../BuildAll/doc/copyright.html">版权声明</a></li>
@@ -187,7 +188,21 @@
 </div>
 </div>
 <div class="section" id="id7">
-<h2>配置文件说明<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<h2>入库<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>1.更换./configs/vio_face_pic的jpg图片。
+2.修改name_jpg.list的文件列表。
+3.运行run.sh e ruku，选择video_box选项即可。(其中e为错误级别的log，可选f/e/i/w/d)</p>
+</div>
+<div class="section" id="id8">
+<h2>删除底库<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>运行run.sh e db_drop_table，选择video_box选项即可。</p>
+</div>
+<div class="section" id="id9">
+<h2>查询底库<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>运行run.sh i db_list，选择video_box选项即可。</p>
+</div>
+<div class="section" id="id10">
+<h2>配置文件说明<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
 <p>1.video_box_config.json</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
   &quot;xstream_workflow_file&quot;: &quot;./video_box/configs/body_detection.json&quot;,	// xstream配置文件 
@@ -241,11 +256,13 @@
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
   &quot;vo&quot;: {
     &quot;enable&quot;: true,											// 是否开启VO输出
-    &quot;display_mode&quot;: 0 									  	// 显示模式，0: auto, 1: 9 pictures
+    &quot;display_mode&quot;: 0, 									// 显示模式，0: auto, 1: 9 pictures
+    &quot;transition_support&quot;: 0             // 是否支持动态融合
   },
   &quot;rtsp&quot;: {
     &quot;stream_1080p&quot;: false,									// 是否开启1080P RTSP码流推送
-    &quot;stream_720p&quot;: false									// 是否开启720P RTSP码流推送
+    &quot;stream_720p&quot;: false,									// 是否开启720P RTSP码流推送
+    &quot;encode_smart_info&quot;: true             // 编码码流是否包括智能信息
   }
 }
 </pre></div>
@@ -273,8 +290,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h2>常见问题<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id11">
+<h2>常见问题<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
 <p>1.拉取码流出错</p>
 <ol class="simple">
 <li><p>rtsp.json文件里面的url地址问题，注意检查url的用户名密码以及ip。</p></li>

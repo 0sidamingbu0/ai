@@ -17,6 +17,7 @@
 #include <map>
 #include <vector>
 #include <chrono>
+#include <algorithm>
 #include "xstream/vision_type/include/horizon/vision_type/vision_type_util.h"
 #include "hobotlog/hobotlog.hpp"
 #include "xproto/message/pluginflow/flowmsg.h"
@@ -39,6 +40,12 @@
 #include "websocketplugin/attribute_convert/attribute_convert.h"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+
+#ifdef USE_MC
+#include "mcplugin/mcmessage.h"
+#include "smartplugin/method_configer.h"
+#include "xproto_msgtype/uvcplugin_data.h"
+#endif
 
 namespace horizon {
 namespace vision {
@@ -209,14 +216,36 @@ std::string VehicleSmartMessage::Serialize() {
 }
 
 std::map<int, int> CustomSmartMessage::fall_state_;
-std::mutex CustomSmartMessage::fall_mutex_;
+std::mutex CustomSmartMessage::static_attr_mutex_;
 std::map<int, int> CustomSmartMessage::gesture_state_;
 std::map<int, float> CustomSmartMessage::gesture_start_time_;
+std::map<int, CustomSmartMessage::gesture_info_t>
+        CustomSmartMessage::gesture_info_cache_;
+
+typedef struct {
+  int residual_err_thr_ = 50;  // base on 1080p
+  size_t fit_points_size_thr_ = 25;
+  int fit_ratio_thr_ = 3;
+  int rotate_start_angel_thr_ = 180;
+  int rotate_loop_angel_dist_thr_ = 200;
+  // if hand continuous has no gesture frame count exceeds
+  // gesture_vanish_thr, clear cache
+  uint64 dynamic_gesture_vanish_thr = 50;
+  uint64 static_gesture_vanish_thr = 25;
+  uint64 static_dynamic_dist_thr = 5;
+  uint64 valid_palmmove_in_cache_thr = 50;
+  int conflict_gesture_thr_ = 25;
+  uint64 valid_palm_for_palmpat_thr_ = 150;
+  int gesture_mute_outside = 20;  // base on 1080p
+  int palm_move_dist_thr = 5;  // base on 1080p
+} gesture_thr_t;
+
 bool gesture_as_event = false;
 int dist_calibration_w = 0;
 float dist_fit_factor = 0.0;
 float dist_fit_impower = 0.0;
 bool dist_smooth = true;
+gesture_thr_t gesture_thr;
 
 void CustomSmartMessage::Serialize_Print(Json::Value &root) {
   LOGD << "Frame id: " << frame_id;
@@ -802,6 +831,8 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
   fps_attrs->set_value_string_(std::to_string(frame_fps));
   // user-defined output parsing declaration.
   xstream::BaseDataVector *face_boxes = nullptr;
+  xstream::BaseDataVector *face_lmks = nullptr;
+  xstream::BaseDataVector *hand_lmks = nullptr;
   xstream::BaseDataVector *lmks = nullptr;
   xstream::BaseDataVector *mask = nullptr;
   xstream::BaseDataVector *features = nullptr;
@@ -995,14 +1026,256 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
       }
     }
     static bool check_env = false;
-    bool need_check_mask_time = false;
+    static bool need_check_mask_time = false;
+    static bool need_dump_matting = false;
     if (!check_env) {
       auto check_mask_time = getenv("check_mask_time");
       if (check_mask_time && !strcmp(check_mask_time, "ON")) {
         need_check_mask_time = true;
       }
+      auto dump_matting = getenv("dump_matting");
+      if (dump_matting && !strcmp(dump_matting, "ON")) {
+        need_dump_matting = true;
+      }
       check_env = true;
     }
+
+    if (output->name_ == "matting") {
+      mask = dynamic_cast<xstream::BaseDataVector *>(output.get());
+      LOGD << "matting size: " << mask->datas_.size();
+      if (mask->datas_.size() != body_box_list.size()) {
+        LOGE << "matting size: " << mask->datas_.size()
+             << ", body_box size: " << body_box_list.size();
+      }
+
+      for (size_t i = 0; i < mask->datas_.size(); ++i) {
+        auto one_mask_start_time = std::chrono::system_clock::now();
+        auto one_mask = std::static_pointer_cast<
+            xstream::XStreamData<hobot::vision::Segmentation>>(mask->datas_[i]);
+        if (one_mask->state_ != xstream::DataState::VALID) {
+          continue;
+        }
+        // 查找对应的track_id
+        if (body_box_list[i]->value.id == -1) {
+          continue;
+        }
+        target_key body_key(body_box_list[i]->value.category_name,
+                            body_box_list[i]->value.id);
+        if (smart_target.find(body_key) == smart_target.end()) {
+          LOGE << "Not found the track_id target";
+          continue;
+        } else {
+          auto float_matrix = smart_target[body_key]->add_float_matrixs_();
+          float_matrix->set_type_("matting");
+
+          auto body_box = body_box_list[i]->value;
+          auto mask = one_mask->value;
+          int h_w = sqrt(mask.values.size());
+          cv::Mat mask_mat(h_w, h_w, CV_32FC1, mask.values.data());  // 256x256
+
+          mask_mat *= 255;
+          mask_mat.convertTo(mask_mat, CV_8UC1);  // mask_mat: 0-255
+
+          for (int h = 0; h < mask_mat.rows; h++) {
+            auto data = mask_mat.ptr<uchar>(h);
+            auto float_array = float_matrix->add_arrays_();
+            for (int w = 0; w < mask_mat.cols; w++) {
+              float_array->add_value_(data[w]);
+            }
+          }
+
+          auto one_mask_end_time = std::chrono::system_clock::now();
+          if (need_check_mask_time) {
+            auto duration_time =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    one_mask_end_time - one_mask_start_time);
+            LOGW << "process one matting:  " << duration_time.count()
+                 << " ms";
+          }
+        }
+      }
+      if (need_dump_matting) {
+        cv::Mat matting(1080, 1920, CV_8UC1, cv::Scalar(0));
+        int target_size = smart_msg->targets__size();
+        for (int i = 0; i < target_size; i++) {
+          auto target = smart_msg->mutable_targets_(i);
+          if (target->type_() == "person") {
+            // body_box
+            float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+            int boxes_size = target->boxes__size();
+            for (int j = 0; j < boxes_size; j++) {
+              auto box = target->mutable_boxes_(j);
+              if (box->type_() == "body") {
+                x1 = box->mutable_top_left_()->x_();
+                y1 = box->mutable_top_left_()->y_();
+                x2 = box->mutable_bottom_right_()->x_();
+                y2 = box->mutable_bottom_right_()->y_();
+              }
+            }
+            float width = x2 - x1;
+            float height = y2 - y1;
+            int float_matrixs_size = target->float_matrixs__size();
+            for (int j = 0; j < float_matrixs_size; j++) {
+              auto float_matrix = target->mutable_float_matrixs_(j);
+              if (float_matrix->type_() == "matting") {
+                cv::Mat one_matting(256, 256, CV_8UC1, cv::Scalar(0));
+                for (int r = 0; r < 256; r++) {
+                  auto one_matting_data = one_matting.ptr<uchar>(r);
+                  auto float_array = float_matrix->mutable_arrays_(r);
+                  for (int c = 0; c < 256; c++) {
+                    if (float_array->value_(c) > 0) {
+                      one_matting_data[c] = float_array->value_(c);
+                    }
+                  }
+                }
+                cv::resize(one_matting, one_matting,
+                           cv::Size(256*width/224, 256*height/224));
+
+                for (int row = 0; row < one_matting.rows; row++) {
+                  for (int col = 0; col < one_matting.cols; col++) {
+                    int x = (col - width/224.0 * 16) + x1;     // width = x2-x1
+                    int y = (row - height/224.0 * 16) + y1;    // height = y2-y1
+                    if (one_matting.ptr<uchar>(row)[col] > 0 &&
+                        x >= 0 && x < 1920 && y >=0 && y < 1080)
+                      matting.ptr<uchar>(y)[x] =
+                          one_matting.ptr<uchar>(row)[col];
+                  }
+                }
+              }
+            }
+          }
+        }
+        static int index = 0;
+        cv::imwrite("matting_"+std::to_string(index++)+".png", matting);
+      }
+    }
+
+    if (output->name_ == "matting_trimapfree") {
+      mask = dynamic_cast<xstream::BaseDataVector *>(output.get());
+      LOGD << "matting size: " << mask->datas_.size();
+      if (mask->datas_.size() != body_box_list.size()) {
+        LOGE << "matting size: " << mask->datas_.size()
+             << ", body_box size: " << body_box_list.size();
+      }
+
+      for (size_t i = 0; i < mask->datas_.size(); ++i) {
+        auto one_mask_start_time = std::chrono::system_clock::now();
+        auto one_mask = std::static_pointer_cast<
+            xstream::XStreamData<hobot::vision::Segmentation>>(mask->datas_[i]);
+        if (one_mask->state_ != xstream::DataState::VALID) {
+          continue;
+        }
+        // 查找对应的track_id
+        if (body_box_list[i]->value.id == -1) {
+          continue;
+        }
+        target_key body_key(body_box_list[i]->value.category_name,
+                            body_box_list[i]->value.id);
+        if (smart_target.find(body_key) == smart_target.end()) {
+          LOGE << "Not found the track_id target";
+          continue;
+        } else {
+          auto float_matrix = smart_target[body_key]->add_float_matrixs_();
+          float_matrix->set_type_("matting_trimapfree");
+
+          auto body_box = body_box_list[i]->value;
+          auto mask = one_mask->value;
+          int h_w = sqrt(mask.values.size());
+          cv::Mat mask_mat(h_w, h_w, CV_32FC1, mask.values.data());  // 512x512
+
+          mask_mat *= 255;
+          mask_mat.convertTo(mask_mat, CV_8UC1);  // mask_mat: 0-255
+
+          for (int h = 0; h < mask_mat.rows; h++) {
+            auto data = mask_mat.ptr<uchar>(h);
+            auto float_array = float_matrix->add_arrays_();
+            for (int w = 0; w < mask_mat.cols; w++) {
+              float_array->add_value_(data[w]);
+            }
+          }
+
+          auto one_mask_end_time = std::chrono::system_clock::now();
+          if (need_check_mask_time) {
+            auto duration_time =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    one_mask_end_time - one_mask_start_time);
+            LOGW << "process one matting:  " << duration_time.count()
+                 << " ms";
+          }
+        }
+      }
+      if (need_dump_matting) {
+        cv::Mat matting(1080, 1920, CV_8UC1, cv::Scalar(0));
+        int target_size = smart_msg->targets__size();
+        for (int i = 0; i < target_size; i++) {
+          auto target = smart_msg->mutable_targets_(i);
+          if (target->type_() == "person") {
+            // body_box
+            float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+            int boxes_size = target->boxes__size();
+            for (int j = 0; j < boxes_size; j++) {
+              auto box = target->mutable_boxes_(j);
+              if (box->type_() == "body") {
+                x1 = box->mutable_top_left_()->x_();
+                y1 = box->mutable_top_left_()->y_();
+                x2 = box->mutable_bottom_right_()->x_();
+                y2 = box->mutable_bottom_right_()->y_();
+              }
+            }
+            float width = x2 - x1;
+            float height = y2 - y1;
+
+            // 外扩系数k=0.2 TODO
+            float k = 0.2;
+            float expand_roi_x1 = x1 - width * k;
+            // float expand_roi_x2 = x2 + width * k;
+            float expand_roi_y1 = y1 - height * k;
+            // float expand_roi_y2 = y2 + height * k;
+            int expand_roi_height = height + 2 * height * k;
+            int expand_roi_width = width + 2 * width * k;
+            float ratio = expand_roi_height > expand_roi_width ?
+                          512.0 / expand_roi_height : 512.0 / expand_roi_width;
+
+            int resize_roi_height = expand_roi_height * ratio;
+            int resize_roi_width = expand_roi_width * ratio;
+
+            int float_matrixs_size = target->float_matrixs__size();
+            for (int j = 0; j < float_matrixs_size; j++) {
+              auto float_matrix = target->mutable_float_matrixs_(j);
+              if (float_matrix->type_() == "matting_trimapfree") {
+                cv::Mat one_matting(resize_roi_height, resize_roi_width,
+                                    CV_8UC1, cv::Scalar(0));
+                for (int r = 0; r < one_matting.rows; r++) {
+                  auto one_matting_data = one_matting.ptr<uchar>(r);
+                  auto float_array = float_matrix->mutable_arrays_(r);
+                  for (int c = 0; c < one_matting.cols; c++) {
+                    if (float_array->value_(c) > 0) {
+                      one_matting_data[c] = float_array->value_(c);
+                    }
+                  }
+                }
+                cv::resize(one_matting, one_matting,
+                           cv::Size(expand_roi_width, expand_roi_height));
+
+                for (int row = 0; row < one_matting.rows; row++) {
+                  for (int col = 0; col < one_matting.cols; col++) {
+                    int x = col + expand_roi_x1;
+                    int y = row + expand_roi_y1;
+                    if (one_matting.ptr<uchar>(row)[col] > 0 &&
+                        x >= 0 && x < 1920 && y >=0 && y < 1080)
+                      matting.ptr<uchar>(y)[x] =
+                          one_matting.ptr<uchar>(row)[col];
+                  }
+                }
+              }
+            }
+          }
+        }
+        static int index = 0;
+        cv::imwrite("matting_"+std::to_string(index++)+".png", matting);
+      }
+    }
+
     auto mask_start_time = std::chrono::system_clock::now();
     if (output->name_ == "mask") {
       mask = dynamic_cast<xstream::BaseDataVector *>(output.get());
@@ -1222,6 +1495,7 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
     }
 
     if (output->name_ == "fall_vote") {
+      std::lock_guard<std::mutex> lk(static_attr_mutex_);
       auto fall_votes = dynamic_cast<xstream::BaseDataVector *>(output.get());
       LOGD << "fall_votes size: " << fall_votes->datas_.size();
       if (fall_votes->datas_.size() != body_box_list.size()) {
@@ -1248,7 +1522,6 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
           auto attrs = target->add_attributes_();
           attrs->set_type_("fall");
           {
-            std::lock_guard<std::mutex> fall_lock(fall_mutex_);
             auto id = body_box_list[i]->value.id;
             if (fall_vote->value.value == 1) {
               fall_state_[id] = 1;
@@ -1382,15 +1655,16 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
     }
     if (output->name_ == "hand_lmk" ||
         output->name_ == "lowpassfilter_hand_lmk") {
-      lmks = dynamic_cast<xstream::BaseDataVector *>(output.get());
-      LOGD << "hand_lmk size: " << lmks->datas_.size();
-      if (lmks->datas_.size() != hand_box_list.size()) {
-        LOGE << "hand_lmk size: " << lmks->datas_.size()
+      hand_lmks = dynamic_cast<xstream::BaseDataVector *>(output.get());
+      LOGD << "hand_lmk size: " << hand_lmks->datas_.size();
+      if (hand_lmks->datas_.size() != hand_box_list.size()) {
+        LOGE << "hand_lmk size: " << hand_lmks->datas_.size()
              << ", hand_box size: " << hand_box_list.size();
       }
-      for (size_t i = 0; i < lmks->datas_.size(); ++i) {
+      for (size_t i = 0; i < hand_lmks->datas_.size(); ++i) {
         auto lmk = std::static_pointer_cast<
-            xstream::XStreamData<hobot::vision::Landmarks>>(lmks->datas_[i]);
+            xstream::XStreamData<hobot::vision::Landmarks>>
+                (hand_lmks->datas_[i]);
         // 查找对应的track_id
         if (hand_box_list[i]->value.id == -1) {
           continue;
@@ -1415,16 +1689,16 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
         }
       }
     }
-    if (output->name_ == "lmk_106pts") {
-      lmks = dynamic_cast<xstream::BaseDataVector *>(output.get());
-      LOGD << "lmk_106pts size: " << lmks->datas_.size();
-      if (lmks->datas_.size() != face_box_list.size()) {
-        LOGE << "lmk_106pts size: " << lmks->datas_.size()
+    if (output->name_ == "lowpassfilter_lmk_106pts") {
+      face_lmks = dynamic_cast<xstream::BaseDataVector *>(output.get());
+      if (face_lmks->datas_.size() != face_box_list.size()) {
+        LOGE << "lmk_106pts size: " << face_lmks->datas_.size()
              << ", hand_box size: " << face_box_list.size();
       }
-      for (size_t i = 0; i < lmks->datas_.size(); ++i) {
+      for (size_t i = 0; i < face_lmks->datas_.size(); ++i) {
         auto lmk = std::static_pointer_cast<
-              xstream::XStreamData<hobot::vision::Landmarks>>(lmks->datas_[i]);
+              xstream::XStreamData<hobot::vision::Landmarks>>
+                (face_lmks->datas_[i]);
         // 查找对应的track_id
         if (face_box_list[i]->value.id == -1) {
           continue;
@@ -1451,6 +1725,7 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
       }
     }
     if (output->name_ == "gesture_vote") {
+      std::lock_guard<std::mutex> lk(static_attr_mutex_);
       auto gesture_votes =
           dynamic_cast<xstream::BaseDataVector *>(output.get());
       LOGD << "gesture_vote size: " << gesture_votes->datas_.size();
@@ -1464,6 +1739,7 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
             gesture_votes->datas_[i]);
         // 查找对应的track_id
         if (hand_box_list[i]->value.id == -1) {
+          LOGI << "hand id invalid";
           continue;
         }
         target_key hand_key(hand_box_list[i]->value.category_name,
@@ -1472,10 +1748,484 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
           LOGE << "Not found the track_id target";
         } else {
           if (gesture_vote->state_ != xstream::DataState::VALID) {
-            LOGD << "state = invalid";
+            LOGI << "gesture vote state not valid";
             continue;
           }
           int gesture_ret = -1;
+          auto gesture_val = gesture_vote->value.value;
+          auto gesture_orig = gesture_vote->value.value;
+          int32_t hand_id = hand_box_list[i]->value.id;
+          LOGI << "gesture_type:" << gesture_val
+               << "  frame_id:" << frame_id
+               << "  hand id:" << hand_id;
+
+          // send original gesture, which is used for debug
+          {
+            auto target = smart_target[hand_key];
+            auto attrs = target->add_attributes_();
+            attrs->set_type_("gesture_orig");
+            attrs->set_value_(gesture_orig);
+            attrs->set_value_string_(AttributeConvert::Instance().GetAttrDes(
+                    "gesture_orig", gesture_orig));
+          }
+
+          // 清理缓存：长时间无手势或者手势有冲突
+          if (!gesture_info_cache_.empty() &&
+              gesture_info_cache_.find(hand_id) != gesture_info_cache_.end() &&
+              !gesture_info_cache_.at(hand_id).frame_infos.empty()
+                  ) {
+            // gesture_vanish_thr is static or dynamic thr
+            // according to whether present hand is moving
+            uint64 gesture_vanish_thr = gesture_thr.dynamic_gesture_vanish_thr;
+            if (static_cast<int>(gesture_type::Background) == gesture_val) {
+              // cal the average point distance of
+              // last min_gesture_vanish_thr frames
+              const auto& gesture_points =
+                      gesture_info_cache_.at(hand_id).points;
+              if (frame_id - gesture_info_cache_.at(hand_id).last_frame_id >=
+                          gesture_thr.static_gesture_vanish_thr &&
+                      gesture_points.size() >=
+                              gesture_thr.static_gesture_vanish_thr) {
+                uint64 dist_sum = 0;
+                for (size_t pt_idx = gesture_points.size() - 1;
+                     pt_idx >= gesture_points.size() -
+                                       gesture_thr.static_gesture_vanish_thr;
+                     pt_idx--) {
+                  if (pt_idx >= 1) {
+                    auto dist = sqrt(pow(gesture_points[pt_idx].x -
+                                        gesture_points[pt_idx - 1].x, 2) +
+                                    pow(gesture_points[pt_idx].y -
+                                        gesture_points[pt_idx - 1].y, 2));
+                    dist_sum += dist;
+                    LOGD << "frame " << frame_id
+                         << "  hand " << hand_id
+                         << "  pt_idx:" << pt_idx << "  dist is " << dist;
+                  } else {
+                    break;
+                  }
+                }
+                LOGD << "frame " << frame_id
+                     << "  hand " << hand_id << "  dist_sum is " << dist_sum
+                     << "  average:" << dist_sum /
+                        (gesture_thr.static_gesture_vanish_thr - 1);
+                if (dist_sum / gesture_thr.static_gesture_vanish_thr <
+                        gesture_thr.static_dynamic_dist_thr) {
+                  gesture_vanish_thr = gesture_thr.static_gesture_vanish_thr;
+                }
+              }
+            }
+
+            if (static_cast<int>(gesture_type::Background) == gesture_val &&
+                (frame_id - gesture_info_cache_.at(hand_id).last_frame_id >=
+                        gesture_vanish_thr)) {
+              gesture_info_cache_.erase(hand_id);
+              LOGI << "erase gesture, serial no gesture  hand_id:" << hand_id
+                   << "  gesture_vanish_thr:" << gesture_vanish_thr;
+              continue;
+            } else if (static_cast<int>(gesture_type::Background) !=
+                        gesture_val &&
+                    gesture_val != static_cast<int>(
+                    gesture_info_cache_.at(hand_id).frame_infos.front().type)
+                    ) {
+              const auto& first_gesture_type =
+                      gesture_info_cache_.at(hand_id).frame_infos.front().type;
+              if ((first_gesture_type == gesture_type::Palm ||
+                   first_gesture_type == gesture_type::PalmMove) &&
+                  (gesture_val == static_cast<int>(gesture_type::Palmpat) ||
+                          gesture_val ==
+                                  static_cast<int>(gesture_type::PalmMove))) {
+                // not conflict gesture
+                // Palmpat gesture will check if hand ever has Palm/PalmMove
+                // Palm/PalmMove gesture will calculate distance
+                // of last 2 Palm/PalmMove gestures
+              } else {
+                gesture_info_cache_.at(hand_id).gesture_conflict_num++;
+                if (gesture_info_cache_.at(hand_id).gesture_conflict_num >=
+                    gesture_thr.conflict_gesture_thr_) {
+                  gesture_info_cache_.erase(hand_id);
+                  LOGI << "erase gesture, serial conflict, gesture_val:"
+                       << gesture_val;
+                  continue;
+                } else {
+                  LOGI << "gesture_conflict_num:"
+                       << gesture_info_cache_.at(hand_id).gesture_conflict_num;
+                  continue;
+                }
+              }
+            }
+          }
+
+          // gesture strategies start
+          // palmpat gesture is valid if last gesture is palm or palmmove
+          if (static_cast<int>(gesture_type::Palmpat) == gesture_val) {
+            // check if hand id has palm or palmmove ever
+            bool hand_has_palm_ever = false;
+            if (gesture_info_cache_.find(hand_id) ==
+                        gesture_info_cache_.end() ||
+                    gesture_info_cache_.at(hand_id).frame_infos.empty()) {
+              hand_has_palm_ever = false;
+              LOGI << "invalid palmpat gesture, hand has no gesture in cache"
+                   << "  hand id:" << hand_id;
+            } else {
+              const auto& gestures =
+                      gesture_info_cache_.at(hand_id).frame_infos;
+              for (size_t idx = gestures.size() - 1; idx >= 0; idx--) {
+                if (frame_id < gestures[idx].frame_id) {
+                  // adapt unorder frame output from xstream
+                  continue;
+                }
+
+                if (frame_id - gestures[idx].frame_id >=
+                        gesture_thr.valid_palm_for_palmpat_thr_) {
+                  hand_has_palm_ever = false;
+                  break;
+                }
+                if (gesture_type::Palm == gestures[idx].type ||
+                        gesture_type::PalmMove == gestures[idx].type) {
+                  hand_has_palm_ever = true;
+                  break;
+                }
+              }
+            }
+
+            if (!hand_has_palm_ever) {
+              gesture_val = 0;
+            }
+          }
+
+          // classify Palm and PalmMove gesture
+          if (gesture_val == static_cast<int>(gesture_type::PalmMove) ||
+                  gesture_val == static_cast<int>(gesture_type::Palm)) {
+            if (gesture_info_cache_.find(hand_id) !=
+                        gesture_info_cache_.end() &&
+                    !gesture_info_cache_.at(hand_id).frame_infos.empty()) {
+              if (gesture_type::Palmpat ==
+                      gesture_info_cache_.at(hand_id).frame_infos.back().type) {
+                // clear cache if gesture is palm/palmmove and last is palmpat,
+                // in order to avoid unaccurate start point
+                gesture_info_cache_.erase(hand_id);
+              } else {
+                auto last_point = gesture_info_cache_.at(hand_id).points.back();
+                if (hand_lmks &&
+                    hand_lmks->datas_.size() == gesture_votes->datas_.size()) {
+                  const auto &hand_lmk = std::static_pointer_cast<
+                          xstream::XStreamData<hobot::vision::Landmarks>>
+                          (hand_lmks->datas_[i]);
+                  // default is the center of the palm, for palm move gesture
+                  size_t point_idx = 9;
+                  hobot::vision::Point present_point;
+                  present_point.x =
+                          hand_lmk->value.values[point_idx].x * x_ratio;
+                  present_point.y =
+                          hand_lmk->value.values[point_idx].y * y_ratio;
+
+                  // cal distance
+                  auto dist = sqrt((last_point.x - present_point.x) *
+                                   (last_point.x - present_point.x) +
+                                   (last_point.y - present_point.y) *
+                                   (last_point.y - present_point.y));
+                  LOGD << "frame " << frame_id
+                       << "  hand " << hand_id << "  dist is " << dist;
+
+                  // find if has palm move gesture in lastest N frames
+                  bool has_palmmove_ever = false;
+                  const auto& gesture_frame_infos =
+                          gesture_info_cache_.at(hand_id).frame_infos;
+                  for (int idx =  gesture_frame_infos.size() - 1;
+                       idx >= 0; idx--) {
+                    if (frame_id < gesture_frame_infos[idx].frame_id) {
+                      // adapt unorder frame output from xstream
+                      continue;
+                    }
+                    if (frame_id - gesture_frame_infos[idx].frame_id <
+                        gesture_thr.valid_palmmove_in_cache_thr) {
+                      if (gesture_type::PalmMove ==
+                          gesture_frame_infos[idx].type) {
+                        has_palmmove_ever = true;
+                        break;
+                      }
+                    } else {
+                      break;
+                    }
+                  }
+
+                  if (dist < gesture_thr.palm_move_dist_thr * dst_w / 1920) {
+                    if (!has_palmmove_ever) {
+                      gesture_val = static_cast<int>(gesture_type::Palm);
+                      // clear cache to make the start point of
+                      // palmmove gesture accurate
+                      gesture_info_cache_.erase(hand_id);
+                    } else {
+                      gesture_val = static_cast<int>(gesture_type::PalmMove);
+                    }
+                  } else {
+                    gesture_val = static_cast<int>(gesture_type::PalmMove);
+                  }
+                } else {
+                  continue;
+                }
+              }
+            } else {
+              gesture_val = static_cast<int>(gesture_type::Palm);
+            }
+          }
+
+          // mute gesture strategy
+          if (static_cast<int>(gesture_type::Mute) == gesture_val) {
+            // 查找hand box对应的face，iou策略
+            auto match_hand_face = [&] (std::shared_ptr<
+                    xstream::XStreamData<hobot::vision::BBox>> box) -> int {
+                int max_index = -1;
+                float max_ratio = 0;
+                if (face_box_list.size() > 0) {
+                  for (size_t idx = 0; idx < face_box_list.size(); idx++) {
+                    auto face_box = face_box_list[idx];
+                    xstream::XStreamData<BBox> inter_box;
+                    inter_box.value.x1 = (std::max)(
+                            face_box->value.x1, box->value.x1);
+                    inter_box.value.x2 = (std::min)(
+                            face_box->value.x2, box->value.x2);
+                    inter_box.value.y1 = (std::max)(
+                            face_box->value.y1, box->value.y1);
+                    inter_box.value.y2 = (std::min)(
+                            face_box->value.y2, box->value.y2);
+
+                    if (inter_box.value.x2 <= inter_box.value.x1 ||
+                        inter_box.value.y2 <= inter_box.value.y1) {
+                      continue;  // no intersection
+                    }
+                    float ratio = (inter_box.value.Width() + 1) *
+                            (inter_box.value.Height() + 1) /
+                            box->value.Height() * box->value.Width();
+                    if (max_index == -1 || ratio > max_ratio) {
+                      max_index = idx;
+                      max_ratio = ratio;
+                    }
+                  }
+
+                  if (max_ratio < 0.1) {
+                    max_index = -1;
+                  }
+                }
+
+                LOGD << "match max_ratio:" << max_ratio;
+                if (max_index < 0) {
+                  LOGI << "match fail";
+                }
+                return max_index;
+            };
+
+            auto max_face_index = match_hand_face(hand_box_list[i]);
+            if (max_face_index >= 0 &&
+                    hand_lmks &&
+                    hand_lmks->datas_.size() == gesture_votes->datas_.size() &&
+                    max_face_index < static_cast<int>(face_lmks->datas_.size())
+                    ) {
+              const auto& max_face_lmk = std::static_pointer_cast<
+                      xstream::XStreamData<hobot::vision::Landmarks>>
+                      (face_lmks->datas_[max_face_index]);
+              const auto& hand_lmk = std::static_pointer_cast<
+                      xstream::XStreamData<hobot::vision::Landmarks>>
+                      (hand_lmks->datas_[i]);
+              // check unusual and error cases:
+              // 1. face has box but no lmk
+              // 2. face lmk is not 106 pts
+              // 3. hand lmk is not 21 pts
+              if (max_face_lmk->value.values.size() == 106 &&
+                      hand_lmk->value.values.size() == 21) {
+                // valid zone is a rectangle
+                // left of mouth
+                auto valid_zone_l_x = max_face_lmk->value.values[84].x -
+                        gesture_thr.gesture_mute_outside * dst_w / 1920;
+                // right of mouth
+                auto valid_zone_r_x = max_face_lmk->value.values[90].x +
+                        gesture_thr.gesture_mute_outside * dst_w / 1920;
+                // bottom of nose
+                auto valid_zone_t_y = max_face_lmk->value.values[60].y;
+                // bottom of jaw
+                auto valid_zone_b_y = max_face_lmk->value.values[16].y;
+
+                // check the hand lmk points of forefinger
+                std::vector<hobot::vision::Point> check_hand_lmks = {
+                        hand_lmk->value.values[5],
+                        hand_lmk->value.values[6],
+                        hand_lmk->value.values[7],
+                        hand_lmk->value.values[8]};
+
+                // the mute gesture is valid if any point of forefinger
+                // is in the valid zone
+                auto check_valid = [&] () -> bool {
+                    for (const auto check_hand_lmk : check_hand_lmks) {
+                      if (check_hand_lmk.x < valid_zone_r_x &&
+                          check_hand_lmk.x > valid_zone_l_x &&
+                          check_hand_lmk.y < valid_zone_b_y &&
+                          check_hand_lmk.y > valid_zone_t_y) {
+                        LOGD << "lmk in zone";
+                        return true;
+                      }
+                    }
+                    LOGW << "all lmks are out of zone";
+                    return false;
+                };
+
+                // check if mute gesture is valid
+                if (check_valid()) {
+                  gesture_val = static_cast<int>(gesture_type::Mute);
+                  LOGD << "gesture is valid";
+                } else {
+                  gesture_val = -1;
+                  LOGD << "gesture is not valid";
+                  // dump zone and hand lmk info for debug
+                  LOGD << "valid zone: " << valid_zone_l_x
+                       << " " <<  valid_zone_r_x
+                       << " " <<  valid_zone_t_y
+                       << " " <<  valid_zone_b_y;
+                  LOGD << "hand lmks:";
+                  for (size_t idx = 0; idx < hand_lmk->value.values.size();
+                       idx++) {
+                    LOGD << idx << " " << hand_lmk->value.values[idx].x
+                         << " " << hand_lmk->value.values[idx].y;
+                  }
+                }
+              } else {
+                LOGW << "max_face_lmk pts size:"
+                     << max_face_lmk->value.values.size()
+                     << "  hand_lmk pts size:"
+                     << hand_lmk->value.values.size();
+              }
+            } else {
+              LOGI << "invalid gesture";
+              gesture_val = -1;
+
+              if (!hand_lmks) {
+                LOGI << "invalid hand_lmks";
+              } else {
+                LOGI << "hand lmk size:" << hand_lmks->datas_.size()
+                     << "  gesture vote:" << gesture_votes->datas_.size()
+                     << "  face idx:" << max_face_index
+                     << "  face lmk size:" << face_lmks->datas_.size();
+              }
+              continue;
+            }
+          }
+
+          // move gesture strategy
+
+          // if hand has gesture ever and not timeout, output last gesture
+          // 只有动态手势才会缓存每帧状态，所以只有动态手势才会召回
+          if (gesture_val <= 0 &&
+                  gesture_info_cache_.find(hand_id) !=
+                          gesture_info_cache_.end() &&
+                  !gesture_info_cache_.at(hand_id).frame_infos.empty() &&
+                  gesture_info_cache_.at(hand_id).last_type >
+                          gesture_type::Background &&
+                  // 避免从Palm/PalmMove到PalmPat后，手势消失被召回成Palm/PalmMove
+                  gesture_info_cache_.at(hand_id).last_type !=
+                          gesture_type::Palmpat) {
+            gesture_val =
+                  static_cast<int>(gesture_info_cache_.at(hand_id).last_type);
+            LOGD << "frame:" << frame_id
+                 << "  hand id:" << hand_id
+                 << "  reset gesture from " << gesture_orig
+                 << "  to " << gesture_val;
+          }
+
+          gesture_info_t* hand_gesture_info = nullptr;
+          if (static_cast<int>(gesture_type::Palm) == gesture_val ||
+                  static_cast<int>(gesture_type::PalmMove) == gesture_val ||
+                  static_cast<int>(gesture_type::Palmpat) == gesture_val ||
+                  static_cast<int>(gesture_type::Pinch) == gesture_val ||
+                  static_cast<int>(
+                          gesture_type::IndexFingerRotateAntiClockwise)
+                  == gesture_val ||
+                  static_cast<int>(gesture_type::IndexFingerRotateClockwise)
+                  == gesture_val) {
+            if (hand_lmks &&
+                hand_lmks->datas_.size() == gesture_votes->datas_.size()) {
+              const auto& hand_lmk = std::static_pointer_cast<
+                      xstream::XStreamData<hobot::vision::Landmarks>>
+                      (hand_lmks->datas_[i]);
+              // default is the center of the palm, for palm move gesture
+              size_t point_idx = 9;
+              if (static_cast<int>(gesture_type::Pinch) == gesture_val) {
+                point_idx = 8;  // fingertip of forefinger for pinch gesture
+              } else if (static_cast<int>(
+                              gesture_type::IndexFingerRotateAntiClockwise)
+                         == gesture_val ||
+                      static_cast<int>(
+                              gesture_type::IndexFingerRotateClockwise)
+                      == gesture_val) {
+                point_idx = 8;  // fingertip of forefinger for rotate gesture
+              }
+
+              auto get_mean_point = [this, &hand_lmk, &x_ratio, &y_ratio] ()
+                      -> hobot::vision::Point {
+                  hobot::vision::Point point;
+                  point.x = 0;
+                  point.y = 0;
+                  for (const auto& val : hand_lmk->value.values) {
+                    point.x += val.x;
+                    point.y += val.y;
+                  }
+                  point.x = point.x / hand_lmk->value.values.size() * x_ratio;
+                  point.y = point.y / hand_lmk->value.values.size() * y_ratio;
+                  return point;
+              };
+              if (gesture_info_cache_.find(hand_id) ==
+                      gesture_info_cache_.end()) {
+                hobot::vision::Point point;
+                if (static_cast<int>(
+                            gesture_type::IndexFingerRotateAntiClockwise)
+                    == gesture_val ||
+                    static_cast<int>(gesture_type::IndexFingerRotateClockwise)
+                    == gesture_val) {
+                  point = get_mean_point();
+                } else {
+                  point.x = hand_lmk->value.values[point_idx].x * x_ratio;
+                  point.y = hand_lmk->value.values[point_idx].y * y_ratio;
+                }
+                gesture_single_frame_info_t single_frame_info;
+                gesture_info_t info;
+                single_frame_info.frame_id = frame_id;
+                single_frame_info.type =
+                        static_cast<gesture_type>(gesture_val);
+                LOGD << "insert frame " << frame_id
+                     << "  hand " << hand_id << "  type " << gesture_val
+                     << "  point:" << point.x << "," << point.y;
+                info.frame_infos.emplace_back(single_frame_info);
+                info.points.emplace_back(cv::Point(point.x, point.y));
+
+                gesture_info_cache_[hand_id] = info;
+                if (gesture_val == gesture_orig) {
+                  gesture_info_cache_[hand_id].last_frame_id = frame_id;
+                  gesture_info_cache_[hand_id].last_type =
+                          static_cast<gesture_type>(gesture_val);
+                }
+              } else {
+                hobot::vision::Point point;
+                if (static_cast<int>(
+                            gesture_type::IndexFingerRotateAntiClockwise) ==
+                            gesture_val ||
+                    static_cast<int>(gesture_type::IndexFingerRotateClockwise)
+                    == gesture_val) {
+                  point = get_mean_point();
+                } else {
+                  point.x = hand_lmk->value.values[point_idx].x * x_ratio;
+                  point.y = hand_lmk->value.values[point_idx].y * y_ratio;
+                }
+                if (UpdateGestureInfo(static_cast<gesture_type>(gesture_val),
+                                      static_cast<gesture_type>(gesture_orig),
+                                      hand_id,
+                                      point,
+                                      hand_box_list[i],
+                                      dst_h / 1080) < 0) {
+                  LOGI << "UpdateGestureInfo fail";
+                  continue;
+                }
+              }
+              hand_gesture_info = &gesture_info_cache_.at(hand_id);
+            }
+          }
           // gesture event
           if (gesture_as_event) {
             auto hand_id = hand_box_list[i]->value.id;
@@ -1484,37 +2234,136 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
                 std::chrono::system_clock::now().time_since_epoch()).count();
             float cur_sec = cur_microsec / 1000000.0;
             if (gesture_state_.find(hand_id) == gesture_state_.end()) {
-              gesture_ret = gesture_vote->value.value;
+              gesture_ret = gesture_val;
               gesture_state_[hand_id] = gesture_ret;
               gesture_start_time_[hand_id] = cur_sec;
+
+              LOGD << "gesture_val " << gesture_val
+                   << " gesture:" << gesture_ret
+                   << "  hand id:" << hand_box_list[i]->value.id
+                   << "  frame_id:" << frame_id;
             } else {
               auto last_gesture = gesture_state_[hand_id];
-              auto cur_gesture = gesture_vote->value.value;
-              if (last_gesture != cur_gesture &&
-                  cur_sec - gesture_start_time_[hand_id] >= 0.5) {
+              auto cur_gesture = gesture_val;
+              if ((last_gesture != cur_gesture &&
+                  cur_sec - gesture_start_time_[hand_id] >= 0.5)) {
                 gesture_ret = cur_gesture;
                 gesture_state_[hand_id] = gesture_ret;
                 gesture_start_time_[hand_id] = cur_sec;
+
+                LOGD << "gesture_val " << gesture_val
+                     << " gesture:" << gesture_ret
+                     << "  hand id:" << hand_box_list[i]->value.id
+                     << "  frame_id:" << frame_id;
               }
             }
           } else {
-            gesture_ret = gesture_vote->value.value;
+            gesture_ret = gesture_val;
+            LOGD << "gesture_val " << gesture_val << " gesture:" << gesture_ret
+                 << "  hand id:" << hand_box_list[i]->value.id
+                 << "  frame_id:" << frame_id;
           }
           // end gesture event
           auto target = smart_target[hand_key];
           auto attrs = target->add_attributes_();
           attrs->set_type_("gesture");
           attrs->set_value_(gesture_ret);
+          LOGD << "track_id_ " << target->track_id_()
+               << " gesture:" << gesture_ret
+               << "  hand id:" << hand_id << "  frame_id:" << frame_id;
           auto gesture_des = AttributeConvert::Instance().GetAttrDes(
               "gesture", gesture_ret);
           attrs->set_value_string_(gesture_des);
           LOGD << " " << gesture_ret << ", des: " << gesture_des;
+          if ((static_cast<int>(gesture_type::PalmMove) == gesture_ret ||
+                static_cast<int>(gesture_type::Pinch) == gesture_ret ||
+                static_cast<int>(gesture_type::IndexFingerRotateAntiClockwise)
+                == gesture_ret ||
+                static_cast<int>(gesture_type::IndexFingerRotateClockwise)
+                  == gesture_ret) &&
+                  hand_gesture_info &&
+                  hand_gesture_info->frame_infos.size() >= 2) {
+            HOBOT_CHECK(hand_gesture_info->frame_infos.size() ==
+                                hand_gesture_info->points.size())
+            << " frame_infos:" << hand_gesture_info->frame_infos.size()
+            << "  points:" << hand_gesture_info->points.size();
+            if ( static_cast<int>(gesture_type::IndexFingerRotateAntiClockwise)
+                 == gesture_ret ||
+                 static_cast<int>(gesture_type::IndexFingerRotateClockwise)
+                 == gesture_ret ) {
+              auto points = target->add_points_();
+              points->set_type_("gesture_move");
+              LOGD << "set gesture_move size:"
+                   << hand_gesture_info->points.size();
+              for (const auto& pt : hand_gesture_info->points) {
+                auto p_start = points->add_points_();
+                p_start->set_x_(pt.x);
+                p_start->set_y_(pt.y);
+              }
+
+              // 确保序列化结果的有效性，用户不需要再对结果校验，直接绘制拟合图
+              if (hand_id != -1 &&
+                      gesture_info_cache_.find(hand_id) !=
+                              gesture_info_cache_.end() &&
+                      gesture_info_cache_.at(hand_id).points.size() >=
+                              gesture_thr.fit_points_size_thr_) {
+                const auto& gesture_res = gesture_info_cache_[hand_id];
+                auto matrix = target->add_float_matrixs_();
+                matrix->set_type_("rotate_res");
+                {
+                  auto array = matrix->add_arrays_();
+                  array->set_type_("statistics_res");
+                  array->add_value_(gesture_res.fit_residual_err);
+                  array->add_value_(gesture_res.fit_ratio);
+                  array->add_value_(gesture_res.rotate_num);
+                  array->add_value_(gesture_res.angel);
+                }
+                {
+                  auto array = matrix->add_arrays_();
+                  array->set_type_("fit_res");
+                  array->add_value_(gesture_res.fit_rect.angle);
+                  array->add_value_(gesture_res.fit_rect.center.x);
+                  array->add_value_(gesture_res.fit_rect.center.y);
+                  array->add_value_(gesture_res.fit_rect.size.width);
+                  array->add_value_(gesture_res.fit_rect.size.height);
+                }
+
+                LOGD << "serialize rotate matrix";
+              }
+              LOGD << "gesture:" << gesture_ret
+                   << "  move coord size:"
+                   << hand_gesture_info->frame_infos.size()
+                   << "  rotate_num:"
+                   << gesture_info_cache_[hand_id].rotate_num
+                   << "  angel:" << gesture_info_cache_[hand_id].angel
+                   << "  fit_ratio:" << gesture_info_cache_[hand_id].fit_ratio
+                   << "  fit_residual_err:"
+                   << gesture_info_cache_[hand_id].fit_residual_err;
+            } else {
+              auto points = target->add_points_();
+              points->set_type_("gesture_move");
+              const auto& coord_start = hand_gesture_info->points.front();
+              const auto& coord_end = hand_gesture_info->points.back();
+              auto p_start = points->add_points_();
+              p_start->set_x_(coord_start.x);
+              p_start->set_y_(coord_start.y);
+              auto p_end = points->add_points_();
+              p_end->set_x_(coord_end.x);
+              p_end->set_y_(coord_end.y);
+              LOGD << "gesture:" << gesture_ret
+                   << "  move coord size:" <<
+                              hand_gesture_info->frame_infos.size()
+                   << "  start:" << coord_start.x << "," << coord_start.y
+                   << "  end:" << coord_end.x << "," << coord_end.y;
+            }
+          }
         }
       }
     }
     if (output->name_ == "hand_disappeared_track_id_list") {
       auto disappeared_hands =
         dynamic_cast<xstream::BaseDataVector *>(output.get());
+      std::lock_guard<std::mutex> lk(static_attr_mutex_);
       for (size_t i = 0; i < disappeared_hands->datas_.size(); ++i) {
         auto disappeared_hand = std::static_pointer_cast<
             xstream::XStreamData<hobot::vision::Attribute<int>>>(
@@ -1527,6 +2376,11 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
             gesture_start_time_.end()) {
           gesture_start_time_.erase(disappeared_hand);
           LOGD << "erase " << disappeared_hand << " from timestamp_start";
+        }
+        if (gesture_info_cache_.find(disappeared_hand) !=
+                gesture_info_cache_.end()) {
+          gesture_info_cache_.erase(disappeared_hand);
+          LOGD << "erase " << disappeared_hand << " from coordinate";
         }
       }
     }
@@ -1544,6 +2398,7 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
     proto_frame_message.SerializeToString(&proto_str);
   }
   LOGD << "smart result serial success";
+
   return proto_str;
 }
 
@@ -1576,6 +2431,44 @@ void SmartPlugin::ParseConfig() {
   if (config_->HasMember("gesture_as_event")) {
     gesture_as_event = config_->GetBoolValue("gesture_as_event");
   }
+
+  if (config_->HasMember("gesture_mute_outside")) {
+    gesture_thr.gesture_mute_outside =
+            config_->GetIntValue("gesture_mute_outside");
+  }
+  if (config_->HasMember("palm_move_dist_thr")) {
+    gesture_thr.palm_move_dist_thr = config_->GetIntValue("palm_move_dist_thr");
+  }
+  if (config_->HasMember("valid_palm_for_palmpat_thr")) {
+    gesture_thr.valid_palm_for_palmpat_thr_ =
+            config_->GetIntValue("valid_palm_for_palmpat_thr");
+  }
+  if (config_->HasMember("dynamic_gesture_vanish_thr")) {
+    gesture_thr.dynamic_gesture_vanish_thr =
+            config_->GetIntValue("dynamic_gesture_vanish_thr");
+  }
+  if (config_->HasMember("static_gesture_vanish_thr")) {
+    gesture_thr.static_gesture_vanish_thr =
+            config_->GetIntValue("static_gesture_vanish_thr");
+  }
+  if (config_->HasMember("static_dynamic_dist_thr")) {
+    gesture_thr.static_dynamic_dist_thr =
+            config_->GetIntValue("static_dynamic_dist_thr");
+  }
+  if (config_->HasMember("conflict_gesture_thr")) {
+    gesture_thr.conflict_gesture_thr_ =
+            config_->GetIntValue("conflict_gesture_thr");
+  }
+  LOGI << "gesture_mute_outside:" << gesture_thr.gesture_mute_outside
+       << " palm_move_dist_thr:" << gesture_thr.palm_move_dist_thr
+       << " valid_palm_for_palmpat_thr:"
+       << gesture_thr.valid_palm_for_palmpat_thr_
+       << " dynamic_gesture_vanish_thr:"
+       << gesture_thr.dynamic_gesture_vanish_thr
+       << " static_gesture_vanish_thr:" << gesture_thr.static_gesture_vanish_thr
+       << " static_dynamic_dist_thr:" << gesture_thr.static_dynamic_dist_thr
+       << " conflict_gesture_thr:" << gesture_thr.conflict_gesture_thr_;
+
   dist_calibration_w =
           config_->GetIntValue("distance_calibration_width");
   dist_fit_factor = config_->GetFloatValue("distance_fit_factor");
@@ -1606,8 +2499,65 @@ int SmartPlugin::Init() {
 
   RegisterMsg(TYPE_IMAGE_MESSAGE,
               std::bind(&SmartPlugin::Feed, this, std::placeholders::_1));
+#ifdef USE_MC
+  MethodConfiger::Get()->weak_sdk_ = sdk_;
+  RegisterMsg(TYPE_TRANSPORT_MESSAGE,
+      std::bind(&SmartPlugin::OnApInfoMessage, this, std::placeholders::_1));
+#endif
   return XPluginAsync::Init();
 }
+
+#ifdef USE_MC
+struct APCfgRespMessage: public basic_msgtype::APRespMessage{
+  APCfgRespMessage(bool status, uint64_t seq_id, const x3::Config &config)
+  : APRespMessage(seq_id), status_(status) {
+    config.SerializeToString(&proto_);
+  }
+  std::string Serialize();
+  bool status_;
+};
+
+std::string APCfgRespMessage::Serialize() {
+  LOGE << "serialize msg_id_:" << sequence_id_;
+  x3::MessagePack pack;
+  pack.set_flow_(x3::MessagePack_Flow_CP2AP);
+  pack.set_type_(x3::MessagePack_Type::MessagePack_Type_kXConfig);
+  pack.mutable_addition_()->mutable_frame_()->set_sequence_id_(sequence_id_);
+
+  x3::InfoMessage info;
+  auto ack = status_
+             ? x3::Response_Ack::Response_Ack_Success
+             : x3::Response_Ack::Response_Ack_Fail;
+  info.mutable_response_()->set_ack_(ack);
+  if (!proto_.empty() && status_)
+    info.add_config_()->ParseFromString(proto_);
+  pack.set_content_(info.SerializeAsString());
+  return pack.SerializeAsString();
+}
+
+int SmartPlugin::OnApInfoMessage(const XProtoMessagePtr& msg) {
+  int ret = kHorizonVisionFailure;
+  auto uvc_msg = std::static_pointer_cast<
+      basic_msgtype::TransportMessage>(msg);
+  x3::MessagePack pack_msg;
+  x3::InfoMessage InfoMsg;
+  auto pack_msg_parse = pack_msg.ParseFromString(uvc_msg->proto_);
+  if (pack_msg_parse &&
+      pack_msg.type_() == x3::MessagePack_Type::MessagePack_Type_kXConfig &&
+      InfoMsg.ParseFromString(pack_msg.content_()) &&
+      InfoMsg.config__size() > 0) {
+    x3::Config *config_proto = InfoMsg.mutable_config_(0);
+    auto sequence_id = pack_msg.addition_().frame_().sequence_id_();
+    ret = MethodConfiger::Get()->HandleAPConfig(*config_proto);
+    auto response = std::make_shared<APCfgRespMessage>(
+        ret == kHorizonVisionSuccess,
+        sequence_id,
+        *config_proto);
+    PushMsg(response);
+  }
+  return kHorizonVisionSuccess;
+}
+#endif
 
 int SmartPlugin::Feed(XProtoMessagePtr msg) {
   if (!run_flag_) {
@@ -1620,7 +2570,8 @@ int SmartPlugin::Feed(XProtoMessagePtr msg) {
   if (valid_frame->profile_ != nullptr) {
     valid_frame->profile_->UpdatePluginStartTime(desc());
   }
-  xstream::InputDataPtr input = Convertor::ConvertInput(valid_frame.get());
+  xstream::InputDataPtr input =
+      Convertor::ConvertInput(valid_frame.get(), GetWorkflowInputImageName());
   auto xstream_input_data =
       std::static_pointer_cast<xstream::XStreamData<ImageFramePtr>>(
           input->datas_[0]);
@@ -1629,6 +2580,9 @@ int SmartPlugin::Feed(XProtoMessagePtr msg) {
   input_wrapper->frame_info = valid_frame;
   input_wrapper->context = input_wrapper;
   monitor_->PushFrame(input_wrapper);
+#ifdef USE_MC
+  MethodConfiger::Get()->BuildInputParam(input);
+#endif
   if (sdk_->AsyncPredict(input) < 0) {
     auto intput_frame = monitor_->PopFrame(frame_id);
     delete static_cast<SmartInput *>(intput_frame.context);
@@ -1657,6 +2611,9 @@ int SmartPlugin::Stop() {
   }
   run_flag_ = false;
 
+  while (sdk_->GetTaskNum() != 0) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
   if (result_to_json_) {
     remove("smart_data.json");
     Json::StreamWriterBuilder builder;
@@ -1669,8 +2626,8 @@ int SmartPlugin::Stop() {
 }
 
 int SmartPlugin::DeInit() {
-  XPluginAsync::DeInit();
   Profiler::Release();
+  XPluginAsync::DeInit();
   return 0;
 }
 
@@ -1786,7 +2743,7 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
 
   for (const auto &output : xstream_out->datas_) {
     LOGD << output->name_ << ", type is " << output->type_;
-    if (output->name_ == "rgb_image" || output->name_ == "image") {
+    if (output->name_ == GetWorkflowInputImageName()) {
       rgb_image = dynamic_cast<XStreamImageFramePtr *>(output.get());
     }
 #ifdef DUMP_SNAP
@@ -1815,7 +2772,7 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
 #endif
   }
 
-  auto smart_msg = std::make_shared<CustomSmartMessage>(xstream_out);
+  auto smart_msg = CreateSmartMessage(xstream_out);
   // Set origin input named "image" as output always.
   HOBOT_CHECK(rgb_image);
   smart_msg->channel_id = rgb_image->value->channel_id;
@@ -1841,6 +2798,184 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
   if (dump_result_) {
     smart_msg->Serialize_Dump_Result();
   }
+}
+
+CustomSmartMessage::EllipsePara
+CustomSmartMessage::CalEllipsePara(const cv::RotatedRect& fit_rect) {
+  CustomSmartMessage::EllipsePara out_para;
+  float theta = fit_rect.angle * CV_PI / 180.0;
+  float a = fit_rect.size.width / 2.0;
+  float b = fit_rect.size.height / 2.0;
+
+  out_para.c.x = fit_rect.center.x;
+  out_para.c.y = fit_rect.center.y;
+
+  out_para.A = a * a * sin(theta) * sin(theta) +
+          b * b * cos(theta) * cos(theta);
+  out_para.B = (-2.0) * (a * a - b * b) * sin(theta) * cos(theta);
+  out_para.C = a * a * cos(theta) * cos(theta) +
+          b * b * sin(theta) * sin(theta);
+  out_para.F = (-1.0) * a * a * b * b;
+
+  return out_para;
+}
+
+// 以pt1为基准
+float CustomSmartMessage::CalAngelOfTwoVector(const cv::Point2f &c,
+                          const cv::Point2f &pt1,
+                          const cv::Point2f &pt2,
+                          bool clock_wise) {
+  float theta = atan2(pt1.x - c.x, pt1.y - c.y) -
+          atan2(pt2.x - c.x, pt2.y - c.y);
+  if (theta > CV_PI)
+    theta -= 2 * CV_PI;
+  if (theta < -CV_PI)
+    theta += 2 * CV_PI;
+
+  theta = theta * 180.0 / CV_PI;
+  if (theta < 0) {
+    theta = theta + 360;
+  }
+  if (!clock_wise) {
+    // anti clock wise
+    theta = 360 - theta;
+  }
+  return theta;
+}
+
+float CustomSmartMessage::CalFitVal(const cv::RotatedRect& fit_rect,
+                                    float x_origin,
+                                    float y_origin) {
+  EllipsePara ellipse_para = CalEllipsePara(fit_rect);
+
+  // cal fit y
+  int x = x_origin - ellipse_para.c.x;
+  float a = ellipse_para.C;
+  float b = ellipse_para.B * x;
+  float c = ellipse_para.A * x * x + ellipse_para.F;
+
+  float y1 = ((-1.0) * b + sqrt(b * b - 4.0 * a * c)) / (2.0 * a);
+  float y2 = ((-1.0) * b - sqrt(b * b - 4.0 * a * c)) / (2.0 * a);
+
+  float y1_new = y1 + ellipse_para.c.y;
+  float y2_new = y2 + ellipse_para.c.y;
+
+  // select the min angle
+  float ret_y = y1_new;
+  if (std::abs(y2_new - y_origin) < std::abs(y1_new - y_origin)) {
+    ret_y = y2_new;
+  }
+  return ret_y;
+}
+
+int CustomSmartMessage::UpdateGestureInfo(
+        const gesture_type& gesture_val,
+        const gesture_type& gesture_original,
+        int hand_id,
+        const hobot::vision::Point& hand_lmk_point,
+        const std::shared_ptr<xstream::XStreamData<hobot::vision::BBox>>&
+        hand_box,
+        float y_ratio) {
+  gesture_single_frame_info_t single_frame_info;
+  single_frame_info.frame_id = frame_id;
+  single_frame_info.type = static_cast<gesture_type>(gesture_val);
+  gesture_info_cache_[hand_id].frame_infos.emplace_back(single_frame_info);
+  gesture_info_cache_[hand_id].points.emplace_back(
+          cv::Point(hand_lmk_point.x, hand_lmk_point.y));
+  if (gesture_val == gesture_original) {
+    gesture_info_cache_[hand_id].last_frame_id = frame_id;
+    gesture_info_cache_[hand_id].last_type =
+            static_cast<gesture_type>(gesture_val);
+  }
+
+  LOGI << "cache size:" << gesture_info_cache_[hand_id].frame_infos.size()
+       << "  " << gesture_info_cache_[hand_id].points.size();
+
+  if (gesture_type::IndexFingerRotateAntiClockwise != gesture_val &&
+          gesture_type::IndexFingerRotateClockwise != gesture_val) {
+    return 0;
+  }
+
+  // 拟合的点至少为6
+  if (gesture_info_cache_[hand_id].points.size() >=
+          gesture_thr.fit_points_size_thr_) {
+    // 椭圆拟合
+    cv::RotatedRect box = cv::fitEllipse(gesture_info_cache_[hand_id].points);
+    gesture_info_cache_[hand_id].fit_ratio =
+            MAX(box.size.width, box.size.height) /
+                    MIN(box.size.width, box.size.height);
+    if (gesture_info_cache_[hand_id].fit_ratio <= gesture_thr.fit_ratio_thr_
+       && std::max(box.size.width, box.size.height) >
+                    hand_box->value.Width() / 2
+            ) {
+      // cal fitting residual error
+      gesture_info_cache_[hand_id].fit_residual_err = 0;
+      float dist = 0.0;
+      for (const auto point : gesture_info_cache_[hand_id].points) {
+        auto y_fit = CalFitVal(box, point.x, point.y);
+        if (y_fit - point.y < 1080 * y_ratio) {
+          dist += sqrt((y_fit - point.y) * (y_fit - point.y));
+        } else {
+          LOGD << "invalid fit, y dist:" << y_fit - point.y
+               << "  y_fit:" << y_fit << " y_origin:" << point.y;
+        }
+      }
+      gesture_info_cache_[hand_id].fit_residual_err =
+              dist / gesture_info_cache_[hand_id].points.size();
+      LOGI << "dist:" << dist
+           << "  size:" << gesture_info_cache_[hand_id].points.size()
+           << "  err:" << gesture_info_cache_[hand_id].fit_residual_err;
+      if (gesture_info_cache_[hand_id].fit_residual_err >=
+              gesture_thr.residual_err_thr_ * y_ratio) {
+        LOGW << "erase gesture fit_residual_err is "
+             << gesture_info_cache_[hand_id].fit_residual_err
+             << " threshold is " << gesture_thr.residual_err_thr_ * y_ratio;
+        gesture_info_cache_.erase(hand_id);
+        return -1;
+      }
+
+      // cal rotate angel and rotate num
+      cv::Point2f fit_center(box.center.x, box.center.y);
+      cv::Point2f start_pt(gesture_info_cache_[hand_id].points.front().x,
+                           gesture_info_cache_[hand_id].points.front().y);
+      cv::Point2f end_pt(gesture_info_cache_[hand_id].points.back().x,
+                         gesture_info_cache_[hand_id].points.back().y);
+      bool clock_wise = true;
+      if (gesture_type::IndexFingerRotateAntiClockwise == gesture_val) {
+        clock_wise = false;
+      }
+      int angel =
+              CalAngelOfTwoVector(fit_center,
+                                  start_pt,
+                                  end_pt,
+                                  clock_wise);
+      gesture_info_cache_[hand_id].fit_rect = box;
+      if (angel <= gesture_thr.rotate_start_angel_thr_) {
+        gesture_info_cache_[hand_id].has_start = true;
+        LOGI << "rotate start hand_id:" << hand_id;
+      }
+      if (gesture_info_cache_[hand_id].has_start &&
+              angel < gesture_info_cache_[hand_id].angel &&
+              gesture_info_cache_[hand_id].angel - angel >=
+                      gesture_thr.rotate_loop_angel_dist_thr_
+              ) {
+        gesture_info_cache_[hand_id].rotate_num++;
+        gesture_info_cache_[hand_id].has_start = false;
+        LOGI << "hand_id:" << hand_id
+             << "  rotate_num:" << gesture_info_cache_[hand_id].rotate_num;
+      }
+      gesture_info_cache_[hand_id].angel = angel;
+    } else {
+      gesture_info_cache_.erase(hand_id);
+      LOGI << "erase gesture, invalid fitEllipse"
+           << "  fit_ratio:" << gesture_info_cache_[hand_id].fit_ratio
+           << "  fit size:" << std::max(box.size.width, box.size.height)
+           << "  hand box width:" << hand_box->value.Width();
+      return -1;
+    }
+  }
+
+  return 0;
 }
 }  // namespace smartplugin
 }  // namespace xproto

@@ -23,6 +23,7 @@ if (${IOT_VIO_API})
     file(GLOB PROJECT_SRC
         "src/vioplugin/*.cpp"
         "src/iotviomanager/*.cpp"
+        "src/iotviomanager/camera/*.cpp"
         "src/utils/*.cpp")
 else ()
     file(GLOB PROJECT_SRC
@@ -33,7 +34,7 @@ endif ()
 set(SOURCE_FILES ${PROJECT_SRC} ${PROJECT_INC})
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-set(BASE_LIBRARIES opencv_world pthread vio cam uvc xproto_msgtype jsoncpp xstream-imagetools)
+set(BASE_LIBRARIES opencv_world pthread vio cam uvc xproto_msgtype jsoncpp xstream-imagetools dl)
 
 set(X3_HAPI_LIB isp iar isp_algo tinyalsa multimedia z avformat hbmedia)
 target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES} ${X3_HAPI_LIB})

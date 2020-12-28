@@ -109,11 +109,12 @@ ourRTSPClient::ourRTSPClient(UsageEnvironment &env, char const *rtspURL,
 
 ourRTSPClient::~ourRTSPClient() {
   LOGI << "channel " << channel_ << " ~ourRTSPClient()";
-  LOGI << "~ourRTSPClient(), call media pipeline deinit, channel:" << channel_;
   auto media =
       horizon::vision::MediaPipeManager::GetInstance().GetPipeLine()[channel_];
   if (media) {
     media->Stop();
+    LOGI << "~ourRTSPClient(), call media pipeline deinit, channel:"
+         << channel_;
     media->DeInit();
   }
   LOGI << "leave ourRTSPClient::~ourRTSPClient(), channel:" << channel_;
@@ -660,7 +661,7 @@ void shutdownStream(RTSPClient *rtspClient, int exitCode) {
   UsageEnvironment &env = rtspClient->envir();  // alias
   StreamClientState &scs =
       (reinterpret_cast<ourRTSPClient *>(rtspClient))->scs;  // alias
-
+  int channel = (reinterpret_cast<ourRTSPClient *>(rtspClient))->channel_;
   // First, check whether any subsessions have still to be closed:
   if (scs.session != NULL) {
     printf("scs.session\n");
@@ -669,12 +670,13 @@ void shutdownStream(RTSPClient *rtspClient, int exitCode) {
     MediaSubsession *subsession;
 
     while ((subsession = iter.next()) != NULL) {
-      printf("subsession name: %s \n", subsession->mediumName());
+      LOGI << "channel:" << channel
+           << " subsession name:" << subsession->mediumName();
       if (subsession->sink != NULL) {
-        printf("subsession->sink try close\n");
+        LOGI << "channel:" << channel << " subsession->sink try close";
         Medium::close(subsession->sink);
         subsession->sink = NULL;
-        printf("subsession->sink\n");
+        LOGI << "channel:" << channel << " subsession->sink";
         if (subsession->rtcpInstance() != NULL) {
           subsession->rtcpInstance()->setByeHandler(
               NULL, NULL);  // in case the server sends a RTCP "BYE" while
@@ -683,7 +685,7 @@ void shutdownStream(RTSPClient *rtspClient, int exitCode) {
         someSubsessionsWereActive = True;
       }
     }
-    printf("subsession->sink22\n");
+    LOGI << "channel:" << channel << " subsession->sink22";
     if (someSubsessionsWereActive) {
       // Send a RTSP "TEARDOWN" command, to tell the server to shutdown the
       // stream. Don't bother handling the response to the "TEARDOWN".

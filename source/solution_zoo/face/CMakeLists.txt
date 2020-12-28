@@ -9,8 +9,8 @@ set(SOURCE_FILES
 add_executable(face_solution ${SOURCE_FILES})
 
 set(BASE_LIBRARIES smartplugin visualplugin
-        FasterRCNNMethod bpu_predict FaceSnapFilterMethod SnapShotMethod GradingMethod vote_method
-        MOTMethod ipc_tracking xstream xstream-imagetools hobotlog
+        FasterRCNNMethod CNNMethod bpu_predict FilterMethod SnapShotMethod GradingMethod vote_method
+        MOTMethod MultitaskPredictMethod MultitaskPostProcessMethod ipc_tracking xstream xstream-imagetools hobotlog
         jsoncpp opencv_world websocketplugin vioplugin)
 if (${PLATFORM_X2})
 set(UVC_LIBRARIES )

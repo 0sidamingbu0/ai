@@ -1,0 +1,17 @@
+{
+  "model_name" : "faceLandmark106pts",
+  "model_version": "v0.0.1",
+  "in_msg_type" : "rect",
+  "model_file_path": "../../models/faceLandmark106pts.hbm",
+  "bpu_config_path": "../configs/bpu_config.json",
+  "post_fn" : "common_lmk_106pts",
+  "data_type": "img_nv12_separate",
+  "lmk_num": 106,
+  "vector_size": 32,
+  "i_o_stride": 4,
+  "max_handle_num": -1,
+  "output_size" : 1,
+  "core_id": 2,
+  "expand_scale": 1.25,
+  "norm_method": "norm_by_lside_ratio"
+}

@@ -20,7 +20,7 @@
 #include <chrono>
 #include <fstream>
 #include <string>
-
+#include <utility>
 #include "hobotlog/hobotlog.hpp"
 #include "smartplugin/smartplugin.h"
 #ifdef USE_MC
@@ -170,6 +170,7 @@ void HidManager::RecvThread() {
   }
   delete []recv_data;
 }
+
 void HidManager::SendThread() {
   // start send Hid 数据
   LOGD << "start HidManager";
@@ -180,18 +181,52 @@ void HidManager::SendThread() {
       {
         // 需要从pb_buffer中获取一个结果返回
         std::unique_lock<std::mutex> lck(queue_lock_);
-        if (pb_buffer_queue_.size() > 0) {
-          LOGD << "pb_buffer_queue_ size:" << pb_buffer_queue_.size();
-          // send smart data
-          LOGD << "Get smart data";
-          std::string pb_string = pb_buffer_queue_.front();
-          pb_buffer_queue_.pop();
-          lck.unlock();
-          // 将pb string 发送给ap
-          if (Send(pb_string)) {
-            LOGE << "Hid Send error!";
-          } else {
-            LOGD << "Hid Send end";
+        static uint64_t last_send_id = 0;
+        bool wait_ret =
+            condition_.wait_for(
+                lck, std::chrono::milliseconds(100),
+                [&]() { return
+                    (smart_msg_queue_.size() > 0 &&
+                        ((smart_msg_queue_.top().first <= last_send_id + 1)
+                         || smart_msg_queue_.size() >= queue_max_size_))
+                || (pb_cp2ap_info_queue_.size() > 0); });
+        if (!wait_ret) continue;
+        size_t queue_len = smart_msg_queue_.size();
+        if (queue_len > 0) {
+          auto msg_pair = smart_msg_queue_.top();
+          auto send_msg = [&, this] () {
+              last_send_id = msg_pair.first;
+              LOGD << "send frame " << msg_pair.first;
+              std::string pb_string = std::move(msg_pair.second);
+              smart_msg_queue_.pop();
+              lck.unlock();
+
+              auto send_start = std::chrono::high_resolution_clock::now();
+              if (Send(pb_string)) {
+                LOGE << "Hid Send error!";
+              } else {
+                LOGD << "Hid Send end";
+              }
+              auto send_end = std::chrono::high_resolution_clock::now();
+              std::chrono::duration<float, std::milli> cost
+                      = send_end - send_start;
+              LOGI << "send pb cost ms:" << cost.count();
+          };
+          //  此时发送的是智能帧或drop帧
+          if (last_send_id + 1 == msg_pair.first) {
+            send_msg();
+          } else if (msg_pair.first == 0
+              //  此时是发送AP查询的底库的CURD相关信息
+              || last_send_id + 1 > msg_pair.first) {
+            //  此时发送的是抓拍帧或第一帧智能帧
+            auto last_send_id_cache = last_send_id;
+            send_msg();
+            last_send_id = last_send_id_cache;
+          } else if (queue_len >= queue_max_size_) {
+            // exception occurred
+            auto lost_frame_id = last_send_id;
+            send_msg();
+            LOGW << "frame id: " << lost_frame_id << " lost";
           }
         }
       }
@@ -240,12 +275,15 @@ void HidManager::SendThread() {
           bool wait_ret =
               condition_.wait_for(
                   lck, std::chrono::milliseconds(10),
-                  [&]() { return pb_buffer_queue_.size() > 0; });
+                  [&]() { return smart_msg_queue_.size() > 0; });
           // 从pb_buffer中获取结果
           if (wait_ret != 0) {
             // send smart data
-            pb_string = pb_buffer_queue_.front();
-            pb_buffer_queue_.pop();
+            if (smart_msg_queue_.size() > 0) {
+              auto msg_pair = smart_msg_queue_.top();
+              pb_string = msg_pair.second;
+              smart_msg_queue_.pop();
+            }
           }
         }
         // 将pb string 发送给ap
@@ -296,6 +334,12 @@ int HidManager::Stop() {
     recv_thread_->join();
     recv_thread_ = nullptr;
   }
+  {
+    std::lock_guard<std::mutex> lck(queue_lock_);
+    while (!smart_msg_queue_.empty()) {
+      smart_msg_queue_.pop();
+    }
+  }
   LOGI << "HidManager Stop Done";
   return 0;
 }
@@ -311,6 +355,7 @@ int HidManager::FeedInfo(const XProtoMessagePtr& msg) {
   // pb入队
   LOGD << "info data to queue, size: " << protocol.size();
   pb_cp2ap_info_queue_.push(std::move(protocol));
+  condition_.notify_one();
 #endif
   return 0;
 }
@@ -333,6 +378,42 @@ int HidManager::FeedSmart(XProtoMessagePtr msg, int ori_image_width,
       std::bind(&HidManager::Serialize, this, smart_msg,
                 ori_image_width, ori_image_height,
                 dst_image_width, dst_image_height));
+  return 0;
+}
+
+int HidManager::FeedDropSmart(uint64_t frame_id) {
+  LOGD << "feed drop frame " << frame_id;
+  serialize_thread_.PostTask(
+          std::bind(&HidManager::SerializeDropFrame, this, frame_id));
+  return 0;
+}
+
+//  it is better SerializeDropFrame in smartmessage rather in hid_manager.
+int HidManager::SerializeDropFrame(uint64_t frame_id) {
+  x3::MessagePack pack;
+  pack.set_flow_(x3::MessagePack_Flow::MessagePack_Flow_CP2AP);
+  pack.set_type_(x3::MessagePack_Type::MessagePack_Type_kXPlugin);
+  auto add_frame = pack.mutable_addition_()->mutable_frame_();
+  add_frame->set_timestamp_(frame_id);
+  add_frame->set_sequence_id_(frame_id);
+  add_frame->set_frame_type_(x3::Frame_FrameType_DropFrame);
+
+  auto protocol = pack.SerializeAsString();
+  {
+    std::lock_guard<std::mutex> lck(queue_lock_);
+    smart_msg_queue_.emplace(std::make_pair(frame_id, std::move(protocol)));
+    LOGD << "smart_msg_queue_ size:" << smart_msg_queue_.size();
+    if (smart_msg_queue_.size() > queue_max_size_) {
+      LOGW << "smart_msg_queue_.size() is larger than MAX_SIZE: "
+           << queue_max_size_;
+      smart_msg_queue_.pop();
+    }
+  }
+  condition_.notify_one();
+  if (print_timestamp_) {
+    LOGW << "HidManager::SerializeDropFrame timestamp:" << frame_id;
+  }
+
   return 0;
 }
 
@@ -366,18 +447,18 @@ int HidManager::Serialize(SmartMessagePtr smart_msg,
       LOGE << "not support smart_type";
       return -1;
   }
-
   // pb入队
   LOGD << "smart data to queue";
   {
     std::lock_guard<std::mutex> lck(queue_lock_);
-    pb_buffer_queue_.push(protocol);  // 将新的智能结果放入队列尾部
-    if (pb_buffer_queue_.size() > queue_max_size_) {
-      pb_buffer_queue_.pop();  // 将队列头部的丢弃
-      LOGD << "Drop smartMsg data...";
+    smart_msg_queue_.emplace(std::make_pair(timestamp, std::move(protocol)));
+    LOGD << "smart_msg_queue_ size:" << smart_msg_queue_.size();
+    if (smart_msg_queue_.size() > queue_max_size_) {
+      LOGW << "smart_msg_queue_.size() is larger than MAX_SIZE: "
+      << queue_max_size_;
+      smart_msg_queue_.pop();
     }
   }
-  LOGD << "pb_buffer_queue_ size:" << pb_buffer_queue_.size();
   condition_.notify_one();
   if (print_timestamp_) {
     LOGW << "HidManager::Serialize timestamp:" << timestamp;
@@ -386,7 +467,7 @@ int HidManager::Serialize(SmartMessagePtr smart_msg,
 }
 
 int HidManager::Send(const std::string &proto_str) {
-  LOGD << "Start send smart data...  len:" << proto_str.length();
+  LOGI << "Start send smart data...  len:" << proto_str.length();
   int buffer_size_src = proto_str.length();
   char *str_src = const_cast<char *>(proto_str.c_str());
 
@@ -412,11 +493,11 @@ int HidManager::Send(const std::string &proto_str) {
     timeout.tv_usec = 0;
     int retv = select(hid_file_handle_ + 1, NULL, &wset, NULL, &timeout);
     if (retv == 0) {
-      LOGD << "Hid select: send data time out";
+      LOGE << "Hid select: send data time out";
       continue;
     } else if (retv < 0) {
       LOGE << "Hid select: send data error, ret: " << retv;
-      continue;
+      return -1;
     }
     if (remainding_size >= 1024) {
       LOGD << "Send 1024 bytes data...";
