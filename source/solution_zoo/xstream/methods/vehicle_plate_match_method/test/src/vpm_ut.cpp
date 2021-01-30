@@ -44,7 +44,6 @@ TEST(VehiclePlateMatchMethod_TEST, Basic) {
   EXPECT_EQ(rv, 0);
 
   str = vpm_method.GetVersion();
-  vpm_method.OnProfilerChanged(true);
 
   InputParamPtr param_in;
   rv = vpm_method.UpdateParameter(param_in);
@@ -96,10 +95,10 @@ TEST(VehiclePlateMatchMethod_TEST, Basic) {
   input.push_back(std::vector<BaseDataPtr>());
   input[0].push_back(data_vbox);
   input[0].push_back(data_pbox);
+  input[0].push_back(data_vlmk);
+  input[0].push_back(data_plmk);
   input[0].push_back(data_ptype);
   input[0].push_back(data_pcolor);
-  input[0].push_back(data_vlmk);  // adjust order
-  input[0].push_back(data_plmk);
 
   // 2. build param
   std::vector<xstream::InputParamPtr> param;

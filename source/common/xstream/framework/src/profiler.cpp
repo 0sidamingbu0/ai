@@ -78,7 +78,7 @@ Profiler::~Profiler() {
   while (getline(foi_, line)) {  // line中不包括每行的换行符
     std::vector<std::string> elements = hobotprofiler::split(line, '|');
     if (elements.size() != 5) {
-      std::cout << "Record format invailed!" << std::endl;
+      LOGE << "Record format invailed!" << std::endl;
       continue;
     }
 
@@ -116,8 +116,6 @@ void Profiler::Log(const std::stringstream &ss) {
   std::lock_guard<std::mutex> lock(lock_);
   if (foi_.is_open()) {
     foi_ << ss.str();
-  } else {
-    std::cout << ss.str() << std::endl;
   }
 }
 

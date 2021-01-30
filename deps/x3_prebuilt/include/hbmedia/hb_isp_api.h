@@ -27,8 +27,8 @@ typedef enum HB_ISP_FW_STATE_E {
 } ISP_FW_STATE_E;
 
 typedef struct HB_ISP_CTRL_PARAM_ATTR_S {
-	uint32_t u32Thresh;
 	uint32_t u32Offset;
+	uint32_t u32Thresh;
 	uint32_t u32Slope;
 } ISP_CTRL_PARAM_ATTR_S;
 
@@ -225,6 +225,7 @@ extern int HB_ISP_AFLibUnRegCallback(uint8_t pipeId);
  *				  Module Tune API 				 	 *
  *****************************************************************************************/
 #define ISP_AUTO_ISO_STRENGTH_NUM	16
+#define ISP_IRIDIX_ASYMMETRY_NUM            65
 
 /* AE */ //cmd
 typedef struct HB_ISP_AE_ATTR_S {
@@ -282,6 +283,10 @@ typedef struct HB_ISP_DEMOSAIC_ATTR_S {
 	ISP_CTRL_PARAMA_ATTR_S SharpLumaHighD;
 	ISP_CTRL_PARAM_ATTR_S SharpLumaLowUD;
 	ISP_CTRL_PARAMA_ATTR_S SharpLumaHighUD;
+	uint32_t u32MinDstrength;
+	uint32_t u32MinUDstrength;
+	uint32_t u32MaxDstrength;
+	uint32_t u32MaxUDstrength;
 	uint16_t u16NpOffset[ISP_AUTO_ISO_STRENGTH_NUM][2];
 } ISP_DEMOSAIC_ATTR_S;
 
@@ -334,12 +339,30 @@ typedef struct HB_ISP_IRIDIX_MANUAL_ATTR_S {
 	uint32_t u32RoiVerEnd;
 	uint32_t u32StrengthInRoi;
 	uint32_t u32StrengthOutRoi;
+	uint32_t u32DarkEnh;
 } ISP_IRIDIX_MANUAL_ATTR_S;
 
 typedef struct HB_ISP_IRIDIX_ATTR_S {
 	ISP_OP_TYPE_E enOpType;
 	ISP_IRIDIX_AUTO_ATTR_S stAuto;
 	ISP_IRIDIX_MANUAL_ATTR_S stManual;
+	uint32_t u32BlackLevel;
+	uint32_t u32WhiteLevel;
+	uint32_t u32Svariance;
+	uint32_t u32Bright_pr;
+	uint32_t u32Contrast;
+	uint32_t u32IridixOn;
+	uint32_t u32FilterMux;
+	uint32_t u32VarianceSpace;
+	uint32_t u32VarianceIntensity;
+	uint32_t u32SlopeMax;
+	uint32_t u32SlopeMin;
+	uint32_t u32FwdPerceptCtrl;
+	uint32_t u32RevPerceptCtrl;
+	uint32_t u32FwdAlpha;
+	uint32_t u32RevAlpha;
+	uint32_t u32GtmSelect;
+	uint32_t u32IridixAsymmetry[ISP_IRIDIX_ASYMMETRY_NUM];
 } ISP_IRIDIX_ATTR_S;
 
 /* CNR */ //lut
@@ -382,6 +405,7 @@ typedef struct HB_ISP_SINTER_ATTR_S {
 typedef struct HB_ISP_TEMPER_ATTR_S {
 	uint16_t aau16Strength[ISP_AUTO_ISO_STRENGTH_NUM][2];
 	uint32_t u32RecursionLimit;
+	uint32_t u32LutEnable;
 } ISP_TEMPER_ATTR_S;
 
 /* Scene Mode */ //cmd
@@ -405,9 +429,15 @@ typedef struct HB_MESH_SHADING_ATTR_S {
 
 /* Mesh Shading LUT */ //reg
 typedef struct HB_MESH_SHADING_LUT_S {
-	uint32_t au32RGain[1024];
-	uint32_t au32GGain[1024];
-	uint32_t au32BGain[1024];
+	uint8_t au8LsAR[1024];
+	uint8_t au8LsAG[1024];
+	uint8_t au8LsAB[1024];
+	uint8_t au8LsTl84R[1024];
+	uint8_t au8LsTl84G[1024];
+	uint8_t au8LsTl84B[1024];
+	uint8_t au8LsD65R[1024];
+	uint8_t au8LsD65G[1024];
+	uint8_t au8LsD65B[1024];
 } MESH_SHADING_LUT_S;
 
 /* Radial Shading */ //reg
@@ -429,9 +459,9 @@ typedef struct HB_RADIAL_SHADING_ATTR_S {
 
 /* Radial Shading LUT */ //reg
 typedef struct HB_RADIAL_SHADING_LUT_S {
-	uint32_t au32RGain[129];
-	uint32_t au32GGain[129];
-	uint32_t au32BGain[129];
+	uint16_t au16RGain[129];
+	uint16_t au16GGain[129];
+	uint16_t au16BGain[129];
 } RADIAL_SHADING_LUT_S;
 
 /* CSC */ //lut + reg
@@ -588,19 +618,132 @@ extern int HB_ISP_GetLumaZoneHist(uint8_t pipeId, ISP_STATISTICS_LUMVAR_ZONE_ATT
 
 /* awb statistical selection area */
 typedef struct HB_ISP_AWB_STAT_AREA_ATTR_S {
-	uint16_t u32WhiteLevel;
-	uint16_t u32BlackLevel;
-	uint16_t u32CrRefMax;
-	uint16_t u32CrRefMin;
-	uint16_t u32CbRefMax;
-	uint16_t u32CbRefMin;
-	uint16_t u32CrRefHigh;
-	uint16_t u32CrRefLow;
-	uint16_t u32CbRefHigh;
-	uint16_t u32CbRefLow;
+	uint32_t u32WhiteLevel;
+	uint32_t u32BlackLevel;
+	uint32_t u32CrRefMax;
+	uint32_t u32CrRefMin;
+	uint32_t u32CbRefMax;
+	uint32_t u32CbRefMin;
+	uint32_t u32CrRefHigh;
+	uint32_t u32CrRefLow;
+	uint32_t u32CbRefHigh;
+	uint32_t u32CbRefLow;
 } ISP_AWB_STAT_AREA_ATTR_S;
 
 extern int HB_ISP_GetAwbStatAreaAttr(uint8_t pipeId, ISP_AWB_STAT_AREA_ATTR_S *pstAwbStatAreaAttr);
 extern int HB_ISP_SetAwbStatAreaAttr(uint8_t pipeId, ISP_AWB_STAT_AREA_ATTR_S *pstAwbStatAreaAttr);
+
+/** **/
+typedef struct HB_ISP_I2C_DATA_S {
+	uint8_t u8DevId;
+	uint8_t u8IntPos;
+	uint8_t u8Update;
+	uint8_t u8DelayFrameNum;
+	uint32_t u32RegAddr;
+	uint32_t u32AddrByteNum;
+	uint32_t u32Data;
+	uint32_t u32DataByteNum;
+} ISP_I2C_DATA_S;
+
+int HB_ISP_StartI2CBus(uint8_t pipeId);
+void HB_ISP_StopI2CBus(uint8_t pipeId);
+int HB_ISP_SendI2CData(ISP_I2C_DATA_S data);
+
+typedef struct HB_TMPER_NP_LUT_S {
+        uint8_t au8Np[128];
+} TEMPER_NP_LUT_S;
+
+extern int HB_ISP_GetTempLut(uint8_t pipeId, TEMPER_NP_LUT_S *pstTemperLUT);
+extern int HB_ISP_SetTempLut(uint8_t pipeId, TEMPER_NP_LUT_S *pstTemperLUT);
+
+// awb
+typedef struct HB_ISP_MESH_RGBG_WEIGHT_S {
+	uint16_t u16MeshRgbgWeight[15][15];
+} ISP_MESH_RGBG_WEIGHT_S;
+
+typedef struct HB_ISP_MESH_LS_WEIGHT_S {
+	uint16_t u16MeshLsWeight[15][15];
+} ISP_MESH_LS_WEIGHT_S;
+
+typedef struct HB_ISP_MESH_COLOR_TEMP_WEIGHT_S {
+	uint16_t u16MeshColorTempWeight[15][15];
+} ISP_MESH_COLOR_TEMP_WEIGHT_S;
+
+typedef struct HB_ISP_AWB_POS_STATUS_S {
+	uint16_t u16AwbRgPos[15];
+	uint16_t u16AwbBgPos[15];
+} ISP_AWB_POS_STATUS_S;
+
+typedef struct HB_ISP_AWB_LIGHT_SOURCE_S {
+        uint16_t u16ColorTemp[7];
+        uint16_t u16RgPosCalc[7];
+	uint16_t u16BgPosCalc[7];
+} ISP_AWB_LIGHT_SOURCE_S;
+
+typedef struct HB_ISP_AWB_CCT_CTRL_S {
+	uint16_t u16AwbColourPre[4];
+	uint16_t u16AwbWarmLsA[3];
+	uint16_t u16AwbWarmLsD75[3];
+	uint16_t u16AwbWarmLsD50[3];
+} ISP_AWB_CCT_CTRL_S;
+
+typedef struct HB_ISP_MIX_LIGHT_PARAM_S {
+	uint32_t u32MixLightParm[8];
+} ISP_MIX_LIGHT_PARAM_S;
+
+typedef struct HB_ISP_SKY_PARAM_S {
+	uint16_t u16SkyLuxTh;
+	uint16_t u16WbStrength[3];
+	uint16_t u16Ct65Pos;
+	uint16_t u16Ct40Pos;
+} ISP_SKY_PARAM_S;
+
+typedef struct HB_ISP_AWB_DEFAULT_PARAM_S {
+	uint16_t u16Ct30Pos;
+} ISP_AWB_DEFAULT_PARAM_S;
+
+extern int HB_ISP_SetSkyCtrlAttr(uint8_t pipeId, const ISP_SKY_PARAM_S *pstSkyCtrlAttr);
+extern int HB_ISP_GetSkyCtrlAttr(uint8_t pipeId, ISP_SKY_PARAM_S *pstSkyCtrlAttr);
+extern int HB_ISP_SetMixLightAttr(uint8_t pipeId, const ISP_MIX_LIGHT_PARAM_S *pstMixLightAttr);
+extern int HB_ISP_GetMixLightAttr(uint8_t pipeId, ISP_MIX_LIGHT_PARAM_S *pstMixLightAttr);
+extern int HB_ISP_SetCctCtrlAttr(uint8_t pipeId, const ISP_AWB_CCT_CTRL_S *pstCctAttr);
+extern int HB_ISP_GetCctCtrlAttr(uint8_t pipeId, ISP_AWB_CCT_CTRL_S *pstCctAttr);
+extern int HB_ISP_SetAwbRgBgWeightAttr(uint8_t pipeId, const ISP_MESH_RGBG_WEIGHT_S *pstWeightAttr);
+extern int HB_ISP_GetAwbRgBgWeightAttr(uint8_t pipeId, ISP_MESH_RGBG_WEIGHT_S *pstWeightAttr);
+extern int HB_ISP_GetAwbLsWeightAttr(uint8_t pipeId, ISP_MESH_LS_WEIGHT_S *pstWeightAttr);
+extern int HB_ISP_SetAwbLsWeightAttr(uint8_t pipeId, const ISP_MESH_LS_WEIGHT_S *pstWeightAttr);
+extern int HB_ISP_GetAwbDefultParmAttr(uint8_t pipeId, ISP_AWB_DEFAULT_PARAM_S *pstAwbAttr);
+extern int HB_ISP_SetAwbDefultParmAttr(uint8_t pipeId, const ISP_AWB_DEFAULT_PARAM_S *pstAwbAttr);
+extern int HB_ISP_GetEvToLuxStatustAttr(uint8_t pipeId, uint8_t *pstEvtoluxStatustAttr);
+extern int HB_ISP_SetEvToLuxStatustAttr(uint8_t pipeId, const uint8_t *pstEvtoluxStatustAttr);
+extern int HB_ISP_SetAwbColorTempWeightAttr(uint8_t pipeId, const ISP_MESH_COLOR_TEMP_WEIGHT_S *pstWeightAttr);
+extern int HB_ISP_GetAwbColorTempWeightAttr(uint8_t pipeId, ISP_MESH_COLOR_TEMP_WEIGHT_S *pstWeightAttr);
+extern int HB_ISP_SetAwbPosStatusAttr(uint8_t pipeId, const ISP_AWB_POS_STATUS_S *pstPosAttr);
+extern int HB_ISP_GetAwbPosStatusAttr(uint8_t pipeId, ISP_AWB_POS_STATUS_S *pstPosAttr);
+extern int HB_ISP_SetAwbLightSourceAttr(uint8_t pipeId, const ISP_AWB_LIGHT_SOURCE_S *pstLightAttr);
+extern int HB_ISP_GetAwbLightSourceAttr(uint8_t pipeId, ISP_AWB_LIGHT_SOURCE_S *pstLightAttr);
+
+
+typedef struct HB_ISP_WDR_OFFSET_S {
+	uint32_t u32WdrLR;
+	uint32_t u32WdrLGr;
+	uint32_t u32WdrLGb;
+	uint32_t u32WdrLB;
+	uint32_t u32WdrMR;
+	uint32_t u32WdrMGr;
+	uint32_t u32WdrMGb;
+	uint32_t u32WdrMB;
+	uint32_t u32WdrSR;
+	uint32_t u32WdrSGr;
+	uint32_t u32WdrSGb;
+	uint32_t u32WdrSB;
+	uint32_t u32WdrVsR;
+	uint32_t u32WdrVsGr;
+	uint32_t u32WdrVsGb;
+	uint32_t u32WdrVsB;
+} ISP_WDR_OFFSET_S;
+
+extern int HB_ISP_GetWdrOffsetAttr(uint8_t pipeId, ISP_WDR_OFFSET_S *pstWdrOffsetAttr);
+extern int HB_ISP_SetWdrOffsetAttr(uint8_t pipeId, ISP_WDR_OFFSET_S *pstWdrOffsetAttr);
 
 #endif

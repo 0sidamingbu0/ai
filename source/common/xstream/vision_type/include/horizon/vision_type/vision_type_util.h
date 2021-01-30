@@ -327,6 +327,54 @@ int HorizonVisionFreeBodySmartData(HorizonVisionBodySmartData *smart);
  *
  * \~Chinese @param psmart [out] 用来存储新申请的smart data指针
  * \~Chinese @return int 0表示成功，<0则为错误码
+ * \~Chinese @note skeleton 及 segmentation 资源需单独申请
+ */
+int HorizonVisionAllocHandSmartData(HorizonVisionHandSmartData **psmart);
+
+/**
+ * \~Chinese @brief 复制 smart data，复制数据到另一个结构体，相当于赋值操作
+ *
+ * \~Chinese @param smart [in] smart data 指针存储地址
+ * \~Chinese @param new_smart [out] 新的smart data的地址
+ * \~Chinese @return int 0表示成功，<0则为错误码
+ */
+int HorizonVisionCopyHandSmartData(HorizonVisionHandSmartData *smart_data,
+                                   HorizonVisionHandSmartData *new_smart);
+
+/**
+ * \~Chinese @brief 复制 smart
+ * data，构造新的结构体并复制内容过来，然后返回新的结构体指针
+ *
+ * \~Chinese @param smart [in] smart data 指针存储地址
+ * \~Chinese @param pnew_smart [out] 用于存储新的smart data的地址
+ * \~Chinese @return int 0表示成功，<0则为错误码
+ */
+int HorizonVisionDupHandSmartData(HorizonVisionHandSmartData *smart_data,
+                                  HorizonVisionHandSmartData **pnew_smart);
+
+/**
+ * \~Chinese @brief 清空smart data内部数据，但保留smart data本身
+ *
+ * \~Chinese @param smart [in] smart data指针
+ * \~Chinese @return int 0表示成功，<0则为错误码
+ * \~Chinese @note 如果skeleton 或 segmentation不为空，则会一并释放该资源
+ */
+int HorizonVisionCleanHandSmartData(HorizonVisionHandSmartData *smart);
+
+/**
+ * \~Chinese @brief 释放smart data
+ *
+ * \~Chinese @param smart [in] smart data指针
+ * \~Chinese @return int 0表示成功，<0则为错误码
+ */
+int HorizonVisionFreeHandSmartData(HorizonVisionHandSmartData *smart);
+
+
+/**
+ * \~Chinese @brief 申请smart data
+ *
+ * \~Chinese @param psmart [out] 用来存储新申请的smart data指针
+ * \~Chinese @return int 0表示成功，<0则为错误码
  * \~Chinese @note face 及 body 资源需单独申请
  */
 int HorizonVisionAllocSmartData(HorizonVisionSmartData **psmart, int num);

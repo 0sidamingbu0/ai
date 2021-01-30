@@ -15,9 +15,10 @@
 
 #include "hobotxstream/method.h"
 #include "horizon/vision_type/vision_type.hpp"
-#include "ssd_method/ssd_post_process_module.h"
-#include "ssd_method/ssd_predictor.h"
 
+namespace xstream {
+class SSDPredictor;
+}
 namespace xstream {
 
 class SSDParam : public xstream::InputParam {
@@ -50,8 +51,6 @@ class SSDMethod : public Method {
 
   std::string GetVersion() const override { return ""; }
 
-  void OnProfilerChanged(bool on) override {}
-
   MethodInfo GetMethodInfo() override {
     MethodInfo method_info;
     method_info.is_thread_safe_ = false;
@@ -60,7 +59,7 @@ class SSDMethod : public Method {
   };
 
  private:
-  std::shared_ptr<xstream::SSD_Predictor> ssd_predictor_;
+  std::shared_ptr<xstream::SSDPredictor> ssd_predictor_;
   SSDParamPtr method_param_;
 };
 

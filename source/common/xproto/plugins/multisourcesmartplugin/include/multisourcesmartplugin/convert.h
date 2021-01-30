@@ -9,9 +9,11 @@
 #ifndef INCLUDE_MULTISOURCESMARTPLUGIN_CONVERT_H_
 #define INCLUDE_MULTISOURCESMARTPLUGIN_CONVERT_H_
 
+#include <string>
+
 #include "hobotxsdk/xstream_data.h"
-#include "xproto_msgtype/vioplugin_data.h"
 #include "xproto_msgtype/gdcplugin_data.h"
+#include "xproto_msgtype/vioplugin_data.h"
 
 using horizon::vision::xproto::basic_msgtype::VioMessage;
 using horizon::vision::xproto::basic_msgtype::IpmImageMessage;
@@ -27,13 +29,18 @@ class Convertor {
   /**
    * @brief convert input VioMessage to xstream inputdata.
    * @param input input VioMessage
+   * @param input idx multi-images index
+   * @param input image input name in xstream workflow config
    * @return xstream::InputDataPtr xstream input
    */
   static xstream::InputDataPtr ConvertInput(const IpmImageMessage *input,
-                                            uint32_t idx);
-  static xstream::InputDataPtr ConvertInput(const VioMessage *input);
+                                            uint32_t idx,
+                                            std::string input_name = "image");
   static xstream::InputDataPtr ConvertInput(const VioMessage *input,
-                                            uint32_t image_idx);
+                                            std::string input_name = "image");
+  static xstream::InputDataPtr ConvertInput(const VioMessage *input,
+                                            uint32_t image_idx,
+                                            std::string input_name = "image");
 };
 
 }  // namespace multisourcesmartplugin

@@ -67,6 +67,11 @@ do {									\
 #define XJ3_CPU_2 2
 #define XJ3_CPU_3 3
 
+#define SIF_YUV_CONSEC "SIF_YUV_CONSECTIVE"
+#define ISP_YUV_CONSEC "ISP_YUV_CONSECTIVE"
+#define IPU_YUV_CONSEC "IPU_YUV_CONSECTIVE"
+#define PYM_YUV_CONSEC "PYM_YUV_CONSECTIVE"
+#define GDC_YUV_CONSEC "GDC_YUV_CONSECTIVE"
 
 int set_thread_affinity(pthread_t pid, int cpu_num);
 int get_thread_policy(pthread_attr_t *attr);

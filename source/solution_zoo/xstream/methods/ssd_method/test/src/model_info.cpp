@@ -10,7 +10,6 @@
  */
 
 #include "ssd_method/model_info.h"
-#include "bpu_predict/bpu_internal.h"
 #include "hobotlog/hobotlog.hpp"
 #include <string>
 namespace xstream {

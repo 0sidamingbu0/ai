@@ -37,8 +37,6 @@ class DnnPredictMethod : public Method {
       const std::vector<xstream::InputParamPtr> &param) override;
 
  public:
-  static std::mutex init_mutex_;
-
   Json::Value config_;
   std::string model_path_;
 

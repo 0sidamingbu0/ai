@@ -1,0 +1,78 @@
+# 版本说明  版本 2.9.0
+
+<h2>        故事
+</h2>
+<ul>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-650'>XPPXROC-650</a>] -         USB Camera产品方向
+</li>
+</ul>
+                                                                                                        
+<h2>        任务
+</h2>
+<ul>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-358'>XPPXROC-358</a>] -         添加gtest
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-678'>XPPXROC-678</a>] -         代码风格整理
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-819'>XPPXROC-819</a>] -         优化人体分割matting性能
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-854'>XPPXROC-854</a>] -         把run.sh脚本做拆分
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-861'>XPPXROC-861</a>] -         live555拉取多路rtsp码流使用tcp会有拉取不到的情况
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-862'>XPPXROC-862</a>] -         live555拉取多路rtsp码流使用tcp在停止时会出现崩溃的情况
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-863'>XPPXROC-863</a>] -         排查aiexpress编译后output目录下头文件和库的缺失
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-864'>XPPXROC-864</a>] -         rndis链路的设计与review
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-865'>XPPXROC-865</a>] -         XProto代码覆盖率达80%
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-868'>XPPXROC-868</a>] -         J3 硬件GDC生成IPM图
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-870'>XPPXROC-870</a>] -         针对iot的解决方案，提供建议的启动脚本
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-871'>XPPXROC-871</a>] -         xproto Plugin接口梳理
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-872'>XPPXROC-872</a>] -         车路协同mappingmethod的开发调试
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-873'>XPPXROC-873</a>] -         大唐车路协同支持车牌检测
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-874'>XPPXROC-874</a>] -         车路协同支持车牌识别
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-875'>XPPXROC-875</a>] -         大唐车路协同新增车颜色
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-887'>XPPXROC-887</a>] -         ssd模型添加到github版本
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-888'>XPPXROC-888</a>] -         修复xstream在ubuntu gcc4.8.5机器上无法链接使用
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-889'>XPPXROC-889</a>] -         不能增量编译
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-890'>XPPXROC-890</a>] -         适配bpu_runwithbox接口变更
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-895'>XPPXROC-895</a>] -         生成部署包的脚本，不要修改编译环境
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-898'>XPPXROC-898</a>] -         优化face_body_multisource的源码
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-901'>XPPXROC-901</a>] -         集成20210104系统镜像
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-903'>XPPXROC-903</a>] -         2.8.0文档优化
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-905'>XPPXROC-905</a>] -         bug修复：iotvioplugin中使用的Executor，不能正常退出
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-906'>XPPXROC-906</a>] -         VoteMethod 对属性添加得分值
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-909'>XPPXROC-909</a>] -         hbdk更新至3.15.4版本
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-911'>XPPXROC-911</a>] -         yolov3示例改为padding与resize方式
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-912'>XPPXROC-912</a>] -         github包编译不过
+</li>
+</ul>
+    
+<h2>        故障
+</h2>
+<ul>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-910'>XPPXROC-910</a>] -         2.8.0文档优化
+</li>
+</ul>

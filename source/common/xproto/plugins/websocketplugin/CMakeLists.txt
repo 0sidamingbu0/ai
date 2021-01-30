@@ -49,10 +49,10 @@ target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})
 #add_subdirectory(test)
 #add_subdirectory(sample)
 
-set(OUTPUT_ROOT ${PROJECT_SOURCE_DIR}/output)
+# set(OUTPUT_ROOT ${PROJECT_SOURCE_DIR}/output)
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-    DESTINATION ${MY_OUTPUT_ROOT}/include/${PROJECT_NAME})
+    DESTINATION ${MY_OUTPUT_ROOT}/include)
 install(TARGETS ${PROJECT_NAME} DESTINATION ${MY_OUTPUT_ROOT}/lib)
 install(DIRECTORY
     ${CMAKE_CURRENT_SOURCE_DIR}/configs/

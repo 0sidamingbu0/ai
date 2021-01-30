@@ -62,6 +62,18 @@ typedef struct HorizonVisionBodySmartData_ {
 } HorizonVisionBodySmartData;
 
 /**
+ * \~Chinese @brief 手势智能信息
+ */
+typedef struct HorizonVisionHandSmartData_ {
+  /// \~Chinese 跟踪ID
+  HorizonVisionTrackID track_id;
+  /// \~Chinese 手势框
+  HorizonVisionBBox hand_rect;
+  /// \~Chinese 手势类型
+  uint32_t hand_gesture;
+} HorizonVisionHandSmartData;
+
+/**
  *\~Chinese @brief 每一个目标额外的人脸调试用辅助信息
  */
 
@@ -93,6 +105,8 @@ typedef struct HorizonVisionSmartData_ {
   HorizonVisionFaceSmartData *face;
   /// \~Chinese 人体智能信息
   HorizonVisionBodySmartData *body;
+  /// \~Chinese 手势智能信息
+  HorizonVisionHandSmartData *hand;
   /// \~Chinese 人脸额外的辅助信息，默认为空
   HorizonVisionFaceExtraInfo *face_extra;
 } HorizonVisionSmartData;

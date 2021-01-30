@@ -10,7 +10,11 @@
             "file_path": "configs/vio_hg/name.list",
             "image_list": [
                 "face_body_multisource/configs/images/image-001.jpeg",
-                "face_body_multisource/configs/images/image-002.jpeg"
+                "face_body_multisource/configs/images/image-002.jpeg",
+                "face_body_multisource/configs/images/image-003.jpeg",
+                "face_body_multisource/configs/images/image-004.jpeg",
+                "face_body_multisource/configs/images/image-005.jpeg",
+                "face_body_multisource/configs/images/image-006.jpeg"
             ],
             "video_path": "test.avi",
             "interval": 20,

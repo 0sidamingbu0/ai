@@ -211,7 +211,7 @@ HBDK_PUBLIC extern hbrt_error_t hbrtOffloadHBM(hbrt_hbm_handle_t hbm_handle);
  * @return ::hbrtSuccess, ::hbrtErrorHBMIdIsBusy
  * @note User must destroy all running instances and offload all HBM explicitly before calling this function.
  */
-HBDK_PUBLIC extern hbrt_error_t hbrtDeepFreeMemory();
+HBDK_PUBLIC extern hbrt_error_t hbrtDeepFreeMemory(void);
 
 /**
  * @brief check if the CRC32 recorded in HBM is the same as in-time calculated CRC32 of corresponding memory.
@@ -1027,7 +1027,7 @@ HBDK_PUBLIC extern hbrt_error_t hbrtQuantizeByScale(void *to_int_data, hbrt_elem
  * @return ::hbrtSuccess
  * @note The higher the log level is, the more detailed the log will be.
  */
-HBDK_PUBLIC extern hbrt_error_t hbrtSetLogLevel();
+HBDK_PUBLIC extern hbrt_error_t hbrtSetLogLevel(void);
 
 /**
  * Print the function call to console for debug purpose.
@@ -1102,7 +1102,7 @@ HBDK_PUBLIC extern hbrt_error_t hbrtIsCompatibleVersion(hbrt_version_info_t v1, 
  * Check if the hbrt header is compatible to the hbrt library.
  * @return ::hbrtSuccess, ::hbrtErrorIncompatibleVersion
  */
-static inline hbrt_error_t hbrtIsCompatibleHeader() {
+static inline hbrt_error_t hbrtIsCompatibleHeader(void) {
   hbrt_version_info_t ver;
   hbrt_error_t err = hbrtGetVersion(&ver);
   if (err) {

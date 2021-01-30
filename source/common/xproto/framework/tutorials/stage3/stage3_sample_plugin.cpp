@@ -148,6 +148,7 @@ int main() {
 
   auto np_plg = std::make_shared<NumberProducerPlugin>();
   auto sc_plg = std::make_shared<SumConsumerPlugin>();
+  sc_plg->SetMsgMonitorTime(1000);
 
   np_plg->Init();
   sc_plg->Init();

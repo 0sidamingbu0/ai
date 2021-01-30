@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>如何集成模型至AI-EXPRESS &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>如何集成模型至AI-EXPRESS &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -119,7 +119,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#mobilenetv2">MobilenetV2</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#iotvioplugin">IotVioPlugin金字塔配置</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id10">SmartPlugin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id11">WebSocketPlugin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#main">main 函数实现</a></li>
@@ -292,6 +291,10 @@
 <span class="n">height_6</span> <span class="o">=</span> <span class="mi">540</span> <span class="n">x</span> <span class="mi">64</span> <span class="o">/</span> <span class="p">(</span><span class="mi">64</span> <span class="o">+</span> <span class="mi">32</span><span class="p">)</span> <span class="o">=</span> <span class="mi">360</span>
 </pre></div>
 </div>
+<p>多路盒子智能解决方案金字塔配置的文件在：**solution_zoo/video_box/src/mediapipemanager目录下面的vpsmodule.cpp文件:</p>
+<p>int VpsModule::Init 函数用于初始化vps，包括金字塔的属性。此函数内，所调用的HB_VPS_SetPymChnAttr接口则为配置金字塔属性接口，VPS_PYM_CHN_ATTR_S为金字塔属性结构体。</p>
+<p>若需修改盒子的金字塔配置属性，可以参考修改此函数。</p>
+<p>金字塔各层缩放比例，ROI区域的配置与此文件前述金字塔配置方法一致，此处不再详述。</p>
 </div>
 <div class="section" id="id2">
 <h2>智能预测<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
@@ -1144,22 +1147,29 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
 <p>框架中已包括模型预测+后处理的Method基础类，即DnnPredictMethod与DnnPostProcessMethod。用户集成具体的模型时，需要根据需要实现基类中的成员函数，具体可以参考<a class="reference external" href="#DnnPredictMethod">DnnPredictMethod</a>.</p>
 <div class="section" id="yolov3">
 <h4>YoloV3<a class="headerlink" href="#yolov3" title="永久链接至标题">¶</a></h4>
-<p>根据模型描述信息，该模型的输入是416x416大小的nv12数据，在预测方法Yolov3PredictMethod中，核心工作是在函数<code class="docutils literal notranslate"><span class="pre">PrepareInputData()</span></code>中准备模型的输入数据。由于输入是nv12数据，所以可以直接使用金字塔图像数据，因此需要<strong>配置金字塔层数</strong>，详细可以参考<a class="reference external" href="#IotVioPlugin%E9%87%91%E5%AD%97%E5%A1%94%E9%85%8D%E7%BD%AE">IotVioPlugin金字塔配置</a>，这里不展开描述金字塔的配置，假设从金字塔拿到的数据大小是416x416。</p>
+<p>根据模型描述信息，该模型的输入是416x416大小的nv12数据，在预测方法Yolov3PredictMethod中，核心工作是在函数<code class="docutils literal notranslate"><span class="pre">PrepareInputData()</span></code>中准备模型的输入数据。由于输入是nv12数据，所以可以直接使用金字塔图像数据，因此需要<strong>配置金字塔层数</strong>，详细可以参考<a class="reference external" href="#IotVioPlugin%E9%87%91%E5%AD%97%E5%A1%94%E9%85%8D%E7%BD%AE">IotVioPlugin金字塔配置</a>，这里不展开描述金字塔的配置。</p>
+<p>若对金字塔图像直接缩放，缩放至416x416，势必会产生形变。为了保证模型效果，我们对图像做了padding后，再进行缩放。思路为：直接在原图底部填充黑色，将原图padding为宽高相同的图像（padding_image），再将padding_image缩放至416x416大小。这里为了减小计算量，我们选择合适的金字塔层做输入。</p>
+<p>以原图1920x1080为例，金字塔第0层大小为1920x1080，第4层为960x540，第8层为480x270。yolov3模型输入大小是416x416，我们避免padding过多影响算法效果，选择宽高都大于模型输入大小的金字塔图像作为输入。需要以第4层(960x540)为基础层，padding到960x960大小，再缩放到416x416。</p>
+<p>以原图3840x2160为例，金字塔第0层大小为3840x2160，第4层为1920x1080，第8层为960x540，需要以第8层(960x540)为基础层，padding到960x960大小，再缩放到416x416。</p>
+<p>以原图4000*3000为例，金字塔第0层大小为4000x3000，第4层为2000x1500，第8层为1000x750，第12层为500x375。需要以第8层(1000x750)为基础层，padding到1000x1000大小，再缩放到416x416。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// PrepareInputData的逻辑
 // 参考common/xstream/framework/tutorials/stage10/method/Yolov3PredictMethod
-1. 从指定金字塔层中取数据，并检查数据大小是否与模型输入大小(416x416)一致。若不一致需要报错，一般是vio金字塔配置错误;
+1. 从指定金字塔层中取数据，并检查图像宽高大小是否大于模型输入大小(416x416)。若不满足需要报错，一般是vio金字塔配置错误;
 2. 申请input_tensor和output_tensor, 基类已实现，可以直接调用;
-3. 复制金字塔图像数据到input_tensor;
+3. 申请padding_image空间，封装为BPU_Tensor结构，注意使用结束需要释放;
+4. 复制金字塔图像数据到padding_image;
+5. 缩放padding_image数据到input_tensor;
+6. 释放padding_image;
 </pre></div>
 </div>
 <p>另外，由于模型输出的检测结果是基于输入数据的，所以后续需要缩放到原分辨率大小(后处理中)，这里预测前需要获取原图分辨率<code class="docutils literal notranslate"><span class="pre">GetSrcImageSize()</span></code>。</p>
-<p>后处理中，核心工作是在函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>中解析bpu输出结果output_tensor。需要注意的是，这里直接解析出的检测结果是基于输入数据的分辨率，需要将其坐标映射回原图分辨率。假设原图大小(金字塔第0层)1920x1080，金字塔第4层960x540，从金字塔第4层960x540抠取中间520x520大小，再缩放到416x416后输入模型预测。代码可参考<code class="docutils literal notranslate"><span class="pre">common/xstream/framework/tutorials/stage10/method/Yolov3PostProcessMethod</span></code>.</p>
+<p>后处理中，核心工作是在函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>中解析bpu输出结果output_tensor。需要注意的是，这里直接解析出的检测结果是基于输入数据的分辨率，需要将其坐标映射回原图分辨率。假设原图大小(金字塔第0层)1920x1080，金字塔第4层960x540，取金字塔第4层960x540，padding到960x960大小，再缩放到416x416后输入模型预测。代码可参考<code class="docutils literal notranslate"><span class="pre">common/xstream/framework/tutorials/stage10/method/Yolov3PostProcessMethod</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">映射关系</span><span class="p">,</span> <span class="n">原图坐标</span><span class="p">(</span><span class="n">x</span><span class="s1">&#39;, y&#39;</span><span class="p">),</span> <span class="n">输出结果</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">x</span><span class="s1">&#39; = [x * (520.0 / 416.0) + (960-520)/2] * (1980 / 960)</span>
-<span class="n">y</span><span class="s1">&#39; = [y * (520.0 / 416.0) + (540-520)/2] * (1080 / 540)</span>
+<span class="n">x</span><span class="s1">&#39; = [x * (960.0 / 416.0)] * (1980 / 960)</span>
+<span class="n">y</span><span class="s1">&#39; = [y * (960.0 / 416.0)] * (1080 / 540)</span>
 </pre></div>
 </div>
-<p><img alt="输入数据与原图分辨率关系" src="../../_images/vio.png" /></p>
+<p>这里还需注意的是，由于对原图做了底部的padding，因此需要对映射后的坐标(x’, y’)【主要是y’】，限制在原图坐标范围内。</p>
 <p>后处理解析的检测框使用<code class="docutils literal notranslate"><span class="pre">hobot::vision::BBox</span></code>数据结构来表示(定义在common/xstream/vision_type/include/horizon/vision_type/vision_type.hpp)。此外，在函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>中还需要将解析后的数据封装为xstream-frame框架支持的BaseData数据结构。由于全图可能存在多个目标，结果会有多个检测框，这里需要使用派生数据结构xstream::BaseDataVector，将检测框封装到成员变量datas_中，Yolov3PostProcessMethod的输出数据结构是xstream::BaseDataVector&lt;xstream::XStreamData<a class="reference external" href="hobot::vision::BBox">hobot::vision::BBox</a>&gt;.</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">BaseDataVector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">BaseDataVector</span><span class="p">();</span>
@@ -1190,31 +1200,6 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
 </div>
 <p>后处理中，核心工作是在函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>中解析bpu输出结果output_tensor，并封装成框架兼容的BaseData数据类型。与Yolov3PostProcessMethod输出类似，这里同样用<code class="docutils literal notranslate"><span class="pre">hobot::vision::BBox</span></code>数据结构来表示分类结果。Mobilenetv2PostProcessMethod的输出数据结构是xstream::BaseDataVector&lt;xstream::XStreamData<a class="reference external" href="hobot::vision::BBox">hobot::vision::BBox</a>&gt;.
 详细可参考<code class="docutils literal notranslate"><span class="pre">common/xstream/framework/tutorials/stage10/method/Mobilenetv2PostProcessMethod</span></code>.</p>
-</div>
-</div>
-<div class="section" id="iotvioplugin">
-<h3>IotVioPlugin金字塔配置<a class="headerlink" href="#iotvioplugin" title="永久链接至标题">¶</a></h3>
-<p>检测模型输入的大小是416x416。图像原图为1920x1080，或者3840x2160。</p>
-<p>若对原图直接缩放，缩放至416x416，势必会产生形变。</p>
-<p>为了保证模型效果，则对原图分析区域做了裁剪与缩放，思路为：只对原图中间正方形区域做预测。</p>
-<p>对原图做裁剪与缩放，基于XJ3 金字塔完成。</p>
-<p>以原图1920x1080为例，金字塔第0层大小为1920x1080，第4层为960x540，第8层为480x270，以此类推，详细参考<a class="reference external" href="#%E5%9B%BE%E5%83%8F%E8%8E%B7%E5%8F%96">图像获取</a>
-yolov3模型输入大小是416x416，第8层太小，因此需要以第4层(960x540)为基础层，从第4层的中间抠取520x520，并缩放到416x416。金字塔5-7层的基础层都是第4层，这里我们按照这样的逻辑配置金字塔第7层为模型的输入数据。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&quot;roi_x_7&quot;: 220,   // 960x540中roi左上角x坐标, 计算方式：(960 - 520) / 2
-&quot;roi_y_7&quot;: 10,    // 960x540中roi左上角y坐标, 计算方式：(540 - 520) / 2
-&quot;roi_w_7&quot;: 520,   // 960x540中roi宽
-&quot;roi_h_7&quot;: 520,   // 960x540中roi高
-&quot;factor_7&quot;: 16,   // 960x540中roi缩放系数, 64/(64+factor) = 64/(64+16) = 0.8, 520*0.8 = 416
-</pre></div>
-</div>
-<p>以原图3840x2160为例，金字塔第0层大小为3840x2160，第4层为1920x1080，第8层为960x540，以此类推。
-yolov3模型输入大小是416x416，因此需要以第8层(960x540)为基础层，从第8层的中间抠取520x520，并缩放到416x416。金字塔9-11层的基础层都是第8层，这里我们按照这样的逻辑配置金字塔第10层为模型的输入数据。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&quot;roi_x_10&quot;: 220,   // 960x540中roi左上角x坐标, 计算方式：(960 - 520) / 2
-&quot;roi_y_10&quot;: 10,    // 960x540中roi左上角y坐标, 计算方式：(540 - 520) / 2
-&quot;roi_w_10&quot;: 520,   // 960x540中roi宽
-&quot;roi_h_10&quot;: 520,   // 960x540中roi高
-&quot;factor_10&quot;: 16,   // 960x540中roi缩放系数, 64/(64+factor) = 64/(64+16) = 0.8, 520*0.8 = 416
-</pre></div>
 </div>
 </div>
 <div class="section" id="id10">

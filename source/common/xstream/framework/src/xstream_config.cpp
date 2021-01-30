@@ -49,7 +49,7 @@ int XStreamConfig::LoadFile(const std::string& file_path) {
     Config workflow = workflows[i];
     if (workflow.isMember(kMethodCfgString) &&
         workflow.isMember(kMethodCfgPath)) {
-      LOGD << kMethodCfgString << ", " << kMethodCfgPath << " both exists";
+      LOGW << kMethodCfgString << ", " << kMethodCfgPath << " both exists";
       return -1;
     }
   }

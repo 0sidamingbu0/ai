@@ -257,6 +257,26 @@ class Nv12ImageList : public ImageList {
   virtual ~Nv12ImageList() {}
 };
 
+#ifdef USE_MC
+class BufferImageList : public ImageList {
+ public:
+  BufferImageList() = delete;
+  explicit BufferImageList(const char *vio_cfg_file) :
+          ImageList(vio_cfg_file) {}
+  virtual ~BufferImageList() {}
+  int Run() override {
+    if (is_running_)
+      return kHorizonVioErrorAlreadyStart;
+
+    std::lock_guard<std::mutex> lock(decod_mut_);
+    is_running_ = true;
+    HOBOT_CHECK(InitDecModule() >= 0 && StartDecModule() >= 0);
+    ap_hg_mode_ = true;
+    return kHorizonVioErrorAlreadyStart;
+  }
+};
+#endif
+
 class CachedImageList : public VioProduce {
  public:
   CachedImageList() = delete;

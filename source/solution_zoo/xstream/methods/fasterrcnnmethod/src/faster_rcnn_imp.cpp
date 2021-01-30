@@ -17,7 +17,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "bpu_predict/bpu_internal.h"
 #include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_parse_utils.h"
 #include "bpu_predict/bpu_parse_utils_extension.h"

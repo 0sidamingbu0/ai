@@ -21,7 +21,7 @@ set(BASE_LIBRARIES CNNMethod ${BASE_LIBRARIES} )
 endif()
 
 if (${PLATFORM_X3})
-set(BASE_LIBRARIES ${BASE_LIBRARIES} uvcplugin)
+set(BASE_LIBRARIES aioplugin ${BASE_LIBRARIES} uvcplugin)
 endif()
 
 target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})

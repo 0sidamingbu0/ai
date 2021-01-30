@@ -5,13 +5,13 @@
       "model_name": "detection",
       "model_out_sequence": [
         {
-          "name": "parking_box",
+          "name": "parking_orient_box",
           "type": "apabbox"
         }
       ],
       "model_input_width": 256,
       "model_input_height": 512
     },
-    "method_outs": ["parking_box"],
+    "method_outs": ["parking_orient_box"],
     "model_file_path": "../../models/apa_detection.hbm"
 }

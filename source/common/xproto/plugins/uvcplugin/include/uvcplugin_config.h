@@ -63,6 +63,7 @@ class UvcConfig {
   int is_cbr_ = 1;
   int bitrate_ = 2000;
   int h264_encode_time_;
+  int audio_enable_;
 };
 
 }  // namespace Uvcplugin

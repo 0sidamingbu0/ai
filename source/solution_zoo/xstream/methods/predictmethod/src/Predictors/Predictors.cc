@@ -20,7 +20,6 @@
 
 namespace xstream {
 
-std::mutex Predictors::init_mutex_;
 int Predictors::Init(const std::string &cfg) {
   LOGD << "Predictors Init";
   // 0. parse config_
@@ -38,7 +37,6 @@ int Predictors::Init(const std::string &cfg) {
   HOBOT_CHECK(model_path_.size() > 0) << "must set model_file_path";
 
   // 2. load model
-  std::unique_lock<std::mutex> lock(init_mutex_);
   int ret = 0;
   bpu_model_ = std::make_shared<BPU_MODEL_S>();
   ret = HB_BPU_loadModelFromFile(model_path_.c_str(), bpu_model_.get());

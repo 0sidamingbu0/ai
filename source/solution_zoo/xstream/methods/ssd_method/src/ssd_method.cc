@@ -19,7 +19,7 @@ namespace xstream {
 
 int SSDMethod::Init(const std::string &config_file_path) {
   LOGD << "SSDMethod Init " << config_file_path << std::endl;
-  ssd_predictor_.reset(new xstream::SSD_Predictor());
+  ssd_predictor_.reset(new xstream::SSDPredictor());
   int ret = ssd_predictor_->Init(config_file_path);
   HOBOT_CHECK(ret == 0) << "SSD_method init failed.";
   method_param_.reset(new xstream::SSDParam("SSDMethod"));

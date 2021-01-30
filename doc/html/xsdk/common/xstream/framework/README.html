@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>Overview &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -264,7 +264,7 @@
 <div class="section" id="xstream-frameowrk">
 <h2>XStream Frameowrk 概述<a class="headerlink" href="#xstream-frameowrk" title="永久链接至标题">¶</a></h2>
 <p>XStream-Framwork是一种基于数据流的SDK编程框架：<br />1）可以通过JSON配置构建workflow，workflow是一个有向拓扑图，图中每个节点（Node）都管理了一个或多个同类型的method的实例；<br />2）method表示一种能力，通常是某类模型能力（人脸检测、人脸Pose等）或者算法策略（过滤策略、融合策略、优选策略等）；<br />3）workflow表示一个范式，定义了一组能力的串联方式，比如人脸检测、跟踪、属性（pose、blur等）以及优选等能力级联起来可以构建一个人脸抓拍范式；<br />4）XStream-Framework定义了一套面向workflow的sdk C++通用接口，通过设置不同的配置文件同一套接口可以运行不同的workflow。</p>
-<p><img alt="XStream概貌" src="../../../../_images/image-xstream-arch2.png" /></p>
+<p><img alt="XStream概貌" src="../../../../_images/image-xstream-arch1.png" /></p>
 <div class="section" id="id1">
 <h3>XStream Framework核心模块<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
 <table border="1" class="docutils">
@@ -343,7 +343,7 @@
 <h4>编译<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
 <p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>CentOS平台</p></li>
+<li><p>CentOS平台(CentOS7, gcc4.8.5)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
@@ -352,7 +352,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Ubuntu平台</p></li>
+<li><p>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -361,7 +361,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Linaro-aarch64平台</p></li>
+<li><p>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -688,7 +688,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <li><p>性能统计数据可视化</p></li>
 </ul>
 <p>用户打开性能统计后，若统计结果输出到文件”profiler.txt”，可以通过访问<code class="docutils literal notranslate"><span class="pre">chrome://tracing/</span></code>，通过页面的<code class="docutils literal notranslate"><span class="pre">Load</span></code>按钮将文件加载，即可看到统计数据可视化界面。以下图为例，页面上的横坐标表示”时间”；前两行纵坐标表示对应Method处理的帧数；后两行纵坐标表示不同线程”thread_id”，同时页面左下角提供了工具以便用户查看数据细节。</p>
-<p><img alt="统计数据可视化" src="../../../../_images/profiler3.png" /></p>
+<p><img alt="统计数据可视化" src="../../../../_images/profiler2.png" /></p>
 </div>
 <div class="section" id="id13">
 <h4>异步运行-输入数据<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
@@ -1056,12 +1056,12 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </tr>
 </tbody>
 </table><p><strong>optional</strong><br /><strong>——sched_upper</strong> : workflow调度线程<br /><strong>——sched_down</strong> :  workflow中node的公共守护线程   ***<br /><em><strong>如果设置线程优先级，建议这两个线程的优先级高于每个node的线程优先级</strong></em><br /><em><strong>node</strong></em><br /><strong>——thread_list</strong> :  指定了node执行线程index的数组，基于thread_list可以实现多个node之间共享执行线程。<br /><strong>——thread_priority</strong> : 线程的优先级设置。</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;thread_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-      <span class="nt">&quot;thread_priority&quot;</span><span class="p">:</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;policy&quot;</span><span class="p">:</span> <span class="s2">&quot;SCHED_FIFO&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;priority&quot;</span><span class="p">:</span> <span class="mi">10</span>
-      <span class="p">},</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>&quot;thread_list&quot;: [0],
+      &quot;thread_priority&quot;:
+      {
+        &quot;policy&quot;: &quot;SCHED_FIFO&quot;,
+        &quot;priority&quot;: 10
+      },
 </pre></div>
 </div>
 </div>
@@ -1111,16 +1111,16 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </div>
 <p>每帧数据FrameWork Data有序列号sequence_id标记，还需增加每路输出OutputData的唯一标记output_type_，在config文件中获取。
 多路输出的Json配置方式为：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span> <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;output_type&quot;</span><span class="p">:</span> <span class="s2">&quot;out1&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;outputs&quot;</span><span class="p">:[</span><span class="s2">&quot;face_head_box_filter&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;output_type&quot;</span><span class="p">:</span> <span class="s2">&quot;out2&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;outputs&quot;</span><span class="p">:[</span><span class="s2">&quot;face_head_box_filter2&quot;</span><span class="p">]</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span> &quot;outputs&quot;: [
+    {
+      &quot;output_type&quot;: &quot;out1&quot;,
+      &quot;outputs&quot;:[&quot;face_head_box_filter&quot;]
+    },
+    {
+      &quot;output_type&quot;: &quot;out2&quot;,
+      &quot;outputs&quot;:[&quot;face_head_box_filter2&quot;]
+    }
+  ],
 </pre></div>
 </div>
 </div>

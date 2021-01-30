@@ -44,8 +44,6 @@ class ScrambleOrderMethod : public Method {
   InputParamPtr GetParameter() const override { return InputParamPtr(); }
 
   std::string GetVersion() const override { return "reorder0.0.0"; }
-
-  void OnProfilerChanged(bool on) override {}
 };
 }  // namespace xstream
 #endif  // XSTREAM_FRAMEWORK_TEST_INCLUDE_SCRAMBLEORDERMETHOD_H_

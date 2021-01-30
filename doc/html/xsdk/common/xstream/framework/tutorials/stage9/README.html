@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>关闭指定的method实例 &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>关闭指定的method实例 &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -230,7 +230,7 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 </pre></div>
 </div>
 <p>对应的Workflow结构图如下所示：</p>
-<p><img alt="workflow" src="../../../../../../_images/workflow3.png" /></p>
+<p><img alt="workflow" src="../../../../../../_images/workflow2.png" /></p>
 <p>定义XStream框架BBox数据结构</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// method/bbox.h</span>
 <span class="k">struct</span> <span class="nc">BBox</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
@@ -299,7 +299,7 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 <h2>1. Invalid Mode<a class="headerlink" href="#invalid-mode" title="永久链接至标题">¶</a></h2>
 <p>若希望暂时停止上述workflow中BBoxAreaFilter节点的运行，即将bbox_area_filter节点设置为Invalid模式。</p>
 <p>对应的Workflow结构图如下所示：</p>
-<p><img alt="Invalid" src="../../../../../../_images/invalid3.png" /></p>
+<p><img alt="Invalid" src="../../../../../../_images/invalid2.png" /></p>
 <p>设置Invalid参数：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>  <span class="c1">// 2 set DisableParam Invalid for &quot;bbox_area_filter&quot;</span>
   <span class="n">xstream</span><span class="o">::</span><span class="n">InputParamPtr</span> <span class="n">invalidFilter3</span><span class="p">(</span>
@@ -349,7 +349,7 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 <h2>2. Use Predefined Mode<a class="headerlink" href="#use-predefined-mode" title="永久链接至标题">¶</a></h2>
 <p>Use Predefined模型与Invalid模型类似，它是通过人工指定相关Node的输出数据，而跳过Node节点计算。类似地，将BBoxAreaFilter节点设置为Use Predefined Mode，具体做法如下。</p>
 <p>对应的Workflow结构图如下所示：</p>
-<p><img alt="use_pre_defined" src="../../../../../../_images/use_predefine3.png" /></p>
+<p><img alt="use_pre_defined" src="../../../../../../_images/use_predefine2.png" /></p>
 <p>准备输入数据(同上)，准备pre_define数据BBox(0, 0, 10, 10, 1.0)：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">InputDataPtr</span> <span class="nf">inputdata</span><span class="p">(</span><span class="k">new</span> <span class="n">InputData</span><span class="p">());</span>
   <span class="n">BaseDataVector</span> <span class="o">*</span><span class="nf">data</span><span class="p">(</span><span class="k">new</span> <span class="n">BaseDataVector</span><span class="p">);</span>
@@ -425,7 +425,7 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 </pre></div>
 </div>
 <p>此时实际运行时，Workflow结构如下：</p>
-<p><img alt="PassThrough" src="../../../../../../_images/pass_through3.png" /></p>
+<p><img alt="PassThrough" src="../../../../../../_images/pass_through2.png" /></p>
 <p>正常运行模式下，输入数据经过BBoxScoreFilter、BBoxLengthFilter节点后，face_head_box_filter_2数据内容是BBox(0, 0, 6, 8, 0.7)和BBox(0, 0, 8, 8, 0.9)，再经过BBoxAreaFilter节点，face_head_box_filter_3数据内容是BBox(0, 0, 8, 8, 0.9)。而将BBoxAreaFilter节点设置为Pass Through Mode后，face_head_box_filter_3的数据是BBox(0, 0, 6, 8, 0.7)和BBox(0, 0, 8, 8, 0.9)，即与face_head_box_filter_2相同。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>============Output Call Back============
 —seq: 0
@@ -493,7 +493,7 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 </pre></div>
 </div>
 <p>实际运行对应的workflow如下：</p>
-<p><img alt="Best_Effort_Pass_Through1" src="../../../../../../_images/best_effort_pass_through13.png" /></p>
+<p><img alt="Best_Effort_Pass_Through1" src="../../../../../../_images/best_effort_pass_through12.png" /></p>
 <p>准备数据face_head_box包含框(0, 0, 10, 20, 0.1)、(0, 0, 7, 7, 0.8),body_hand_box包含框(0, 0, 6, 8, 0.7),(0, 0, 8, 8, 0.9);</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="n">InputDataPtr</span> <span class="nf">inputdata</span><span class="p">(</span><span class="k">new</span> <span class="n">InputData</span><span class="p">());</span>
   <span class="n">BaseDataVector</span> <span class="o">*</span><span class="nf">data1</span><span class="p">(</span><span class="k">new</span> <span class="n">BaseDataVector</span><span class="p">);</span>
@@ -592,7 +592,7 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 </pre></div>
 </div>
 <p>实际运行对应的workflow如下：</p>
-<p><img alt="Best_Effort_Pass_Through2" src="../../../../../../_images/best_effort_pass_through23.png" /></p>
+<p><img alt="Best_Effort_Pass_Through2" src="../../../../../../_images/best_effort_pass_through22.png" /></p>
 <p>准备输入数据，包括框(0, 0, 10, 20, 0.1),(0, 0, 7, 7, 0.8),(0, 0, 6, 8, 0.7),(0, 0, 8, 8, 0.9):</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>  <span class="n">InputDataPtr</span> <span class="nf">inputdata</span><span class="p">(</span><span class="k">new</span> <span class="n">InputData</span><span class="p">());</span>
   <span class="n">BaseDataVector</span> <span class="o">*</span><span class="nf">data1</span><span class="p">(</span><span class="k">new</span> <span class="n">BaseDataVector</span><span class="p">);</span>

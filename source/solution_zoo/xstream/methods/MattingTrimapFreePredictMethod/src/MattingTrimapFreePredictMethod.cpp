@@ -121,8 +121,8 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
     float expand_roi_height = src_roi_height + 2 * expansion_height;
     float expand_roi_width = src_roi_width + 2 * expansion_width;
 
-    float resize_ratio = std::min(512 / expand_roi_height,
-                                  512 / expand_roi_width);
+    float resize_ratio = std::min(model_input_height_ / expand_roi_height,
+                                  model_input_width_ / expand_roi_width);
 
     float expand_resize_height = expand_roi_height * resize_ratio;
     float expand_resize_width = expand_roi_width * resize_ratio;
@@ -232,7 +232,7 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
     int padding_size, padding_height, padding_width;
     int first_stride, second_stride;
 
-    // need padding to 512x512
+    // need padding to model_input_size[such as: 512x512]
     int top_x = -w_left*resize_ratio;
     if (top_x & (static_cast<int>(0X01) != 0)) {
       top_x--;
@@ -241,8 +241,8 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
     if (top_y & (static_cast<int>(0X01) != 0)) {
       top_y--;
     }
-    int bottom_x = top_x + 511;
-    int bottom_y = top_y + 511;
+    int bottom_x = top_x + model_input_width_ - 1;
+    int bottom_y = top_y + model_input_height_ - 1;
     {
     RUN_PROCESS_TIME_PROFILER("padding_nv12");
     ret = HobotXStreamCropYuvImageWithPaddingBlack(
@@ -254,15 +254,15 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
         &padding_nv12_data, &padding_size,
         &padding_width, &padding_height,
         &first_stride, &second_stride);
+    // release nv12_resize_tensor
+    HB_SYS_bpuMemFree(&nv12_resize_tensor.data);
+    HB_SYS_bpuMemFree(&nv12_resize_tensor.data_ext);
     if (ret != 0) {
       LOGE << "crop and padding nv12 failed, ret: " << ret;
       LOGE << "input size: " << resize_height << " x " << resize_width;
       LOGE << "crop scope: (" << top_x << ", " << top_y
            << ", " << bottom_x << ", " << bottom_y << ")";
       LOGE << "output size: " << padding_height << "x" << padding_width;
-      // release nv12_resize_tensor
-      HB_SYS_bpuMemFree(&nv12_resize_tensor.data);
-      HB_SYS_bpuMemFree(&nv12_resize_tensor.data_ext);
       continue;
     }
     }
@@ -284,20 +284,17 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
       BPU_TENSOR_S &tensor = input_tensors[roi_idx][0];
       HOBOT_CHECK(tensor.data_type == BPU_TYPE_IMG_NV12_SEPARATE);
 
-      int model_input_height = tensor.data_shape.d[input_h_idx_];  // 512
-      int model_input_width = tensor.data_shape.d[input_w_idx_];   // 512
-      int model_input_stride = tensor.aligned_shape.d[input_w_idx_];   // 512
-      HOBOT_CHECK(model_input_height == padding_height &&
-                  model_input_width == padding_width);
-      HOBOT_CHECK(model_input_stride == model_input_width);
+      HOBOT_CHECK(model_input_height_ == padding_height &&
+                  model_input_width_ == padding_width);
 
       uint8_t* src = padding_nv12_data;
       // copy y data
-      memcpy(tensor.data.virAddr, src, model_input_height * model_input_width);
+      memcpy(tensor.data.virAddr, src,
+             model_input_height_ * model_input_width_);
       // copy uv data
-      src = padding_nv12_data + model_input_height * model_input_width;
+      src = padding_nv12_data + model_input_height_ * model_input_width_;
       memcpy(tensor.data_ext.virAddr, src,
-             model_input_height * model_input_width / 2);
+             model_input_height_ * model_input_width_ / 2);
       HobotXStreamFreeImage(padding_nv12_data);
       HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
     }

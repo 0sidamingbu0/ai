@@ -78,8 +78,6 @@ class OrderTestThread : public Method {
     return orderMethod;
   }
 
-  void OnProfilerChanged(bool on) override {}
-
  private:
   int method_id;
 };

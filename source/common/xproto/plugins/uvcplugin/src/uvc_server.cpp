@@ -110,10 +110,13 @@ int UvcServer::InitCodecManager(vencParam *vencParam) {
   PAYLOAD_TYPE_E format = PT_MJPEG;
   if (vencParam->type == 1) {
     format = PT_MJPEG;
+    config_->video_type_ = Uvcplugin::UvcConfig::VIDEO_MJPEG;
   } else if (vencParam->type == 2) {
     format = PT_H265;
+    config_->video_type_ = Uvcplugin::UvcConfig::VIDEO_H265;
   } else if (vencParam->type == 3) {
     format = PT_H264;
+    config_->video_type_ = Uvcplugin::UvcConfig::VIDEO_H264;
   }
 
   MediaCodecManager &manager = MediaCodecManager::Get();

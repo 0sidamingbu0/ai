@@ -101,6 +101,15 @@ int RectInputPredictMethod::PrepareInputData(
       BBox *normed_box = &(p_normed_roi->value);
       NormalizeRoi(&p_roi->value, normed_box, norm_params_,
                    pyramid.Width(), pyramid.Height(), filter_method_);
+      LOGD << "norm roi norm_type:"
+           << static_cast<int>(norm_params_.norm_method)
+           << " expand_scale:" << norm_params_.expand_scale
+           << " aspect_ratio:" << norm_params_.aspect_ratio
+           << "  from:" << p_roi->value.x1 << ", " << p_roi->value.y1
+           << ", " << p_roi->value.x2 << ", " << p_roi->value.y2
+           << "  to:" << p_normed_roi->value.x1
+           << ", " << p_normed_roi->value.y1
+           << ", " << p_normed_roi->value.x2 << ", " << p_normed_roi->value.y2;
     }
 
     if (p_roi->state_ != xstream::DataState::VALID || idx >= handle_num) {

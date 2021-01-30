@@ -32,7 +32,7 @@ namespace xstream {
 int DetectPostProcessor::Init(const std::string &cfg) {
   PostProcessor::Init(cfg);
   auto net_info = config_->GetSubConfig("net_info");
-  std::vector<std::shared_ptr<Config>> model_out_sequence =
+  std::vector<std::shared_ptr<postprocessmethod::Config>> model_out_sequence =
       net_info->GetSubConfigArray("model_out_sequence");
 
   for (size_t i = 0; i < model_out_sequence.size(); ++i) {
@@ -852,33 +852,58 @@ void DetectPostProcessor::ParseOrientBox(
      {box_ctr, branch_ctr},
      {box_orient, branch_orient}};
 
-  // 解析bpu数据
-  std::vector<std::vector<float>> mat_datas(bpu_datas.size());
+  // 2.1. 先解析score, 过滤得到初步的valid_index
+  int model_out_size = height * width;
+  std::vector<float> vec_data_score(model_out_size);
+  std::vector<int> valid_index(model_out_size);
+  int valid_num = 0;
+  ConvertOutputFilter(bpu_datas[0].data,
+                      vec_data_score.data(),
+                      bpu_datas[0].branch,
+                      log(box_score_thresh_/(1-box_score_thresh_)),
+                      valid_index,
+                      valid_num);
+  LOGD << "valid_num: " << valid_num;
 
-  for (size_t i = 0; i < bpu_datas.size(); i++) {
-    int height = out_level2branch_info_[bpu_datas[i].branch].real_nhwc[1];
-    int width = out_level2branch_info_[bpu_datas[i].branch].real_nhwc[2];
-    int channel = out_level2branch_info_[bpu_datas[i].branch].real_nhwc[3];
-    int model_out_size = height * width * channel;
-    std::vector<float> vec_data(model_out_size);
-    ConvertOutput(bpu_datas[i].data, vec_data.data(), bpu_datas[i].branch);
-    mat_datas[i] = vec_data;
+  // 2.2. 解析ctr、reg、ori, 只需根据valid_index解析部分即可
+  std::vector<float> vec_data_ctr(valid_num);
+  ConvertOutputFilter(bpu_datas[2].data,
+                      vec_data_ctr.data(),
+                      bpu_datas[2].branch,
+                      valid_index,
+                      valid_num);
+  std::vector<float> vec_data_reg(valid_num * 4);
+  ConvertOutputFilter(bpu_datas[1].data,
+                      vec_data_reg.data(),
+                      bpu_datas[1].branch,
+                      valid_index,
+                      valid_num);
+  std::vector<float> vec_data_ori(valid_num * 2);
+  ConvertOutputFilter(bpu_datas[3].data,
+                      vec_data_ori.data(),
+                      bpu_datas[3].branch,
+                      valid_index,
+                      valid_num);
+  if (valid_num <= 0) {
+    LOGD << "no box detected";
+    return;
   }
-  cv::Mat box_score_data_raw(64 * 32, 1, CV_32FC1, mat_datas[0].data());
-  cv::Mat box_ctr_data_raw(64 * 32, 1, CV_32FC1, mat_datas[2].data());
-  cv::Mat box_reg_data_raw(64 * 32, 4, CV_32FC1, mat_datas[1].data());
-  cv::Mat box_orient_data(64 * 32, 2, CV_32FC1, mat_datas[3].data());
-
+  // 2.3. 计算score
+  cv::Mat box_score_data_raw(valid_num, 1, CV_32FC1, vec_data_score.data());
+  cv::Mat box_ctr_data_raw(valid_num, 1, CV_32FC1, vec_data_ctr.data());
   cv::Mat box_score_data, box_ctr_data;
   cv::exp(box_score_data_raw * (-1), box_score_data);
   box_score_data = 1 / (1 + box_score_data);
   cv::exp(box_ctr_data_raw * (-1), box_ctr_data);
   box_ctr_data = 1 / (1 + box_ctr_data);
   cv::multiply(box_score_data, box_ctr_data, box_score_data);
-
+  // 计算reg
+  cv::Mat box_reg_data_raw(valid_num, 4, CV_32FC1, vec_data_reg.data());
   cv::Mat box_reg_data;
   cv::exp(box_reg_data_raw, box_reg_data);
   box_reg_data = box_reg_data * 8;
+  // 计算ori
+  cv::Mat box_orient_data(valid_num, 2, CV_32FC1, vec_data_ori.data());
 
   // box_score_thresh_过滤
   cv::Mat candidate_inds;
@@ -898,7 +923,7 @@ void DetectPostProcessor::ParseOrientBox(
   };
   std::vector<BoxData> box_data(pre_nms_top_n);
   int box_data_index = 0;
-  // [hw, c]
+  // [valid_num, c]
   for (int row = 0; row < box_score_data.rows; row++) {
     float* ptr = box_score_data.ptr<float>(row);
     for (int col = 0; col < box_score_data.cols; col++) {
@@ -908,8 +933,8 @@ void DetectPostProcessor::ParseOrientBox(
         one_box_data.class_id = col + 1;
         std::vector<int> location(2);
         std::vector<float> reg(4), orient(2);
-        location[0] = locations.ptr<int32_t>(row)[0];
-        location[1] = locations.ptr<int32_t>(row)[1];
+        location[0] = locations.ptr<int32_t>(valid_index[row])[0];
+        location[1] = locations.ptr<int32_t>(valid_index[row])[1];
         reg[0] = box_reg_data.ptr<float>(row)[0];
         reg[1] = box_reg_data.ptr<float>(row)[1];
         reg[2] = box_reg_data.ptr<float>(row)[2];
@@ -1041,17 +1066,14 @@ void DetectPostProcessor::ParseCorner(
   RUN_FPS_PROFILER("Parse_Corner");
   int height = out_level2branch_info_[branch].real_nhwc[1];
   int width = out_level2branch_info_[branch].real_nhwc[2];
-  int channel = out_level2branch_info_[branch].real_nhwc[3];
-  int model_out_size = height * width * channel;
+  // int channel = out_level2branch_info_[branch].real_nhwc[3];
+  int model_out_size = height * width * 1;
 
   std::vector<float> vec_data(model_out_size);
-  ConvertOutput(result, vec_data.data(), branch);
+  ConvertOutput(result, vec_data.data(), branch, 1);  // 暂时只用到了第一个通道
 
   // get first channel: heatmap
-  cv::Mat bpu_result(height, width, CV_32FC(channel), vec_data.data());
-  std::vector<cv::Mat> bpu_results;
-  cv::split(bpu_result, bpu_results);
-  cv::Mat heatmap = bpu_results[0];
+  cv::Mat heatmap(height, width, CV_32FC(1), vec_data.data());
 
   // 1. find local_max
   std::vector<float> scores;
@@ -1114,19 +1136,27 @@ void DetectPostProcessor::ParseCorner(
 void DetectPostProcessor::ConvertOutput(
     void *src_ptr,
     void *dest_ptr,
-    int out_index) {
+    int out_index,
+    int channel) {
   auto &aligned_shape = bpu_model_->outputs[out_index].aligned_shape;
   auto &real_shape = bpu_model_->outputs[out_index].shape;
-  auto elem_size = 1;  // TODO(zhe.sun) 是否可判断float
-  if (bpu_model_->outputs[out_index].data_type == BPU_TYPE_TENSOR_S32) {
-    elem_size = 4;
-  }
+  auto elem_size = 4;
+  HOBOT_CHECK(bpu_model_->outputs[out_index].data_type == BPU_TYPE_TENSOR_S32);
   auto shift = bpu_model_->outputs[out_index].shifts;
 
+  int convert_channel = 0;
+  if (channel == 0) {
+    convert_channel = real_shape.d[3];
+  } else {
+    HOBOT_CHECK(channel <= real_shape.d[3]) << "channel: " << channel
+        << ", real_channel: " << real_shape.d[3];
+    convert_channel = channel;
+  }
+
   uint32_t dst_n_stride =
-      real_shape.d[1] * real_shape.d[2] * real_shape.d[3] * elem_size;
-  uint32_t dst_h_stride = real_shape.d[2] * real_shape.d[3] * elem_size;
-  uint32_t dst_w_stride = real_shape.d[3] * elem_size;
+      real_shape.d[1] * real_shape.d[2] * convert_channel * elem_size;
+  uint32_t dst_h_stride = real_shape.d[2] * convert_channel * elem_size;
+  uint32_t dst_w_stride = convert_channel * elem_size;
   uint32_t src_n_stride =
       aligned_shape.d[1] * aligned_shape.d[2] * aligned_shape.d[3] * elem_size;
   uint32_t src_h_stride = aligned_shape.d[2] * aligned_shape.d[3] * elem_size;
@@ -1148,21 +1178,107 @@ void DetectPostProcessor::ConvertOutput(
             reinterpret_cast<int8_t *>(cur_h_dst) + ww * dst_w_stride;
         void *cur_w_src =
             reinterpret_cast<int8_t *>(cur_h_src) + ww * src_w_stride;
-        for (int cc = 0; cc < real_shape.d[3]; cc++) {
+        for (int cc = 0; cc < convert_channel; cc++) {
           void *cur_c_dst =
               reinterpret_cast<int8_t *>(cur_w_dst) + cc * elem_size;
           void *cur_c_src =
               reinterpret_cast<int8_t *>(cur_w_src) + cc * elem_size;
-          if (elem_size == 4) {
-            tmp_int32_value = *(reinterpret_cast<int32_t *>(cur_c_src));
-            tmp_float_value = GetFloatByInt(tmp_int32_value, shift[cc]);
-            *(reinterpret_cast<float *>(cur_c_dst)) = tmp_float_value;
-          } else {
-            *(reinterpret_cast<int8_t *>(cur_c_dst)) =
-                *(reinterpret_cast<int8_t *>(cur_c_src));
-          }
+          tmp_int32_value = *(reinterpret_cast<int32_t *>(cur_c_src));
+          tmp_float_value = GetFloatByInt(tmp_int32_value, shift[cc]);
+          *(reinterpret_cast<float *>(cur_c_dst)) = tmp_float_value;
         }
       }
+    }
+  }
+}
+
+void DetectPostProcessor::ConvertOutputFilter(
+    void *src_ptr,
+    void *dest_ptr,
+    int out_index,
+    float threshold,
+    std::vector<int> &valid_index,
+    int &valid_num) {
+  auto &aligned_shape = bpu_model_->outputs[out_index].aligned_shape;
+  auto &real_shape = bpu_model_->outputs[out_index].shape;
+  auto elem_size = 1;
+  if (bpu_model_->outputs[out_index].data_type == BPU_TYPE_TENSOR_S32) {
+    elem_size = 4;
+  }
+  auto shift = bpu_model_->outputs[out_index].shifts;
+  float threshold_quanti = threshold * (1 << shift[0]);
+
+  uint32_t src_n_stride =
+      aligned_shape.d[1] * aligned_shape.d[2] * aligned_shape.d[3] * elem_size;
+  uint32_t src_h_stride = aligned_shape.d[2] * aligned_shape.d[3] * elem_size;
+  uint32_t src_w_stride = aligned_shape.d[3] * elem_size;
+
+  float tmp_float_value;
+  int32_t tmp_int32_value;
+
+  int index = 0;
+  valid_num = 0;
+  for (int nn = 0; nn < real_shape.d[0]; nn++) {
+    void *cur_n_src = reinterpret_cast<int8_t *>(src_ptr) + nn * src_n_stride;
+    for (int hh = 0; hh < real_shape.d[1]; hh++) {
+      void *cur_h_src =
+          reinterpret_cast<int8_t *>(cur_n_src) + hh * src_h_stride;
+      for (int ww = 0; ww < real_shape.d[2]; ww++) {
+        void *cur_w_src =
+            reinterpret_cast<int8_t *>(cur_h_src) + ww * src_w_stride;
+        for (int cc = 0; cc < real_shape.d[3]; cc++) {
+          void *cur_c_src =
+              reinterpret_cast<int8_t *>(cur_w_src) + cc * elem_size;
+          if (elem_size == 4) {
+            tmp_int32_value = *(reinterpret_cast<int32_t *>(cur_c_src));
+            if (tmp_int32_value >= threshold_quanti) {
+              tmp_float_value = GetFloatByInt(tmp_int32_value, shift[cc]);
+              *(reinterpret_cast<float *>(dest_ptr)) = tmp_float_value;
+              dest_ptr = reinterpret_cast<char *>(dest_ptr) + elem_size;
+              valid_index[valid_num] = index;
+              valid_num++;
+            }
+          }
+          index++;
+        }
+      }
+    }
+  }
+}
+
+void DetectPostProcessor::ConvertOutputFilter(
+    void *src_ptr,
+    void *dest_ptr,
+    int out_index,
+    const std::vector<int> &valid_index,
+    const int &valid_num) {
+  auto &aligned_shape = bpu_model_->outputs[out_index].aligned_shape;
+  auto &real_shape = bpu_model_->outputs[out_index].shape;
+  auto elem_size = 1;
+  if (bpu_model_->outputs[out_index].data_type == BPU_TYPE_TENSOR_S32) {
+    elem_size = 4;
+  }
+  auto shift = bpu_model_->outputs[out_index].shifts;
+
+  uint32_t src_h_stride = aligned_shape.d[2] * aligned_shape.d[3];
+  uint32_t src_w_stride = aligned_shape.d[3];
+
+  float tmp_float_value;
+  int32_t tmp_int32_value;
+
+  for (int i = 0; i < valid_num; i++) {
+    int index = valid_index[i];
+    // 根据index计算h,w
+    int h_index = index / 32;  // 32是有效宽度
+    int w_index = index % 32;
+    // 对有效索引处的数据定点转浮点
+    for (int cc = 0; cc < real_shape.d[3]; cc++) {
+      tmp_int32_value = *(reinterpret_cast<int32_t *>(
+          src_ptr) + h_index * src_h_stride +
+          w_index * src_w_stride + cc);
+      tmp_float_value = GetFloatByInt(tmp_int32_value, shift[cc]);
+      *(reinterpret_cast<float *>(dest_ptr)) = tmp_float_value;
+      dest_ptr = reinterpret_cast<char *>(dest_ptr) + elem_size;
     }
   }
 }

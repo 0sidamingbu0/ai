@@ -71,8 +71,6 @@ int Yolov3PostProcessMethod::Init(const std::string &cfg_path) {
       config_.GetIntValue("basic_pyramid_image_height");
   basic_pyramid_image_width_ =
       config_.GetIntValue("basic_pyramid_image_width");
-  pyramid_roi_height_ = config_.GetIntValue("pyramid_roi_height");
-  pyramid_roi_width_ = config_.GetIntValue("pyramid_roi_width");
   return 0;
 }
 
@@ -165,26 +163,20 @@ int Yolov3PostProcessMethod::ParseDnnResult(
           double xmax = (box_center_x + box_scale_x / 2.0);
           double ymax = (box_center_y + box_scale_y / 2.0);
 
-          // 根据vio配置，金字塔第7层数据大小是416x416
-          // 是由金字塔第4层(960x540)从中间抠取520x520大小后缩放的
-          // 将坐标从模型输入大小(416 x 416)，映射到(520 x 520)
-          float x_factor = pyramid_roi_width_ * 1.0 / model_input_width;
-          float y_factor = pyramid_roi_height_ * 1.0 / model_input_height;
-          xmin *= x_factor;
-          xmax *= x_factor;
-          ymin *= y_factor;
-          ymax *= y_factor;
-          // 将坐标从分辨率520x520的roi映射到金字塔第4层(960x540)
-          double shift_x =
-              (basic_pyramid_image_width_ - pyramid_roi_width_) / 2;
-          double shift_y =
-              (basic_pyramid_image_height_ - pyramid_roi_height_) / 2;
-          xmin += shift_x;
-          ymin += shift_y;
-          xmax += shift_x;
-          ymax += shift_y;
+          // 预处理是将金字塔数据(960x540)，padding到960x960后,再缩放到416x416
+          // 将坐标从模型输入大小(416x416)，映射到(960x960)
+          float factor = basic_pyramid_image_width_ * 1.0 / model_input_width;
+          xmin *= factor;
+          xmax *= factor;
+          ymin *= factor;
+          ymax *= factor;
+          // 将坐标压缩在图像范围内(960x540)
+          ymin = std::min(
+              ymin, static_cast<double>(basic_pyramid_image_height_) - 1);
+          ymax = std::min(
+              ymax, static_cast<double>(basic_pyramid_image_height_) - 1);
 
-          // 将坐标从金字塔大小(960 x 540)，映射到原图大小(1920 x 1080)
+          // 将坐标从金字塔大小(960x540)，映射到原图大小(1920 x 1080)
           double xmin_org = xmin / w_ratio;
           double xmax_org = xmax / w_ratio;
           double ymin_org = ymin / h_ratio;

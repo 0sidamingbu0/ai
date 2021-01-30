@@ -322,14 +322,5 @@ void MethodManager::Process(const std::vector<std::vector<BaseDataPtr>> &inputs,
       break;
   }
 }
-/**
- * \brief callback function when profiler status is changed
- * @param on
- */
-void MethodManager::OnProfilerChanged(bool on) {
-  for (auto &method : methods_) {
-    method->OnProfilerChanged(on);
-  }
-}
 
 }  // namespace xstream

@@ -59,8 +59,6 @@ class VoteMethod : public Method {
     return "";
   }
 
-  void OnProfilerChanged(bool on) override {}
-
   MethodInfo GetMethodInfo() override {
     MethodInfo method_info;
     method_info.is_thread_safe_ = false;
@@ -70,12 +68,12 @@ class VoteMethod : public Method {
 
 
  private:
-  void AdjustQueue(const XStreamData<int> &vote_info,
+  void AdjustQueue(const XStreamData<hobot::vision::Attribute<int>> &vote_info,
                   uint32_t track_id,
-                  float score,
                   float timestamp);
-  void Vote(std::shared_ptr<XStreamData<int>> &vote_info_ptr,
-            uint32_t track_id);
+  void Vote(
+    std::shared_ptr<XStreamData<hobot::vision::Attribute<int>>> &vote_info_ptr,
+    uint32_t track_id);
 
  private:
   int max_slide_window_size_;
@@ -85,10 +83,10 @@ class VoteMethod : public Method {
   float negative_voting_threshold_;
   float time_interval_;
 
-  std::unordered_map<uint32_t, std::deque<xstream::XStreamData<int>>>
-  slide_window_map;
+  std::unordered_map<
+      uint32_t, std::deque<xstream::XStreamData<hobot::vision::Attribute<int>>>>
+      slide_window_map;
   int type_;  // 0 vehicle type & color ,1 plate_color , 2 living & behavior
-  std::unordered_map<uint32_t, float> score_;  // plate_color need
   std::unordered_map<uint32_t, std::deque<float>> timestamp_map_;
 };
 

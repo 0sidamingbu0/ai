@@ -49,6 +49,12 @@ int32_t Predictor::Init(std::shared_ptr<CNNMethodConfig> config) {
        << "parent path" << parent_path;
   core_id_ = config->GetIntValue("core_id", 2);
 
+  // 默认resize_type为0
+  // resize_type = 1
+  // 结合HB_BPU_runModel接口：支持输入数据缩放到模型输入大小
+  // 结合HB_BPU_runModelWithBbox接口：支持软件resize roi
+  resize_type_ = config->GetIntValue("resize_type", resize_type_);
+
   std::string s_norm_method = config->GetSTDStringValue("norm_method",
                                                         "norm_by_nothing");
   norm_params_.expand_scale = config->GetFloatValue("expand_scale", 1.0f);
@@ -123,10 +129,12 @@ int Predictor::RunModelWithBBox(
   BPU_TASK_HANDLE task_handle;
   BPU_RUN_CTRL_S run_ctrl;
   run_ctrl.core_id = core_id_;
+  run_ctrl.resize_type = resize_type_;
 #ifdef X2
   int ret = HB_BPU_runModelWithBbox(
       bpu_model_,
-      static_cast<BPU_CAMERA_BUFFER>(&pym_image.img),
+      reinterpret_cast<BPU_ADDR_INFO_S*>(&pym_image.img.down_scale[0]),
+      pym_image.img.ds_pym_layer,
       box, box_num, output_tensors_.data(),
       bpu_model_->output_num, &run_ctrl,
       false, resizable_cnt, &task_handle);
@@ -138,7 +146,9 @@ int Predictor::RunModelWithBBox(
 
   int ret = HB_BPU_runModelWithBbox(
       bpu_model_,
-      static_cast<BPU_CAMERA_BUFFER>(&bpu_predict_pyramid.result_info),
+      reinterpret_cast<BPU_ADDR_INFO_S*>(
+        &bpu_predict_pyramid.result_info.down_scale[0]),
+      bpu_predict_pyramid.result_info.ds_pym_layer,
       box, box_num, output_tensors_.data(),
       bpu_model_->output_num, &run_ctrl,
       false, resizable_cnt, &task_handle);
@@ -565,6 +575,7 @@ int Predictor::RunModel(uint8_t *img_data,
   // 3. run model
   BPU_RUN_CTRL_S run_ctrl_s;
   run_ctrl_s.core_id = core_id_;
+  run_ctrl_s.resize_type = resize_type_;
   BPU_TASK_HANDLE task_handle;
   int ret = HB_BPU_runModel(bpu_model_,
                             input_tensors_.data(),

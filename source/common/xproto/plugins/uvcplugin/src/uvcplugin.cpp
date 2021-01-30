@@ -28,6 +28,7 @@
 #endif
 #include "xproto_msgtype/vioplugin_data.h"
 #include "utils/time_helper.h"
+#include "xproto_msgtype/aioplugin_data.h"
 
 namespace horizon {
 namespace vision {
@@ -37,6 +38,7 @@ using horizon::vision::xproto::XPluginErrorCode;
 using horizon::vision::xproto::basic_msgtype::SmartMessage;
 using horizon::vision::xproto::basic_msgtype::TransportMessage;
 using horizon::vision::xproto::basic_msgtype::VioMessage;
+using horizon::vision::xproto::basic_msgtype::AioMessage;
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_UVC_MESSAGE)
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_TRANSPORT_MESSAGE)
 #ifdef USE_MC
@@ -89,6 +91,11 @@ int UvcPlugin::ParseConfig(std::string config_file) {
     LOGE << config_file << " should set smart_transfer mode";
     return -1;
   }
+
+  if (json_obj.isMember("audio_enable")) {
+    audio_enable_ = json_obj["audio_enable"].asInt();
+    LOGD << "audio_enable = " << audio_enable_;
+  }
   return 0;
 }
 
@@ -127,12 +134,27 @@ int UvcPlugin::Init() {
     return -1;
   }
 
-  HOBOT_CHECK(uvc_server_ && smart_manager_);
+  if (audio_enable_) {
+    uac_server_ = std::make_shared<UacServer>(config_file_);
+    if (uac_server_->Init()) {
+      LOGE << "UwsPlugin Init uac server failed";
+      return -1;
+    }
+  }
+  if (audio_enable_) {
+    HOBOT_CHECK(uvc_server_ && smart_manager_ && uac_server_);
+  } else {
+    HOBOT_CHECK(uvc_server_ && smart_manager_);
+  }
 
   RegisterMsg(TYPE_IMAGE_MESSAGE,
   std::bind(&UvcPlugin::FeedVideoMsg, this, std::placeholders::_1));
   RegisterMsg(TYPE_DROP_IMAGE_MESSAGE, std::bind(&UvcPlugin::FeedVideoDropMsg,
                                                  this, std::placeholders::_1));
+  if (audio_enable_) {
+    RegisterMsg(TYPE_AUDIO_MESSAGE,
+    std::bind(&UvcPlugin::FeedMicphoneAudioMsg, this, std::placeholders::_1));
+  }
 #ifdef USE_MC
   RegisterMsg(
           TYPE_MC_UPSTREAM_MESSAGE,
@@ -143,6 +165,7 @@ int UvcPlugin::Init() {
   std::lock_guard<std::mutex> lk(video_send_mutex_);
   video_sended_without_recv_count_ = 0;
   encode_thread_.CreatThread(1);
+  send_audio_thread_.CreatThread(1);
   auto print_timestamp_str = getenv("uvc_print_timestamp");
   if (print_timestamp_str && !strcmp(print_timestamp_str, "ON")) {
     print_timestamp_ = true;
@@ -161,6 +184,12 @@ int UvcPlugin::DeInit() {
   LOGD << "uvc server deinit done";
   if (smart_manager_) {
     smart_manager_->DeInit();
+  }
+
+  if (audio_enable_) {
+    if (uac_server_) {
+      uac_server_->DeInit();
+    }
   }
 
   LOGD << "uvc hid_manager_ deinit done";
@@ -234,6 +263,11 @@ int UvcPlugin::Stop() {
   }
   LOGI << "UvcPlugin stop done";
 
+  if (audio_enable_) {
+    if (uac_server_) {
+      uac_server_->Stop();
+    }
+  }
   efd_ = 0;
   monitor_flag_ = 0;
 
@@ -369,6 +403,18 @@ int UvcPlugin::FeedVideo(XProtoMessagePtr msg) {
     return 0;
   }
   auto ts0 = Timer::current_time_stamp();
+
+  std::string user_data =
+          ((Uvcplugin::UvcConfig::VIDEO_MJPEG == UvcServer::config_->video_type_ ||
+            Uvcplugin::UvcConfig::VIDEO_JPG == UvcServer::config_->video_type_) ?
+           "" : "dc45e9bd-e6d948b7-962cd820-d923eeef+") + std::to_string(vio_msg->time_stamp_);
+  LOGD << "venc insert user_data:" << user_data;
+  if (HB_VENC_InserUserData(0,
+                            reinterpret_cast<uint8_t*>(const_cast<char*>
+                            (user_data.data())), user_data.length()) != 0) {
+    LOGE << "HB_VENC_InserUserData fail";
+  }
+
   int ret = HB_VENC_SendFrame(0, &pstFrame, 0);
   if (ret < 0) {
     LOGE << "HB_VENC_SendFrame 0 error!!!ret " << ret;
@@ -512,6 +558,19 @@ int UvcPlugin::FeedVideoDrop(XProtoMessagePtr msg) {
     return 0;
   }
 
+  // For H264 and H265 encoder format, userdata format is uuid + user defined data (string)
+  // For jpg and mjpeg encoder format, userdata format is only user defined data (string)
+  std::string user_data =
+          ((Uvcplugin::UvcConfig::VIDEO_MJPEG == UvcServer::config_->video_type_ ||
+           Uvcplugin::UvcConfig::VIDEO_JPG == UvcServer::config_->video_type_) ?
+          "" : "dc45e9bd-e6d948b7-962cd820-d923eeef+") + std::to_string(vio_msg->time_stamp_);
+  LOGD << "venc insert user_data:" << user_data;
+  if (HB_VENC_InserUserData(0,
+                            reinterpret_cast<uint8_t*>(const_cast<char*>
+                            (user_data.data())), user_data.length()) != 0) {
+    LOGE << "HB_VENC_InserUserData fail";
+  }
+
   int ret = HB_VENC_SendFrame(0, &pstFrame, 0);
   if (ret < 0) {
     LOGE << "HB_VENC_SendFrame 0 error!!!ret " << ret;
@@ -557,6 +616,20 @@ int UvcPlugin::FeedVideoDrop(XProtoMessagePtr msg) {
     vio_msg->profile_->UpdatePluginStopTime(desc());
   }
   UvcServer::SetEncoderRunning(false);
+  return 0;
+}
+
+int UvcPlugin::FeedMicphoneAudioMsg(XProtoMessagePtr msg) {
+  send_audio_thread_.PostTask(
+      std::bind(&UvcPlugin::FeedMicphoneAudio, this, msg));
+  return 0;
+}
+
+int UvcPlugin::FeedMicphoneAudio(XProtoMessagePtr msg) {
+  auto aio_msg = std::dynamic_pointer_cast<AioMessage>(msg);
+  char* buf = (char *)aio_msg->buffer_;
+  int size = aio_msg->size_;
+  uac_server_->SendUacData(buf, size);
   return 0;
 }
 
@@ -652,6 +725,9 @@ void UvcPlugin::MonitorEvent() {
 int UvcPlugin::ReInit() {
   uvc_server_ = std::make_shared<UvcServer>();
   uvc_server_->Init(config_file_);
+  if (audio_enable_) {
+    uac_server_->Init();
+  }
 
   if (smart_transfer_mode_ == 1) {
     smart_manager_ = std::make_shared<RndisManager>(config_file_);

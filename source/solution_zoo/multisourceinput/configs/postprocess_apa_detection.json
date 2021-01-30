@@ -3,11 +3,11 @@
     "net_info": {
       "model_out_sequence": [
         {
-          "name": "parking_box",
+          "name": "parking_orient_box",
           "type": "apabbox"
         }
       ]
     },
-    "method_outs": ["parking_box"],
+    "method_outs": ["parking_orient_box"],
     "model_file_path": "../../models/apa_detection.hbm"
 }

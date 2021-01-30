@@ -67,18 +67,28 @@ int hb_vot_init(void)
   return 0;
 }
 
-VotModule::VotModule():group_id_(-1), stop_(true) {
-  Init();
+VotModule::VotModule(const std::string& config):group_id_(-1), stop_(true) {
+  // parse config
+  if (!config.empty()) {
+    LOGI << "vot config file: " << config;
+    Json::Value cfg_jv;
+    std::ifstream infile(config);
+    if (infile) {
+      infile >> cfg_jv;
+      config_.reset(new JsonConfigWrapper(cfg_jv));
+    } else {
+      LOGE << "open vot config fail";
+    }
+  }
+
 //  hb_vot_init();
 }
 
 VotModule::~VotModule() {
-  Stop();
   std::unique_lock<std::mutex> lk(send_vot_mtx_);
   send_vot_cache_.clear();
   lk.unlock();
   free(buffer_);
-  DeInit();
 }
 
 int VotModule::Start() {
@@ -95,11 +105,15 @@ int VotModule::Start() {
           continue;
         }
 
-        std::shared_ptr<char> sp_buf = nullptr;
-        if (!vot_data->is_drop_frame_) {
-          sp_buf = PlotImage(vot_data);
-        } else if (plot_drop_img_) {
-          sp_buf = PlotImage(vot_data);
+        if (vot_data->is_drop_frame_ || !vot_data->sp_smart_pb_) {
+          if (!plot_drop_img_) {
+            continue;
+          }
+        }
+
+        std::shared_ptr<char> sp_buf = PlotImage(vot_data);
+        if (!sp_buf) {
+          continue;
         }
 
         std::unique_lock<std::mutex> lk(send_vot_mtx_);
@@ -157,8 +171,28 @@ int VotModule::Start() {
         last_send_vot_tp = std::chrono::system_clock::now();
 
         memcpy(buffer_, sp_buf.get(), image_data_size_);
-        static VOT_FRAME_INFO_S stFrame {buffer_, image_data_size_};
+        static VOT_FRAME_INFO_S stFrame;
+        stFrame.addr = buffer_;
+        stFrame.size = image_data_size_;
         HB_VOT_SendFrame(0, channel_, &stFrame, -1);
+
+        if (en_encoder_ && 0 == encoder_input_) {
+          for (int i = 0; i < venc_param_.height; ++i) {
+            memcpy(venc_param_.mmz_vaddr + i * venc_param_.width,
+                   buffer_ + i * venc_param_.width, venc_param_.width);
+          }
+          for (int i = 0; i < venc_param_.height / 2; ++i) {
+            memcpy(venc_param_.mmz_vaddr +
+                           (i + venc_param_.height) * venc_param_.width,
+                   buffer_ + venc_param_.width * venc_param_.height +
+                           i * venc_param_.width,
+               venc_param_.width);
+          }
+          int ret = HB_VENC_SendFrame(venc_param_.veChn, &pstFrame, 20);
+          if (ret != 0) {
+            LOGE << "HB_VENC_SendStream Failed. ret = " << ret;
+          }
+        }
       }
   };
   send_vot_task_ = std::make_shared<std::thread>(send_vot_func);
@@ -170,11 +204,68 @@ int VotModule::Start() {
 //      std::this_thread::sleep_for(std::chrono::milliseconds(1));
 //    }
 //  });
+
+
+  if (InitCodecManager() != 0) {
+    LOGE << "init codec fail";
+    return -1;
+  }
+
+  if (en_encoder_ && !recv_stream_task_) {
+    auto exec = [this](){
+        VIDEO_STREAM_S vstream;
+        while (!stop_) {
+          memset(&vstream, 0, sizeof(VIDEO_STREAM_S));
+          auto ret = HB_VENC_GetStream(venc_param_.veChn, &vstream, 2000);
+          if (ret < 0) {
+            LOGE << "HB_VENC_GetStream timeout: " << ret;
+            continue;
+          } else {
+            HOBOT_CHECK(vstream.pstPack.size > 5)
+            << "encode bitstream too small";
+            if (ofs_encoder_output_.good()) {
+              ofs_encoder_output_.write(vstream.pstPack.vir_ptr,
+                                        vstream.pstPack.size);
+            }
+            HB_VENC_ReleaseStream(0, &vstream);
+          }
+        }
+    };
+    recv_stream_task_ = std::make_shared<std::thread>(exec);
+  }
+
   return 0;
 }
 
 int VotModule::Init() {
   int ret = 0;
+
+  if (config_) {
+    if (config_->HasKey("en_encoder")) {
+      en_encoder_ = config_->GetBoolValue("en_encoder");
+    }
+    if (config_->HasKey("encoder_input")) {
+      encoder_input_ = config_->GetBoolValue("encoder_input");
+    }
+    if (config_->HasKey("encoder_output_save_file")) {
+      encoder_output_save_file_ =
+              config_->GetSTDStringValue("encoder_output_save_file");
+    }
+    if (config_->HasKey("en_bgr_convert")) {
+      plot_color_ = config_->GetBoolValue("en_bgr_convert");
+    }
+    if (config_->HasKey("en_fps_draw")) {
+      vot_draw_ctrl_.draw_fps = config_->GetBoolValue("en_fps_draw");
+    }
+    if (config_->HasKey("en_gesture_val_draw")) {
+      vot_draw_ctrl_.draw_gesture_val =
+              config_->GetBoolValue("en_gesture_val_draw");
+    }
+    if (config_->HasKey("en_handid_draw")) {
+      vot_draw_ctrl_.draw_hand_id = config_->GetBoolValue("en_handid_draw");
+    }
+  }
+
   image_height_ = 1080;
   image_width_ = 1920;
   image_data_size_ = image_width_ * image_height_ * 3 / 2;
@@ -246,6 +337,64 @@ int VotModule::Init() {
   printf("HB_VOT_EnableChn: %d\n", ret);
 
   buffer_ = (char *)malloc(image_data_size_);// NOLINT
+
+  if (en_encoder_) {
+    ofs_encoder_output_.open(encoder_output_save_file_);
+    if (ofs_encoder_output_.good()) {
+      LOGD << "save encoder output to file " << encoder_output_save_file_;
+    } else {
+      LOGE << "error! open file " << encoder_output_save_file_;
+      return -1;
+    }
+
+    // alloc ion buffer for video encoder
+    // 1. init
+    VP_CONFIG_S vp_config;
+    memset(&vp_config, 0x00, sizeof(VP_CONFIG_S));
+    vp_config.u32MaxPoolCnt = venc_param_.vp_pool_cnt;
+    ret = HB_VP_SetConfig(&vp_config);
+    if (ret) {
+      if (ret == HB_ERR_VP_BUSY) {
+        LOGW << "hb vp have already config, ret: " << ret;
+      } else {
+        LOGE << "hb vp config failed, ret: " << ret;
+        return ret;
+      }
+    }
+    // feedback mode has already init in vio plugin
+    if (ret != HB_ERR_VP_BUSY) {
+      ret = HB_VP_Init();
+      if (ret != 0) {
+        LOGE << "hb vp init failed, ret: " << ret;
+        return ret;
+      }
+      venc_param_.vp_init_local = true;
+    }
+
+    // 2. alloc
+    venc_param_.mmz_size = venc_param_.width * venc_param_.height * 3 / 2;
+    ret = HB_SYS_Alloc(&venc_param_.mmz_paddr,
+                       reinterpret_cast<void **>(&venc_param_.mmz_vaddr),
+                       venc_param_.mmz_size);
+    if (ret != 0) {
+      LOGE << "HB_SYS_Alloc failed, ret: " << ret;
+      return ret;
+    }
+    // 3. set venc input frame
+    memset(&pstFrame, 0, sizeof(VIDEO_FRAME_S));
+    pstFrame.stVFrame.width = venc_param_.width;
+    pstFrame.stVFrame.height = venc_param_.height;
+    pstFrame.stVFrame.size = venc_param_.mmz_size;
+    pstFrame.stVFrame.pix_format = HB_PIXEL_FORMAT_NV12;
+    pstFrame.stVFrame.phy_ptr[0] = venc_param_.mmz_paddr;
+    pstFrame.stVFrame.phy_ptr[1] =
+            venc_param_.mmz_paddr + venc_param_.width * venc_param_.height;
+    pstFrame.stVFrame.vir_ptr[0] = venc_param_.mmz_vaddr;
+    pstFrame.stVFrame.vir_ptr[1] =
+            venc_param_.mmz_vaddr + venc_param_.width * venc_param_.height;
+    pstFrame.stVFrame.pts = 0;
+  }
+
   return ret;
 }
 
@@ -378,7 +527,7 @@ VotModule::PlotImage(const std::shared_ptr<VotData_t>& vot_data) {
         }
       }
     }
-    if (frame_fps_ > 0) {
+    if (vot_draw_ctrl_.draw_fps && frame_fps_ > 0) {
       cv::putText(bgr, "fps " + std::to_string(frame_fps_),
                   cv::Point(10, 20),
                   cv::HersheyFonts::FONT_HERSHEY_PLAIN,
@@ -442,6 +591,7 @@ VotModule::PlotImage(const std::shared_ptr<VotData_t>& vot_data) {
           } else if ("hand" == box.type_()) {
             has_hand = true;
             hand_rect = rect;
+            hand_rect.id = target.track_id_();
           }
         }
         if (has_face || has_head) {
@@ -520,6 +670,9 @@ VotModule::PlotImage(const std::shared_ptr<VotData_t>& vot_data) {
 
       int gesture = 0;
       int gesture_orig = -1;
+      int gesture_raw = -1;
+      float gesture_score = 0;
+      int gesture_direction = -1;
       int age = -1;
       int gender = 0;
       int dist = -1;
@@ -567,6 +720,13 @@ VotModule::PlotImage(const std::shared_ptr<VotData_t>& vot_data) {
         }
         if (attr.type_() == "gesture_orig") {
           gesture_orig = attr.value_();
+        }
+        if (attr.type_() == "gesture_raw") {
+          gesture_raw = attr.value_();
+          gesture_score = attr.score_();
+        }
+        if (attr.type_() == "gesture_direction") {
+          gesture_direction = attr.value_();
         }
         if (attr.type_() == "age") {
           age = attr.value_();
@@ -633,35 +793,53 @@ VotModule::PlotImage(const std::shared_ptr<VotData_t>& vot_data) {
                       cv::Point(hand_rect.x2, hand_rect.y2),
                       CV_RGB(255, 255, 0), 2);
 
-
         // plot original gesture type
-        cv::putText(bgr, "gest:" + std::to_string(gesture_orig),
-                    cv::Point2f(hand_rect.x1, hand_rect.y2 + 15),
-                    cv::HersheyFonts::FONT_HERSHEY_PLAIN,
-                    2, CV_RGB(255, 255, 255), 1);
-
+        if (vot_draw_ctrl_.draw_gesture_val) {
+          auto draw_gesture_pt = cv::Point2f(hand_rect.x1, hand_rect.y2);
+          draw_gesture_pt.y += 20;
+          cv::putText(bgr, "raw:" + std::to_string(gesture_raw) + " " +
+                              std::to_string(gesture_score).substr(0, 4),
+                      draw_gesture_pt,
+                      cv::HersheyFonts::FONT_HERSHEY_PLAIN,
+                      2, CV_RGB(255, 255, 255), 1);
+          draw_gesture_pt.y += 20;
+          cv::putText(bgr, "vote:" + std::to_string(gesture_orig),
+                      draw_gesture_pt,
+                      cv::HersheyFonts::FONT_HERSHEY_PLAIN,
+                      2, CV_RGB(255, 255, 255), 1);
+          draw_gesture_pt.y += 20;
+          cv::putText(bgr, "gest:" + std::to_string(gesture),
+                      draw_gesture_pt,
+                      cv::HersheyFonts::FONT_HERSHEY_PLAIN,
+                      2, CV_RGB(255, 255, 255), 1);
+        }
 
         // hand id
-        // for debug
-//        int offset_factor = 1;
-//        if (hand_rect.id < 10) {
-//          offset_factor = 1;
-//        } else if (hand_rect.id < 100) {
-//          offset_factor = 2;
-//        } else {
-//          offset_factor = 3;
-//        }
-//        cv::putText(bgr, std::to_string(hand_rect.id),
-//                    cv::Point2f(hand_rect.x1 - 20 * offset_factor,
-//                    hand_rect.y1 + 20),
-//                    cv::HersheyFonts::FONT_HERSHEY_PLAIN,
-//                    2, CV_RGB(255, 255, 255), 2);
+        if (vot_draw_ctrl_.draw_hand_id) {
+          int offset_factor = 1;
+          if (hand_rect.id < 10) {
+            offset_factor = 1;
+          } else if (hand_rect.id < 100) {
+            offset_factor = 2;
+          } else {
+            offset_factor = 3;
+          }
+          cv::putText(bgr, std::to_string(hand_rect.id),
+                      cv::Point2f(hand_rect.x1 - 20 * offset_factor,
+                                  hand_rect.y1 + 20),
+                      cv::HersheyFonts::FONT_HERSHEY_PLAIN,
+                      2, CV_RGB(255, 255, 255), 2);
+        }
 
         if ((gesture > 0 && gesture <=
                 static_cast<int>(output_gesture_type::PalmMove)) ||
                 gesture >= static_cast<int>(output_gesture_type::Pinch)) {
           // plot gesture type
-          cv::putText(bgr, gesture_type,
+          std::string gesture_direction_str =
+                  map_gesture_direction_.find(gesture_direction) ==
+                          map_gesture_direction_.end() ?
+                  "" : " " + map_gesture_direction_.at(gesture_direction);
+          cv::putText(bgr, gesture_type + gesture_direction_str,
                       cv::Point2f(hand_rect.x1, hand_rect.y1 - 15),
                       cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                       3, CV_RGB(255, 255, 255), 3);
@@ -867,6 +1045,16 @@ int VotModule::Input(const std::shared_ptr<VotData_t>& vot_data) {
     return 0;
   }
 
+  if (en_encoder_ && 1 == encoder_input_ && vot_data && vot_data->sp_img_) {
+    memcpy(venc_param_.mmz_vaddr,
+           vot_data->sp_img_->image.data,
+           vot_data->sp_img_->image.data_size);
+    int ret = HB_VENC_SendFrame(venc_param_.veChn, &pstFrame, 20);
+    if (ret != 0) {
+      LOGE << "HB_VENC_SendStream Failed. ret = " << ret;
+    }
+  }
+
   if (in_queue_.size() < in_queue_len_max_) {
     in_queue_.push(std::move(vot_data));
   } else {
@@ -898,6 +1086,16 @@ int VotModule::Stop() {
   in_queue_.clear();
   plot_tasks_.clear();
 
+  if (recv_stream_task_) {
+    recv_stream_task_->join();
+    recv_stream_task_ = nullptr;
+  }
+
+  if (DeinitCodecManager() != 0) {
+    LOGE << "deinit codec fail";
+    return -1;
+  }
+
   return 0;
 }
 
@@ -911,7 +1109,72 @@ int VotModule::DeInit() {
 
   ret = HB_VOT_Disable(0);
   if (ret) printf("HB_VOT_Disable failed.\n");
+
+  if (en_encoder_) {
+    if (ofs_encoder_output_.good()) {
+      ofs_encoder_output_.close();
+    }
+
+    if (venc_param_.mmz_vaddr) {
+      ret = HB_SYS_Free(venc_param_.mmz_paddr,
+                        reinterpret_cast<void *>(venc_param_.mmz_vaddr));
+      if (ret != 0) {
+        LOGE << "HB_SYS_Free error! already exit in vio plugin. ret: " << ret;
+      }
+      venc_param_.mmz_vaddr = nullptr;
+    }
+    if (venc_param_.vp_init_local) {
+      ret = HB_VP_Exit();
+      if (ret == 0) {
+        LOGI << "vp exit ok!";
+      } else {
+        LOGE << "vp exit error! ret: " << ret;
+      }
+    }
+  }
+
   return ret;
+}
+
+int VotModule::InitCodecManager() {
+  if (!en_encoder_) {
+    return 0;
+  }
+  MediaCodecManager &manager = MediaCodecManager::Get();
+  auto rv = manager.ModuleInit();  // ModuleInit()内部保证可以重复初始化
+  HOBOT_CHECK(rv == 0);
+
+  PAYLOAD_TYPE_E format = venc_param_.format;
+  int chn_ = venc_param_.veChn;
+  int pic_width = venc_param_.width;
+  int pic_height = venc_param_.height;
+  int frame_buf_depth = venc_param_.frame_buf_depth;
+  int is_cbr = venc_param_.is_cbr;
+  int bitrate = venc_param_.bitrate;
+
+  LOGI << "pic_width: " << pic_width << " pic_height: " << pic_height
+       << " bitrate:" << bitrate << " format:" << format;
+
+  rv = manager.EncodeChnInit(chn_, format, pic_width, pic_height,
+                             frame_buf_depth, HB_PIXEL_FORMAT_NV12,
+                             is_cbr, bitrate);
+  HOBOT_CHECK(rv == 0);
+
+  rv = manager.EncodeChnStart(chn_);
+  HOBOT_CHECK(rv == 0);
+  return 0;
+}
+
+int VotModule::DeinitCodecManager() {
+  if (!en_encoder_) {
+    return 0;
+  }
+  LOGI << "DeinitCodecManager";
+  MediaCodecManager &manager = MediaCodecManager::Get();
+  manager.EncodeChnStop(venc_param_.veChn);
+  manager.EncodeChnDeInit(venc_param_.veChn);
+  // manager.ModuleDeInit();
+  return 0;
 }
 }   //  namespace vision
 }   //  namespace horizon

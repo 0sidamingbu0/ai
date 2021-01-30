@@ -25,7 +25,6 @@ namespace xstream {
 
 #define ALIGN_16(v) ((v + (16 - 1)) / 16 * 16)
 
-std::mutex DnnPredictMethod::init_mutex_;
 int32_t DnnPredictMethod::Init(const std::string &cfg_path) {
   LOGI << "DnnPredictMethod Init";
   // 0. parse config_
@@ -67,13 +66,19 @@ int32_t DnnPredictMethod::Init(const std::string &cfg_path) {
   HOBOT_CHECK(core_id <= 2 && core_id >= 0) << "core_id out of range";
   dnn_ctrl_.core_id = core_id;  // 注意：异步预测模式下指定core_id无效
 
+  // resize_type = 1
+  // 结合HB_BPU_runModel接口：支持输入数据缩放到模型输入大小
+  // 结合HB_BPU_runModelWithBbox接口：支持软件resize roi
+  int resize_type = config_["resize_type"].isInt() ?
+                    config_["resize_type"].asInt() : 0;  // 默认为0
+  dnn_ctrl_.resize_type = resize_type;
+
   src_image_width_ = config_["src_image_witdh"].isInt() ?
                      config_["src_image_witdh"].asInt() : 0;
   src_image_height_ = config_["src_image_height"].isInt() ?
                      config_["src_image_height"].asInt() : 0;
 
   int ret;
-  std::unique_lock<std::mutex> lock(init_mutex_);
   // 2. load model
   dnn_model_ = std::make_shared<BPUModelWrapper>();
   ret = HB_BPU_loadModelFromFile(model_path_.c_str(), &dnn_model_->bpu_model);
@@ -352,7 +357,8 @@ std::vector<std::vector<BaseDataPtr>> DnnPredictMethod::DoProcess(
       // 调用BPU-Predict接口完成预测
       #ifdef X2
       ret = HB_BPU_runModelWithBbox(&dnn_model_->bpu_model,
-          static_cast<BPU_CAMERA_BUFFER>(&pyramid.img),
+          reinterpret_cast<BPU_ADDR_INFO_S*>(&pyramid.img.down_scale[0]),
+          pyramid.img.ds_pym_layer,
           input_box.data(), input_box.size(),
           output_tensor.data(), output_tensor.size(),
           &dnn_ctrl_, dnn_is_sync_,
@@ -362,7 +368,9 @@ std::vector<std::vector<BaseDataPtr>> DnnPredictMethod::DoProcess(
       bpu_predict_x3::PyramidResult bpu_predict_pyramid;
       Convert(pyramid, bpu_predict_pyramid);
       ret = HB_BPU_runModelWithBbox(&dnn_model_->bpu_model,
-          static_cast<BPU_CAMERA_BUFFER>(&bpu_predict_pyramid.result_info),
+          reinterpret_cast<BPU_ADDR_INFO_S*>(
+            &bpu_predict_pyramid.result_info.down_scale[0]),
+          bpu_predict_pyramid.result_info.ds_pym_layer,
           input_box.data(), input_box.size(),
           output_tensor.data(), output_tensor.size(),
           &dnn_ctrl_, dnn_is_sync_,
@@ -377,6 +385,7 @@ std::vector<std::vector<BaseDataPtr>> DnnPredictMethod::DoProcess(
         return output;
       }
       // 这部分逻辑，解决pyramid选层失败，导致roi未送入模型，避免出现bpu结果与输入roi错位的问题
+      LOGI << "resizable count: " << resizable_cnt;
       for (size_t i = 0, bpu_box_idx = 0; i < valid_box.size(); i++) {
         if (valid_box[i]) {
           valid_box[i] = input_box[bpu_box_idx].resizable;

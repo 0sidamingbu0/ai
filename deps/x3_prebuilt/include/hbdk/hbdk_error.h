@@ -222,13 +222,11 @@ enum enumhbrtError {
 
 typedef enum enumhbrtError hbrt_error_t;
 
-#pragma PRQA_MESSAGES_OFF 5124
 static inline void hbdk_error_print_to_stderr(const char* msg) {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
   fprintf(stderr, "%s\n", msg);
 }
 
-#pragma PRQA_MESSAGES_OFF 5124
 static inline void hbdk_int_print_to_stderr(int num) {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
   fprintf(stderr, "%d\n", num);
@@ -237,9 +235,9 @@ static inline void hbdk_int_print_to_stderr(int num) {
 // @formatter:off
 // clang-format off
 #ifndef SWIG
-inline static void hbrtBreakInClion()
+inline static void hbrtBreakInClion(void)
     HBRT_DEPRECATED("hbrtBreakInClion has been deprecated since 3.8.1, and will be removed in a future release");
-inline static void hbrtBreakInClion() {}
+inline static void hbrtBreakInClion(void) {}
 #endif
 
 

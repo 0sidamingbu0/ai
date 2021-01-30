@@ -12,18 +12,21 @@ cp ${ALL_PROJECT_DIR}/build/lib/libvioplugin*.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/build/lib/libsmartplugin*.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/build/lib/libvisualplugin*.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/build/lib/libwebsocketplugin*.so ${RELEASE_DIR}/lib/ -rf
+cp ${ALL_PROJECT_DIR}/build/lib/libaioplugin*.so ${RELEASE_DIR}/lib/ -rf
+cp ${ALL_PROJECT_DIR}/build/lib/libalsadevice*.so ${RELEASE_DIR}/lib/ -rf
 
 if [ ${ARCHITECTURE} == "x3" ]
 then
   cp ${ALL_PROJECT_DIR}/build/lib/libuvcplugin*.so ${RELEASE_DIR}/lib/ -rf
+  cp ${ALL_PROJECT_DIR}/build/lib/libcommongdcplugin*.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
   cp ${ALL_PROJECT_DIR}/build/lib/libxstream-media_codec*.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libmulti*.so ${RELEASE_DIR}/lib/ -rf
-  cp ${ALL_PROJECT_DIR}/build/lib/libgdcplugin*.so ${RELEASE_DIR}/lib/ -rf
-	cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/gdcplugin/deps/*.so ${RELEASE_DIR}/lib/ -rf
-  cp ${ALL_PROJECT_DIR}/build/lib/libdisplayplugin*.so ${RELEASE_DIR}/lib/ -rf
-	cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/displayplugin/deps/lib/*.so ${RELEASE_DIR}/lib/ -rf
-  cp ${ALL_PROJECT_DIR}/build/lib/libcanplugin.so ${RELEASE_DIR}/lib/ -rf
-  cp ${ALL_PROJECT_DIR}/build/lib/libanalysisplugin.so ${RELEASE_DIR}/lib/ -rf
+  cp ${ALL_PROJECT_DIR}/build/lib/libgdcplugin*.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/gdcplugin/deps/*.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/build/lib/libdisplayplugin*.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/displayplugin/deps/lib/*.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/build/lib/libcanplugin.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/build/lib/libanalysisplugin.so ${RELEASE_DIR}/lib/ -rf 2>/dev/null
   cp ${ALL_PROJECT_DIR}/build/lib/libexamplewebsocketplugin*.so ${RELEASE_DIR}/lib/ -rf
   cp ${ALL_PROJECT_DIR}/build/lib/libexamplesmartplugin*.so ${RELEASE_DIR}/lib/ -rf
 fi
@@ -46,6 +49,11 @@ cp ${ALL_PROJECT_DIR}/deps/libyuv/lib/libyuv.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/deps/libjpeg-turbo/lib/libturbojpeg.so* ${RELEASE_DIR}/lib/ -rf
 
 cp ${ALL_PROJECT_DIR}/run.sh ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/run_body.sh ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/run_face_recog.sh ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/run_tv_uvc.sh ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/run_video_box.sh ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/run_yolov3_mobilenetv3_example.sh ${RELEASE_DIR}/ -rf
 cp ${ALL_PROJECT_DIR}/start_nginx.sh ${RELEASE_DIR}/ -rf
 ## vio configs
 mkdir ${RELEASE_DIR}/configs/
@@ -57,10 +65,10 @@ then
   cp ${ALL_PROJECT_DIR}/output/vioplugin/config/vio* ${RELEASE_DIR}/configs/ -rf
   echo "copy viowrapper configs"
   cp ${ALL_PROJECT_DIR}/source/common/viowrapper/config/x3dev/hb* ${RELEASE_DIR}/configs/ -rf 
-  cp ${ALL_PROJECT_DIR}/output/apa ${RELEASE_DIR}/ -rf
-  cp ${ALL_PROJECT_DIR}/output/apa/configs/configs/*  ${RELEASE_DIR}/configs/ -rf
-  cp ${ALL_PROJECT_DIR}/output/multivioplugin/bin/multivioplugin_test ${RELEASE_DIR}/apa/ -rf
-  cp ${ALL_PROJECT_DIR}/output/multisourceinput ${RELEASE_DIR}/ -rf
+  cp ${ALL_PROJECT_DIR}/output/apa ${RELEASE_DIR}/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/output/apa/configs/configs/*  ${RELEASE_DIR}/configs/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/output/multivioplugin/bin/multivioplugin_test ${RELEASE_DIR}/apa/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/output/multisourceinput ${RELEASE_DIR}/ -rf 2>/dev/null
 fi
 cp ${ALL_PROJECT_DIR}/output/visualplugin/config/visualplugin*.json ${RELEASE_DIR}/configs/ -rf
 cp ${ALL_PROJECT_DIR}/source/common/xproto/plugins/websocketplugin/configs/websocketplugin_attribute.json ${RELEASE_DIR}/configs/ -rf
@@ -69,13 +77,16 @@ mkdir -p ${RELEASE_DIR}/models
 cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/*/so/*.hbm ${RELEASE_DIR}/models/ -rf
 if [ ${ARCHITECTURE} == "x3" ]
 then
-  cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/SegmentationMultitask_1024x768/so/SegmentationMultitask_1024x768.hbm ${RELEASE_DIR}/models/ -rf
-  cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/personMultitask_1024x768/so/personMultitask_1024x768.hbm ${RELEASE_DIR}/models/personMultitask_1024x768.hbm -rf
+  cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/SegmentationMultitask_1024x768/so/SegmentationMultitask_1024x768.hbm ${RELEASE_DIR}/models/ -rf 2>/dev/null
+  cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/personMultitask_1024x768/so/personMultitask_1024x768.hbm ${RELEASE_DIR}/models/personMultitask_1024x768.hbm -rf 2>/dev/null
   # apa models
-  cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/models/* ${RELEASE_DIR}/models/ -rf
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/apa/models/* ${RELEASE_DIR}/models/ -rf 2>/dev/null
   # matting models
-  cp ${ALL_PROJECT_DIR}/source/solution_zoo/xstream/methods/models/* ${RELEASE_DIR}/models/ -rf
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/xstream/methods/models/* ${RELEASE_DIR}/models/ -rf 2>/dev/null
   cp ${ALL_PROJECT_DIR}/source/solution_zoo/yolov3_mobilenetv2_example/models/* ${RELEASE_DIR}/models/ -rf
+  # x3 gdc config
+  cp ${ALL_PROJECT_DIR}/output/commongdcplugin/configs/common_gdc_plugin.json ${RELEASE_DIR}/configs/ -rf
+  cp ${ALL_PROJECT_DIR}/output/commongdcplugin/configs/gdc ${RELEASE_DIR}/configs/ -rf
 fi
 
 ## solutions
@@ -83,7 +94,7 @@ cp ${ALL_PROJECT_DIR}/output/face_solution ${RELEASE_DIR}/ -rf
 cp ${ALL_PROJECT_DIR}/output/body_solution ${RELEASE_DIR}/ -rf
 #cp ${ALL_PROJECT_DIR}/output/vehicle_solution ${RELEASE_DIR}/ -rf
 cp ${ALL_PROJECT_DIR}/output/face_body_multisource ${RELEASE_DIR}/ -rf
-cp ${ALL_PROJECT_DIR}/output/xwarehouse_sample ${RELEASE_DIR}/ -rf
+cp ${ALL_PROJECT_DIR}/output/xwarehouse_sample ${RELEASE_DIR}/ -rf 2>/dev/null
 cp ${ALL_PROJECT_DIR}/output/yolov3_solution ${RELEASE_DIR}/ -rf
 ## ssd_test
 mkdir -p ${RELEASE_DIR}/ssd_test/config/vio_config

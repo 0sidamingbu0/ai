@@ -45,8 +45,6 @@ class MethodModule : public hobot::Module {
   InputParamPtr GetParameter() const;
   std::string GetVersion() const;
   void Finalize() {}
-  /// 用于告知Method整个SDK的Profiler状态更改
-  void OnProfilerChanged(bool on) {}
 
   /**
    * Input Message:

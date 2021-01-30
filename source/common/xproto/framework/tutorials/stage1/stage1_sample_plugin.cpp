@@ -132,6 +132,7 @@ class SumConsumerPlugin : public XPluginAsync {
     return 0;
   }
   int DeInit() {
+    UnRegisterMsg(TYPE_SAMPLE_MESSAGE);
     return XPluginAsync::DeInit();
   }
   std::string desc() const {

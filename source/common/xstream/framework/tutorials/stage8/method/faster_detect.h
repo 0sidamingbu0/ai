@@ -33,7 +33,6 @@ class FasterDetect : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-  void OnProfilerChanged(bool on) override;
 };
 
 class FasterDetectParam : public xstream::InputParam {

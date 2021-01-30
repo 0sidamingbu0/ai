@@ -40,7 +40,7 @@ extern "C" {
 #define ATTRIBUTE __attribute__((aligned (ALIGN_NUM)))
 #endif
 
-#define RGN_HANDLE_MAX 108
+#define RGN_HANDLE_MAX 256
 #define PIPELINE_MAX_NUM 6
 #define RGN_GROUP_MAX 8
 #define RGN_BATCHHANDLE_MAX 18
@@ -48,11 +48,15 @@ extern "C" {
 #define IMAGE_MAX_WIDTH 4096
 #define IMAGE_MAX_HEIGHT 4096
 #define RGN_MIN_WIDTH 32
+#define RGN_SP_MIN_WIDTH 2
+#define RGN_MOSAIC_MIN_WIDTH 16
 #define RGN_MIN_HEIGHT 2
 #define STA_MIN_WIDTH 2
 #define STA_MIN_HEIGHT 2
 #define STA_MAX_WIDTH 255
 #define STA_MAX_HEIGHT 255
+
+#define POLYGON_MAX_SIDE 10
 
 typedef enum {
 	EN_INVALID_CHNID = 1,
@@ -80,7 +84,9 @@ typedef enum {
 typedef enum HB_RGN_TYPE_PARAM_E        /*region type*/
 {
     OVERLAY_RGN,
-    COVER_RGN
+    COVER_RGN,
+    MOSAIC_RGN,
+    RGN_TYPE_MAX
 } RGN_TYPE_E;
 
 typedef enum HB_RGN_CHN_ID_ATTR_E      /*ipu channel region attached to*/
@@ -129,6 +135,12 @@ typedef enum HB_PIXEL_FORMAT_ATTR_E     /*pixel format*/
     PIXEL_FORMAT_YUV420SP
 } RGN_PIXEL_FORMAT_E;
 
+typedef enum HB_RGN_COVER_TYPE_E
+{
+    COVER_RECT = 0,
+    COVER_POLYGON,
+} RGN_AREA_TYPE_E;
+
 typedef int32_t RGN_HANDLE;            /*region handle*/
 
 typedef int32_t RGN_HANDLEGROUP;       /*region group handle*/
@@ -152,6 +164,12 @@ typedef struct HB_RGN_RECT_ATTR_S       /*rectangle attribute*/
     uint32_t u32Width;                /*width of rectangle*/
     uint32_t u32Height;               /*height of rectangle*/
 } RGN_RECT_S;
+
+typedef struct HB_RGN_POLYGON_ATTR_S       /*rectangle attribute*/
+{
+    uint32_t u32SideNum;
+    RGN_POINT_S stVertex[POLYGON_MAX_SIDE];
+} RGN_POLYGON_S;
 
 typedef struct HB_RGN_OVERLAY_ATTR_S    /*overlay region attribute*/
 {
@@ -185,6 +203,31 @@ typedef struct HB_RGN_COVER_CHN_ATTR_S          // channel cover region
     uint32_t u32Color;                        /*color of cover region*/
 }RGN_COVER_CHN_S;
 
+typedef struct HB_RGN_COVER_CHN_ATTR_PRO_S          // channel cover region
+                                                // display attribute
+{
+    RGN_AREA_TYPE_E enCoverType;
+    union
+    {
+        RGN_RECT_S stRect;                        /*rectangle of cover region*/
+        RGN_POLYGON_S stPolygon;
+    };
+    uint32_t u32Color;                        /*color of cover region*/
+}RGN_COVER_CHN_PRO_S;
+
+typedef struct HB_RGN_MOASIC_CHN_ATTR_S          // moasic attribute
+{
+    RGN_RECT_S stRect;
+    uint32_t stPixelBlock;
+}RGN_MOASIC_CHN_S;
+
+typedef union HB_RGN_CHN_ATTR_PRO_U                 /*channel region attribute*/
+{
+    RGN_OVERLAY_CHN_S stOverlayChn;           /*overlay region attribute*/
+    RGN_COVER_CHN_PRO_S stCoverChn;               /*cover region attribute*/
+    RGN_MOASIC_CHN_S stMoasicChn;               /*moasic region attribute*/
+} RGN_CHN_PRO_U;
+
 typedef union HB_RGN_CHN_ATTR_U                 /*channel region attribute*/
 {
     RGN_OVERLAY_CHN_S stOverlayChn;           /*overlay region attribute*/
@@ -204,6 +247,14 @@ typedef struct HB_RGN_CHN_ATTR_S                /*channel display attribute*/
     bool bInvertEn;                           /*enable invert*/
     RGN_CHN_U unChnAttr;                      /*region display attribute*/
 } RGN_CHN_ATTR_S;
+
+typedef struct HB_RGN_CHN_ATTR_EX_S                /*channel display attribute*/
+{
+    bool bShow;                               /*whether region display*/
+    bool bInvertEn;                           /*enable invert*/
+    uint32_t u32DisplayLevel;
+    RGN_CHN_PRO_U unChnAttr;                      /*region display attribute*/
+} RGN_CHN_ATTR_EX_S;
 
 typedef struct HB_RGN_BITMAP_ATTR_S           /*bitmap attribute*/
 {
@@ -261,6 +312,9 @@ int32_t HB_RGN_SetBitMap(RGN_HANDLE Handle, const RGN_BITMAP_S *pstBitmapAttr);
 int32_t HB_RGN_AttachToChn(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
                             const RGN_CHN_ATTR_S *pstChnAttr);
 
+int32_t HB_RGN_AttachToChnEx(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
+                            const RGN_CHN_ATTR_EX_S *pstChnAttr);
+
 /*detach region from a channel*/
 int32_t HB_RGN_DetachFromChn(RGN_HANDLE Handle, const RGN_CHN_S *pstChn);
 
@@ -268,9 +322,15 @@ int32_t HB_RGN_DetachFromChn(RGN_HANDLE Handle, const RGN_CHN_S *pstChn);
 int32_t HB_RGN_SetDisplayAttr(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
                             const RGN_CHN_ATTR_S *pstChnAttr);
 
+int32_t HB_RGN_SetDisplayAttrEx(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
+                            const RGN_CHN_ATTR_EX_S *pstChnAttr);
+
 /*get the displayed attribute*/
 int32_t HB_RGN_GetDisplayAttr(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
                             RGN_CHN_ATTR_S *pstChnAttr);
+
+int32_t HB_RGN_GetDisplayAttrEx(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
+                            RGN_CHN_ATTR_EX_S *pstChnAttr);
 
 /*get info of canvas*/
 int32_t HB_RGN_GetCanvasInfo(RGN_HANDLE Handle, RGN_CANVAS_S *pstCanvasInfo);
@@ -311,6 +371,9 @@ int32_t HB_RGN_GetSta(const RGN_CHN_S *pstChn, uint16_t astStaValue[8][4]);
 int32_t HB_RGN_AttachToPym(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
                             const RGN_CHN_ATTR_S *pstChnAttr);
 
+int32_t HB_RGN_AttachToPymEx(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
+                            const RGN_CHN_ATTR_EX_S *pstChnAttr);
+
 int32_t HB_RGN_DetachFromPym(RGN_HANDLE Handle, const RGN_CHN_S *pstChn);
 
 int32_t HB_RGN_SetPymColorMap(uint32_t aColorMap[15]);
@@ -322,6 +385,9 @@ int32_t HB_RGN_GetPymSta(const RGN_CHN_S *pstChn, uint16_t astStaValue[8][4]);
 
 int32_t HB_RGN_AddToYUV(RGN_HANDLE Handle, hb_vio_buffer_t *vio_buffer,
                             const RGN_CHN_ATTR_S *pstChnAttr);
+
+int32_t HB_RGN_AddToYUVEx(RGN_HANDLE Handle, hb_vio_buffer_t *vio_buffer,
+                            const RGN_CHN_ATTR_EX_S *pstChnAttr);
 
 int32_t HB_RGN_SetDisplayLevel(RGN_HANDLE Handle, const RGN_CHN_S *pstChn,
                             uint32_t osd_level);

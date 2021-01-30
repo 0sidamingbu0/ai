@@ -36,8 +36,6 @@ class MergeMethod : public Method {
 
   std::string GetVersion() const override { return "0.0.17"; }
 
-  void OnProfilerChanged(bool on) override {}
-
   MethodInfo GetMethodInfo() override {
     MethodInfo method_info;
     method_info.is_thread_safe_ = true;

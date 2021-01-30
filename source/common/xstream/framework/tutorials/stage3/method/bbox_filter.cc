@@ -115,6 +115,4 @@ void BBoxFilter::Finalize() {
 
 std::string BBoxFilter::GetVersion() const { return "test_only"; }
 
-void BBoxFilter::OnProfilerChanged(bool on) {}
-
 }  // namespace xstream

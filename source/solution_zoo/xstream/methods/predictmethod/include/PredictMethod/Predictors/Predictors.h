@@ -60,7 +60,6 @@ class Predictors {
 
  protected:
   Json::Value config_;
-  static std::mutex init_mutex_;
   std::string model_path_;
 
   std::shared_ptr<BPU_MODEL_S> bpu_model_ = nullptr;

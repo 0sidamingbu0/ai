@@ -2,6 +2,7 @@
   "xstream_workflow_file": "./video_box/configs/body_detection.json",
   "xstream_workflow_file_pic": "./video_box/configs/recog_flow.json",
   "xstream_workflow_file_feature": "./video_box/configs/feature_flow.json",
+  "enable_recog": false,
   "enable_profile": 0,
   "profile_log_path": "",
   "enable_result_to_json": false,

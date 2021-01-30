@@ -14,12 +14,15 @@
 #include <memory>
 #include "hobotlog/hobotlog.hpp"
 #include "vioplugin/vioplugin.h"
-#include "smartplugin/smartplugin.h"
+#include "smartplugin/smartplugin_multisource.h"
+#include "websocketplugin/websocketplugin_multisource.h"
 #include "bpu_predict/bpu_predict_extension.h"
 
-using std::chrono::seconds;
-using horizon::vision::xproto::smartplugin::SmartPlugin;
+using horizon::vision::xproto::multisourcesmartplugin::FaceBodySmartPlugin;
+using horizon::vision::xproto::multisourcewebsocketplugin::
+    FaceBodyWebsocketPlugin;
 using horizon::vision::xproto::vioplugin::VioPlugin;
+using std::chrono::seconds;
 
 static volatile bool exit_ = false;
 
@@ -52,7 +55,8 @@ int solution_main(int argc, const char **argv) {
   std::string run_mode = "ut";
   std::string vio_config_file = std::string(argv[1]);
   std::string smart_config_file = std::string(argv[2]);
-  std::string log_level(argv[3]);
+  std::string websocket_config_file = std::string(argv[3]);
+  std::string log_level(argv[4]);
 
   if (log_level == "-i") {
     SetLogLevel(HOBOT_LOG_INFO);
@@ -69,8 +73,8 @@ int solution_main(int argc, const char **argv) {
     return 0;
   }
 
-  if (argc == 5) {
-    run_mode.assign(argv[4]);
+  if (argc == 6) {
+    run_mode.assign(argv[5]);
 
     if (run_mode != "ut" && run_mode != "normal") {
       LOGE << "not support mode: " << run_mode;
@@ -83,7 +87,9 @@ int solution_main(int argc, const char **argv) {
   // signal(SIGSEGV, signal_handle);
 
   auto vio_plg = std::make_shared<VioPlugin>(vio_config_file);
-  auto smart_plg = std::make_shared<SmartPlugin>(smart_config_file);
+  auto smart_plg = std::make_shared<FaceBodySmartPlugin>(smart_config_file);
+  auto websocket_plg =
+      std::make_shared<FaceBodyWebsocketPlugin>(websocket_config_file);
 
   int rv = vio_plg->Init();
   if (rv != 0) {
@@ -100,6 +106,14 @@ int solution_main(int argc, const char **argv) {
 
   LOGI << "smart plugin init success";
 
+  rv = websocket_plg->Init();
+  if (rv < 0) {
+    LOGE << "websocket plugin init failed";
+    return -1;
+  }
+
+  LOGI << "websocket plugin init success";
+
   rv = vio_plg->Start();
   if (rv < 0) {
     LOGE << "vio plugin start failed";
@@ -113,6 +127,13 @@ int solution_main(int argc, const char **argv) {
     return -1;
   }
   LOGI << "smart plugin start success";
+
+  rv = websocket_plg->Start();
+  if (rv < 0) {
+    LOGE << "websocket plugin start failed";
+    return -1;
+  }
+  LOGI << "websocket plugin start success";
 
   if (run_mode == "ut") {
     std::this_thread::sleep_for(std::chrono::seconds(60));
@@ -135,6 +156,12 @@ int solution_main(int argc, const char **argv) {
     return -1;
   }
 
+  rv = websocket_plg->Stop();
+  if (rv < 0) {
+    LOGE << "websocket plugin stop failed";
+    return -1;
+  }
+
   rv = vio_plg->DeInit();
   if (rv < 0) {
     LOGE << "vio plugin DeInit failed";
@@ -147,7 +174,14 @@ int solution_main(int argc, const char **argv) {
     return -1;
   }
 
+  rv = websocket_plg->DeInit();
+  if (rv < 0) {
+    LOGE << "websocket plugin DeInit failed";
+    return -1;
+  }
+
   smart_plg = nullptr;
+  websocket_plg = nullptr;
   LOGI << "smart plugin stop success";
   return 0;
 }

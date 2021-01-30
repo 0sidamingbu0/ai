@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "xproto/message/pluginflow/flowmsg.h"
 #include "xproto/plugin/xplugin.h"
+#include "xproto/plugin/xpluginasync.h"
 #include "xproto/utils/singleton.h"
 #include "xproto/threads/threadpool.h"
 #include "xproto/message/pluginflow/msg_registry.h"
@@ -55,7 +56,14 @@ class XMsgQueue : public hobot::CSingleton<XMsgQueue> {
            << ", for plugin " << plugin->desc();
       return;
     }
-    plugin->SetMsgMonitorTime(msg_timeout_monitor_);
+    auto async_plugin = std::dynamic_pointer_cast<XPluginAsync>(plugin);
+    if (async_plugin) {
+      int monitor_time = async_plugin->GetMsgMonitorTime();
+      if (monitor_time <= 0) {
+        // plugin本身没有设置超时时间时，则设置为默认的超时时间
+        async_plugin->SetMsgMonitorTime(msg_timeout_monitor_);
+      }
+    }
     table_[type_handle].push_back(plugin);
   }
   void UnRegisterPlugin(const XPluginPtr &plugin, const std::string& msg_type) {
@@ -86,13 +94,17 @@ class XMsgQueue : public hobot::CSingleton<XMsgQueue> {
     while (true) {
       auto msg_queue_normal = true;
       for (auto &plugin : plugins) {
-        auto msg_count = plugin->GetPluginMsgCount();
-        auto plugin_msg_limit = plugin->GetPluginMsgLimit();
-        auto max_plugin_msg_count =
-            plugin_msg_limit <= 0 ? max_plugin_msg_ : plugin_msg_limit;
-        if (msg_count >= max_plugin_msg_count) {
-          msg_queue_normal = false;
-          break;
+        auto async_plugin = std::dynamic_pointer_cast<XPluginAsync>(plugin);
+        if (async_plugin) {
+          // 流量控制只对XPluginAsync有用
+          auto msg_count = async_plugin->GetPluginMsgCount();
+          auto plugin_msg_limit = async_plugin->GetPluginMsgLimit();
+          auto max_plugin_msg_count =
+              plugin_msg_limit <= 0 ? max_plugin_msg_ : plugin_msg_limit;
+          if (msg_count >= max_plugin_msg_count) {
+            msg_queue_normal = false;
+            break;
+          }
         }
       }
       if (false == msg_queue_normal) {
@@ -120,13 +132,16 @@ class XMsgQueue : public hobot::CSingleton<XMsgQueue> {
       std::lock_guard<std::mutex> lck(mutex_);
       auto &plugins = table_[type_handle];
       for (auto &plugin : plugins) {
-        auto msg_count = plugin->GetPluginMsgCount();
-        auto plugin_msg_limit = plugin->GetPluginMsgLimit();
-        auto max_plugin_msg_count =
-            plugin_msg_limit <= 0 ? max_plugin_msg_ : plugin_msg_limit;
-        if (msg_count >= max_plugin_msg_count) {
-          msg_queue_normal = false;
-          break;
+        auto async_plugin = std::dynamic_pointer_cast<XPluginAsync>(plugin);
+        if (async_plugin) {
+          auto msg_count = async_plugin->GetPluginMsgCount();
+          auto plugin_msg_limit = async_plugin->GetPluginMsgLimit();
+          auto max_plugin_msg_count =
+              plugin_msg_limit <= 0 ? max_plugin_msg_ : plugin_msg_limit;
+          if (msg_count >= max_plugin_msg_count) {
+            msg_queue_normal = false;
+            break;
+          }
         }
       }
     }

@@ -40,8 +40,6 @@ std::string BBoxFilter::GetVersion() const {
   return "";
 }
 
-void BBoxFilter::OnProfilerChanged(bool on) {}
-
 std::vector<std::vector<BaseDataPtr>> BBoxScoreFilter::DoProcess(
     const std::vector<std::vector<BaseDataPtr>> &input,
     const std::vector<InputParamPtr> &param) {

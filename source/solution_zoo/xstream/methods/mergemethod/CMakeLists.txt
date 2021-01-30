@@ -33,6 +33,8 @@ set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME}/)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/MergeMethod/MergeMethod.h
         DESTINATION ${MY_OUTPUT_ROOT}/include/MergeMethod)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/MergeMethod/data_type/data_type.h
+        DESTINATION ${MY_OUTPUT_ROOT}/include/MergeMethod/data_type)
 
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${MY_OUTPUT_ROOT}/lib)

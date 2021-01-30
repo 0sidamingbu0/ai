@@ -78,41 +78,10 @@ int Yolov3PredictMethod::PrepareInputData(
 
   auto pyramid_image = std::static_pointer_cast<
       hobot::vision::PymImageFrame>(xstream_img->value);
-  // pym第0层大小
-  // const int src_width = pyramid_image->Width();
-  // const int src_height = pyramid_image->Height();
 
   // 全图检测对应一次预测
   input_tensors.resize(1);
   output_tensors.resize(1);
-
-  int target_pym_layer_height = 0;
-  int target_pym_layer_width = 0;
-
-  // 模型输入大小：416 x 416
-  // 以1080p为例，金字塔第0层1920x1080，第4层960x540，第8层480x270
-  // vio配置目标层pyramid_layer_：从第4层抠取图像中间的416x416
-  // desired: target_pym_layer_height = 416, target_pym_layer_width = 416
-#ifdef X2
-  target_pym_layer_height =
-      pyramid_image->img.down_scale[pyramid_layer_].height;
-  target_pym_layer_width =
-      pyramid_image->img.down_scale[pyramid_layer_].width;
-#endif
-#ifdef X3
-  target_pym_layer_height = pyramid_image->down_scale[pyramid_layer_].height;
-  target_pym_layer_width = pyramid_image->down_scale[pyramid_layer_].width;
-#endif
-
-  int ret = 0;
-
-  // check pyramid image size
-  if (target_pym_layer_height != model_input_height_ ||
-      target_pym_layer_width != model_input_width_) {
-    LOGE << "pyramid image size not equal to model input size, "
-        << "check vio_config and pyramid_layer: " << pyramid_layer_;
-    return -1;
-  }
 
 #ifdef X2
   auto input_img = pyramid_image->img.down_scale[pyramid_layer_];
@@ -120,9 +89,16 @@ int Yolov3PredictMethod::PrepareInputData(
 #ifdef X3
   auto input_img = pyramid_image->down_scale[pyramid_layer_];
 #endif
+  // 期望金字塔图像宽高都大于模型输入，避免padding影响算法效果
+  if (input_img.height < model_input_height_ ||
+      input_img.width < model_input_width_) {
+    LOGE << "pyramid image size smaller than model_input size, "
+         << "please check pyramid_layer";
+    return -1;
+  }
 
   // 1. alloc input_tensors
-  ret = AllocInputTensor(input_tensors[0]);
+  int ret = AllocInputTensor(input_tensors[0]);
   if (ret != 0) {
   LOGE << "Alloc InputTensor failed!";
   return -1;
@@ -134,46 +110,80 @@ int Yolov3PredictMethod::PrepareInputData(
     return -1;
   }
 
-  // 3. copy data to input_tensors
-  HOBOT_CHECK(input_tensors[0].size() == 1);  // 1层输入
-  // 与模型有关，需要根据模型信息处理,此模型输入数据类型nv12
-  HOBOT_CHECK(input_tensors[0][0].data_type == BPU_TYPE_IMG_NV12_SEPARATE);
+  // 模型输入大小：416 x 416
+  // 以1080p为例，金字塔第0层1920x1080，第4层960x540
+  // vio配置目标层pyramid_layer_：取第4层数据，padding到960x960，再resize到416x416
+  // desired: target_pym_layer_height = 540, target_pym_layer_width = 960
+
+  // prepare 960x960 BPU_TENSOR
+  // 注意BPU_TENSOR需要释放
+  BPU_TENSOR_S pre_resize_tensor;
   {
-    uint8_t *input_y_data, *input_uv_data;
+    pre_resize_tensor.data_type = BPU_TYPE_IMG_NV12_SEPARATE;
+    int h_idx, w_idx, c_idx;
+    HB_BPU_getHWCIndex(
+        pre_resize_tensor.data_type, nullptr, &h_idx, &w_idx, &c_idx);
+    pre_resize_tensor.data_shape.ndim = 4;
+    pre_resize_tensor.data_shape.d[0] = 1;
+    // 金字塔图像width>height, padding到width
+    pre_resize_tensor.data_shape.d[h_idx] = input_img.width;
+    pre_resize_tensor.data_shape.d[w_idx] = input_img.width;
+    pre_resize_tensor.data_shape.d[c_idx] = 3;
+    pre_resize_tensor.aligned_shape = pre_resize_tensor.data_shape;
 
-    BPU_TENSOR_S &tensor = input_tensors[0][0];
-    int height = tensor.data_shape.d[input_h_idx_];
-    int width = tensor.data_shape.d[input_w_idx_];
-    int stride = tensor.aligned_shape.d[input_w_idx_];
-#ifdef X2
-    input_y_data = reinterpret_cast<uint8_t *>(input_img.y_vaddr);
-    input_uv_data = reinterpret_cast<uint8_t *>(input_img.c_vaddr);
-#endif
-#ifdef X3
-    input_y_data = reinterpret_cast<uint8_t *>(input_img.y_vaddr);
-    input_uv_data = reinterpret_cast<uint8_t *>(input_img.c_vaddr);
-#endif
-
-    // copy y data to data0
-    uint8_t *y = reinterpret_cast<uint8_t *>(tensor.data.virAddr);
-    for (int h = 0; h < height; ++h) {
-      auto *raw = y + h * stride;
-      memcpy(raw, input_y_data, width);
-      input_y_data += width;
+    // alloc bpu-mem
+    // 数据类型是nv12图像，y和uv分量分开alloc和存储
+    int y_length = input_img.width * input_img.width;
+    int uv_length = y_length >> 1;
+    ret = HB_SYS_bpuMemAlloc(
+        "in_data0", y_length, true, &pre_resize_tensor.data);
+    if (ret != 0) {
+      LOGE << "bpu alloc mem failed: " << HB_BPU_getErrorName(ret);
+      return -1;
     }
-    HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
-
+    ret = HB_SYS_bpuMemAlloc(
+        "in_data1", uv_length, true, &pre_resize_tensor.data_ext);
+    if (ret != 0) {
+      LOGE << "bpu alloc mem failed: " << HB_BPU_getErrorName(ret);
+      // release alloced mem
+      HB_SYS_bpuMemFree(&pre_resize_tensor.data);
+      return -1;
+    }
+    // Copy y data to data0
+    uint8_t *y = reinterpret_cast<uint8_t *>(pre_resize_tensor.data.virAddr);
+    uint8_t *src_y = reinterpret_cast<uint8_t *>(input_img.y_vaddr);
+    memcpy(y, src_y, input_img.width * input_img.height);
+    // 将padding的底部填充0
+    memset(y + input_img.width * input_img.height, 0,
+           input_img.width * (input_img.width - input_img.height));
+    HB_SYS_flushMemCache(&pre_resize_tensor.data, HB_SYS_MEM_CACHE_CLEAN);
     // Copy uv data to data_ext
-    uint8_t *uv = reinterpret_cast<uint8_t *>(tensor.data_ext.virAddr);
-    int uv_height = height / 2;
-    for (int i = 0; i < uv_height; ++i) {
-      auto *raw = uv + i * stride;
-      memcpy(raw, input_uv_data, width);
-      input_uv_data += width;
-    }
-    HB_SYS_flushMemCache(&tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
+    uint8_t *uv = reinterpret_cast<uint8_t *>(
+        pre_resize_tensor.data_ext.virAddr);
+    uint8_t *src_uv = reinterpret_cast<uint8_t *>(input_img.c_vaddr);
+    int uv_height = input_img.height >> 1;
+    memcpy(uv, src_uv, input_img.width * uv_height);
+    // 将padding的底部填充0
+    memset(uv + input_img.width * uv_height, 0,
+           input_img.width * (input_img.width - input_img.height) >> 1);
+    HB_SYS_flushMemCache(&pre_resize_tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
   }
 
+  // resize to 416x416
+  BPU_RESIZE_CTRL_S ctrl_param = {
+      BPU_RESIZE_TYPE_BILINEAR,
+      BPU_TYPE_IMG_NV12_SEPARATE,
+      -1};
+  HOBOT_CHECK(input_tensors[0].size() == 1);
+  ret = HB_BPU_resize(&pre_resize_tensor,
+                      &input_tensors[0][0],
+                      &ctrl_param);
+  HB_SYS_bpuMemFree(&pre_resize_tensor.data);
+  HB_SYS_bpuMemFree(&pre_resize_tensor.data_ext);
+  if (ret != 0) {
+    LOGE << "resize nv12 failed";
+    return -1;
+  }
   return 0;
 }
 }  // namespace xstream

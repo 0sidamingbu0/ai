@@ -137,7 +137,7 @@
         "outputs": [
           "matting_trimapfree"
         ],
-        "method_config_file": "null"
+        "method_config_file": "postprocess_matting_trimapfree.json"
       }
     ]
 }

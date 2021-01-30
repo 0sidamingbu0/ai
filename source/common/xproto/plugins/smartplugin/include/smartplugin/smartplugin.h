@@ -91,14 +91,21 @@ struct CustomSmartMessage : SmartMessage {
   std::string Serialize() override;
   std::string Serialize(int ori_w, int ori_h, int dst_w, int dst_h) override;
   void Serialize_Print(Json::Value &root);
+  void SetExpansionRatio(float expansion_ratio) {
+    matting_trimapfree_expansion_ratio_ = expansion_ratio;
+  }
   void SetAPMode(bool ap_mode) {
     ap_mode_ = ap_mode;
   }
   void Serialize_Dump_Result();
+  const xstream::OutputDataPtr& GetSmartResult() const {
+    return smart_result;
+  }
 
  protected:
   xstream::OutputDataPtr smart_result;
   bool ap_mode_ = false;
+  float matting_trimapfree_expansion_ratio_ = 0.2;
 
  private:
   enum class gesture_type {
@@ -115,6 +122,13 @@ struct CustomSmartMessage : SmartMessage {
     // model output end
     // gesture output with strategy start
     Palm
+  };
+  enum class gesture_direction {
+    UNKONWN = 0,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
   };
 
   typedef struct {
@@ -242,6 +256,8 @@ class SmartPlugin : public XPluginAsync {
   bool dump_result_{false};
   Json::Value root_;
   bool run_flag_ = false;
+  bool hand_id_merge_ = true;
+  bool convert_keypoint_format_ = false;
 
 #ifdef USE_MC
   int OnApInfoMessage(const XProtoMessagePtr &msg);

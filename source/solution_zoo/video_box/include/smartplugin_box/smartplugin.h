@@ -143,6 +143,7 @@ class SmartPlugin : public XPluginAsync {
   bool running_venc_720p_ = false;
   bool running_vot_ = true;
   bool encode_smart_ = true;
+  bool enable_recog_{false};
 
   int channel_num_ = 0;
   int display_mode_ = 0;

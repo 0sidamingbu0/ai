@@ -16,9 +16,7 @@
 #include <vector>
 #include "DnnPostProcessMethod/DnnPostProcessMethod.h"
 #include "bpu_predict/bpu_predict_extension.h"
-#ifdef X3
-#include "./bpu_predict_x3.h"
-#endif
+
 namespace xstream {
 
 class MattingTrimapFreePostProcessMethod : public DnnPostProcessMethod {
@@ -26,11 +24,15 @@ class MattingTrimapFreePostProcessMethod : public DnnPostProcessMethod {
   MattingTrimapFreePostProcessMethod() {}
   virtual ~MattingTrimapFreePostProcessMethod() {}
 
+  int Init(const std::string &cfg_path) override;
   // 派生类需要实现
   // 完成模型的后处理，以及转换成Method输出格式
   // IN: dnn_result. OUT: frame_result
   virtual int ParseDnnResult(DnnAsyncData &dnn_result,
                              std::vector<BaseDataPtr> &frame_result);
+
+ private:
+  float matting_thresh_ = 0.5;
 };
 }  // namespace xstream
 #endif

@@ -48,8 +48,6 @@ class FilterSkipFrameMethod : public Method {
 
   std::string GetVersion() const override;
 
-  void OnProfilerChanged(bool on) override;
-
  private:
   /**
    * @brief 更新配置

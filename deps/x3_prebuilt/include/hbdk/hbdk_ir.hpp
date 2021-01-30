@@ -71,6 +71,13 @@ void AbortOnVersion(const T *, std::uint32_t version) {
   std::abort();
 }
 
+enum class round_mode_t {
+  UNSET,  // Use enable_rounding field if unset
+  FLOOR,
+  ROUND,
+  CEIL,
+};
+
 /**
  * Tensor used by Layer inputs and outputs
  */
@@ -239,6 +246,14 @@ struct Layer {
     SPOOLING_AVG_GLOBAL,
     RESCALE,
     SLUT,
+    GEMM,
+    ELEMENTWISE_BIT_AND,
+    ELEMENTWISE_BIT_OR,
+    ELEMENTWISE_BIT_XOR,
+    ELEMENTWISE_EQUAL,
+    ELEMENTWISE_NOT_EQUAL,
+    ELEMENTWISE_GREATER,
+    ELEMENTWISE_LESS_OR_EQUAL,
   };
 
   Layer() = default;
@@ -762,6 +777,7 @@ struct RoiResizeLayer : public Layer {
   struct Roi;
   enum class PadMode;
   enum class AlignMode;
+  enum class InterpolationMode;
   RoiResizeLayer() = default;
   RoiResizeLayer(std::string name, std::vector<std::shared_ptr<Tensor>> input_tensors,
                  std::vector<std::shared_ptr<Tensor>> output_tensors, RoiResizeLayer::Roi roi,
@@ -808,6 +824,12 @@ struct RoiResizeLayer : public Layer {
          CEREAL_NVP(roi_.bottom), CEREAL_NVP(pad_mode_), CEREAL_NVP(align_mode_), CEREAL_NVP(is_interpolate_twice),
          CEREAL_NVP(precision_bit_num_), CEREAL_NVP(start_offset_), CEREAL_NVP(step_),
          CEREAL_NVP(calibrate_step_block_size_));
+    } else if (version == 10) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(roi_.left), CEREAL_NVP(roi_.top), CEREAL_NVP(roi_.right),
+         CEREAL_NVP(roi_.bottom), CEREAL_NVP(pad_mode_), CEREAL_NVP(align_mode_), CEREAL_NVP(interpolation_mode_),
+         CEREAL_NVP(is_interpolate_twice), CEREAL_NVP(precision_bit_num_), CEREAL_NVP(start_offset_), CEREAL_NVP(step_),
+         CEREAL_NVP(calibrate_step_block_size_), CEREAL_NVP(pad_value_), CEREAL_NVP(pad_value_uv_),
+         CEREAL_NVP(is_input_uint8_), CEREAL_NVP(is_output_uint8_));
     } else {
       AbortOnVersion(this, version);
     }
@@ -825,8 +847,9 @@ struct RoiResizeLayer : public Layer {
     }
   } roi_;
 
-  enum class PadMode { ZERO, BOUNDARY } pad_mode_ = PadMode::ZERO;
+  enum class PadMode { ZERO, BOUNDARY, CONSTANT } pad_mode_ = PadMode::ZERO;
   enum class AlignMode { ORIGIN, CENTER } align_mode_ = AlignMode::ORIGIN;
+  enum class InterpolationMode { BILINEAR, NEAREST } interpolation_mode_ = InterpolationMode::BILINEAR;
   bool is_interpolate_twice = true;
   std::pair<uint32_t, uint32_t> precision_bit_num_ = {8U, 8U};
   /*
@@ -848,6 +871,11 @@ struct RoiResizeLayer : public Layer {
    * -1 indicates that calibration is not enabled.
    */
   int32_t calibrate_step_block_size_ = -1;
+
+  int32_t pad_value_ = 0;
+  int32_t pad_value_uv_ = 0;
+  bool is_input_uint8_ = false;
+  bool is_output_uint8_ = false;
 };
 
 /**
@@ -897,12 +925,15 @@ struct ElementwiseMul : public Layer {
       ar(cereal::base_class<Layer>(this));
     } else if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(enable_rounding));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(enable_rounding), CEREAL_NVP(round_mode));
     } else {
       AbortOnVersion(this, version);
     }
   }
 
-  bool enable_rounding = false;
+  bool enable_rounding = false;  // Deprecated, use round_mode
+  round_mode_t round_mode = round_mode_t::UNSET;
 };
 
 /**
@@ -930,6 +961,9 @@ struct SElementwiseMul : public Layer {
     } else if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(output_scale), CEREAL_NVP(accu_right_shift),
          CEREAL_NVP(output_right_shift), CEREAL_NVP(enable_rounding));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(output_scale), CEREAL_NVP(accu_right_shift),
+         CEREAL_NVP(output_right_shift), CEREAL_NVP(enable_rounding), CEREAL_NVP(round_mode));
     } else {
       AbortOnVersion(this, version);
     }
@@ -939,12 +973,13 @@ struct SElementwiseMul : public Layer {
   std::vector<int8_t> accu_right_shift;
   std::vector<int8_t> output_right_shift;
 
-  bool enable_rounding = false;
+  bool enable_rounding = false;  // Deprecated, use round_mode
 
   // deprecated parameters, plan to delete on version 3.12.x
   std::vector<int32_t> sumin_scale;
   std::vector<int8_t> bias_left_shift;
   std::vector<int8_t> sumin_left_shift;
+  round_mode_t round_mode = round_mode_t::UNSET;
 };
 
 /**
@@ -969,11 +1004,14 @@ struct ElementwiseAdd : public Layer {
       ar(cereal::base_class<Layer>(this));
     } else if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(enable_rounding));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(enable_rounding), CEREAL_NVP(round_mode));
     } else {
       AbortOnVersion(this, version);
     }
   }
-  bool enable_rounding = false;
+  bool enable_rounding = false;  // Deprecated. Use round_mode
+  round_mode_t round_mode = round_mode_t::UNSET;
 };
 
 /**
@@ -995,8 +1033,9 @@ struct SElementwiseAdd : public Layer {
   layer_type_t GetLayerType() const override { return layer_type_t::SELEMENTWISE_ADD; }
 
   template <class Archive>
-  void serialize(Archive &ar, std::int32_t const version) {
-    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+  void serialize(Archive &ar,
+                 std::int32_t const version) {  // Don't forget to update the version number using
+                                                // HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
     if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(output_scale), CEREAL_NVP(accu_right_shift),
          CEREAL_NVP(output_right_shift), CEREAL_NVP(sumin_scale), CEREAL_NVP(sumin_left_shift),
@@ -1005,6 +1044,10 @@ struct SElementwiseAdd : public Layer {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(output_scale), CEREAL_NVP(accu_right_shift),
          CEREAL_NVP(output_right_shift), CEREAL_NVP(sumin_scale), CEREAL_NVP(sumin_left_shift),
          CEREAL_NVP(input_left_shift), CEREAL_NVP(input_scale), CEREAL_NVP(enable_rounding));
+    } else if (version == 4) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(output_scale), CEREAL_NVP(accu_right_shift),
+         CEREAL_NVP(output_right_shift), CEREAL_NVP(sumin_scale), CEREAL_NVP(sumin_left_shift),
+         CEREAL_NVP(input_left_shift), CEREAL_NVP(input_scale), CEREAL_NVP(enable_rounding), CEREAL_NVP(round_mode));
     } else {
       AbortOnVersion(this, version);
     }
@@ -1020,7 +1063,8 @@ struct SElementwiseAdd : public Layer {
   std::vector<int32_t> sumin_scale;
   std::vector<int8_t> sumin_left_shift;
 
-  bool enable_rounding = false;
+  bool enable_rounding = false;  // Deprecated. Use round_mode
+  round_mode_t round_mode = round_mode_t::UNSET;
 };
 
 /* ===============================================
@@ -1057,11 +1101,14 @@ struct ElementwiseSub : public Layer {
       ar(cereal::base_class<Layer>(this));
     } else if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(enable_rounding));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(enable_rounding), CEREAL_NVP(round_mode));
     } else {
       AbortOnVersion(this, version);
     }
   }
-  bool enable_rounding = false;
+  bool enable_rounding = false;  // Deprecated. Use round_mode
+  round_mode_t round_mode = round_mode_t::UNSET;
 };
 
 /**
@@ -1191,6 +1238,7 @@ struct ChannelSumLayer : public Layer {
  * output [?]
  */
 struct FilterLayer : public Layer {
+  enum class PostProcessMode { FT_DENSEBOX, FT_SSD, FT_YOLO, NONE };
   FilterLayer() = default;
   FilterLayer(std::string name, std::vector<std::shared_ptr<Tensor>> input_tensors,
               std::vector<std::shared_ptr<Tensor>> output_tensors, int32_t anchor_num, int32_t thresh,
@@ -1206,7 +1254,10 @@ struct FilterLayer : public Layer {
 
   template <class Archive>
   void serialize(Archive &ar, std::int32_t const version) {
-    if (version == 1) {
+    if (version == 2) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(anchor_dim), CEREAL_NVP(threshold), CEREAL_NVP(max_box_num),
+         CEREAL_NVP(start_channel), CEREAL_NVP(end_channel), CEREAL_NVP(post_process_mode));
+    } else if (version == 1) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(anchor_dim), CEREAL_NVP(threshold), CEREAL_NVP(max_box_num),
          CEREAL_NVP(start_channel), CEREAL_NVP(end_channel));
     } else {
@@ -1219,6 +1270,7 @@ struct FilterLayer : public Layer {
   uint32_t max_box_num;
   uint32_t start_channel;
   uint32_t end_channel;
+  PostProcessMode post_process_mode = PostProcessMode::NONE;
 };
 
 /**
@@ -1243,12 +1295,18 @@ struct SoftmaxLayer : public Layer {
     // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
     if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(preserve_shape));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(preserve_shape), CEREAL_NVP(max_value_only), CEREAL_NVP(exp_table),
+         CEREAL_NVP(exp_shift));
     } else {
       AbortOnVersion(this, version);
     }
   }
 
   bool preserve_shape = false;
+  bool max_value_only = false;
+  std::vector<int32_t> exp_table;
+  int8_t exp_shift = 0;
 };
 
 /**
@@ -1274,6 +1332,12 @@ struct WarpingLayer : public Layer {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(mode), CEREAL_NVP(stride), CEREAL_NVP(mapping_offset),
          CEREAL_NVP(kernel_shape), CEREAL_NVP(padding_value), CEREAL_NVP(is_mapping_y_then_x),
          CEREAL_NVP(is_uint8_mode));
+    } else if (version == 5) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(mode), CEREAL_NVP(stride), CEREAL_NVP(mapping_offset),
+         CEREAL_NVP(kernel_shape), CEREAL_NVP(padding_value), CEREAL_NVP(is_mapping_y_then_x),
+         CEREAL_NVP(is_uint8_mode), CEREAL_NVP(is_input_uint8), CEREAL_NVP(is_output_uint8),
+         CEREAL_NVP(enable_rounding), CEREAL_NVP(padding_value_uv), CEREAL_NVP(interpolation_mode),
+         CEREAL_NVP(pad_mode));
     } else {
       AbortOnVersion(this, version);
     }
@@ -1286,7 +1350,13 @@ struct WarpingLayer : public Layer {
   Shape2D kernel_shape;
   int32_t padding_value = 0;
   bool is_mapping_y_then_x = false;  // motion vector channel 0 is y, and channel 1 is x ?
-  bool is_uint8_mode = false;        // 8-bit input/output/padding_value are interpreted as uint8
+  bool is_uint8_mode = false;        // deprecated, 8-bit input/output/padding_value are interpreted as uint8
+  bool is_input_uint8 = false;       // 8-bit input/padding_value are interpreted as uint8
+  bool is_output_uint8 = false;      // 8-bit output is interpreted as uint8
+  bool enable_rounding = true;
+  int32_t padding_value_uv = 0;  // for yuv input, the y and uv are allowed to have different values
+  enum class InterpolationMode { BILINEAR, NEAREST } interpolation_mode = InterpolationMode::BILINEAR;
+  enum class PadMode { CONSTANT, BOUNDARY } pad_mode = PadMode::CONSTANT;
 };
 
 /**
@@ -2279,6 +2349,152 @@ struct Rescale : public Layer {
   std::vector<int8_t> output_right_shift;
 };
 
+/***
+ * Support D = alpha * A * B + beta * C, which A, B, C, D all are matrix, represented as tensor, the shape are 1x1xMxN,
+ * M is the row number, N is the column number.
+ *
+ * If the A's shape is 1x1xMxK, B's shape is 1x1xKxN, then the C's shape is 1x1xMxN, D's shape is 1x1xMxN;
+ * If is_transa is true, the A's shape is 1x1xKxM, if is_transb is true, the B's shape is 1x1xNxK.
+ *
+ */
+struct GemmLayer : public Layer {
+  GemmLayer() = default;
+  GemmLayer(std::string name, std::vector<std::shared_ptr<Tensor>> input_tensors,
+            std::vector<std::shared_ptr<Tensor>> output_tensors, int32_t alpha, int32_t beta, bool is_transa,
+            bool is_transb)
+      : Layer(std::move(name), std::move(input_tensors), std::move(output_tensors)),
+        alpha_(alpha),
+        beta_(beta),
+        is_transa_(is_transa),
+        is_transb_(is_transb) {}
+  ~GemmLayer() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::GEMM; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(alpha_), CEREAL_NVP(beta_), CEREAL_NVP(is_transa_),
+         CEREAL_NVP(is_transb_));
+    }
+  }
+  int32_t alpha_;
+  int32_t beta_;
+  bool is_transa_;
+  bool is_transb_;
+};
+
+struct ElementwiseBitAnd : public Layer {
+  using Layer::Layer;
+  ~ElementwiseBitAnd() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_BIT_AND; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
+struct ElementwiseBitOr : public Layer {
+  using Layer::Layer;
+  ~ElementwiseBitOr() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_BIT_OR; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
+struct ElementwiseBitXor : public Layer {
+  using Layer::Layer;
+  ~ElementwiseBitXor() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_BIT_XOR; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
+struct ElementwiseEqual : public Layer {
+  using Layer::Layer;
+  ~ElementwiseEqual() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_EQUAL; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
+struct ElementwiseNotEqual : public Layer {
+  using Layer::Layer;
+  ~ElementwiseNotEqual() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_NOT_EQUAL; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
+struct ElementwiseGreater : public Layer {
+  using Layer::Layer;
+  ~ElementwiseGreater() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_GREATER; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
+struct ElementwiseLessOrEqual : public Layer {
+  using Layer::Layer;
+  ~ElementwiseLessOrEqual() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::ELEMENTWISE_LESS_OR_EQUAL; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+};
+
 }  // namespace hbir
 }  // namespace hbdk
 
@@ -2312,15 +2528,15 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::RoiResizeLayer, 9)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ReluLayer, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseMul, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseMul, 3)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SElementwiseMul, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SElementwiseMul, 3)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseAdd, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseAdd, 3)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseSub, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseSub, 3)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SElementwiseAdd, 3)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SElementwiseAdd, 4)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SplitLayer, 1)
 // NOLINTNEXTLINE
@@ -2328,9 +2544,9 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ConcatLayer, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ChannelMaxLayer, 2)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SoftmaxLayer, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SoftmaxLayer, 3)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::WarpingLayer, 4)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::WarpingLayer, 5)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::DetectionPostProcessLayer, 5)
 // NOLINTNEXTLINE
@@ -2340,7 +2556,7 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ROIAlignLayer, 3)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ChannelSumLayer, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::FilterLayer, 1)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::FilterLayer, 2)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SliceLayer, 1)
 // NOLINTNEXTLINE
@@ -2385,6 +2601,22 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseMax, 1)
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::Rescale, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SLutLayer, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::GemmLayer, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseBitAnd, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseBitOr, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseBitXor, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseEqual, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseNotEqual, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseGreater, 1)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseLessOrEqual, 1)
 #undef HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION
 
 #endif  // SWIG

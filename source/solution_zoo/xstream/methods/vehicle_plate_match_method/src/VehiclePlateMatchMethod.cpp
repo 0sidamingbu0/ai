@@ -26,7 +26,7 @@ typedef XStreamData<hobot::vision::BBox> XStreamBBox;
 
 int VehiclePlateMatchMethod::Init(const std::string &config_file_path) {
   LOGI << "VehiclePlateMatchMethod::Init " << config_file_path;
-  matcher = hobot::vehicle_snap_strategy::PairsMatchAPI::NewPairsMatchAPI(
+  matcher = hobot::vehicle_match_strategy::PairsMatchAPI::NewPairsMatchAPI(
       config_file_path);
   if (nullptr == matcher)
     return -1;
@@ -51,21 +51,27 @@ std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
     auto &in_batch_i = input[i];
     auto &out_batch_i = output[i];
 
+    // inputs order: vehicle_bbox, plate_bbox, vehicle_lmks, plate_lmks,
+    // plate_type, plate_color
     auto in_vehicle_rects =
         std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[0]);
     auto in_plate_rects =
         std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[1]);
-    auto in_plate_type =
-        std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[2]);
-    auto in_plate_color =
-        std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[3]);
     auto in_vehicle_lmk = std::make_shared<BaseDataVector>();
     auto in_plate_lmk = std::make_shared<BaseDataVector>();
-    if (in_batch_i.size() == 6) {
-      in_vehicle_lmk =
-          std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[4]);
-      in_plate_lmk =
-          std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[5]);
+    auto in_plate_type = std::make_shared<BaseDataVector>();
+    auto in_plate_color = std::make_shared<BaseDataVector>();
+    if (in_batch_i.size() >= 3) {
+      in_vehicle_lmk = std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[2]);
+    }
+    if (in_batch_i.size() >= 4) {
+      in_plate_lmk = std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[3]);
+    }
+    if (in_batch_i.size() >= 5) {
+      in_plate_type = std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[4]);
+    }
+    if (in_batch_i.size() >= 6) {
+      in_plate_type = std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[5]);
     }
 
     assert("BaseDataVector" == in_vehicle_rects->type_);
@@ -92,22 +98,22 @@ std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
     out_batch_i.push_back(
         std::dynamic_pointer_cast<BaseData>(out_plate_color));
 
-    hobot::vehicle_snap_strategy::VehicleListPtr vehicle_list =
-        std::make_shared<hobot::vehicle_snap_strategy::VehicleList>();
-    hobot::vehicle_snap_strategy::PlateListPtr plate_list =
-        std::make_shared<hobot::vehicle_snap_strategy::PlateList>();
+    hobot::vehicle_match_strategy::VehicleListPtr vehicle_list =
+        std::make_shared<hobot::vehicle_match_strategy::VehicleList>();
+    hobot::vehicle_match_strategy::PlateListPtr plate_list =
+        std::make_shared<hobot::vehicle_match_strategy::PlateList>();
 
     std::size_t vehicle_data_size = in_vehicle_rects->datas_.size();
     for (std::size_t vehicle_idx = 0; vehicle_idx < vehicle_data_size;
          ++vehicle_idx) {
-      hobot::vehicle_snap_strategy::Vehicle veh_tmp;
+      hobot::vehicle_match_strategy::Vehicle veh_tmp;
       auto bbox = std::dynamic_pointer_cast<XStreamBBox>(
           in_vehicle_rects->datas_[vehicle_idx]);
       if (!bbox) {
         LOGW << "bbox is null";
         continue;
       }
-      hobot::vehicle_snap_strategy::BBoxPtr box =
+      hobot::vehicle_match_strategy::BBoxPtr box =
           std::make_shared<hobot::vision::BBox>(
             bbox->value.x1, bbox->value.y1, bbox->value.x2, bbox->value.y2);
       if (in_vehicle_lmk && !in_vehicle_lmk->datas_.empty() &&
@@ -117,7 +123,7 @@ std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
             in_vehicle_lmk->datas_[vehicle_idx]);
         veh_tmp.vehicle_landmarks_ptr = vehicle_lmk;
       } else {
-        LOGW << "no matching vehicle lmks";
+        LOGD << "no matching vehicle lmks";
       }
 
       veh_tmp.bbox = box;
@@ -128,16 +134,31 @@ std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
 
     for (std::size_t plate_idx = 0; plate_idx < in_plate_rects->datas_.size();
          ++plate_idx) {
-      hobot::vehicle_snap_strategy::Plate plate_tmp;
+      hobot::vehicle_match_strategy::Plate plate_tmp;
       auto bbox =
           std::dynamic_pointer_cast<XStreamBBox>(
               in_plate_rects->datas_[plate_idx]);
-      auto plate_type = std::dynamic_pointer_cast<
-          xstream::XStreamData<hobot::vision::Attribute<int>>>(
-          in_plate_type->datas_[plate_idx]);
-      auto plate_color = std::dynamic_pointer_cast<
-          xstream::XStreamData<hobot::vision::Attribute<int>>>(
-          in_plate_color->datas_[plate_idx]);
+      if (in_plate_type && !in_plate_type->datas_.empty() &&
+          plate_idx < in_plate_type->datas_.size()) {
+        auto plate_type = std::dynamic_pointer_cast<
+            xstream::XStreamData<hobot::vision::Attribute<int>>>(
+                in_plate_type->datas_[plate_idx]);
+        plate_tmp.is_double = plate_type->value.value;
+        plate_tmp.plateType = plate_type;
+      } else {
+        LOGD << "no matching plate type";
+      }
+
+      if (in_plate_color && !in_plate_color->datas_.empty() &&
+          plate_idx < in_plate_color->datas_.size()) {
+        auto plate_color = std::dynamic_pointer_cast<
+            xstream::XStreamData<hobot::vision::Attribute<int>>>(
+                in_plate_color->datas_[plate_idx]);
+        plate_tmp.plate_color = *plate_color;
+      } else {
+        LOGD << "no matching plate color";
+      }
+
       if (in_plate_lmk && !in_plate_lmk->datas_.empty() &&
           plate_idx < in_plate_lmk->datas_.size()) {
         auto plate_lmk = std::dynamic_pointer_cast<
@@ -145,29 +166,25 @@ std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
             in_plate_lmk->datas_[plate_idx]);
         plate_tmp.plate_landmarks_ptr = plate_lmk;
       } else {
-        LOGW << "no match plate lmks";
+        LOGD << "no match plate lmks";
       }
 
-      if (!bbox || !plate_type) {
+      if (!bbox) {
         LOGW << "bbox or plate_type is null";
         continue;
       }
 
-      hobot::vehicle_snap_strategy::BBoxPtr box =
+      hobot::vehicle_match_strategy::BBoxPtr box =
           std::make_shared<hobot::vision::BBox>(
         bbox->value.x1, bbox->value.y1, bbox->value.x2, bbox->value.y2);
       plate_tmp.bbox = box;
       plate_tmp.bbox->id = bbox->value.id;
       plate_tmp.plateBox = bbox;
-      plate_tmp.is_double = plate_type->value.value;
-      plate_tmp.plateType = plate_type;
-      plate_tmp.plate_color = *plate_color;
       plate_list->emplace_back(std::move(plate_tmp));
     }
     LOGI << "matcher input vehicle list size : " << vehicle_list->size();
     LOGI << "matcher input plate list size : " << plate_list->size();
     matcher->Process(vehicle_list, plate_list);
-    LOGI << "matcher output vehicle list size : " << vehicle_list->size();
     for (const auto &itr : *vehicle_list) {
       out_vehicle_rects->datas_.push_back(itr.vehicleBox);
       out_vehicle_lmk->datas_.push_back(itr.vehicle_landmarks_ptr);
@@ -189,7 +206,5 @@ std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
 void VehiclePlateMatchMethod::Finalize() { LOGI << "VehicleMatch::Finalize"; }
 
 std::string VehiclePlateMatchMethod::GetVersion() const { return "v0.0.1"; }
-
-void VehiclePlateMatchMethod::OnProfilerChanged(bool on) {}
 
 }  // namespace xstream

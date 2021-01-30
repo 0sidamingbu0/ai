@@ -59,12 +59,12 @@ if (NOT ${PARENT_BUILD})
       message("tool chain:${CMAKE_CXX_COMPILER}")
       add_definitions(-std=c++11)
       include_directories(
-        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/hobotlog/include
-        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/gtest/include
+        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/gtest/include
+        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/hobotlog/include
       )
       link_directories(
-        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/hobotlog/lib
-        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/gtest/lib
+        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/gtest/lib
+        ${XPROTO_CURRENT_DIR}/framework/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/hobotlog/lib
       )
     endif ()
   # arm architecture
@@ -124,7 +124,7 @@ add_subdirectory(tutorials/stage3)
 add_subdirectory(tutorials/stage2)
 
 # make install
-set(OUTPUT_ROOT ${PROJECT_SOURCE_DIR}/output)
+# set(OUTPUT_ROOT ${PROJECT_SOURCE_DIR}/output)
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/xproto)
 
 install(
@@ -152,7 +152,9 @@ install(
 )
 
 install(
-  FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/utils/singleton.h
+  FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/utils/singleton.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/xproto/utils/profile.h
   DESTINATION ${MY_OUTPUT_ROOT}/include/xproto/utils
 )
 

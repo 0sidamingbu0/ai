@@ -648,6 +648,16 @@ int VinModule::HbMipiGetSnsAttrBySns(MipiSensorType sensor_type,
           &SENSOR_F37_30FPS_10BIT_LINEAR_INFO,
           sizeof(MIPI_SENSOR_INFO_S));
       break;
+    case kSC8238_30FPS_3840P_RAW10_LINEAR:
+      memcpy(pst_sns_attr,
+             &SENSOR_SC8238_30FPS_10BIT_LINEAR_INFO,
+             sizeof(MIPI_SENSOR_INFO_S));
+      break;
+    case kSC8238_30FPS_3840P_RAW10_DOL2:
+      memcpy(pst_sns_attr,
+             &SENSOR_SC8238_30FPS_10BIT_DOL2_INFO,
+             sizeof(MIPI_SENSOR_INFO_S));
+      break;
     default:
       LOGE << "not surpport sensor type sensor_type" << sensor_type;
       break;
@@ -727,6 +737,22 @@ int VinModule::HbMipiGetMipiAttrBySns(MipiSensorType sensor_type,
             &MIPI_SENSOR_F37_30FPS_10BIT_LINEAR_ATTR, sizeof(MIPI_ATTR_S));
       }
       break;
+    case kSC8238_30FPS_3840P_RAW10_LINEAR:
+      if (need_clk == 1) {
+        memcpy(pst_mipi_attr,
+               &MIPI_SENSOR_SC8238_30FPS_10BIT_LINEAR_SENSOR_CLK_ATTR,
+               sizeof(MIPI_ATTR_S));
+      } else {
+        memcpy(pst_mipi_attr,
+               &MIPI_SENSOR_SC8238_30FPS_10BIT_LINEAR_ATTR,
+               sizeof(MIPI_ATTR_S));
+      }
+      break;
+    case kSC8238_30FPS_3840P_RAW10_DOL2:
+      memcpy(pst_mipi_attr,
+             &MIPI_SENSOR_SC8238_30FPS_10BIT_DOL2_ATTR,
+             sizeof(MIPI_ATTR_S));
+      break;
     default:
       LOGE << "not support sensor type";
       break;
@@ -797,6 +823,10 @@ int VinModule::HbVinGetDevAttrBySns(MipiSensorType sensor_type,
     case kF37_30FPS_1080P_RAW10_LINEAR:
       memcpy(pstDevAttr, &DEV_ATTR_F37_LINEAR_BASE,
           sizeof(VIN_DEV_ATTR_S));
+      break;
+    case kSC8238_30FPS_3840P_RAW10_LINEAR:
+      memcpy(pstDevAttr, &DEV_ATTR_SC8238_LINEAR_BASE,
+             sizeof(VIN_DEV_ATTR_S));
       break;
     default:
       LOGE << "not surpport sensor type";
@@ -886,6 +916,10 @@ int VinModule::HbVinGetPipeAttrBySns(MipiSensorType sensor_type,
       memcpy(pstPipeAttr, &PIPE_ATTR_F37_LINEAR_BASE,
           sizeof(VIN_PIPE_ATTR_S));
       break;
+    case kSC8238_30FPS_3840P_RAW10_LINEAR:
+      memcpy(pstPipeAttr, &PIPE_ATTR_SC8238_LINEAR_BASE,
+             sizeof(VIN_PIPE_ATTR_S));
+      break;
     default:
       LOGE << "not surpport sensor type";
       break;
@@ -922,6 +956,9 @@ int VinModule::HbVinGetDisAttrBySns(MipiSensorType sensor_type,
     case kS5KGM1SP_30FPS_4000x3000_RAW10:
       memcpy(pstDisAttr, &DIS_ATTR_12M_BASE, sizeof(VIN_DIS_ATTR_S));
       break;
+    case kSC8238_30FPS_3840P_RAW10_LINEAR:
+      memcpy(pstDisAttr, &DIS_ATTR_SC8238_BASE, sizeof(VIN_DIS_ATTR_S));
+      break;
     default:
       LOGE << "not surpport sensor type";
       break;
@@ -957,6 +994,9 @@ int VinModule::HbVinGetLdcAttrBySns(MipiSensorType sensor_type,
     case kSIF_TEST_PATTERN_12M_RAW12:
     case kS5KGM1SP_30FPS_4000x3000_RAW10:
       memcpy(pstLdcAttr, &LDC_ATTR_12M_BASE, sizeof(VIN_LDC_ATTR_S));
+      break;
+    case kSC8238_30FPS_3840P_RAW10_LINEAR:
+      memcpy(pstLdcAttr, &LDC_ATTR_SC8238_BASE, sizeof(VIN_LDC_ATTR_S));
       break;
     default:
       LOGE << "not surpport sensor type";

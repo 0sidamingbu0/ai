@@ -188,6 +188,11 @@ std::shared_ptr<VioProduce> VioProduce::CreateVioProduce(
   } else if ("face_pic_image_list" == data_source) {
     Vio_Produce = std::make_shared<FacePicImageList>(
         json["vio_cfg_file"]["jpeg_image_list"].asCString());
+#ifdef USE_MC
+  } else if ("buffer_image_list" == data_source) {
+    Vio_Produce = std::make_shared<BufferImageList>(
+            json["vio_cfg_file"]["jpeg_image_list"].asCString());
+#endif
   } else {
     LOGE << "data source " << data_source << " is unsupported";
     return nullptr;
@@ -1301,6 +1306,7 @@ int ImageList::OnGetAPImage(const XProtoMessagePtr& msg) {
   auto &image = ap_image->img_;
   HOBOT_CHECK(image);
   HorizonVisionImage *nv12;
+  uint32_t y_size = 0;
   switch (image->pixel_format) {
     case kHorizonVisionPixelFormatImageContainer:  //  JPG
       VIDEO_FRAME_S pstFrame;
@@ -1317,6 +1323,11 @@ int ImageList::OnGetAPImage(const XProtoMessagePtr& msg) {
           break;
         }
       }
+      LOGD << "decoder output pstFrame w:" << pstFrame.stVFrame.width
+           << " h:" << pstFrame.stVFrame.height
+           << " stride:" << pstFrame.stVFrame.stride
+           << " vstride:" << pstFrame.stVFrame.vstride
+           << " size:" << pstFrame.stVFrame.size;
       HorizonVisionAllocImage(&nv12);
       nv12->height = pstFrame.stVFrame.height;
       nv12->width = pstFrame.stVFrame.width;
@@ -1324,9 +1335,18 @@ int ImageList::OnGetAPImage(const XProtoMessagePtr& msg) {
       nv12->pixel_format = kHorizonVisionPixelFormatRawNV12;
       nv12->stride = pstFrame.stVFrame.stride;
       nv12->stride_uv = pstFrame.stVFrame.vstride;
-      nv12->data = reinterpret_cast<uint8_t *>(
-          HorizonVisionMemDup(pstFrame.stVFrame.vir_ptr[0],
-              pstFrame.stVFrame.size));
+
+      // adapt the align in decoder
+      // e.g. input jpeg is 1920*1080, output nv12 maybe 1920*1088
+      y_size = pstFrame.stVFrame.width * pstFrame.stVFrame.height;
+      nv12->data = reinterpret_cast<uint8_t *>(calloc(1, y_size * 1.5));
+      memcpy(nv12->data, pstFrame.stVFrame.vir_ptr[0], y_size);
+      memcpy(nv12->data + y_size,
+             pstFrame.stVFrame.vir_ptr[0] +
+                     static_cast<uint32_t>(static_cast<float>
+                                           (pstFrame.stVFrame.size) / 1.5),
+             y_size / 2);
+
       ReleaseOutputDecModule(pstFrame);
       break;
     case kHorizonVisionPixelFormatRawNV12:
@@ -1355,6 +1375,10 @@ int ImageList::OnGetAPImage(const XProtoMessagePtr& msg) {
     //  auto mcmsg = std::make_shared<MCMessage>(error_info
     //  SET_APP_STOP, MESSAGE_TO_ADAPTER, rsp_data, "up", msg_id);
     //  PushMsg(mcmsg);
+    HorizonVisionFreeImage(nv12);
+    std::free(feedback_context);
+    FreeBuffer();
+    LOGE << "process image failed, error_info: " << error_info.str();
     return kHorizonVisionFailure;
   }
   auto ret = GetPyramidInfo(vio_pipeline_, feedback_context,
@@ -1363,6 +1387,7 @@ int ImageList::OnGetAPImage(const XProtoMessagePtr& msg) {
   if (!ret) {
     HorizonVisionFreeImage(nv12);
     std::free(feedback_context);
+    FreeBuffer();
     LOGF << "fill vio image failed, ret: " << ret;
   }
   HorizonVisionFreeImage(nv12);

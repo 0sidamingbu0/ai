@@ -39,6 +39,7 @@ typedef enum {
   HBRT_MARCH_UNKNOWN = ((unsigned)('?') << 0U) + ((unsigned)('?') << 8U) + ((unsigned)('?') << 16U),
   HBRT_MARCH_BERNOULLI = ((unsigned)('X') << 0U) + ((unsigned)('2') << 8U) + ((unsigned)(' ') << 16U),
   HBRT_MARCH_BERNOULLI2 = ((unsigned)('X') << 0U) + ((unsigned)('2') << 8U) + ((unsigned)('A') << 16U),
+  HBRT_MARCH_BERNOULLI3 = ((unsigned)('X') << 0U) + ((unsigned)('3') << 8U) + ((unsigned)(' ') << 16U),
 } hbrt_march_t;
 
 typedef hbrt_march_t MARCH HBRT_DEPRECATED_NAME(hbrt_march_t, MARCH, 3.7.1);
@@ -53,6 +54,16 @@ HBRT_MARCH_BERNOULLI
 HBRT_PRAGMA_WARN( \
 "MARCH_X2A has been superseded by HBRT_MARCH_BERNOULLI2 since 3.6.1, and will be removed in a future release")\
 HBRT_MARCH_BERNOULLI2
+
+#define MARCH_X3 \
+HBRT_PRAGMA_WARN( \
+"MARCH_X3 has been superseded by HBRT_MARCH_BERNOULLI3 since 3.6.1, and will be removed in a future release")\
+HBRT_MARCH_BERNOULLI3
+
+# define HBRT_MARCH_AYERS \
+HBRT_PRAGMA_WARN( \
+"HBRT_MARCH_AYERS has been superseded by HBRT_MARCH_BERNOULLI3 since 3.15.1, and will be removed in a future release")\
+HBRT_MARCH_BERNOULLI3
 
 
 

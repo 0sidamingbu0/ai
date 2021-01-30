@@ -112,7 +112,13 @@ struct ImageFacePicMessage : ImageVioMessage {
   ~ImageFacePicMessage(){}
 };
 
-
+struct InfoVioMessage : VioMessage {
+ public:
+  InfoVioMessage() {
+    type_ = TYPE_INFO_IMAGE_MESSAGE;
+  }
+  ~InfoVioMessage() {}
+};
 }  // namespace vioplugin
 }  // namespace xproto
 }  // namespace vision

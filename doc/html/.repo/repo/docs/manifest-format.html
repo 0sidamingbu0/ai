@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>repo Manifest Format &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>repo Manifest Format &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -241,7 +241,6 @@ following DTD:</p>
   <span class="cp">&lt;!ATTLIST extend-project path CDATA #IMPLIED&gt;</span>
   <span class="cp">&lt;!ATTLIST extend-project groups CDATA #IMPLIED&gt;</span>
   <span class="cp">&lt;!ATTLIST extend-project revision CDATA #IMPLIED&gt;</span>
-  <span class="cp">&lt;!ATTLIST extend-project remote CDATA #IMPLIED&gt;</span>
 
   <span class="cp">&lt;!ELEMENT remove-project EMPTY&gt;</span>
   <span class="cp">&lt;!ATTLIST remove-project name  CDATA #REQUIRED&gt;</span>
@@ -421,8 +420,6 @@ at the specified path, rather than all projects with the given name.</p>
 belongs.  Same syntax as the corresponding element of <code class="docutils literal notranslate"><span class="pre">project</span></code>.</p>
 <p>Attribute <code class="docutils literal notranslate"><span class="pre">revision</span></code>: If specified, overrides the revision of the original
 project.  Same syntax as the corresponding element of <code class="docutils literal notranslate"><span class="pre">project</span></code>.</p>
-<p>Attribute <code class="docutils literal notranslate"><span class="pre">remote</span></code>: If specified, overrides the remote of the original
-project.  Same syntax as the corresponding element of <code class="docutils literal notranslate"><span class="pre">project</span></code>.</p>
 </div>
 <div class="section" id="element-annotation">
 <h3>Element annotation<a class="headerlink" href="#element-annotation" title="永久链接至标题">¶</a></h3>
@@ -439,23 +436,13 @@ be kept when exported with the manifest subcommand.</p>
 <p>Zero or more copyfile elements may be specified as children of a
 project element. Each element describes a src-dest pair of files;
 the “src” file will be copied to the “dest” place during <code class="docutils literal notranslate"><span class="pre">repo</span> <span class="pre">sync</span></code>
-command.</p>
-<p>“src” is project relative, “dest” is relative to the top of the tree.
-Copying from paths outside of the project or to paths outside of the repo
-client is not allowed.</p>
-<p>“src” and “dest” must be files.  Directories or symlinks are not allowed.
-Intermediate paths must not be symlinks either.</p>
-<p>Parent directories of “dest” will be automatically created if missing.</p>
+command.
+“src” is project relative, “dest” is relative to the top of the tree.</p>
 </div>
 <div class="section" id="element-linkfile">
 <h3>Element linkfile<a class="headerlink" href="#element-linkfile" title="永久链接至标题">¶</a></h3>
 <p>It’s just like copyfile and runs at the same time as copyfile but
 instead of copying it creates a symlink.</p>
-<p>The symlink is created at “dest” (relative to the top of the tree) and
-points to the path specified by “src” which is a path in the project.</p>
-<p>Parent directories of “dest” will be automatically created if missing.</p>
-<p>The symlink target may be a file or directory, but it may not point outside
-of the repo client.</p>
 </div>
 <div class="section" id="element-remove-project">
 <h3>Element remove-project<a class="headerlink" href="#element-remove-project" title="永久链接至标题">¶</a></h3>

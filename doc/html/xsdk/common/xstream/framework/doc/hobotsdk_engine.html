@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>XStream hobotsdk engine &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>XStream hobotsdk engine &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -172,7 +172,7 @@
 </div>
 <div class="section" id="id1">
 <h1>基础架构<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
-<p><img alt="XStream hobotsdk engine架构" src="../../../../../_images/xstream-hobotsdk-engine-arch2.png" /></p>
+<p><img alt="XStream hobotsdk engine架构" src="../../../../../_images/xstream-hobotsdk-engine-arch1.png" /></p>
 <p><strong>Node</strong>: 作为管理多个同类型method实例的抽象，由３种基础module组成：</p>
 <ul class="simple">
 <li><p><em>Dispatch Module</em>: 负责将连续帧消息分发到多个method实例上，默认策略为Round-Robin;同时可根据工作流的控制参数，将输入消息直接passthrough到Node的输出模块(CollectModule).</p></li>
@@ -181,7 +181,7 @@
 </ul>
 <div class="section" id="nodemodulenode">
 <h2>Node内部module及Node之间的连接方式<a class="headerlink" href="#nodemodulenode" title="永久链接至标题">¶</a></h2>
-<p><img alt="Node内部模块及Node之间的连接方式" src="../../../../../_images/xstream-hobotsdk-node-link2.png" /></p>
+<p><img alt="Node内部模块及Node之间的连接方式" src="../../../../../_images/xstream-hobotsdk-node-link1.png" /></p>
 <ul class="simple">
 <li><p>Node内部Dispatch Module与method Module之间是默认的连接方式即AllExp(多个输入之间是and的关系，且每个输入每次取一个);</p></li>
 <li><p>Dispatch Module到Collect Module的passthrough的连接，以及method module到Collect Module的连接之间是OR表达式;</p></li>
@@ -223,7 +223,7 @@ hobotsdk提供了接口<code class="docutils literal notranslate"><span class="p
 <li><p>传递每帧的输入参数，数据结构为InputParamPtr,该消息可以更新method的参数，也可以控制workflow数据流的处理，比如在线disable某个node等．</p></li>
 <li><p>参数消息在Input的时候Feed,能保证每个node第一时间看到所有需要处理的frame，从而保证XStream顺序处理连续、中间不能有空缺的帧序要求．</p></li>
 </ol>
-<p><img alt="Node input　link" src="../../../../../_images/xstream-node-input-link2.png" /></p>
+<p><img alt="Node input　link" src="../../../../../_images/xstream-node-input-link1.png" /></p>
 </div>
 <div class="section" id="id4">
 <h2>对多路输入的支持<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>

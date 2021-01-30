@@ -82,9 +82,39 @@ class DetectPostProcessor : public PostProcessor {
   void ParseAPADetectionBox(
       void* result, int branch_num,
       std::vector<BBox> &boxes);
+  // 定点转浮点
+  // IN: src_ptr【定点数据地址】, out_index【输出数据所在层数】
+  // IN: channel【需要转换的通道数】
+  // channel = 0，表示转换所有channel数据；channel != 0，表示转换前channel个通道
+  // OUT: dest_ptr【浮点数据地址，由外部申请空间】
   void ConvertOutput(void *src_ptr,
                      void *dest_ptr,
-                     int out_index);
+                     int out_index,
+                     int channel);
+  // 带过滤的定点转浮点
+  // IN: src_ptr【定点数据地址】, out_index【输出数据所在层数】
+  // IN: threshold【浮点阈值】
+  // 只有定点数据大于等于threshold*(2^^shift)，才对其转换浮点
+  // OUT: dest_ptr【浮点数据地址，由外部申请空间】
+  // OUT: valid_index【满足阈值的定点的有效索引(按nhwc排序)】
+  // OUT: valid_num【满足阈值的定点数据数量】
+  void ConvertOutputFilter(void *src_ptr,
+                           void *dest_ptr,
+                           int out_index,
+                           float threshold,
+                           std::vector<int> &valid_index,
+                           int &valid_num);
+  // 带过滤的定点转浮点
+  // IN: src_ptr【定点数据地址】, out_index【输出数据所在层数】
+  // IN: valid_index【需要转换的定点数据索引(按nhwc排序)】
+  // IN: valid_num【需要转换的定点数据数量】
+  // OUT: dest_ptr【浮点数据地址，由外部申请空间】
+  void ConvertOutputFilter(void *src_ptr,
+                           void *dest_ptr,
+                           int out_index,
+                           const std::vector<int> &valid_index,
+                           const int &valid_num);
+
  private:
   std::map<int, DetectBranchInfo> out_level2branch_info_;
   std::vector<std::string> method_outs_;

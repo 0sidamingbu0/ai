@@ -156,13 +156,18 @@ int MethodConfiger::GetMethodthreshold(
     const std::string &key, float &value) {  //NOLINT
   int ret;
   GET_XSTREAM_SDK
-  auto module = method_info_[module_name];
+  if (nullptr == xstream_->GetConfig(module_name)) {
+    LOGE << "xstream could not find module " << module_name;
+    return kHorizonVisionSuccess;
+  }
+  auto& module = method_info_[module_name];
   Json::Value &method_jsonv = module.json_writer_->jsonRoot;
   if (!module.json_writer_->r_updated_) {
     xstream::InputParamPtr param_ptr = xstream_->GetConfig(module_name);
     ret = ParseMethodConfig(param_ptr, &method_jsonv);
     if (ret != kHorizonVisionSuccess) {
       LOGE << "ParseMethodConfig failed, ret: " << ret;
+      return kHorizonVisionFailure;
     }
     module.json_writer_->r_updated_ = true;
   }

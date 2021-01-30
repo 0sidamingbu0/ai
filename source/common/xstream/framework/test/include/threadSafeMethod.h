@@ -85,8 +85,6 @@ class SafeTestThread : public Method {
     return orderMethod;
   }
 
-  void OnProfilerChanged(bool on) override {}
-
  private:
   std::atomic<int> shared_safe_value;
 };

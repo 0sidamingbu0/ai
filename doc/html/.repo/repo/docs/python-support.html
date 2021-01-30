@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Supported Python Versions &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>Supported Python Versions &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -166,9 +166,9 @@ their old LTS/corp systems and have little power to change the system.</p>
 <div class="section" id="summary">
 <h2>Summary<a class="headerlink" href="#summary" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>Python 3.6 (released Dec 2016) is required by default starting with repo-2.x.</p></li>
+<li><p>Python 3.6 (released Dec 2016) is required by default starting with repo-1.14.</p></li>
 <li><p>Older versions of Python (e.g. v2.7) may use the legacy feature-frozen branch
-based on repo-1.x.</p></li>
+based on repo-1.13.</p></li>
 </ul>
 </div>
 <div class="section" id="overview">
@@ -184,18 +184,6 @@ since it doesn’t import any other repo code, this shouldn’t be too problemat
 <p>The master branch will require Python 3.6 at a minimum.
 If the system has an older version of Python 3, then users will have to select
 the legacy Python 2 branch instead.</p>
-<div class="section" id="repo-hooks">
-<h3>repo hooks<a class="headerlink" href="#repo-hooks" title="永久链接至标题">¶</a></h3>
-<p>Projects that use <a class="reference internal" href="repo-hooks.html"><span class="doc">repo hooks</span></a> run on independent schedules.
-They might migrate to Python 3 earlier or later than us.
-To support them, we’ll probe the shebang of the hook script and if we find an
-interpreter in there that indicates a different version than repo is currently
-running under, we’ll attempt to reexec ourselves under that.</p>
-<p>For example, a hook with a header like <code class="docutils literal notranslate"><span class="pre">#!/usr/bin/python2</span></code> will have repo
-execute <code class="docutils literal notranslate"><span class="pre">/usr/bin/python2</span></code> to execute the hook code specifically if repo is
-currently running Python 3.</p>
-<p>For more details, consult the <a class="reference internal" href="repo-hooks.html"><span class="doc">repo hooks</span></a> documentation.</p>
-</div>
 </div>
 </div>
 

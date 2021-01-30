@@ -82,8 +82,6 @@ class passthroughMethod : public Method {
 
     return orderMethod;
   }
-
-  void OnProfilerChanged(bool on) override {}
 };
 }  // namespace xstream
 #endif  // TEST_INCLUDE_PASSTHROUGHMETHOD_H_

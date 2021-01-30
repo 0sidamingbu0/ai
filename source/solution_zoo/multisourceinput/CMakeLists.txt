@@ -8,7 +8,7 @@ set(SOURCE_FILES
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-set(BASE_LIBRARIES vioplugin multisourcesmartplugin multisourcewebsocketplugin
+set(BASE_LIBRARIES vioplugin commongdcplugin multisourcesmartplugin multisourcewebsocketplugin
         PredictMethod PostProcessMethod
         FasterRCNNMethod CNNMethod bpu_predict MergeMethod SnapShotMethod GradingMethod vote_method
         MOTMethod ipc_tracking xstream xstream-imagetools hobotlog

@@ -35,13 +35,6 @@ class XPlugin : public std::enable_shared_from_this<XPlugin> {
   }
   // 处理register的msg类型，如有需要，push自己的msg到总线
   virtual void OnMsg(XProtoMessagePtr msg) = 0;
-  // 用于流量管理
-  virtual int GetPluginMsgCount() = 0;
-  virtual int GetPluginMsgLimit() = 0;
-  virtual void SetPluginMsgLimit(int msg_limit_count) = 0;
-  // plugin处理msg时间监控
-  virtual int GetMsgMonitorTime() = 0;
-  virtual void SetMsgMonitorTime(int msg_monitor_time) = 0;
 
   virtual std::string desc() const {
     return "XPlugin";

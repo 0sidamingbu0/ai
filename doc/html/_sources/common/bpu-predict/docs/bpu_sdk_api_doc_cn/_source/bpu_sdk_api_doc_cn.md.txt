@@ -1,4 +1,4 @@
-# BPU SDK API文档
+# BPU SDK API 文档 v1.25
 
 [TOC]
 
@@ -6,21 +6,21 @@
 
 | 日期       | 版本号 | 描述                                                         |
 | :--------- | ------ | ------------------------------------------------------------ |
-| 2020-06-02 | 1.10   | 1. 修改HB_BPU_runModel注意部分，增加core id说明<br />2. 修改图像数据格式表示方式以及BPU_TENSOR_S结构体 |
-| 2020-06-28 | 1.11   | 1. 添加抢占功能接口HB_BPU_setModelPrior<br />2. 修改HB_BPU_resize和HB_BPU_getResizeResultWithoutPadding接口的说明 |
-| 2020-7-10  | 1.12   | 1. 修订2.1.3中BPU_TENSOR_S结构体<br />2. 修改2.1.4中数据类型的说明，增加“不支持batch模式”的说明<br />3. 增加两个接口的说明：2.3.13的HB_BPU_getHWCIndex和2.3.14的HB_BPU_getHW |
-| 2020-7-13  | 1.13   | 1. HB_BPU_resize接口添加pym的reisze功能                      |
-| 2020-7-13  | 1.14   | 1. 增加HB_BPU_getMemoryUsage接口说明                         |
-| 2020-7-15  | 1.15   | 1. 修正HB_BPU_getMemoryUsage接口说明<br />2. 增加HB_BPU_setGlobalConfig中枚举值的说明 |
-| 2020-7-20  | 1.16   | 1. 增加HB_SYS_virAddrAlloc接口说明<br />2. 增加HB_SYS_virAddrFree接口说明 |
-| 2020-07-23 | 1.17   | 1. 增加HB_BPU_loadModelFromFile接口说明<br />2. 增加HB_BPU_getVersion接口说明<br />3. 增加HB_BPU_runModelWithBbox接口说明<br />4. 增加HB_BPU_createGroup接口说明<br />5. 增加HB_BPU_setModelGroup接口说明<br />6. 增加HB_BPU_setGroupProportion接口说明<br />7. 增加HB_BPU_deleteGroup接口说明<br />8. 增加HB_BPU_parseDetThreshResult接口说明<br />9. 增加HB_BPU_parseChannelMaxResult接口说明<br />10. 增加HB_BPU_parseDPPResult接口说明<br />11. 增加HB_BPU_parseRPPResult接口说明 |
-| 2020-07-23 | 1.18   | 1. resize中pym resize添加环境变量PYM_FRAME_DEPTH             |
-| 2020-08-04 | 1.19   | 1. 修改HB_BPU_runModelWithBbox接口定义和参数说明<br />2. 修改HB_BPU_getMemoryUsage的说明<br />3. 增加BPU_constructCameraBufferFromPyramidBuffer接口说明<br />4. 增加BPU_getCameraInfoFromCameraBuffe接口说明 |
-| 2020-08-07 | 1.20   | 1.将BPU_ConstructCameraBufferFromPyramidBuffer接口名修改,为<br />BPU_getRelatedCameraBufferFromPyramidBuffer，并修改了Buffer的释放说明<br />2. 修改BPU_getCameraInfoFromCameraBuffer的参数说明 |
-| 2020-08-10 | 1.21   | 1. 添加HB_BPU_resize对于图片尺寸的限制<br />2. 添加HB_BPU-setModelPrior低优先级模型运行时间过长报错原因描述 |
-| 2020-08-24 | 1.22   | 1. HB_BPU_resize可以指定bpu核                                |
-| 2020-09-23 | 1.23   | 完善resize接口编译器限制说明                                 |
-| 2020-11-09 | 1.24   | 1. 增加Global Config选项：BPU_GLOBAL_ENGINE_TYPE，BPU_GLOBAL_CUSTOM_OP_LIB_PATH,BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES<br />2. runModel接口支持对input data进行resize来适配模型的输入要求 |
+| 2020-06-02 | 1.10   | 1. 修改`HB_BPU_runModel`注意部分，增加`core_id`说明<br />2. 修改图像数据格式表示方式以及`BPU_TENSOR_S`结构体 |
+| 2020-06-28 | 1.11   | 1. 添加抢占功能接口`HB_BPU_setModelPrior`<br />2. 修改`HB_BPU_resize`和`HB_BPU_getResizeResultWithoutPadding`接口的说明 |
+| 2020-7-10  | 1.12   | 1. 修订2.1.3中`BPU_TENSOR_S`结构体<br />2. 修改2.1.4中数据类型的说明，增加“不支持batch模式”的说明<br />3. 增加两个接口的说明：2.3.13的`HB_BPU_getHWCIndex`和2.3.14的`HB_BPU_getHW` |
+| 2020-7-13  | 1.13   | 1. `HB_BPU_resize`接口添加pym的reisze功能                      |
+| 2020-7-13  | 1.14   | 1. 增加`HB_BPU_getMemoryUsage`接口说明                         |
+| 2020-7-15  | 1.15   | 1. 修正`HB_BPU_getMemoryUsage`接口说明<br />2. 增加`HB_BPU_setGlobalConfig`中枚举值的说明 |
+| 2020-7-20  | 1.16   | 1. 增加`HB_SYS_virAddrAlloc`接口说明<br />2. 增加`HB_SYS_virAddrFree`接口说明 |
+| 2020-07-23 | 1.17   | 1. 增加`HB_BPU_loadModelFromFile`接口说明<br />2. 增加`HB_BPU_getVersion`接口说明<br />3. 增加`HB_BPU_runModelWithBbox`接口说明<br />4. 增加`HB_BPU_createGroup`接口说明<br />5. 增加`HB_BPU_setModelGroup`接口说明<br />6. 增加`HB_BPU_setGroupProportion`接口说明<br />7. 增加`HB_BPU_deleteGroup`接口说明<br />8. 增加`HB_BPU_parseDetThreshResult`接口说明<br />9. 增加`HB_BPU_parseChannelMaxResult`接口说明<br />10. 增加`HB_BPU_parseDPPResult`接口说明<br />11. 增加`HB_BPU_parseRPPResult`接口说明 |
+| 2020-07-23 | 1.18   | 1. `resize`中pym resize添加环境变量`PYM_FRAME_DEPTH`             |
+| 2020-08-04 | 1.19   | 1. 修改`HB_BPU_runModelWithBbox`接口定义和参数说明<br />2. 修改`HB_BPU_getMemoryUsage`的说明<br />3. 增加`BPU_constructCameraBufferFromPyramidBuffer`接口说明<br />4. 增加`BPU_getCameraInfoFromCameraBuffe`接口说明 |
+| 2020-08-07 | 1.20   | 1.将`BPU_ConstructCameraBufferFromPyramidBuffer`接口名修改,为<br />`BPU_getRelatedCameraBufferFromPyramidBuffer`，并修改了Buffer的释放说明<br />2. 修改`BPU_getCameraInfoFromCameraBuffer`的参数说明 |
+| 2020-08-10 | 1.21   | 1. 添加`HB_BPU_resize`对于图片尺寸的限制<br />2. 添加`HB_BPU-setModelPrior`低优先级模型运行时间过长报错原因描述 |
+| 2020-08-24 | 1.22   | 1. `HB_BPU_resize`可以指定bpu核                                |
+| 2020-09-23 | 1.23   | 完善`resize`接口编译器限制说明                                 |
+| 2020-11-09 | 1.24   | 1. 增加Global Config选项：`BPU_GLOBAL_ENGINE_TYPE`，`BPU_GLOBAL_CUSTOM_OP_LIB_PATH`,`BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES`<br />2. `runModel`接口支持对input data进行resize来适配模型的输入要求 |
 | 2020-11-20 | 1.25   | 1. 删除pym resize功能<br />2. 补充layout和padding说明        |
 
 ## 1.系统软件接口介绍
@@ -37,7 +37,7 @@ typedef struct hb_BPU_MEMORY_S {
 } BPU_MEMORY_S;
 ```
 
-BPU_MEMORY_S结构体用于定义bpu的内存。
+`BPU_MEMORY_S`结构体用于定义bpu的内存。
 
 ### 1.2 内存函数API
 
@@ -50,18 +50,19 @@ int HB_SYS_bpuMemAlloc(const char *name,
                        BPU_MEMORY_S *mem);
 ```
 
-**描述：**在Bernoulli芯片的架构中，BPU和CPU共享同一个memory空间。这里单独提供一个BPU内存的结构是因为BPU需要使用物理空间连续的一块内存，因此需要用专门的函数申请。该函数返回申请到的memory地址（包括物理地址和虚拟地址），其中虚拟地址可以被直接读写，在后续执行BPU操作时也是传入虚拟地址。
+**描述：**
+
+在Bernoulli芯片的架构中，BPU和CPU共享同一个memory空间。这里单独提供一个BPU内存的结构是因为BPU需要使用物理空间连续的一块内存，因此需要用专门的函数申请。该函数返回申请到的memory地址（包括物理地址和虚拟地址），其中虚拟地址可以被直接读写，在后续执行BPU操作时也是传入虚拟地址。
 
 **输入：**
 
-1. name：指定申请内存的name，这样可以被用来标识这块内存，后续分析内存状态的时候可以用到。
-
-  2. alloc_mem_size：表示期望申请的内存大小。
-  3. cachable：表示该内存是否带cache标记。
+1. `name`：指定申请内存的name，这样可以被用来标识这块内存，后续分析内存状态的时候可以用到。
+2. `alloc_mem_size`：表示期望申请的内存大小。
+3. `cachable`：表示该内存是否带cache标记。
 
 **输出：**
 
-​	1. mem：BPU_MEMORY_S类型的结构体指针。该结构体由调用者传入，函数内部会填充具体内容，包括：申请内存的物理地址、虚拟地址、以及memory size。
+1. `mem`：`BPU_MEMORY_S`类型的结构体指针。该结构体由调用者传入，函数内部会填充具体内容，包括：申请内存的物理地址、虚拟地址、以及memory size。
 
 **返回：**
 
@@ -75,37 +76,43 @@ int HB_SYS_bpuMemAlloc(const char *name,
 int HB_SYS_flushMemCache(const BPU_MEMORY_S *mem, int flag);
 ```
 
-**描述：**对于申请为cachable的内存，会在memory上带cache的标记。这样就可能出现由CPU写入或者读取的数据被缓存，导致数据陈旧。
+**描述：**
 
-![image-20201202103007754](C:\Users\yizheng.wang\AppData\Roaming\Typora\typora-user-images\image-20201202103007754.png)
+对于申请为cachable的内存，会在memory上带cache的标记。这样就可能出现由CPU写入或者读取的数据被缓存，导致数据陈旧。
+
+![memory_architecture](./images/memory_architecture.png)
 
 Bernoulli的内存架构如上图所示。CPU与主存之间存在的cache会缓存数据。而BPU与主存之间没有cache。在flush接口中提供了两种方式，分别对应不同的使用场景。
 
-1. 对于CPU写memory的场景，由于数据会缓存到cache中，导致memory中的数据是旧，这样BPU执行模型的时候取的数据就是错的。因此需要把cache中的数据flush到memory中，这时候就需要使用HB_SYS_BPU_MEM_CACHE_CLEAN参数。
-2. 对于CPU曾经读取过memory的数据的场景，数据有可能会被缓存到cache中。这时如果BPU写了memory，那么CPU在读取数据时仍然从cache中读，这样就会导致CPU读到错误的数据。这时候就需要把cache中读取得数据清理掉，需要使用HB_SYS_BPU_MEM_CACHE_INVALIDATE参数。
+1. 对于CPU写memory的场景，由于数据会缓存到cache中，导致memory中的数据是旧，这样BPU执行模型的时候取的数据就是错的。因此需要把cache中的数据flush到memory中，这时候就需要使用`HB_SYS_BPU_MEM_CACHE_CLEAN`参数。
+2. 对于CPU曾经读取过memory的数据的场景，数据有可能会被缓存到cache中。这时如果BPU写了memory，那么CPU在读取数据时仍然从cache中读，这样就会导致CPU读到错误的数据。这时候就需要把cache中读取得数据清理掉，需要使用`HB_SYS_BPU_MEM_CACHE_INVALIDATE`参数。
 
-**tips：**对于输出内存设置cachable，通过flush来获取最新的数据。之所以设置输出为cachable，是因为CPU可能会多次访问模型的结果，这样能够利用cache缓存，提高访问速度。
+**TIPS：**
+
+对于输出内存设置cachable，通过flush来获取最新的数据。之所以设置输出为cachable，是因为CPU可能会多次访问模型的结果，这样能够利用cache缓存，提高访问速度。
 
 **输入：**
 
-1.	mem：是由memAlloc接口申请的BPU内存结构体指针。
-2.	flag：表示flush操作的方向。具体请见描述部分的说明。
+1. `mem`：是由memAlloc接口申请的BPU内存结构体指针。
+2. `flag`：表示flush操作的方向。具体请见上文中的**描述**部分。
 
 **返回：**
 
-1.	返回int类型的错误码。
+1. 返回int类型的错误码。
 
 #### 1.2.3 HB_SYS_isMemCachable
 
-```
+```c
 int HB_SYS_isMemCachable(const BPU_MEMORY_S *mem);
 ```
 
-**描述：**检查bpu memory是否是cachable的。
+**描述：**
+
+检查bpu memory是否是cachable的。
 
 **输入：**
 
-1. mem：由HB_SYS_bpuMemAlloc接口申请的BPU内存结构体指针。 
+1. `mem`：由`HB_SYS_bpuMemAlloc`接口申请的BPU内存结构体指针。
 
 **返回：**
 
@@ -113,15 +120,17 @@ int HB_SYS_isMemCachable(const BPU_MEMORY_S *mem);
 
 #### 1.2.4 HB_SYS_bpuMemFree
 
-```
+```c
 int HB_SYS_bpuMemFree(BPU_MEMORY *mem);
 ```
 
-**描述：**释放BPU memory。传入BPU_MEMORY_S结构体指针，内部会修改该结构，把各个字段设置成非法字段。防止后面再次使用该结构体。
+**描述：**
+
+释放BPU memory。传入`BPU_MEMORY_S`结构体指针，内部会修改该结构，把各个字段设置成非法字段。防止后面再次使用该结构体。
 
 **输入：**
 
-1. mem：由HB_SYS_bpuMemAlloc接口申请的BPU内存结构体指针。
+1. `mem`：由`HB_SYS_bpuMemAlloc`接口申请的BPU内存结构体指针。
 
 **返回：**
 
@@ -129,73 +138,76 @@ int HB_SYS_bpuMemFree(BPU_MEMORY *mem);
 
 #### 1.2.5 HB_SYS_getMemInfo
 
-```
+```c
 int HB_SYS_getMemInfo(const void *virAddr, uint64_t *phyAddr, int *is_cachable);
 ```
 
-**描述：**这个接口的功能是检查传入的指针指向的是否是BPU内存，如果是BPU内存，则返回对应的物理地址。如果不是BPU内存，则返回失败。当返回失败时，phyAddr和is_cachable的内容是未定义的。
+**描述：**
+
+这个接口的功能是检查传入的指针指向的是否是BPU内存，如果是BPU内存，则返回对应的物理地址。如果不是BPU内存，则返回失败。当返回失败时，`phyAddr`和`is_cachable`的内容是未定义的。
 
 **参数：**
 
-1. virAddr：需要进行转换的虚拟地址指针。
-2. phyAddr：返回对应的物理地址。
-3. is_cachable：返回内存是否为cachable。
+1. `virAddr`：需要进行转换的虚拟地址指针。
+2. `phyAddr`：返回对应的物理地址。
+3. `is_cachable`：返回内存是否为cachable。
 
 **返回：**
 
-1. 返回int类型的错误码。成功为BPU_OK，其他返回值都是失败。
+1. 返回int类型的错误码。成功为`BPU_OK`，其他返回值都是失败。
 
 #### 1.2.6 HB_SYS_virAddrAlloc
 
-```
+```c
 int HB_SYS_virAddrAlloc(void **virAddr,const uint64_t *phyAddr, size_t alloc_mem_size);
 ```
 
-**描述：**这个接口的功能是将传入的内存物理地址，转换为虚拟地址。
+**描述：**
+
+这个接口的功能是将传入的内存物理地址，转换为虚拟地址。
 
 **参数：**
 
-1. virAddr：返回虚拟地址指针。
-2. phyAddr：需要进行转换的的物理地址的指针。
-
-3. alloc_mem_size：内存大小。
+1. `virAddr`：返回虚拟地址指针。
+2. `phyAddr`：需要进行转换的的物理地址的指针。
+3. `alloc_mem_size`：内存大小。
 
 **返回：**
 
-1. 返回int类型的错误码。成功为BPU_OK，其他返回值都是失败。
+1. 返回int类型的错误码。成功为`BPU_OK`，其他返回值都是失败。
 
-**注意：**
-
-1. 转换完成的虚拟地址在使用完成后要进行释放。
+**注意：转换完成的虚拟地址在使用完成后要进行释放。**
 
 #### 1.2.7 HB_SYS_virAddrFree
 
-```
+```c
 int HB_SYS_virAddrFree(const void *virAddr);
 ```
 
-**描述：**这个接口的功能是释放虚拟地址对应的内存。
+**描述：**
+
+这个接口的功能是释放虚拟地址对应的内存。
 
 **参数：**
 
-1. virAddr：虚拟地址。
+1. `virAddr`：虚拟地址。
 
 **返回：**
 
-1. 返回int类型的错误码。成功为BPU_OK，其他返回值都是失败。
+1. 返回int类型的错误码。成功为`BPU_OK`，其他返回值都是失败。
 
 ## 2.BPU predict API
 
-### 2.1 数据结构体定义
+### 2.1 数据结构体的定义
 
-```
+```c
 typedef enum hb_BPU_OP_TYPE_E {
   BPU_OP_TYPE_CONV,
   BPU_OP_TYPE_UNKNOWN,
 } BPU_OP_TYPE_E;
 ```
 
-```
+```c
 typedef enum hb_BPU_LAYOUT_E {
   BPU_LAYOUT_NONE = 0,
   BPU_LAYOUT_NHWC,
@@ -203,7 +215,7 @@ typedef enum hb_BPU_LAYOUT_E {
 } BPU_LAYOUT_E;
 ```
 
-```
+```c
 #define BPU_MODEL_MAX_SHAPE_DIM (8)
 typedef struct hb_BPU_DATA_SHAPE_S {
   BPU_LAYOUT_E layout;
@@ -212,7 +224,7 @@ typedef struct hb_BPU_DATA_SHAPE_S {
 } BPU_DATA_SHAPE_S;
 ```
 
-```
+```c
 typedef enum hb_BPU_DATA_TYPE_E {
   // IMG类型都是uint8的
   BPU_TYPE_IMG_Y,
@@ -232,15 +244,17 @@ typedef enum hb_BPU_DATA_TYPE_E {
 } BPU_DATA_TYPE_E;
 ```
 
-```
+```c
 typedef struct hb_BPU_RUN_CTRL_S {
   int core_id;
+  int resize_type;  // 1: resize input data if input shape is not same with
+                    // model input shape; other value: no resize
 } BPU_RUN_CTRL_S;
 ```
 
 #### 2.1.1 BPU_MODEL_NODE_S
 
-```
+```c
 typedef struct hb_BPU_MODEL_NODE_S {
   BPU_OP_TYPE_E op_type;  // only used for output node
   BPU_DATA_TYPE_E data_type;
@@ -252,35 +266,29 @@ typedef struct hb_BPU_MODEL_NODE_S {
 } BPU_MODEL_NODE_S;
 ```
 
-**描述：**BPU_MODEL_NODE_S结构体描述了模型输入/输出节点的信息。包括：
+**描述：**
 
-1. 节点的op类型。
+`BPU_MODEL_NODE_S`结构体描述了模型输入/输出节点的信息。包括：
 
-2. 数据类型：表示模型要求的输入/输出数据类型。
+  1. `op_type`：节点的op类型。
+  2. `data_type`：表示模型要求的输入/输出数据类型。
+  3. `shape`：表示模型输入/输出的shape，这个`shape`指的是模型训练时候的shape。
+  4. `aligned_shape`：模型在BPU上运行时，需要以一定的方式对齐到8或者16字节，因此就有了这个对齐shape，表示模型运行所需要的输入/输出shape。这个通常是在普通shape的基础上加padding得到。
+  5. `name`：模型的name字符串。
+  6. `shifts`和`shift_len`：当模型的输出为convolution，且输出数据是int8或者int32时，而实际训练时候模型的结果是float32，因此就需要把int8/int32转换成float32。这里的shift值就是用于转换成float32的。`shift_len`跟convolution的filter大小一致。
 
-3. shape：表示模型输入/输出的shape，这个shape指的是模型训练时候的shape。
+转换公式为：**f_result[c] = out_i[c] / (1 << shift[c])**.
 
-4. 对齐shape：模型在BPU上运行时，需要以一定的方式对齐到8或者16字节，因此就有了这个对齐shape，表示模型运行所需要的输入/输出shape。这个通常是在普通shape的基础上加padding得到。
+其中：
 
-5. name：模型的name字符串。
-
-6. shifts和shift_len：当模型的输出为convolution，且输出数据是int8或者int32时，而实际训练时候模型的结果是float32，因此就需要把int8/int32转换成float32。这里的shift值就是用于转换成float32的。shift_len跟convolution的filter大小一致。
-
-   转换公式为：**f_result[c] = out_i[c] / (1 << shift[c])**.
-
-   其中：
-
-   1. c为0～num_filter，也就是输出channel数。
-
-   2. f_result为float值。
-
-   3. out_i为输出的int8或者int32值。
-
-   4. shift为对应的移位值。
+  1. c为0～num_filter，也就是输出channel数。
+  2. f_result为float值。
+  3. out_i为输出的int8或者int32值。
+  4. shift为对应的移位值。
 
 #### 2.1.2 BPU_MODEL_S
 
-```
+```c
 #define BPU_MODEL_MAX_NODE_NUM (16)
 typedef struct hb_BPU_MODEL_S {
   void *handle;
@@ -291,19 +299,18 @@ typedef struct hb_BPU_MODEL_S {
 } BPU_MODEL_S;
 ```
 
-**说明：**BPU_MODEL_S表示一个模型的信息。其中：
+**说明：**
 
-1. handle：用来表示模型在内部使用的对象指针。该内部对象中存储了模型的所有信息。在HB_BPU_loadModel接口中设置该值，在HB_BPU_releaseModel接口中重置为NULL。
+`BPU_MODEL_S`表示一个模型的信息。其中：
 
-2. inputs：表示模型的输入节点信息。在节点结构体中包含了描述节点所需要的信息。
-
-3. outputs：同inputs结构。
-
-4. input_num和output_num：分别表示模型输入输出的节点个数。
+1. `handle`：用来表示模型在内部使用的对象指针。该内部对象中存储了模型的所有信息。在`HB_BPU_loadModel`接口中设置该值，在`HB_BPU_releaseModel`接口中重置为NULL。
+2. `inputs`：表示模型的输入节点信息。在节点结构体中包含了描述节点所需要的信息。
+3. `outputs`：同`inputs`结构。
+4. `input_num`和`output_num`：分别表示模型输入输出的节点个数。
 
 #### 2.1.3 BPU_TENSOR_S
 
-```
+```c
 typedef struct hb_BPU_TENSOR_S {
   BPU_DATA_TYPE_E data_type;
   BPU_DATA_SHAPE_S data_shape;
@@ -313,121 +320,145 @@ typedef struct hb_BPU_TENSOR_S {
 } BPU_TENSOR_S;
 ```
 
-**说明：**BPU_TENSOR_S结构体主要用来描述各种数据的结构，可以用于图像，也可以用于特征（例如语音特征，其他模型输出的图像特征等）。其中：
+**说明：**
 
-1. data_type：表示该tensor的数据类型和布局（针对图像）。
+`BPU_TENSOR_S`结构体主要用来描述各种数据的结构，可以用于图像，也可以用于特征（例如语音特征，其他模型输出的图像特征等）。其中：
 
-2. data_shape：描述了数据的大小和layout。
-
-3. aligned_shape：描述了数据padding之后的大小。
-
-4. data：主要用来存储具体的数据地址。
-
-5. data_ext作为data字段的补充，用来存储额外数据的地址。用在NV12的Y和UV分离的场景（数据类型为BPU_TYPE_IMG_NV12_SEPARATE），在Y和UV分离的场景下，data存储Y的数据，data_ext存储UV的数据。
+1. `data_type`：表示该tensor的数据类型和布局（针对图像）。
+2. `data_shape`：描述了数据的大小和layout。
+3. `aligned_shape`：描述了数据padding之后的大小。
+4. `data`：主要用来存储具体的数据地址。
+5. `data_ext`作为`data`字段的补充，用来存储额外数据的地址。用在NV12的Y和UV分离的场景（数据类型为`BPU_TYPE_IMG_NV12_SEPARATE`），在Y和UV分离的场景下，`data`存储Y的数据，`data_ext`存储UV的数据。
 
 #### 2.1.4 数据类型和Layout说明
 
-​		由于使用一个BPU_TENSOR_S结构体表示所有的数据，因此在各种不同的场景下，数据类型、layout以及shape都有不同的组合方式，这里对典型场景的使用方式做以下说明。
+​由于使用一个`BPU_TENSOR_S`结构体表示所有的数据，因此在各种不同的场景下，`data_type`、`layout`以及`shape`都有不同的组合方式，这里对典型场景的使用方式做以下说明。
 
 ##### 2.1.4.1 layout说明
 
-​		layout分为NHWC和NCHW，N代表数量，C代表channel，H代表高度，W代表宽度。NCHW其实代表的是[W H C N]，第一个元素是000，第二个元素是沿着w方向的，即001，这样下去002 003，再接着呢就是沿着H方向，即004 005 006 007...这样到019后，沿C方向，轮到了020，之后021 022 ...一直到319，然后再沿N方向。NHWC的话以此类推，代表的是[C W H N]，第一个元素是000，第二个沿C方向，即020，040, 060..一直到300，之后沿W方向，001 021 041 061...301..到了303后，沿H方向，即004 024 .304.最后到了319，变成N方向，320,340....下图中所示a就是指四个维度。
+​`layout`分为NHWC和NCHW，N代表数量，C代表channel，H代表高度，W代表宽度。NCHW其实代表的是[W H C N]，第一个元素是000，第二个元素是沿着w方向的，即001，这样下去002 003，再接着呢就是沿着H方向，即004 005 006 007...这样到019后，沿C方向，轮到了020，之后021 022 ...一直到319，然后再沿N方向。NHWC的话以此类推，代表的是[C W H N]，第一个元素是000，第二个沿C方向，即020，040, 060..一直到300，之后沿W方向，001 021 041 061...301..到了303后，沿H方向，即004 024 .304.最后到了319，变成N方向，320,340....下图中所示a就是指四个维度。
 
-![image-20201202104425889](C:\Users\yizheng.wang\AppData\Roaming\Typora\typora-user-images\image-20201202104425889.png)
+![data_layout](./images/data_layout.png)
 
 ##### 2.1.4.2 图像数据类型
 
-​		所有的图像数据类型都以BPU_TYPE_IMG_开头，目前支持的类型包括：单Y、YUV_NV12、YUV444、BGR、RGB、BGRP和RGBP。所有的图像的数据类型都是uint8类型，这也是符合图像数据定义的类型。由于shape的定义是按照多维tensor来设计的，因此在图像上需要特别说明：
+​所有的图像数据类型都以`BPU_TYPE_IMG_`开头，目前支持的类型包括：单Y、YUV_NV12、YUV444、BGR、RGB、BGRP和RGBP。所有的图像的数据类型都是uint8类型，这也是符合图像数据定义的类型。由于shape的定义是按照多维tensor来设计的，因此在图像上需要特别说明：
 
 | 图像类型                   | shape                                       | aligned_shape                                             | data                                   |
 | -------------------------- | ------------------------------------------- | --------------------------------------------------------- | -------------------------------------- |
-| BPU_TYPE_IMG_Y             | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | Y的数据                                |
-| BPU_TYPE_IMG_YUV_NV12      | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | YUV_NV12的数据                         |
-| BPU_TYPE_IMG_YUV444        | [0]=n<br/>[1]=h<br/>[2]=w<br/>[3]=c         | [0]=n<br/>[1]=h-stride<br/>[2]=w-stride<br/>[3]=c         | YUV444的数据                           |
-| BPU_TYPE_IMG_BGR           | [0]=n<br/>[1]=h<br/>[2]=w<br/>[3]=c         | [0]=n<br/>[1]=h-stride<br/>[2]=w-stride<br/>[3]=c         | BGR的数据                              |
-| BPU_TYPE_IMG_BGRP          | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | B/G/R的数据                            |
-| BPU_TYPE_IMG_RGB           | [0]=n<br/>[1]=h<br/>[2]=w<br/>[3]=c         | [0]=n<br/>[1]=h-stride<br/>[2]=w-stride<br/>[3]=c         | RGB的数据                              |
-| BPU_TYPE_IMG_RGBP          | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | R/G/B的数据                            |
-| BPU_TYPE_IMG_NV12_SEPARATE | [0]=1<br/>[1]=3<br/>[2]=h<br/>[3]=w         | [0] = 1<br/>[1] = 3<br/>[2] = h-stride<br/>[3] = w-stride | data存储Y分量数据，data1存储UV分量数据 |
+| `BPU_TYPE_IMG_Y`             | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | Y的数据                                |
+| `BPU_TYPE_IMG_YUV_NV12`      | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | YUV_NV12的数据                         |
+| `BPU_TYPE_IMG_YUV444`        | [0]=n<br/>[1]=h<br/>[2]=w<br/>[3]=c         | [0]=n<br/>[1]=h-stride<br/>[2]=w-stride<br/>[3]=c         | YUV444的数据                           |
+| `BPU_TYPE_IMG_BGR`           | [0]=n<br/>[1]=h<br/>[2]=w<br/>[3]=c         | [0]=n<br/>[1]=h-stride<br/>[2]=w-stride<br/>[3]=c         | BGR的数据                              |
+| `BPU_TYPE_IMG_BGRP`          | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | B/G/R的数据                            |
+| `BPU_TYPE_IMG_RGB`           | [0]=n<br/>[1]=h<br/>[2]=w<br/>[3]=c         | [0]=n<br/>[1]=h-stride<br/>[2]=w-stride<br/>[3]=c         | RGB的数据                              |
+| `BPU_TYPE_IMG_RGBP`          | [0]=n<br/>[1]=c<br/>[2]=h<br/>[3]=w         | [0]=n<br/>[1]=c<br/>[2]=h-stride<br/>[3]=w-stride         | R/G/B的数据                            |
+| `BPU_TYPE_IMG_NV12_SEPARATE` | [0]=1<br/>[1]=3<br/>[2]=h<br/>[3]=w         | [0] = 1<br/>[1] = 3<br/>[2] = h-stride<br/>[3] = w-stride | data存储Y分量数据，data1存储UV分量数据 |
 
 **其中：**
 
-1.	shape和aligned_shape的layout都是按4维NHWC或者NCHW来描述。
-2.	Y/NV12/BGRP/RGBP都是按NCHW排布。
-3.	YUV444/BGR/RGB都是按NHWC排布。
-4.	Y的C=1，NV12的C=3。其他图像格式的C都是3。
-5.	n表示图像的帧数，当n > 1时，表示batch模式。
-6.	BPU_TYPE_IMG_NV12_SEPARATE，表示Y和UV分量不连续，用于Y和UV分离的场景。
-7.	Y/NV12/NV12_SEPARATE要求Y和UV的w-stride都是16的倍数。
-8.	在访问数据的时候，通常不会使用h_stride，但是要求h_stride大于等于h。
+1. `shape`和`aligned_shape`的`layout`都是按4维NHWC或者NCHW来描述。
+2. Y/NV12/BGRP/RGBP都是按NCHW排布。
+3. YUV444/BGR/RGB都是按NHWC排布。
+4. Y的C=1，NV12的C=3。其他图像格式的C都是3。
+5. n表示图像的帧数，当n > 1时，表示batch模式。
+6. `BPU_TYPE_IMG_NV12_SEPARATE`，表示Y和UV分量不连续，用于Y和UV分离的场景。
+7. Y/NV12/NV12_SEPARATE要求Y和UV的`w_stride`都是16的倍数。
+8. 在访问数据的时候，通常不会使用`h_stride`，但是要求`h_stride`大于等于h。
+9. `data`的`memSize`要大于等于h_stride * w_stride，防止读取错误内存。
+10. 对于各种图像格式在内存布局，参考如下图示（备注：下面的图像布局格式是一种示意，不代表SDK支持batch模式，目前BPU SDK不支持batch模式。）：
 
-9.	data的memSize要大于等于h_stride * w_stride，防止读取错误内存。
-10.	对于各种图像格式在内存布局，参考如下图示（备注：下面的图像布局格式是一种示意，不代表SDK支持batch模式，目前BPU SDK不支持batch模式。）：
-
-![image-20201202105148102](C:\Users\yizheng.wang\AppData\Roaming\Typora\typora-user-images\image-20201202105148102.png)
+![image_format](./images/image_format.png)
 
 ##### 2.1.4.3 Feature数据类型
 
-Feature类型数据使用BPU_TYPE_TENSOR_为前缀进行描述，支持int8、uint8、int32、uint32和float32类型的数据。Feature类型数据：
-1.	存储在data字段中。
-2.	shape表示feature的维度、layout。
-3.	aligned_shape表示feature的对齐维度，要求data的memSize等于aligned_shape对应的大小。
+Feature类型数据使用`BPU_TYPE_TENSOR_`为前缀进行描述，支持int8、uint8、int32、uint32和float32类型的数据。Feature类型数据：
+
+1. 存储在`data`字段中。
+2. `shape`表示feature的维度、`layout`。
+3. `aligned_shape`表示feature的对齐维度，要求`data`的`memSize`等于`aligned_shape`对应的大小。
+
+#### 2.1.5 BPU_MODEL_PACKAGE_S
+
+```
+#define MAX_MODEL_PACK_NUMBER 64
+typedef struct hb_BPU_MODEL_PACKAGE_S {
+  int model_num;
+  const char *model_name_list[MAX_MODEL_PACK_NUMBER];
+  BPU_MODEL_S model_list[MAX_MODEL_PACK_NUMBER];
+} BPU_MODEL_PACKAGE_S;
+```
+
+**说明：**
+
+`BPU_MODEL_PACKAGE_S`表示一个模型包（多个模型打包成一个文件）的信息。其中：
+
+1. `model_num`：用来表示模型包内含有多少个模型。
+2. `model_name_list`：用来表示模型包内的模型名称。
+3. `model_list`：用来表示模型包内的每个模型的模型信息。
 
 ### 2.2 BPU对齐规则
 
 这部分介绍使用BPU的对齐限制规则，包括起始地址要求，数据对齐要求。主要有三个方面组成：
-1.	模型输入要求： BPU不限制模型输入大小或者奇偶。既像yolo这种416x416的输入可以支持，对于像squeezeNet这种227x227的输入也可以支持。对于NV12输入比较特别，要求HW都是偶数，是为了满足UV是Y的一半的要求。
-2.	stride要求： BPU有stride要求。通常可以在BPU_NODE_S中根据shape和aligned-shape来确定。aligned-shape就是stride对齐的要求。对于NV12或Y输入的有些特别，要求W的stride是16的倍数。padding不关心具体值，可以是0或者非0。
 
-![image-20201202105325981](C:\Users\yizheng.wang\AppData\Roaming\Typora\typora-user-images\image-20201202105325981.png)
+  1. 模型输入要求： BPU不限制模型输入大小或者奇偶。既像yolo这种416x416的输入可以支持，对于像squeezeNet这种227x227的输入也可以支持。对于NV12输入比较特别，要求HW都是偶数，是为了满足UV是Y的一半的要求。
+  2. stride要求： BPU有stride要求。通常可以在`BPU_NODE_S`中根据`shape`和`aligned-shape`来确定。`aligned_shape`就是stride对齐的要求。对于NV12或Y输入的有些特别，要求W的stride是16的倍数。padding不关心具体值，可以是0或者非0。
 
-如上图所示，绿色的部分是原始图片，黄色的部分是padding的部分，假如图片的原始宽度为org_w，原始高度为org_h，那么根据输入W是16的倍数，H是2的倍数，需要对org_w和org_h做padding，使得填充后的图片的w是16的倍数，h是2的倍数。
+      ![alignment_rule_1](./images/alignment_rule_1.png)
 
-3. 起始地址要求：所有传入BPU的内存，都要求16字节对齐。
+      如上图所示，绿色的部分是原始图片，黄色的部分是padding的部分，假如图片的原始宽度为`org_w`，原始高度为`org_h`，那么根据输入W是16的倍数，H是2的倍数，需要对`org_w`和`org_h`做padding，使得填充后的图片的w是16的倍数，h是2的倍数。
+
+  3. 起始地址要求：所有传入BPU的内存，都要求16字节对齐。
 
 例如：对于227x227输入的squeezeNet，模型按照227x227训练：
 
-1. 如果模型输入是NV12的，则要求W的stride为240（达到16的倍数），同时H为228（扩大到偶数）。即NV12的输入应该是228x240，比227多出来的部分是padding数据，不影响最终结果。即BPU计算时还是按照227x227来计算。这里NV12直接送入BPU，所以有要求。
-2. 如果是BGR/RGB/BGRP/RGBP/YUV444的输入，在HB_BPU_runModel和HB_BPU_resize接口内部，会在ARM CPU上做对应的padding转换，跟NV12一样，带w-stride进来。
+  1. 如果模型输入是NV12的，则要求W的stride为240（达到16的倍数），同时H为228（扩大到偶数）。即NV12的输入应该是228x240，比227多出来的部分是padding数据，不影响最终结果。即BPU计算时还是按照227x227来计算。这里NV12直接送入BPU，所以有要求。
+  2. 如果是BGR/RGB/BGRP/RGBP/YUV444的输入，在`HB_BPU_runModel`和`HB_BPU_resize`接口内部，会在ARM CPU上做对应的padding转换，跟NV12一样，带`w_stride`进来。
 
-其他feature输入，按照模型node的信息中的aligned_shape来处理。假如从接口中获取的模型的输入的valid_shape为1x10x10x3，aligned_shape为1x16x16x4，那么需要按照aligned_shape进行填充，如下图：
+其他feature输入，按照模型node的信息中的`aligned_shape`来处理。假如从接口中获取的模型的输入的`valid_shape`为1x10x10x3，`aligned_shape`为1x16x16x4，那么需要按照`aligned_shape`进行填充，如下图：
 
-![image-20201202105344872](C:\Users\yizheng.wang\AppData\Roaming\Typora\typora-user-images\image-20201202105344872.png)
+![alignment_rule_2](./images/alignment_rule_2.png)
 
-原始feature数据的valid_h、valid_w、valid_c如上图黄色部分所示，需要根据aligned_shape中的w、h、c分别进行填充。
+原始feature数据的`valid_h`、`valid_w`、`valid_c`如上图黄色部分所示，需要根据`aligned_shape`中的w、h、c分别进行填充。
 
 ### 2.3 API说明
 
 #### 2.3.1 HB_BPU_loadModel
 
-```
+```c
 int HB_BPU_loadModel(const void *model_data, int model_size, BPU_MODEL_S *model);
 ```
 
-**描述：**加载一个BPU模型，并得到表示该模型的结构体对象。BPU_MODEL_S结构体由外部传入，该函数直接往结构体中填入模型信息。
+**描述：**
+
+加载一个BPU模型，并得到表示该模型的结构体对象。`BPU_MODEL_S`结构体由外部传入，该函数直接往结构体中填入模型信息。
+
 **输入：**
 
-1.	model_data：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，model_data的内存可以被释放。
-2.	model_size：模型data的内存大小。
+1. `model_data`：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，`model_data`的内存可以被释放。
+2. `model_size`：模型data的内存大小。
 
 **输出：**
 
-1. model：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。
+1. `model`：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。
 
 **返回：**
 
-1. int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用HB_BPU_getErrorName(err)得到返回值的字符串描述。
+1. int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用`HB_BPU_getErrorName(err)`得到返回值的字符串描述。
 
 #### 2.3.2 HB_BPU_releaseModel
 
-```
+```c
 int HB_BPU_releaseModel(BPU_MODEL_S *model);
 ```
 
-**描述：**释放已经加载的BPU模型。内部会修改model结构体的内容。
+**描述：**
+
+释放已经加载的BPU模型。内部会修改model结构体的内容。
+
 **输入：**
 
-1.	model：表示model的结构体对象指针。
+1. `model`：表示model的结构体对象指针。
 
 **返回：**
 
@@ -435,22 +466,25 @@ int HB_BPU_releaseModel(BPU_MODEL_S *model);
 
 #### 2.3.3 HB_BPU_getErrorName
 
-```
+```c
 const char *HB_BPU_getErrorName(int error_code);
 ```
 
-**描述：**把error code转换成可读的字符串，便于问题追查。该函数线程安全，可以在任何地方使用。
+**描述：**
+
+把error code转换成可读的字符串，便于问题追查。该函数线程安全，可以在任何地方使用。
+
 **输入：**
 
-1.	error_code：来自其他BPU API的返回值。
+1. `error_code`：来自其他BPU API的返回值。
 
 **返回：**
 
-1.	常量的字符串指针。
+1. 常量的字符串指针。
 
 #### 2.3.4 HB_BPU_setGlobalConfig
 
-```
+```c
 typedef enum hb_BPU_GLOBAL_CONFIG_E {
   BPU_GLOBAL_CONFIG_MAX_TASK_NUM,
   BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE,  // This config is discarded.
@@ -464,41 +498,46 @@ typedef enum hb_BPU_GLOBAL_CONFIG_E {
 } BPU_GLOBAL_CONFIG_E;
 ```
 
-**描述：**BPU_GLOBAL_CONFIG_E枚举了bpu-predict可以设置的全局控制参数。
+**描述：**
 
-1.	BPU_GLOBAL_CONFIG_MAX_TASK_NUM：设置能够同时运行的task个数上限，默认值为32，即可以同时提交32个执行模型的任务。
-2.	BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE：设置内部维护的mem pool大小，默认值为128，即最多在mem pool中存储128个buffer。可以通过修改这个值来控制bpu-predict的内存占用。
-3.	BPU_GLOBAL_CONFIG_DEBUG：设置是否进入debug模式，可选输入为“info” “debug” “warn” “error”：
-a.debug表示打开DEBUG,  ERROR，WARNING，INFO日志
-b.info表示打开ERROR，WARNING，INFO日志
-c.warn表示打开ERROR和WARNING级别日志
-d.error表示打开ERROR级别日志。日志级别也可以用环境变量HB_BPU_DEBUG_LOG=来设置。
-4.	BPU_GLOBAL_CONV_MAPPING_FILE：编译debug模型时输出的卷积节点mapping文件路径。
-5.	BPU_GLOBAL_CONV_DUMP_PATH：将bpu段中包含的conv节点的输出dump到的目录路径
-6.	BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE：取值为“TRUE”或者“true”时，统计LoadModel接口的内存使用情况。要配合HB_BPU_setGlobalConfig接口使用。注意：统计内存功能打开的情况下，性能会有损失，因此在生产环境中不要打开这个统计功能。
-7.	BPU_GLOBAL_ENGINE_TYPE：设置SDK内用于模型推理的engine 类型，取值如下：
-a.“native”表示 native engine类型。
-b.“group”表示 group engine类型，是默认值。
-8.	BPU_GLOBAL_CUSTOM_OP_LIB_PATH：custom op的lib path。
-9.	BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES：基于性能考量，SDK内部对于bpu内存会使用缓存机制，该配置项属于缓存的释放策略配置。假定配置为N，表示某块缓存超过N次不被使用，就会被释放；如果N小于等于0，表示不使用缓存机制。默认配置为64。
+`BPU_GLOBAL_CONFIG_E`枚举了`bpu_predict`可以设置的全局控制参数。
 
-```
+  1. `BPU_GLOBAL_CONFIG_MAX_TASK_NUM`：设置能够同时运行的task个数上限，默认值为32，即可以同时提交32个执行模型的任务。
+  2. `BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE`：设置内部维护的mem pool大小，默认值为128，即最多在mem pool中存储128个buffer。可以通过修改这个值来控制`bpu_predict`的内存占用。
+  3. `BPU_GLOBAL_CONFIG_DEBUG`：设置是否进入debug模式，可选输入为`info debug warn error`：
+      - `debug`表示打开DEBUG,  ERROR，WARNING，INFO日志
+      - `info`表示打开ERROR，WARNING，INFO日志
+      - `warn`表示打开ERROR和WARNING级别日志
+      - `error`表示打开ERROR级别日志。日志级别也可以用环境变量`HB_BPU_DEBUG_LOG=`来设置。
+  4. `BPU_GLOBAL_CONV_MAPPING_FILE`：编译debug模型时输出的卷积节点mapping文件路径。
+  5. `BPU_GLOBAL_CONV_DUMP_PATH`：将bpu段中包含的conv节点的输出dump到的目录路径
+  6. `BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE`：取值为`TRUE`或者`true`时，统计`LoadModel`接口的内存使用情况。要配合`HB_BPU_setGlobalConfig`接口使用。**注意：统计内存功能打开的情况下，性能会有损失，因此在生产环境中不要打开这个统计功能。**
+  7. `BPU_GLOBAL_ENGINE_TYPE`：设置SDK内用于模型推理的engine类型，取值如下：
+      - `native`表示 native engine类型。
+      - `group`表示 group engine类型，是默认值。
+  8. `BPU_GLOBAL_CUSTOM_OP_LIB_PATH`：custom op的lib path。
+  9. `BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES`：基于性能考量，SDK内部对于bpu内存会使用缓存机制，该配置项属于缓存的释放策略配置。假定配置为N，表示某块缓存超过N次不被使用，就会被释放；如果N小于等于0，表示不使用缓存机制。默认配置为64。
+
+```c
 int HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_E config_key, const char* config_value);
 ```
 
-**描述**：该函数用于设置bpu-predict的全局控制信息，此接口须在加载模型之前调用才能生效。
+**描述：**
+
+该函数用于设置`bpu_predict`的全局控制信息，此接口须在加载模型之前调用才能生效。
+
 **输入：**
 
-1.	config_key：表示需要设置的config枚举类型。
-2.	config_value：字符串类型的value。具体value可配的值可以在枚举值定义找到。设置值以字符串方式传入。例如设置BPU_GLOBAL_CONFIG_DEBUG，需要传入“0”或者“1”。
+1. `config_key`：表示需要设置的config枚举类型。
+2. `config_value`：字符串类型的value。具体value可配的值可以在枚举值定义找到。设置值以字符串方式传入。例如设置`BPU_GLOBAL_CONFIG_DEBUG`，需要传入`0`或者`1`。
 
 **返回：**
 
-1.	int类型错误码。
+1. int类型错误码。
 
 #### 2.3.5 HB_BPU_runModel
 
-```
+```c
 typedef void* BPU_TASK_HANDLE;  // 用于表示异步执行的task handle
 
 typedef struct hb_BPU_RUN_CTRL_S {
@@ -515,40 +554,46 @@ int HB_BPU_runModel(const BPU_MODEL_S *model,
                    BPU_TASK_HANDLE *task_handle);
 ```
 
-**描述：**对输入数据执行一次模型。分成同步方式和异步方式。当处于同步方式时，调用该接口会阻塞当前线程，直到模型运行完成；当处于异步方式时，调用该接口会立即返回，之后可以通过task_handle等待模型结束。
+**描述：**
+
+对输入数据执行一次模型。分成同步方式和异步方式。当处于同步方式时，调用该接口会阻塞当前线程，直到模型运行完成；当处于异步方式时，调用该接口会立即返回，之后可以通过`task_handle`等待模型结束。
+
 **输入：**
 
-1.	model：模型的结构体对象指针，表示运行该模型。
-2.	input_data：表示输入数据tensor。
-3.	input-num：表示输入数据的个数，需要跟模型的输入个数匹配。
-4.	output_data：表示输出数据tensor。
-5.	output-num：表示输出数据的个数，要跟模型输出个数一致。
-6.	run_ctrl：表示这次运行的控制信息，例如指定core_id，是否对input做resize处理。
-7.	is_sync：表示这次执行是否用同步模式，true为同步模式，false为异步模式
+1. `model`：模型的结构体对象指针，表示运行该模型。
+2. `input_data`：表示输入数据tensor。
+3. `input_num`：表示输入数据的个数，需要跟模型的输入个数匹配。
+4. `output_data`：表示输出数据tensor。
+5. `output_num`：表示输出数据的个数，要跟模型输出个数一致。
+6. `run_ctrl`：表示这次运行的控制信息，例如指定`core_id`，是否对input做resize处理。
+7. `is_sync`：表示这次执行是否用同步模式，`true`为同步模式，`false`为异步模式
 
 **输出：**
 
-1. 如果是异步接口，则会返回task_handle。这个handle可以用在后续HB_BPU_waitModelDone接口上等待模型执行完成。
+1. 如果是异步接口，则会返回`task_handle`。这个handle可以用在后续`HB_BPU_waitModelDone`接口上等待模型执行完成。
 
 **返回：**
 
-1.	int类型的错误码。
+1. int类型的错误码。
 
 **注：**
 
-1.	关于core-id。core-id的取值范围是[0, max_core_num]，max_core_num是BPU的总核数，在x2/j2/x3/j3上max_core_num为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置core-id为max_core_num。
-2.	异步模式下，core-id不生效。由系统内部根据负载情况自动分配BPU核。
+1. **关于**`core_id`。`core_id`**的取值范围是[0, max_core_num]，**`max_core_num`**是BPU的总核数，在x2/j2/x3/j3上**`max_core_num`**为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置**`core_id`为`max_core_num`。
+2. **异步模式下，**`core_id`**不生效。由系统内部根据负载情况自动分配BPU核。**
 
 #### 2.3.6 HB_BPU_waitModelDone
 
-```
+```c
 int HB_BPU_waitModelDone(BPU_TASK_HANDLE *task_handle);
 ```
 
-**描述：**等待模型执行完成，用于异步执行场景。调用该函数会卡住当前线程，直到模型执行完成。如果在调用该函数的时候模型已经执行完成，则函数直接返回。该函数返回之后，表示output-data中已经存入了模型执行的结果，并且结果可读。
+**描述：**
+
+等待模型执行完成，用于异步执行场景。调用该函数会卡住当前线程，直到模型执行完成。如果在调用该函数的时候模型已经执行完成，则函数直接返回。该函数返回之后，表示`output_data`中已经存入了模型执行的结果，并且结果可读。
+
 **输入：**
 
-1.	task_handle：表示模型一次执行的handle。这个handle由HB_BPU_runModel接口返回。不能用于其他用途。异步场景下该函数返回之后，需要调用HB_BPU_releaseTask来释放task_handle。
+1. `task_handle`：表示模型一次执行的handle。这个handle由`HB_BPU_runModel`接口返回。不能用于其他用途。异步场景下该函数返回之后，需要调用`HB_BPU_releaseTask`来释放`task_handle`。
 
 **返回：**
 
@@ -556,15 +601,17 @@ int HB_BPU_waitModelDone(BPU_TASK_HANDLE *task_handle);
 
 #### 2.3.7 HB_BPU_releaseTask
 
-```
+```c
 int HB_BPU_releaseTask(BPU_TASK_HANDLE *task_handle);
 ```
 
-**描述：**释放task handle，用于异步接口场景，需要在HB_BPU_waitModelDone之后调用。
+**描述：**
+
+释放task handle，用于异步接口场景，需要在`HB_BPU_waitModelDone`之后调用。
 
 **输入：**
 
-1. task_handle：表示模型一次执行的handle，由HB_BPU_runModel接口返回。
+1. `task_handle`：表示模型一次执行的handle，由`HB_BPU_runModel`接口返回。
 
 **返回：**
 
@@ -572,13 +619,13 @@ int HB_BPU_releaseTask(BPU_TASK_HANDLE *task_handle);
 
 #### 2.3.8 HB_BPU_resize
 
-```
+```c
 typedef enum hb_BPU_RESIZE_TYPE_E {
   BPU_RESIZE_TYPE_BILINEAR;
 } BPU_RESIZE_TYPE_E;
 ```
 
-```
+```c
 typedef struct hb_BPU_RESIZE_CTRL_S {
   BPU_RESIZE_TYPE_E resize_type;
   BPU_DATA_TYPE_E output_type;
@@ -586,22 +633,25 @@ typedef struct hb_BPU_RESIZE_CTRL_S {
 } BPU_RESIZE_CTRL_S;
 ```
 
-```
+```c
 int HB_BPU_resize(const BPU_TENSOR_S *src, BPU_TENSOR_S *dest, BPU_RESIZE_CTRL_S *ctrl_param);
 ```
 
-**描述：**将输入的tensor data做resize，转成dest tensor指定的大小，并存储到dest的tensor data中。函数内部不会申请dest空间，需要由外部申请。具体格式参考2.1.3.1图像数据类型一节。
+**描述：**
+
+将输入的tensor data做resize，转成dest tensor指定的大小，并存储到dest的tensor data中。函数内部不会申请dest空间，需要由外部申请。具体格式参考[图像数据类型](##### 2.1.4.2 图像数据类型)一节。
+
 **输入：**
 
-1.	src：表示输入data的数据描述，当输入数据格式为nv12和nv12_separate时，要求输入数据w和16对齐，h和2对齐;当输入为其他格式时，要求w和h和2对齐。
-2.	ctrl_param：表示resize使用的控制参数：
-   a.resize_type：表示使用的resize类型。目前只支持双线性插值。
-   b.output_type: 表示期望输出数据类型。具体说明见“输出类型说明”一节。
-   c.core_id：表示resize跑在哪个bpu核心上，指定0或1表示resize运行在bpu0核或者1核，其他值表示交由bpu_predict来调度运行在哪个核心。
+1. `src`：表示输入data的数据描述，当输入数据格式为nv12和nv12_separate时，要求输入数据w和16对齐，h和2对齐;当输入为其他格式时，要求w和h和2对齐。
+2. `ctrl_param`：表示resize使用的控制参数：
+   - `resize_type`：表示使用的resize类型。目前只支持双线性插值。
+   - `output_type`: 表示期望输出数据类型。具体说明见下文中的**输出类型说明**。
+   - `core_id`：表示resize跑在哪个bpu核心上，指定0或1表示resize运行在bpu0核或者1核，其他值表示交由bpu_predict来调度运行在哪个核心。
 
 **输出：**
 
-1. dest：表示输出data的数据描述，根据dest中设置的height和width执行对应缩放。
+1. `dest`：表示输出data的数据描述，根据`dest`中设置的height和width执行对应缩放。如果输出为nv12或者nv12_separate时，输出w和h必须和2对齐。
 
 **返回：**
 
@@ -609,8 +659,8 @@ int HB_BPU_resize(const BPU_TENSOR_S *src, BPU_TENSOR_S *dest, BPU_RESIZE_CTRL_S
 
 **输出类型说明：**
 
-1.	当ctrl_param参数中的output-type为BPU_TYPE_TENSOR_S8的时候，输出数据为可以直接送入BPU的数据，满足BPU的对齐要求，并且数据类型为int8。需要使用HB_BPU_getImageAlignedShape接口得到的对齐大小来申请output tensor的内存。
-2.	当ctrl_param参数中的output-type为BPU_TYPE_TENSOR_U8时，输出数据为正常的图像，且图像格式跟输入数据一致。output tensor的大小满足output tensor中设置的aligned_shape要求。
+1. 当`ctrl_param`参数中的`output_type`为`BPU_TYPE_TENSOR_S8`的时候，输出数据为可以直接送入BPU的数据，满足BPU的对齐要求，并且数据类型为int8。需要使用`HB_BPU_getImageAlignedShape`接口得到的对齐大小来申请output tensor的内存。
+2. 当`ctrl_param`参数中的`output_type`为`BPU_TYPE_TENSOR_U`8时，输出数据为正常的图像，且图像格式跟输入数据一致。output tensor的大小满足output tensor中设置的`aligned_shape`要求。
 
 这里可以列出一个支持的转换方式矩阵：
 
@@ -624,19 +674,16 @@ int HB_BPU_resize(const BPU_TENSOR_S *src, BPU_TENSOR_S *dest, BPU_RESIZE_CTRL_S
 | RGBP     | 不支持 | 暂未实现 | 暂未实现 | 暂未实现 | 暂未实现 | 支持     | 不支持   |
 | YUV_NV12 | 不支持 | 暂未实现 | 暂未实现 | 暂未实现 | 暂未实现 | 暂未实现 | 支持     |
 
-**其中：**
-
-1.	标示为“支持”的是当前支持的转换方式。
-2.	标示为“暂未实现”的是当前芯片架构可以支持，但是还没有实现的。
-3.	标示为“不支持”的是在当前芯片架构下无法实现的。
-
 **注：**
 
-​	1.缩放倍数最大支持256倍，即[1/256,256]，计算公式为(src-1)/(dst-1)。尺寸要求HxW <= 4094x4080，即缩放图的H最大为4094，W最大为4080。
+1. 标示为“支持”的是当前支持的转换方式。
+2. 标示为“暂未实现”的是当前芯片架构可以支持，但是还没有实现的。
+3. 标示为“不支持”的是在当前芯片架构下无法实现的。
+4. 缩放倍数最大支持256倍，即[1/256,256]，计算公式为(src-1)/(dst-1)。尺寸要求HxW <= 4094x4080，即缩放图的H最大为4094，W最大为4080。
 
 #### 2.3.9 HB_BPU_cropAndResize
 
-```
+```c
 typedef struct hb_BPU_ROI_S {
   int x1;
   int y1;
@@ -645,25 +692,28 @@ typedef struct hb_BPU_ROI_S {
 } BPU_ROI_S;
 ```
 
-```
+```c
 int HB_BPU_cropAndResize(const BPU_TENSOR_S *src, 
                         const BPU_ROI_S *input_roi,
                         BPU_TENSOR_S *dest, 
                         BPU_RESIZE_CTRL_S *ctrl_param);
 ```
 
-**描述：**对输入tensor data按照roi区域crop出来再做resize，并存储到dest的tensor data中。函数内部不会申请dest空间，需要由外部申请，并且设置dest的shape[0]为目标height和shape[1]为目标width。
+**描述：**
+
+对输入tensor data按照roi区域crop出来再做resize，并存储到dest的tensor data中。函数内部不会申请dest空间，需要由外部申请，并且设置dest的shape[0]为目标height和shape[1]为目标width。
+
 **输入：**
 
-1.	src：表示输入data的数据描述，根据结构体中的类型做对应的缩放。
-2.	input_roi：表示需要做resize的roi区域，其中保存左上角和右下角两个顶点的坐标。
-3.	ctrl_param：表示resize使用的控制参数：
-a.resize_type：表示使用的插值类型。目前只支持双线性插值。
-b.output_type: 表示期望输出数据类型。具体说明见“输出类型说明”一节。
+1. `src`：表示输入data的数据描述，根据结构体中的类型做对应的缩放。
+2. `input_roi`：表示需要做resize的roi区域，其中保存左上角和右下角两个顶点的坐标。例如400x200的图片，从左上角crop出200x200的图片，roi中x1应该为0，y1为0，x2为199，y2为199，即crop出的图片width等于x2-x1+1,height等于y2-y1+1。
+3. `ctrl_param`：表示resize使用的控制参数：
+    - `resize_type`：表示使用的插值类型。目前只支持双线性插值。
+    - `output_type`: 表示期望输出数据类型。具体说明上文中的**输出类型说明**。
 
 **输出：**
 
-1. dest：表示输出data的数据描述。
+1. `dest`：表示输出data的数据描述。
 
 **返回：**
 
@@ -671,25 +721,28 @@ b.output_type: 表示期望输出数据类型。具体说明见“输出类型�
 
 **注：**
 
-       1. HB_BPU_cropAndResize与HB_BPU_resize的区别是前者对图像的roi做resize而后者则是全图reszie，HB_BPU_cropAndResize的可支持转换及注意事项与HB_BPU_resize一致。
-       2. crop之前的原图大小要求HxW <= 4094x4080。
+  **1. `HB_BPU_cropAndResize`与`HB_BPU_resize`的区别是前者对图像的roi做resize而后者则是全图reszie，`HB_BPU_cropAndResize`的可支持转换及注意事项与`HB_BPU_resize`一致。**
+  
+  **2. crop之前的原图大小要求HxW <= 4094x4080。**
 
 #### 2.3.10 HB_BPU_getImageAlignedShape
 
-```
+```c
 int HB_BPU_getImageAlignedShape(const BPU_DATA_SHAPE_S *shape, 
                                int *aligned_size);
 ```
 
-**描述：**由输入的shape计算出对齐后的尺寸大小。这个接口可与HB_BPU_cropAndResize和HB_BPU_resize配合，用来获取resize结果需要申请的mem大小。
+**描述：**
+
+由输入的shape计算出对齐后的尺寸大小。这个接口可与`HB_BPU_cropAndResize`和`HB_BPU_resize`配合，用来获取resize结果需要申请的mem大小。
+
 **输入：**
 
-1. shape：表示输入的尺寸描述。 
-
+1. `shape`：表示输入的尺寸描述。
 
 **输出：**
 
-1. aligned_size：表示输入shape对齐后的mem大小。	
+1. `aligned_size`：表示输入shape对齐后的mem大小。
 
 **返回：**
 
@@ -697,25 +750,27 @@ int HB_BPU_getImageAlignedShape(const BPU_DATA_SHAPE_S *shape,
 
 #### 2.3.11 HB_BPU_getResizeResultWithoutPadding
 
-```
+```c
 int HB_BPU_getResizeResultWithoutPadding(const BPU_MEMORY_S *src,
                                          const BPU_DATA_TYPE_E data_type,
                                          const BPU_DATA_SHAPE_S *shape,
 									     void *dest, const int dest_size);
 ```
 
-**描述：**如果HB_BPU_resize或者HB_BPU_cropAndResize接口中的ctrl_param参数中的output_type设置为BPU_TYPE_TENSOR_S8类型，测试返回的dest data可以用来直接跑模型。但是不能直接转成图片查看。因为内部做了padding处理。所以当需要得到resize的图片结果时，需要调用此接口获取实际resize结果。函数内部不会申请dest空间，需要由外部申请，dest空间大小为实际图像大小。例如对RGB图片是h * w * 3。
+**描述：**
+
+如果`HB_BPU_resize`或者`HB_BPU_cropAndResize`接口中的`ctrl_param`参数中的`output_type`设置为`BPU_TYPE_TENSOR_S8`类型，测试返回的dest data可以用来直接跑模型。但是不能直接转成图片查看。因为内部做了padding处理。所以当需要得到resize的图片结果时，需要调用此接口获取实际resize结果。函数内部不会申请dest空间，需要由外部申请，dest空间大小为实际图像大小。例如对RGB图片是h \* w \* 3。
 
 **输入：**
 
-1.	src：表示resize得到的结果。
-2.	data_type：表示resize得到的图像类型。
-3.	shape：表示resize结果的尺寸描述。与data_type配合。
-4.	dest_size：表示dest内存大小，用于检查dest内存是否够用，防止写越界。
+1. `src`：表示resize得到的结果。
+2. `data_type`：表示resize得到的图像类型。
+3. `shape`：表示resize结果的尺寸描述。与`data_type`配合。
+4. `dest_size`：表示dest内存大小，用于检查dest内存是否够用，防止写越界。
 
 **输出：**
 
-1. dest：表示输出的数据地址，由外部申请，内存大小为HxWxC，目前支持的image类型中除了BPU_TYPE_IMG_Y的C为1，其余均为3。
+1. `dest`：表示输出的数据地址，由外部申请，内存大小为HxWxC，目前支持的image类型中除了`BPU_TYPE_IMG_Y`的C为1，其余均为3。
 
 **返回：**
 
@@ -723,29 +778,33 @@ int HB_BPU_getResizeResultWithoutPadding(const BPU_MEMORY_S *src,
 
 #### 2.3.12 HB_BPU_setModelPrior
 
-```
+```c
 int HB_BPU_setModelPrior(BPU_MODEL_S *model);
 ```
 
-**描述：**用于设置模型为高优先级模型，可以抢占其他模型。当在单个核上同时跑两个模型时，正常情况下两个模型会抢占同一个核，此时他们的执行时间会相互影响，导致延迟比单独跑单个模型要大。如果设置其中一个模型为高优先级，那么他就可以执行抢占操作，从而降低自己的延迟，此时的延迟应该和单独跑单个模型基本一致。而另外一个模型由于被抢占，被抢占的那一帧的执行时间会显著变长。
+**描述：**
+
+用于设置模型为高优先级模型，可以抢占其他模型。当在单个核上同时跑两个模型时，正常情况下两个模型会抢占同一个核，此时他们的执行时间会相互影响，导致延迟比单独跑单个模型要大。如果设置其中一个模型为高优先级，那么他就可以执行抢占操作，从而降低自己的延迟，此时的延迟应该和单独跑单个模型基本一致。而另外一个模型由于被抢占，被抢占的那一帧的执行时间会显著变长。
 
 **输入：**
 
- 	1.  model：模型的结构体对象指针，表示运行该模型。
+1. `model`：模型的结构体对象指针，表示运行该模型。
 
 **返回：**
 
-​	1. 返回int类型的错误码。
+​1. 返回int类型的错误码。
 
 **注:**
 
-1.	被抢占的模型必须在编译时添加max_time_per_fc参数，该参数的单位是us。
-2.	使用该接口时，必须设置环境变量BPLAT_CORELIMIT=1。
-3.	如果低优先级模型被抢占后，导致运行的时间大于10s，系统会直接判断该模型运行失败。
+  **1. 被抢占的模型必须在编译时添加`max_time_per_fc`参数，该参数的单位是us。**
+
+  **2. 使用该接口时，必须设置环境变量`BPLAT_CORELIMIT=1`。**
+
+  **3. 如果低优先级模型被抢占后，导致运行的时间大于10s，系统会直接判断该模型运行失败。**
 
 #### 2.3.13 HB_BPU_getHWCIndex
 
-```
+```c
 int HB_BPU_getHWCIndex(BPU_DATA_TYPE_E data_type,
                        const BPU_LAYOUT_E *layout,
                        int *h_idx,
@@ -753,18 +812,20 @@ int HB_BPU_getHWCIndex(BPU_DATA_TYPE_E data_type,
                        int *c_idx);
 ```
 
-**描述：**辅助接口，提供便利功能。根据data_type和layout，返回height/width/ channel在纬度数组（BPU_DATA_SHAPE_S.d）中的位置索引。当data_type参数为BPU_TYPE_IMG_XXX时，layout为无效参数，可传进去NULL。当data_type为BPU_TYPE_TENSOR_XXX时，必须传正确的layout参数。举例来说：如果data_type为BPU_TYPE_IMG_YUV_NV12，由于BPU_TYPE_IMG_YUV_NV12对应的layout为NCHW，因此返回的h_idx=2，w_idx=3，c_idx=1；如果data_type为BPU_TYPE_TENSOR_S8，该type是feature类型的，本身没有layout信息，因此必须传进去正确的layout参数，根据模型的要求，假定layout参数为BPU_LAYOUT_NHWC，则该接口返回的h_idx=1，w_idx=2，c_idx=3。
+**描述：**
 
-**输入：** 
+辅助接口，提供遍历功能。根据`data_type`和`layout`，返回height/width/ channel在维度数组（`BPU_DATA_SHAPE_S.d`）中的位置索引。当`data_type`参数为`BPU_TYPE_IMG_XXX`时，`layout`为无效参数，可传进去`NULL`。当`data_type`为`BPU_TYPE_TENSOR_XXX`时，必须传正确的`layout`参数。举例来说：如果`data_type`为`BPU_TYPE_IMG_YUV_NV12`，由于`BPU_TYPE_IMG_YUV_NV12`对应的`layout`为NCHW，因此返回的`h_idx=2`，`w_idx=3`，`c_idx=1`；如果`data_type`为`BPU_TYPE_TENSOR_S8`，该type是feature类型的，本身没有`layout`信息，因此必须传进去正确的`layout`参数，根据模型的要求，假定`layout`参数为`BPU_LAYOUT_NHWC`，则该接口返回的`h_idx=1`，`w_idx=2`，`c_idx=3`。
 
-1.	data_type：模型input的数据类型。
-2.	layout：模型input的layout，注意：当data_type为图片（BPU_TYPE_IMG_XXX），layout为无效参数，可为NULL；当data_type为feature（BPU_TYPE_TENSOR_XXX），layout为必须的参数。
+**输入：**
+
+1. `data_type`：模型input的数据类型。
+2. `layout`：模型input的layout，**注意：当`data_type`为图片（`BPU_TYPE_IMG_XXX`），layout为无效参数，可为NULL；当`data_type`为feature（`BPU_TYPE_TENSOR_XXX`），layout为必须的参数。**
 
 **输出：**
 
-1.	h_idx：height的位置索引。
-2.	w_idx：width的位置索引。
-3.	c_idx：channel的位置索引。
+1. `h_idx`：height的位置索引。
+2. `w_idx`：width的位置索引。
+3. `c_idx`：channel的位置索引。
 
 **返回：**
 
@@ -772,22 +833,26 @@ int HB_BPU_getHWCIndex(BPU_DATA_TYPE_E data_type,
 
 #### 2.3.14 HB_BPU_getHW
 
-```
+```c
 int HB_BPU_getHW(BPU_DATA_TYPE_E data_type,
                  const BPU_DATA_SHAPE_S *shape,
                  int *height,
                  int *width);
 ```
 
+**描述：**
+
+根据模型的shape获取模型输入的height和width。
+
 **输入：**
 
-1.	data_type：模型input的数据类型，必须的参数。
-2.	shape：对应的纬度结构体，必须的参数。
+1. `data_type`：模型input的数据类型，必须的参数。
+2. `shape`：对应的维度结构体，必须的参数。
 
 **输出：**
 
-1.	height：shape中纬度数组中height大小。
-2.	width：shape中纬度数组中width大小。
+1. `height`：`shape`中维度数组中height大小。
+2. `width`：`shape`中维度数组中width大小。
 
 **返回：**
 
@@ -795,7 +860,7 @@ int HB_BPU_getHW(BPU_DATA_TYPE_E data_type,
 
 #### 2.3.15 HB_BPU_getMemoryUsage
 
-```
+```c
 int HB_BPU_getMemoryUsage(BPU_MODEL_S *model,
                           size_t *bpu_peak_memory_usage,
                           size_t *bpu_memory_occupation,
@@ -803,17 +868,20 @@ int HB_BPU_getMemoryUsage(BPU_MODEL_S *model,
                           size_t *cpu_memory_occupation);
 ```
 
-**描述：**辅助接口，提供模型加载的内存统计功能。在成功调用HB_BPU_loadModel接口之后，传入模型结构体指针，调用该接口，可获取该模型加载的峰值内存和常驻内存。注意，要使用该接口统计内存的话，必须将全局配置BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE设置为“TRUE”，即在加载模型前调用HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE,"TRUE")。
+**描述：**
+
+辅助接口，提供模型加载的内存统计功能。在成功调用`HB_BPU_loadModel`接口之后，传入模型结构体指针，调用该接口，可获取该模型加载的峰值内存和常驻内存。**注意：要使用该接口统计内存的话，必须将全局配置`BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE`设置为“`TRUE`，即在加载模型前调用`HB_BPU_setGlobalConfig`(`BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE, TRUE`)。**
+
 **输入：**
 
-1.	model：表示model的结构体对象指针。
+1. `model`：表示model的结构体对象指针。
 
 **输出：**
 
-1.	bpu_peak_memory_usage：模型加载过程中的峰值bpu内存，以byte为单位的统计数据。
-2.	bpu_memory_occupation：模型加载成功后的的常驻bpu内存（直到HB_BPU_releaseModel被调用才被释放），以byte为单位的统计数据。
-3.	cpu_peak_memory_usage：模型加载过程中的峰值cpu内存，以byte为单位的统计数据。
-4.	cpu_memory_occupation：模型加载成功后的的常驻cpu内存（直到HB_BPU_releaseModel被调用才被释放），以byte为单位的统计数据。
+1. `bpu_peak_memory_usage`：模型加载过程中的峰值bpu内存，以byte为单位的统计数据。
+2. `bpu_memory_occupation`：模型加载成功后的的常驻bpu内存（直到`HB_BPU_releaseModel`被调用才被释放），以byte为单位的统计数据。
+3. `cpu_peak_memory_usage`：模型加载过程中的峰值cpu内存，以byte为单位的统计数据。
+4. `cpu_memory_occupation`：模型加载成功后的的常驻cpu内存（直到`HB_BPU_releaseModel`被调用才被释放），以byte为单位的统计数据。
 
 **返回：**
 
@@ -821,58 +889,65 @@ int HB_BPU_getMemoryUsage(BPU_MODEL_S *model,
 
 #### 2.3.16 HB_BPU_loadModelFromFile
 
-```
+```c
 int HB_BPU_loadModelFromFile(const char *model_file_name, BPU_MODEL_S *model);
 ```
 
-**描述：**从模型文件加载一个BPU模型，并得到表示该模型的结构体对象。BPU_MODEL_S结构体由外部传入，该函数直接往结构体中填入模型信息。
+**描述：**
+
+从模型文件加载一个BPU模型，并得到表示该模型的结构体对象。`BPU_MODEL_S`结构体由外部传入，该函数直接往结构体中填入模型信息。
+
 **输入：**
 
-1.	model_file_name：模型文件的路径名。
+1. `model_file_name`：模型文件的路径名。
 
 **输出：**
 
-1. model：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。
+1. `model`：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。
 
 **返回：**
 
-1. int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用HB_BPU_getErrorName(err)得到返回值的字符串描述。
+1. int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用`HB_BPU_getErrorName(err)`得到返回值的字符串描述。
 
 #### 2.3.17 HB_BPU_getVersion
 
-```
+```c
 const char *HB_BPU_getVersion();
 ```
 
-**描述：**获取BPU SDK的版本号信息。
+**描述：**
 
-**输入：**无。
+获取BPU SDK的版本号信息。
 
-**输出：**无。
+**输入：**
+无。
 
-**返回：**BPU SDK的版本号信息字符串。
+**输出：**
+无。
+
+**返回：**
+
+BPU SDK的版本号信息字符串。
 
 #### 2.3.18 HB_BPU_runModelWithBbox
 
-```
+```c
 typedef struct hb_BPU_BBOX {
-  float x1;
-  float y1;
-  float x2;
-  float y2;
-  float score;
-  int type;
-  bool resizable;
+  float x1;       # box左上角x轴坐标
+  float y1;       # box左上角y轴坐标
+  float x2;       # box右下角x轴坐标
+  float y2;       # box右下角y轴坐标
+  float score;    # box得分
+  int type;       # box类别
+  bool resizable; # 是否对box大小进行resize,如果resize无法由bpu硬件进行resize,则进行软件resize
 } BPU_BBOX;
 ```
 
-```
-typedef void *BPU_PYRAMID_BUFFER;
-```
 
-```
+```c
 int HB_BPU_runModelWithBbox(const BPU_MODEL_S *model,
-                            BPU_CAMERA_BUFFER input,
+                            BPU_ADDR_INFO_S down_scales[],
+                            int down_scale_layers,
                             BPU_BBOX bbox[],
                             int bbox_num,
                             const BPU_TENSOR_S output_data[],
@@ -883,23 +958,27 @@ int HB_BPU_runModelWithBbox(const BPU_MODEL_S *model,
                             BPU_TASK_HANDLE *task_handle);
 ```
 
-**描述：**对输入数据执行模型。其中输入数据是金字塔输入和多个BBox的综合，接口内部会通过BBox对金字塔输入数据进行crop和resize，然后作为模型输入去执行模型。执行方式分成同步方式和异步方式。当处于同步方式时，调用该接口会阻塞当前线程，直到模型运行完成；当处于异步方式时，调用该接口会立即返回，之后可以通过task_handle等待模型结束。
+**描述：**
+
+对输入数据执行模型。其中输入数据是图片的多个缩放层和多个BBox的综合（Bbox的坐标是基于down_scales[0]的，down_scale[0]代表原图），针对每个Bbox，接口内部会根据BBox选择合适的图片缩放层，然后在被选的缩放层上进行crop和resize，以便匹配模型的input shape，然后resize的结果作为模型输入去执行模型。执行方式分成同步方式和异步方式。当处于同步方式时，调用该接口会阻塞当前线程，直到模型运行完成；当处于异步方式时，调用该接口会立即返回，之后可以通过`task_handle`等待模型结束。
+
 **输入：**
 
-1.	model：模型的结构体对象指针，表示运行该模型，目前只支持input为resizer的模型。
-2.	input：表示金字塔输入数据。目前，该数据实际类型要求必须是BPUCameraBuffer，可通过BPU_getCameraImageData或者BPU_constructCameraBufferFromPyramidBuffer等相关接口取得该数据。
-3.	bbox：bbox的数组指针。
-4.	bbox_num：bbox的个数。
-5.	output_data：表示输出数据tensor。
-6.	output-num：表示输出数据的个数，要跟模型输出个数一致。这两个参数要特别注意，output_num就是模型本身的输出个数，output_data则是模型每个输出的nBox个tensor的连续内存，举例来说：
-假设resizer模型有两个输出：A和B，有20个检测框作为输入，则nBox=20，output_num=2， output_data[0]=20个A tensor的内存， output_data[1]=20个B tensor的内存。
-7.	run_ctrl：表示这次运行的控制信息，例如core_id。
-8.	is_sync：表示这次执行是否用同步模式，true为同步模式，false为异步模式。
+1. `model`：模型的结构体对象指针，表示运行该模型，目前只支持 `input` 为resizer的模型。
+2. `down_scales`：图片的多个缩放层，仅指向下缩放，目前该参数的实际来源为io中金字塔相关接口返回的金字塔数据down scale层，`BPU_ADDR_INFO_S`结构体的具体描述参见 `2.4.3 BPU_convertCameraInfo` 章节。
+3. `down_scale_layers`: `down_scales` 数组中有效缩放层的个数。
+4. `bbox`：bbox的数组指针。
+5. `bbox_num`：bbox的个数。
+6. `output_data`：表示输出数据tensor。
+7. `output_num`：表示输出数据的个数，要跟模型输出个数一致。这两个参数要特别注意，`output_num`就是模型本身的输出个数，`output_data`则是模型每个输出的n `bbox_num` 个tensor的连续内存，举例来说：
+假设resizer模型有两个输出：A和B，有20个检测框作为输入，则n `bbox_num`=20，`output_num`=2， `output_data`[0]=20个A tensor的内存， output_data[1]=20个B tensor的内存。
+8. `run_ctrl`：表示这次运行的控制信息，例如`core_id`，是否当resizer硬件不能支持时使用内部RoiResize功能。
+9. `is_sync`：表示这次执行是否用同步模式，`true`为同步模式，`false`为异步模式。
 
 **输出：**
 
-1.	resizable_cnt：实际能够resize的bbox个数，调用方可以根据这个输出值，决定有多少个实际的output。
-2.	如果是异步接口，则会返回task_handle。这个handle可以用在后续HB_BPU_waitModelDone接口上等待模型执行完成。
+1. `resizable_cnt`：实际能够resize的bbox个数，调用方可以根据这个输出值，决定有多少个实际的output。
+2. 如果是异步接口，则会返回`task_handle`。这个handle可以用在后续`HB_BPU_waitModelDone`接口上等待模型执行完成。
 
 **返回：**
 
@@ -907,20 +986,26 @@ int HB_BPU_runModelWithBbox(const BPU_MODEL_S *model,
 
 **注：**
 
-1.	关于core-id。core-id的取值范围是[0, max_core_num]，max_core_num是BPU的总核数，在x2/j2/x3/j3上max_core_num为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置core-id为max_core_num。
-2.	异步模式下，core-id不生效。由系统内部根据负载情况自动分配BPU核。
+1. 关于`core_id`。`core_id`的取值范围是[0, max_core_num]，`max_core_num`是BPU的总核数，在x2/j2/x3/j3上`max_core_num`为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置`core_id`为`max_core_num`。
+2. 异步模式下，`core_id`不生效。由系统内部根据负载情况自动分配BPU核。
 
 #### 2.3.19 HB_BPU_createGroup
 
-```
+```c
 int HB_BPU_createGroup();
 ```
 
-**描述：**创建一个bpu group。bpu group是bpu提供的一种资源保证的手段，多个模型可以归属到一个group，然后设置该group的资源使用限制，bpu将这几个模型的资源使用限制在设定值范围内。
+**描述：**
 
-**输入**：无。
+创建一个bpu group。bpu group是bpu提供的一种资源保证的手段，多个模型可以归属到一个group，然后设置该group的资源使用限制，bpu将这几个模型的资源使用限制在设定值范围内。
 
-**输出：**无。
+**输入：**
+
+无。
+
+**输出：**
+
+无。
 
 **返回：**
 
@@ -928,19 +1013,22 @@ int HB_BPU_createGroup();
 
 #### 2.3.20 HB_BPU_setModelGroup
 
-```
+```c
 int HB_BPU_setModelGroup(BPU_MODEL_S *model, int group_id);
 ```
 
-**描述：**将模型归属到group中。
+**描述：**
+
+将模型归属到group中。
 
 **输入：**
 
-1. model：模型结构体。
+1. `model`：模型结构体。
+2. `group_id`：group id。
 
-2. group_id：group id。
+**输出：**
 
-**输出：**无。
+无。
 
 **返回：**
 
@@ -948,19 +1036,22 @@ int HB_BPU_setModelGroup(BPU_MODEL_S *model, int group_id);
 
 #### 2.3.21 HB_BPU_setGroupProportion
 
-```
+```c
 int HB_BPU_setGroupProportion(int group_id, int proportion);
 ```
 
-**描述：**设置某个group的bpu资源使用限制。
+**描述：**
+
+设置某个group的bpu资源使用限制。
 
 **输入：**
 
-1. group_id：group id。
+1. `group_id`：group id。
+2. `proportion`：资源限制量，取值范围在[0,100]。接口内部会按照proportion/100计算资源使用百分比。
 
-2. proportion：资源限制量，取值范围在[0,100]。接口内部会按照proportion/100计算资源使用百分比。
+**输出：**
 
-**输出：**无
+无。
 
 **返回：**
 
@@ -968,19 +1059,21 @@ int HB_BPU_setGroupProportion(int group_id, int proportion);
 
 **注：**
 
-​		该接口只会限制bpu资源使用率不会超过取值百分比，但对于个别模型来讲，bpu资源使用率并不一定会随着proportion增加而线性增长，因为bpu使用率还受制于其他方面：cpu负载、io负载、模型是否包含cpu算子等。
+​该接口只会限制bpu资源使用率不会超过取值百分比，但对于个别模型来讲，bpu资源使用率并不一定会随着`proportion`增加而线性增长，因为bpu使用率还受制于其他方面：cpu负载、io负载、模型是否包含cpu算子等。
 
 #### 2.3.22 HB_BPU_deleteGroup
 
-```
+```c
 int HB_BPU_deleteGroup(int group_id);
 ```
 
-**描述：**删除某个group。
+**描述：**
+
+删除某个group。
 
 **输入：**
 
-1. group_id：group id。
+1. `group_id`：group id。
 
 **输出：**
 
@@ -992,7 +1085,7 @@ int HB_BPU_deleteGroup(int group_id);
 
 #### 2.3.23 HB_BPU_parseDetThreshResult
 
-```
+```c
 int HB_BPU_parseDetThreshResult(const BPU_MODEL_S *model,
                                 const BPU_TENSOR_S output_data[],
                                 int output_num,
@@ -1002,25 +1095,22 @@ int HB_BPU_parseDetThreshResult(const BPU_MODEL_S *model,
                                 int *bbox_num);
 ```
 
-**描述：**特殊检测模型（定点训练工具训练出的fasterrcnn或者maskrccn）的后处理接口，解析出Bbox。
+**描述：**
+
+特殊检测模型（定点训练工具训练出的fasterrcnn或者maskrccn）的后处理接口，解析出Bbox。
 
 **输入：**
 
-1. model：模型结构体指针。
-
-2. output_data：模型执行后的output tensor数组。
-
-3. output_num：output tensor的个数。
-
-4. class_names： 类别的classes数组。
-
-5. class_num：类别的classes数组的个数。
+1. `model`：模型结构体指针。
+2. `output_data`：模型执行后的output tensor数组。
+3. `output_num`：output tensor的个数。
+4. `class_names`： 类别的classes数组。
+5. `class_num`：类别的classes数组的个数。
 
 **输出：**
 
-1. bbox：解析得到的bbox数组。
-
-2. bbox数组的个数。
+1. `bbox`：解析得到的bbox数组。
+2. `bbox_num`：数组的个数。
 
 **返回：**
 
@@ -1028,7 +1118,7 @@ int HB_BPU_parseDetThreshResult(const BPU_MODEL_S *model,
 
 #### 2.3.24 HB_BPU_parseChannelMaxResult
 
-```
+```c
 int HB_BPU_parseChannelMaxResult(const BPU_MODEL_S *model,
                                  const BPU_TENSOR_S output_data[],
                                  int output_num,
@@ -1036,21 +1126,20 @@ int HB_BPU_parseChannelMaxResult(const BPU_MODEL_S *model,
                                  int *result);
 ```
 
-**描述：**特殊分类模型的后处理接口，解析出分类结果。
+**描述：**
+
+特殊分类模型的后处理接口，解析出分类结果。
 
 **输入：**
 
-1. model：模型结构体指针。
-
-2. output_data：模型执行后的output tensor数组。
-
-3. output_num：output tensor数组的大小。
-
-4. result_num：解析结果的个数，必须小于等于output_num。
+1. `model`：模型结构体指针。
+2. `output_data`：模型执行后的output tensor数组。
+3. `output_num`：output tensor数组的大小。
+4. `result_num`：解析结果的个数，必须小于等于`output_num`。
 
 **输出：**
 
-1. result：解析得到的数组。
+1. `result`：解析得到的数组。
 
 **返回：**
 
@@ -1058,7 +1147,7 @@ int HB_BPU_parseChannelMaxResult(const BPU_MODEL_S *model,
 
 #### 2.3.25 HB_BPU_parseDPPResult
 
-```
+```c
 int HB_BPU_parseDPPResult(const BPU_MODEL_S *model,
                           const BPU_TENSOR_S output_data[],
                           int output_num,
@@ -1066,21 +1155,20 @@ int HB_BPU_parseDPPResult(const BPU_MODEL_S *model,
                           int *bbox_num);
 ```
 
-**描述：**特殊检测模型的后处理接口。解析出检测框Bbox。
+**描述：**
+
+特殊检测模型的后处理接口。解析出检测框Bbox。
 
 **输入：**
 
-1. model：模型结构体指针。
-
-2. output_data：模型执行后的output tensor数组。
-
-3. output_num：output tensor数组的大小 。
+1. `model`：模型结构体指针。
+2. `output_data`：模型执行后的output tensor数组。
+3. `output_num`：output tensor数组的大小 。
 
 **输出：**
 
-1. bbox：解析出的bbox数组。
-
-2. bbox_num：bbox数组的大小。
+1. `bbox`：解析出的bbox数组。
+2. `bbox_num`：bbox数组的大小。
 
 **返回：**
 
@@ -1088,7 +1176,7 @@ int HB_BPU_parseDPPResult(const BPU_MODEL_S *model,
 
 #### 2.3.26 HB_BPU_parseRPPResult
 
-```
+```c
 typedef struct hb_BPU_BBOX_F32 {
   float left;
   float top;
@@ -1114,30 +1202,96 @@ typedef struct hb_BPU_RPP_BBOX {
 } BPU_RPP_BBOX;
 ```
 
-```
+```c
 int HB_BPU_parseRPPResult(const BPU_MODEL_S *model,
                           const BPU_TENSOR_S output_data[],
                           int output_index,
                           BPU_RPP_BBOX *rpp_bbox);
 ```
 
-**描述：**特殊检测模型的某个输出的后处理接口。解析出检测框Bbox。
+**描述：**
+
+特殊检测模型的某个输出的后处理接口。解析出检测框Bbox。
 
 **输入：**
 
-1. model：模型结构体指针。
-
-2. output_data：模型执行后的output tensor数组。
-
-3. output_index：output tensor数组中的元素索引。
+1. `model`：模型结构体指针。
+2. `output_data`：模型执行后的output tensor数组。
+3. `output_index`：output tensor数组中的元素索引。
 
 **输出：**
 
-1. rpp_bbox：解析出的bbox。
+1. `rpp_bbox`：解析出的bbox。
 
 **返回：**
 
-1. int类型的错误码。。
+1. int类型的错误码。
+
+#### 2.3.27 HB_BPU_loadModelPackage
+
+```c++
+int HB_BPU_loadModelPackage(const void *model_data,
+                            int model_size,
+                            BPU_MODEL_PACKAGE_S *model_pack_s);
+```
+
+**描述：**
+
+加载BPU模型包，并得到表示该模型包结构体对象。`BPU_MODEL_PACKAGE_S`结构体由外部传入，该函数直接往结构体中填入模型包内各个模型信息。
+
+**输入：**
+
+1. `model_data`：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，`model_data`的内存可以被释放。
+2. `model_size`：模型data的内存大小。
+
+**输出：**
+
+1. `model_pack_s`：代表当前加载模型包信息的结构体指针。
+
+**返回：**
+
+1. int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用`HB_BPU_getErrorName(err)`得到返回值的字符串描述。
+
+#### 2.3.28 HB_BPU_loadModelPackageFromFile
+
+```c++
+int HB_BPU_loadModelPackageFromFile(const char *file_path,
+                                    BPU_MODEL_PACKAGE_S *model_pack_s);
+```
+
+**描述：**
+
+加载BPU模型包，并得到表示该模型包结构体对象。`BPU_MODEL_PACKAGE_S`结构体由外部传入，该函数直接往结构体中填入模型包内各个模型信息。
+
+**输入：**
+
+1. `file_path`：模型包的文件路径。
+
+**输出：**
+
+1. `model_pack_s`：代表当前加载模型包信息的结构体指针。
+
+**返回：**
+
+1. int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用`HB_BPU_getErrorName(err)`得到返回值的字符串描述。
+
+#### 2.3.29 HB_BPU_releaseModelPackage
+
+```c
+int HB_BPU_releaseModelPackage(BPU_MODEL_PACKAGE_S *model_package_s);
+```
+
+**描述：**
+
+释放已经加载的BPU模型包。内部会修改 `model_package_s` 结构体的内容。
+
+**输入：**
+
+1. `model_package_s`：表示模型包的结构体对象指针。
+
+**返回：**
+
+1. 返回int类型的返回值。0表示执行成功，其他值表示失败。
 
 ### 2.4 IO接口说明
 
@@ -1145,7 +1299,7 @@ int HB_BPU_parseRPPResult(const BPU_MODEL_S *model,
 
 #### 2.4.1 BPU_createCameraHandle
 
-```
+```c
 typedef void *BPUCameraHandle;
 
 int BPU_createCameraHandle(const char *vio_config_file_name,
@@ -1155,47 +1309,46 @@ int BPU_createCameraHandle(const char *vio_config_file_name,
                            BPUCameraHandle *handle);
 ```
 
-**描述：**创建camera对象，并返回表示camera对象的handle。handle由外部传入，函数内部对其进行赋值。
+**描述：**
 
-**注意：**对于一个camera，不能重复创建多个camera对象。
+创建camera对象，并返回表示camera对象的handle。handle由外部传入，函数内部对其进行赋值。
+
+**注意：对于一个camera，不能重复创建多个camera对象。**
 
 **输入：**
 
-1. vio_config_file_name：表示vio 配置文件名。
-
-2. camera_config_file_name：表示camera配置文件名。
-
-3. cam_cfg_index：表示camera配置文件中camera类型对应的config字段的index。
-
-4. port：表示camera配置文件中camera类型对应的config字段中的port id。
+1. `vio_config_file_name`：表示vio配置文件名。
+2. `camera_config_file_name`：表示camera配置文件名。
+3. `cam_cfg_index`：表示camera配置文件中camera类型对应的`config`字段的index。
+4. `port`：表示camera配置文件中camera类型对应的`config`字段中的port id。
 
 **输出：**
 
-1. handle：表示创建好的camera handle，可用于后续获取camera图像。
+1. `handle`：表示创建好的camera handle，可用于后续获取camera图像。
 
 **返回：**
 
 1. 返回int类型的错误码。
 
-**注：**
-
-1. cam_cfg_index和port均为camera配置文件的参数，一般板子可支持多种类型的camera，因此需要找到对应的camera所在的字段，配置文件为json格式，通过cam_cfg_index和port id可找到对应的camera配置参数。在我们提供的示例中，可以找到配置文件的示例。通常在只有单路摄像头的场景，cam_cfg_index和port都是填0。
+**注： `cam_cfg_index`和`port`均为camera配置文件的参数，一般板子可支持多种类型的camera，因此需要找到对应的camera所在的字段，配置文件为json格式，通过`cam_cfg_index`和port id可找到对应的camera配置参数。在我们提供的示例中，可以找到配置文件的示例。通常在只有单路摄像头的场景，`cam_cfg_index`和`port`都是填0。**
 
 #### 2.4.2 BPU_getCameraImageData
 
-```
+```c
 int BPU_getCameraImageData(BPUCameraHandle *handle,BPUCameraBuffer *info);
 ```
 
-**描述：**获取当前的camera图像数据。
+**描述：**
+
+获取当前的camera图像数据。
 
 **输入：**
 
-1. Handle：表示创建好的camera handle。
+1. `handle`：表示创建好的camera handle。
 
 **输出：**
 
-1. info：表示获取当前的camera图像。
+1. `info`：表示获取当前的camera图像。
 
 **返回：**
 
@@ -1203,7 +1356,7 @@ int BPU_getCameraImageData(BPUCameraHandle *handle,BPUCameraBuffer *info);
 
 #### 2.4.3 BPU_convertCameraInfo
 
-```
+```c
 typedef struct hb_BPU_ADDR_INFO_S {
   uint16_t width;
   uint16_t height;
@@ -1215,25 +1368,21 @@ typedef struct hb_BPU_ADDR_INFO_S {
 } BPU_ADDR_INFO_S;
 ```
 
-**描述：**BPU_ADDR_INFO_S表示camera输入的图像描述，camera图像的格式为yuv nv12。
+**描述：**
 
-1. width：表示图像的宽。
+`BPU_ADDR_INFO_S`表示camera输入的图像描述，camera图像的格式为yuv nv12。
 
-2. height： 表示图像的高。
+  1. `width`：表示图像的宽。
+  2. `height`： 表示图像的高。
+  3. `step`： 表示图像在行方向上的步进。
+  4. `y_paddr`：表示y数据的起始物理地址。
+  5. `c_paddr`：表示uv数据的起始物理地址。
+  6. `y_vaddr`：表示y数据的起始虚拟地址。
+  7. `c_vaddr`：表示uv数据的起始虚拟地址。
 
-3. step： 表示图像在行方向上的步进。
+**注意：y和uv的物理地址均不可被外部访问，只能送入bpu参与计算，而如果希望查看camera图像的话，可以访问只读的虚拟地址。**
 
-4. y_paddr：表示y数据的起始物理地址。
-
-5. c_paddr：表示uv数据的起始物理地址。
-
-6. y_vaddr：表示y数据的起始虚拟地址。
-
-7. c_vaddr：表示uv数据的起始虚拟地址。
-
-**注意：**y和uv的物理地址均不可被外部访问，只能送入bpu参与计算，而如果希望查看camera图像的话，可以访问只读的虚拟地址。
-
-```
+```c
 typedef struct hb_BPU_CAMERA_IMAGE_INFO_S {
   int frame_id;
   int64_t timestamp;
@@ -1243,51 +1392,52 @@ typedef struct hb_BPU_CAMERA_IMAGE_INFO_S {
 } BPU_CAMERA_IMAGE_INFO_S;
 ```
 
-**描述：**BPU_CAMERA_IMAGE_INFO_S表示对camera输入的图像相关信息描述。
+**描述：**
 
-1. frame_id：表示当前图像的帧号。
+`BPU_CAMERA_IMAGE_INFO_S`表示对camera输入的图像相关信息描述。
 
-2. timestamp：表示当前的时间戳。
+  1. `frame_id`：表示当前图像的帧号。
+  2. `timestamp`：表示当前的时间戳。
+  3. `img_format`：表示图像的格式，目前仅支持yuv nv12。
+  4. `src_img`：表示图像的数据描述。
+  5. `cam_id`：表示camera id。
 
-3. img_format：表示图像的格式，目前仅支持yuv nv12。
-
-4. src_img：表示图像的数据描述。
-
-5. cam_id：表示camera id。
-
-```
+```c
 int BPU_convertCameraInfo(BPU_CAMERA_IMAGE_INFO_S *cam_info,BPUCameraBuffer buffer);
 ```
 
-**描述：**BPUCameraBuffer包括了大量的输出信息，为了方便客户使用，调用这个接口将camera buffer转换为BPU_CAMERA_IMAGE_INFO_S结构体，从而暴露出一些简单的信息，包含帧号、时间戳以及图像相关的数据。
+**描述：**
+
+`BPUCameraBuffer`包括了大量的输出信息，为了方便客户使用，调用这个接口将camera buffer转换为`BPU_CAMERA_IMAGE_INFO_S`结构体，从而暴露出一些简单的信息，包含帧号、时间戳以及图像相关的数据。
 
  **输入：**
 
-1. buffer：表示获得的当前图像信息。
+1. `buffer`：表示获得的当前图像信息。
 
 **输出：**
 
-1. cam_info：表示转换后得到的结构体。
+1. `cam_info`：表示转换后得到的结构体。
 
 **返回：**
 
 1. int类型的错误码。
 
- **注意：**BPU_CAMERA_IMAGE_INFO_S结构体与BPUCameraBuffer共享同一块camera信息内存，请不要在使用BPU_CAMERA_IMAGE_INFO_S的时候释放BPUCameraBuffer。
+**注意：`BPU_CAMERA_IMAGE_INFO_S`结构体与`BPUCameraBuffer`共享同一块camera信息内存，请不要在使用`BPU_CAMERA_IMAGE_INFO_S`的时候释放`BPUCameraBuffer`。**
 
 #### 2.4.4 BPU_releaseCameraBuffer
 
-```
+```c
 int BPU_releaseCameraBuffer(BPUCameraHandle handle,BPUCameraBuffer buffer);
 ```
 
-**描述：**释放camera图像数据。
+**描述：**
+
+释放camera图像数据。
 
 **输入：**
 
-1. handle：表示camera handle。
-
-2. buffer：表示当前图像信息。
+1. `handle`：表示camera handle。
+2. `buffer`：表示当前图像信息。
 
 **返回：**
 
@@ -1295,15 +1445,17 @@ int BPU_releaseCameraBuffer(BPUCameraHandle handle,BPUCameraBuffer buffer);
 
 #### 2.4.5 BPU_releaseCameraHandle
 
-```
+```c
 int BPU_releaseCameraHandle(BPUCameraHandle handle);
 ```
 
-**描述：**释放camera handle。 
+**描述：**
+
+释放camera handle。
 
 **输入：**
 
-1. handle：表示创建好的camera handle。
+1. `handle`：表示创建好的camera handle。
 
 **返回：**
 
@@ -1311,29 +1463,31 @@ int BPU_releaseCameraHandle(BPUCameraHandle handle);
 
 #### 2.4.6 BPU_getRelatedCameraBufferFromPyramidBuffer
 
-```
+```c
 int BPU_getRelatedCameraBufferFromPyramidBuffer(BPUPyramidBuffer pyr_buffer,BPUCameraBuffer *info);
 ```
 
-**描述：**从BPUPyramidBuffer，构建关联的BPUCameraBuffer结构体。
+**描述：**
+
+从`BPUPyramidBuffer`，构建关联的`BPUCameraBuffer`结构体。
 
 **输入：**
 
-1. pyr_buffer：BPUPyramidBuffer类型的入参，可通过BPU_getPyramidResult等金字塔相关接口获取。
+1. `pyr_buffer`：`BPUPyramidBuffer`类型的入参，可通过`BPU_getPyramidResult`等金字塔相关接口获取。
 
 **输出：**
 
-1. info：基于pyr_buffer构建得到的BPUCameraBuffer指针。
+1. `info`：基于`pyr_buffer`构建得到的`BPUCameraBuffer`指针。
 
 **返回：**
 
 1. int类型的错误码。
 
-**注意：**调用该接口后，后续如果使用BPUCameraBuffe *info，不可以提前释放BPUPyramidBuffer pyr_buffer，因为info和pyr_buffer内部共用了金字塔相关数据资源，必须等到用完BPUCameraBuffe后，调用对应释放接口来释放BPUPyramidBuffer即可，BPUCameraBuffe不需要释放，释放BPUPyramidBuffer时就会将关联的BPUCameraBuffe给同时释放。
+**注意：调用该接口后，后续如果使用`BPUCameraBuffe *info`，不可以提前释放`BPUPyramidBuffer pyr_buffer`，因为`info`和`pyr_buffer`内部共用了金字塔相关数据资源，必须等到用完`BPUCameraBuffe`后，调用对应释放接口来释放BPUPyramidBuffer即可，`BPUCameraBuffe`不需要释放，释放`BPUPyramidBuffer`时就会将关联的`BPUCameraBuffe`给同时释放。**
 
 #### 2.4.7 BPU_getCameraInfoFromCameraBuffe
 
-```
+```c
 int BPU_getCameraInfoFromCameraBuffer(BPUCameraBuffer buffer,
                                       int level,
                                       int height,
@@ -1342,23 +1496,21 @@ int BPU_getCameraInfoFromCameraBuffer(BPUCameraBuffer buffer,
                                       int *matched_level);
 ```
 
-**描述：**从BPUCameraBuffer根据search condition获取对应的金字塔层的信息BPU_CAMERA_IMAGE_INFO_S。search condition包括level或者（height，width）。
+**描述：**
+
+从`BPUCameraBuffer`根据search condition获取对应的金字塔层的信息`BPU_CAMERA_IMAGE_INFO_S`。search condition包括`level`或者`（height，width）`。
 
 **输入：**
 
-1. buffer：BPUCameraBuffer类型的入参，可通过BPU_getCameraImageData接口获取的摄像头金字塔数据。
-
-2. level：哪一层作为search condition，当level大于等于0时，接口会以level为条件去搜索金字塔，会忽略height和width参数。
-
-3. height：高度
-
-4. width：宽度，（height，width）作为search condition，获取对应的金字塔层的信息。注意：接口会优先使用level作为search condition，如果要使用（height，width）作为search condition，level入参必须为负数。
+1. `buffer`：`BPUCameraBuffer`类型的入参，可通过`BPU_getCameraImageData`接口获取的摄像头金字塔数据。
+2. `level`：哪一层作为search condition，当`level`大于等于0时，接口会以`level`为条件去搜索金字塔，会忽略`height`和`width`参数。
+3. `height`：高度
+4. `width`：宽度，`（height，width）`作为search condition，获取对应的金字塔层的信息。注意：接口会优先使用`level`作为search condition，如果要使用`（height，width）`作为search condition，`level`入参必须为负数。
 
 **输出：**
 
-1. cam_info：根据search condition得到的BPU_CAMERA_IMAGE_INFO_S结构体指针
-
-2. matched_level：根据search condition得到匹配的level。
+1. `cam_info`：根据search condition得到的`BPU_CAMERA_IMAGE_INFO_S`结构体指针
+2. `matched_level`：根据search condition得到匹配的`level`。
 
 **返回：**
 

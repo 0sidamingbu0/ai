@@ -86,5 +86,4 @@ TEST(FasterRCNNTest, BasicAPIs) {
   auto method_info = faster_rcnn_method.GetMethodInfo();
   EXPECT_FALSE(method_info.is_thread_safe_);
   EXPECT_TRUE(method_info.is_need_reorder);
-  faster_rcnn_method.OnProfilerChanged(true);
 }
