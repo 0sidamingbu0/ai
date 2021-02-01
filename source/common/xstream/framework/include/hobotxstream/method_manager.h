@@ -64,8 +64,6 @@ class MethodManager {
 
   std::string UniqueName() const { return unique_name_; }
 
-  void OnProfilerChanged(bool on);
-
   XStreamSharedConfig GetSharedConfig() const { return shared_config_; }
 
  private:

@@ -94,12 +94,13 @@ std::vector<BaseDataPtr> ClassifyPredictor::RunSingleFrame(
 
     std::shared_ptr<BPU_TASK_HANDLE> task_handle =
         std::make_shared<BPU_TASK_HANDLE>();
-    BPU_RUN_CTRL_S run_ctrl{2};
+    BPU_RUN_CTRL_S run_ctrl{2, 1};
 
 #ifdef X2
     int ret = HB_BPU_runModelWithBbox(
         bpu_model_.get(),
-        static_cast<BPU_CAMERA_BUFFER>(&pyramid->img),
+        reinterpret_cast<BPU_ADDR_INFO_S*>(&pyramid->img.down_scale[0]),
+        pyramid->img.ds_pym_layer,
         boxes.data(), boxes.size(), output_tensors->data(),
         bpu_model_->output_num, &run_ctrl,
         false, &resizable_cnt, task_handle.get());
@@ -110,7 +111,9 @@ std::vector<BaseDataPtr> ClassifyPredictor::RunSingleFrame(
 
     int ret = HB_BPU_runModelWithBbox(
         bpu_model_.get(),
-        static_cast<BPU_CAMERA_BUFFER>(&bpu_predict_pyramid.result_info),
+        reinterpret_cast<BPU_ADDR_INFO_S*>(
+          &bpu_predict_pyramid.result_info.down_scale[0]),
+        bpu_predict_pyramid.result_info.ds_pym_layer,
         boxes.data(), boxes.size(), output_tensors->data(),
         bpu_model_->output_num, &run_ctrl,
         true, &resizable_cnt, task_handle.get());

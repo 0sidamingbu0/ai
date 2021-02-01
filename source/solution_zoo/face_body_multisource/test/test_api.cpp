@@ -9,9 +9,10 @@
  * \Brief    implement of test_api.cpp
  */
 #include <sys/utsname.h>
+
 #include "gtest/gtest.h"
 #include "hobotlog/hobotlog.hpp"
-#include "smartplugin/smartplugin.h"
+#include "smartplugin/smartplugin_multisource.h"
 
 namespace {
 

@@ -496,17 +496,6 @@ MethodInfo GetMethodInfo();
 
 ----
 
-#### OnProfilerChanged
-```c++
-void OnProfilerChanged(bool on);
-```
-- 描述：用于告知Method Profiler状态的更改。
-
-- 输入：
-  on：表示Profiler的状态。
-
-----
-
 #### DoProcess
 ```c++
 std::vector<std::vector<BaseDataPtr>> DoProcess(

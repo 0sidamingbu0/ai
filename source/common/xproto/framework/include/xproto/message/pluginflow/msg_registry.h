@@ -27,8 +27,6 @@ typedef int32_t XPluginMsgTypeHandle;
 #define XPLUGIN_INVALID_MSG_TYPE -1
 class XPluginMsgRegistry {
  public:
-  XPluginMsgTypeHandle RegisterOrGet(const std::string &name);
-
   XPluginMsgTypeHandle Register(const std::string &name);
 
   XPluginMsgTypeHandle Get(const std::string &name);

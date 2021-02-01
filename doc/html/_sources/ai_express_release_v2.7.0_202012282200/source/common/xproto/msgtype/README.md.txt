@@ -1,2 +1,0 @@
-# xproto_MsgType
-

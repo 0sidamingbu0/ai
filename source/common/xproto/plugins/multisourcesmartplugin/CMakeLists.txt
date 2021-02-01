@@ -21,7 +21,7 @@ file(GLOB PROJECT_SRC
 set(SOURCE_FILES ${PROJECT_SRC} ${PROJECT_INC})
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-set(BASE_LIBRARIES hobotlog opencv_world pthread  xproto_msgtype jsoncpp xstream-imagetools xstream xproto)
+set(BASE_LIBRARIES hobotlog opencv_world pthread  commongdcplugin xproto_msgtype jsoncpp xstream-imagetools xstream xproto)
 
 target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})
 

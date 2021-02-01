@@ -29,7 +29,9 @@ set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME}/)
 #add_subdirectory(test)
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/PredictMethod/PredictMethod.h
-        DESTINATION ${MY_OUTPUT_ROOT}/include)
+        DESTINATION ${MY_OUTPUT_ROOT}/include/PredictMethod)
+install(FILES ${PROJECT_SOURCE_DIR}/include/PredictMethod/Predictors/Predictors.h
+        DESTINATION ${MY_OUTPUT_ROOT}/include/PredictMethod/Predictors)
 
 #install(DIRECTORY ${PROJECT_SOURCE_DIR}/configs
 #        DESTINATION ${MY_OUTPUT_ROOT}/)

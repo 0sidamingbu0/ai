@@ -109,7 +109,9 @@ typedef unsigned char u_int8_t;
 #include <unix.h>
 #endif
 
-#define closeSocket close
+// comment next code to support video_box add websocketplugin
+//#define closeSocket close
+
 
 #ifdef SOLARIS
 #define u_int64_t uint64_t

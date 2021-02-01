@@ -84,6 +84,13 @@ typedef struct hb_BPU_MODEL_S {
   BPU_MODEL_NODE_S *outputs;
 } BPU_MODEL_S;
 
+#define MAX_MODEL_PACK_NUMBER 64
+typedef struct hb_BPU_MODEL_PACK_S {
+  int model_num;
+  const char *model_name_list[MAX_MODEL_PACK_NUMBER];
+  BPU_MODEL_S model_list[MAX_MODEL_PACK_NUMBER];
+} BPU_MODEL_PACKAGE_S;
+
 typedef struct hb_BPU_TENSOR_S {
   BPU_DATA_TYPE_E data_type;
   BPU_DATA_SHAPE_S data_shape;
@@ -119,10 +126,31 @@ int HB_BPU_loadModel(const void *model_data,
 int HB_BPU_loadModelFromFile(const char *model_file_name, BPU_MODEL_S *model);
 
 /*
+ * \brief load model package from address
+ * return 0 for everything is ok, error code for encounter a problem.
+ */
+int HB_BPU_loadModelPackage(const void *model_data,
+                            int model_size,
+                            BPU_MODEL_PACKAGE_S *model_pack_s);
+
+/*
+ * \brief load model package from file
+ * return 0 for everything is ok, error code for encounter a problem.
+ */
+int HB_BPU_loadModelPackageFromFile(const char *file_path,
+                                    BPU_MODEL_PACKAGE_S *model_pack_s);
+
+/*
  * \brief release model
  *  return 0 for everything is ok, error code for encounter a problem.
  */
 int HB_BPU_releaseModel(BPU_MODEL_S *model);
+
+/*
+ * \brief release model package
+ *  return 0 for everything is ok, error code for encounter a problem.
+ */
+int HB_BPU_releaseModelPackage(BPU_MODEL_PACKAGE_S *model_package_s);
 
 /*
  * \brief get the version string of runtime lib
@@ -168,7 +196,46 @@ typedef struct hb_BPU_BBOX {
   int type;
   bool resizable;
 } BPU_BBOX;
-typedef void *BPU_CAMERA_BUFFER;
+
+typedef struct hb_BPU_ADDR_INFO_S {
+  uint16_t width;
+  uint16_t height;
+  uint16_t step;
+  uint64_t y_paddr;
+  uint64_t c_paddr;
+  uint64_t y_vaddr;
+  uint64_t c_vaddr;
+} BPU_ADDR_INFO_S;
+
+// for ds|us
+#define DOWN_SCALE_MAIN_MAX 6
+#define DOWN_SCALE_MAX 24
+#define UP_SCALE_MAX 6
+
+typedef struct hb_BPU_IMG_INFO_S {
+  int slot_id;        // getted slot buff
+  int frame_id;       // for x2 may be 0 - 0xFFFF or 0x7FFF
+  int64_t timestamp;  // BT from Hisi; mipi & dvp from kernel time
+  int img_format;     // now only support yuv420sp
+  int ds_pym_layer;   // get down scale layers
+  int us_pym_layer;   // get up scale layers
+  BPU_ADDR_INFO_S *down_scale[DOWN_SCALE_MAX];
+  BPU_ADDR_INFO_S *up_scale[UP_SCALE_MAX];
+  BPU_ADDR_INFO_S *down_scale_main[DOWN_SCALE_MAIN_MAX];
+  int cam_id;
+} BPU_IMG_INFO_S;
+
+typedef struct hb_BPU_PYRAMID_RESULT_S {
+  BPU_IMG_INFO_S result_info;
+} BPU_PYRAMID_RESULT_S;
+
+typedef struct hb_BPU_CAMERA_IMAGE_INFO_S {
+  int frame_id;       // for x2 may be 0 - 0xFFFF or 0x7FFF
+  int64_t timestamp;  // BT from Hisi; mipi & dvp from kernel time
+  int img_format;     // now only support yuv420sp
+  BPU_ADDR_INFO_S src_img;
+  int cam_id;
+} BPU_CAMERA_IMAGE_INFO_S;
 
 /*
  * \brief run mode with bbox, there are two ways to run model, synchronous and
@@ -178,7 +245,8 @@ typedef void *BPU_CAMERA_BUFFER;
  * HB_BPU_waitModelDone with task_handle wait to the end.
  */
 int HB_BPU_runModelWithBbox(const BPU_MODEL_S *model,
-                            BPU_CAMERA_BUFFER input,
+                            BPU_ADDR_INFO_S down_scales[],
+                            int down_scale_layers,
                             BPU_BBOX bbox[],
                             int nBox,
                             const BPU_TENSOR_S output_data[],
@@ -275,46 +343,6 @@ int HB_SYS_virAddrFree(const void *virAddr);
  *        queue when it is set
  */
 int HB_BPU_setModelPrior(BPU_MODEL_S *model);
-
-typedef struct hb_BPU_ADDR_INFO_S {
-  uint16_t width;
-  uint16_t height;
-  uint16_t step;
-  uint64_t y_paddr;
-  uint64_t c_paddr;
-  uint64_t y_vaddr;
-  uint64_t c_vaddr;
-} BPU_ADDR_INFO_S;
-
-// for ds|us
-#define DOWN_SCALE_MAIN_MAX 6
-#define DOWN_SCALE_MAX 24
-#define UP_SCALE_MAX 6
-
-typedef struct hb_BPU_IMG_INFO_S {
-  int slot_id;        // getted slot buff
-  int frame_id;       // for x2 may be 0 - 0xFFFF or 0x7FFF
-  int64_t timestamp;  // BT from Hisi; mipi & dvp from kernel time
-  int img_format;     // now only support yuv420sp
-  int ds_pym_layer;   // get down scale layers
-  int us_pym_layer;   // get up scale layers
-  BPU_ADDR_INFO_S *down_scale[DOWN_SCALE_MAX];
-  BPU_ADDR_INFO_S *up_scale[UP_SCALE_MAX];
-  BPU_ADDR_INFO_S *down_scale_main[DOWN_SCALE_MAIN_MAX];
-  int cam_id;
-} BPU_IMG_INFO_S;
-
-typedef struct hb_BPU_PYRAMID_RESULT_S {
-  BPU_IMG_INFO_S result_info;
-} BPU_PYRAMID_RESULT_S;
-
-typedef struct hb_BPU_CAMERA_IMAGE_INFO_S {
-  int frame_id;       // for x2 may be 0 - 0xFFFF or 0x7FFF
-  int64_t timestamp;  // BT from Hisi; mipi & dvp from kernel time
-  int img_format;     // now only support yuv420sp
-  BPU_ADDR_INFO_S src_img;
-  int cam_id;
-} BPU_CAMERA_IMAGE_INFO_S;
 
 /*
  * \brief convert layout.

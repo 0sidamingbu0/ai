@@ -77,5 +77,4 @@ std::string TimeoutAlarm::GetVersion() const {
   return "TimeoutAlarm test";
 }
 
-void TimeoutAlarm::OnProfilerChanged(bool on) {}
 }  // namespace xstream

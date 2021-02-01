@@ -39,8 +39,6 @@ void BBoxFilter::Finalize() {
 
 std::string BBoxFilter::GetVersion() const { return ""; }
 
-void BBoxFilter::OnProfilerChanged(bool on) {}
-
 std::vector<std::vector<BaseDataPtr>> BBoxLocationFilter::DoProcess(
     const std::vector<std::vector<BaseDataPtr>> &input,
     const std::vector<InputParamPtr> &param) {

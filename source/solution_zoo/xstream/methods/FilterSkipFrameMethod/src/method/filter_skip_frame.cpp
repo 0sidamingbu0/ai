@@ -167,8 +167,6 @@ void FilterSkipFrameMethod::Finalize() { LOGI << "BBoxFilter::Finalize"; }
 
 std::string FilterSkipFrameMethod::GetVersion() const { return "0.0.1"; }
 
-void FilterSkipFrameMethod::OnProfilerChanged(bool on) {}
-
 int FilterSkipFrameMethod::UpdateConfig(const std::string &config_str) {
   Json::Value config_jv;
   std::stringstream config_stream(config_str);

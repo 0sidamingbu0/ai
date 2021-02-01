@@ -3,7 +3,5 @@
     "nms_threshold": 0.45,
     "nms_top_k": 500,
     "basic_pyramid_image_height": 540,
-    "basic_pyramid_image_width": 960,
-    "pyramid_roi_height": 520,
-    "pyramid_roi_width": 520
+    "basic_pyramid_image_width": 960
 }

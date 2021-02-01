@@ -34,6 +34,8 @@ enum HB_MIPI_ERROR_CODE {
 	MIPI_I2C_WRITE_FAIL,
 	MIPI_I2C_READ_FAIL,
 	MIPI_SW_SENSOR_MODE_FAIL,
+	MIPI_GET_SENSOR_VTS_FAIL,
+	MIPI_GET_SENSOR_HTS_FAIL,
 	MIPI_INVALID_OPERATION
 };
 
@@ -139,7 +141,11 @@ extern int HB_MIPI_ResetSensor(uint32_t devId);
 extern int HB_MIPI_UnresetSensor(uint32_t devId);
 extern int HB_MIPI_SetSensorFps(uint32_t devId, uint32_t fps);
 extern int HB_MIPI_GetSensorInfo(uint32_t devId, MIPI_SENSOR_INFO_S *snsInfo);
+extern int HB_MIPI_GetSensorVts(uint32_t devId, uint32_t *vts);
+extern int HB_MIPI_GetSensorHts(uint32_t devId, uint32_t *hts);
 extern int HB_MIPI_SwSensorFps(uint32_t devId, uint32_t fps);
+extern int HB_MIPI_SetSensorVts(uint32_t devId, uint32_t *vts);
+extern int HB_MIPI_SetSensorHts(uint32_t devId, uint32_t *hts);
 
 extern int HB_MIPI_ReadSensor(uint32_t devId,
 	uint32_t regAddr, char *buffer, uint32_t size);

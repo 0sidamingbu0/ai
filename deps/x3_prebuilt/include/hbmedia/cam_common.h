@@ -171,6 +171,31 @@ typedef struct board_info_s {
 	sensor_info_t sensor_info[CAM_MAX_NUM];
 }board_info_t;
 
+#define HAL_LINE_CONTROL       0x00000001
+#define HAL_GAIN_CONTROL       0x00000002
+#define HAL_AWB_CONTROL        0x00000004
+#define HAL_AF_CONTROL     0x00000008
+#define HAL_ZOOM_CONTROL   0x00000010
+
+typedef struct hal_control_info_s {
+	uint32_t port;
+	uint32_t bus_type;
+	uint32_t bus_num;
+	uint32_t sensor_addr;
+	uint32_t sensor1_addr;
+	uint32_t serial_addr;
+	uint32_t serial_addr1;
+	uint32_t sensor_mode;
+	uint32_t eeprom_addr;
+	spi_data_t sensor_spi_info;
+	uint32_t af_bus_num;
+	uint32_t af_addr;
+	uint32_t af_info[4];
+	uint32_t zoom_bus_num;
+	uint32_t zoom_addr;
+	uint32_t zoom_info[4];
+} hal_control_info_t;
+
 typedef struct {
 	const char *module;
 	int (*init)(sensor_info_t *sensor_info);
@@ -190,6 +215,16 @@ typedef struct {
 			uint32_t gain_setting_0, uint16_t gain_setting_1);
 	int (*dynamic_switch_fps)(sensor_info_t *sensor_info, uint32_t fps);
 	int (*ae_share_init)(uint32_t flag);
+	int (*get_vts)(sensor_info_t *sensor_info, uint32_t *vts);
+	int (*get_hts)(sensor_info_t *sensor_info, uint32_t *hts);
+	int (*set_vts)(sensor_info_t *sensor_info, uint32_t *vts);
+	int (*set_hts)(sensor_info_t *sensor_info, uint32_t *hts);
+	int (*aexp_gain_control)(hal_control_info_t *info, uint32_t mode, uint32_t *again, uint32_t *dgain, uint32_t gain_num);
+	int (*aexp_line_control)(hal_control_info_t *info, uint32_t mode, uint32_t *line, uint32_t line_num);
+	int (*awb_control)(hal_control_info_t *info, uint32_t mode, uint32_t rgain, uint32_t bgain, uint32_t grgain, uint32_t gbgain);
+	int (*af_control)(hal_control_info_t *info, uint32_t mode, uint32_t pos);
+	int (*zoom_control)(hal_control_info_t *info, uint32_t mode, uint32_t pos);
+	int (*userspace_control)(uint32_t port, uint32_t *enable);
 }sensor_module_t;
 
 typedef struct {

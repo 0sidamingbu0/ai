@@ -36,7 +36,7 @@ int main(int argc, char const *argv[]) {
   flow->SetConfig("profiler", "on");
   flow->SetConfig("profiler_name", "flow");
   flow->SetConfig("profiler_file", "./profiler.txt");
-  flow->SetConfig("profiler_frame_interval", "8");
+  flow->SetConfig("profiler_fps_interval", "8");
   flow->SetConfig("profiler_time_interval", "100");
 
   Callback callback;

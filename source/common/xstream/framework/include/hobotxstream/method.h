@@ -50,8 +50,6 @@ class Method {
   virtual std::string GetVersion() const;
   // Get method info
   virtual MethodInfo GetMethodInfo();
-  // Change profiler status
-  virtual void OnProfilerChanged(bool on);
 };
 
 typedef std::shared_ptr<Method> MethodPtr;

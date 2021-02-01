@@ -26,6 +26,7 @@
 #include "bpu_predict/bpu_predict_extension.h"
 #ifdef X3
 #include "uvcplugin/uvcplugin.h"
+#include "aioplugin/aioplugin.h"
 #endif
 
 using horizon::vision::xproto::XPluginAsync;
@@ -41,6 +42,7 @@ using horizon::vision::xproto::websocketplugin::WebsocketPlugin;
 using horizon::vision::xproto::XPluginAsync;
 #ifdef X3
 using horizon::vision::xproto::Uvcplugin::UvcPlugin;
+using horizon::vision::xproto::aioplugin::AioPlugin;
 #endif
 static bool exit_ = false;
 
@@ -78,6 +80,7 @@ int main(int argc, char **argv) {
               << "[-i/-d/-w/-f] " << std::endl;
     return 0;
   }
+
   std::string vio_config_file = std::string(argv[1]);
   std::string smart_config_file = std::string(argv[2]);
   std::string visual_config_file = std::string(argv[3]);
@@ -108,6 +111,9 @@ int main(int argc, char **argv) {
 
   // parse output display mode config
   int display_mode = -1;
+#ifdef X3
+  int audio_enable = 0;
+#endif
   std::ifstream ifs(visual_config_file);
   if (!ifs.is_open()) {
     LOGF << "open config file " << visual_config_file << " failed";
@@ -137,14 +143,26 @@ int main(int argc, char **argv) {
     LOGF << visual_config_file << " set display mode failed";
     return 0;
   }
+#ifdef X3
+  if (json_obj.isMember("audio_enable")) {
+    audio_enable = json_obj["audio_enable"].asInt();
+  }
+#endif
 
   signal(SIGINT, signal_handle);
   signal(SIGPIPE, signal_handle);
 
+#ifdef X3
+  std::shared_ptr<AioPlugin> aio_plg = nullptr;
+  if (audio_enable) {
+    aio_plg = std::make_shared<AioPlugin>(visual_config_file);
+  }
+#endif
   auto vio_plg = std::make_shared<VioPlugin>(vio_config_file);
   auto smart_plg = std::make_shared<SmartPlugin>(smart_config_file);
   std::shared_ptr<XPluginAsync> output_plg = nullptr;
   // create output plugin: QtVisualPlugin/WebsocketPlugin/UvcPlugin
+
   if (0 == display_mode) {
     LOGI << "create QT Visual Plugin";
     output_plg = std::make_shared<VisualPlugin>(visual_config_file);
@@ -164,6 +182,17 @@ int main(int argc, char **argv) {
     LOGE << "Failed to init vio";
     return 1;
   }
+
+#ifdef X3
+  if (audio_enable) {
+    ret = aio_plg->Init();
+    if (ret != 0) {
+      LOGE << "Failed to init aio";
+      return 1;
+    }
+  }
+#endif
+
   ret = smart_plg->Init();
   if (ret != 0) {
     LOGE << "Failed to init smart plugin";
@@ -181,7 +210,14 @@ int main(int argc, char **argv) {
       return 3;
     }
   }
+
   vio_plg->Start();
+
+#ifdef X3
+  if (audio_enable) {
+    aio_plg->Start();
+  }
+#endif
   smart_plg->Start();
 
   if (run_mode == "ut") {
@@ -197,6 +233,14 @@ int main(int argc, char **argv) {
   output_plg->DeInit();
   smart_plg->Stop();
   smart_plg->DeInit();
+
+#ifdef X3
+  if (audio_enable) {
+    aio_plg->Stop();
+    aio_plg->DeInit();
+    aio_plg = nullptr;
+  }
+#endif
 
   vio_plg->Stop();
   vio_plg->DeInit();

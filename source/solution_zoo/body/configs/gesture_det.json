@@ -10,7 +10,7 @@
   "seq_len" : 32,
   "kps_len" : 21,
   "stride" : 0.0333,
-  "max_gap" : 0.2,
+  "max_gap" : 0.9,
   "buf_len" : 100,
   "norm_kps_conf" : 0,
   "kps_norm_scale" : 4.897640403536304,

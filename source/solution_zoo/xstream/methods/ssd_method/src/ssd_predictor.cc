@@ -28,38 +28,14 @@ using hobot::vision::PymImageFrame;
 namespace xstream {
 
 const char *kPyramidImage = "PymImageFrame";
-class ModelOutputBuffer {
- public:
-  ModelOutputBuffer(const BPUModelInfo &output_info,
-                    std::vector<BPU_Buffer_Handle> &output_buf)
-      : output_buf_(output_buf) {
-    // alloc output buffer.
-    for (int i = 0; i < output_info.num; ++i) {
-      BPU_Buffer_Handle out_handle = BPU_createEmptyBPUBuffer();
-      output_buf_.push_back(out_handle);
-    }
-    LOGD << "create bpu buffer success.";
-  }
-  ~ModelOutputBuffer() {
-    // release output buffer.
-    for (auto &buf : output_buf_) {
-      BPU_freeBPUBuffer(buf);
-    }
-    output_buf_.clear();
-    LOGD << "release bpu buffer success.";
-  }
 
- private:
-  std::vector<BPU_Buffer_Handle> &output_buf_;
-};
-
-SSD_Predictor::~SSD_Predictor() {
+SSDPredictor::~SSDPredictor() {
   if (bpu_handle_.handle != NULL) {
     HB_BPU_releaseModel(&bpu_handle_);
   }
 }
 
-int SSD_Predictor::Init(const std::string &config_file) {
+int SSDPredictor::Init(const std::string &config_file) {
   ParseConfig(config_file);
 
   int ret_val = LoadModel(model_file_path_, &bpu_handle_);
@@ -82,8 +58,8 @@ int SSD_Predictor::Init(const std::string &config_file) {
   return 0;
 }
 
-void SSD_Predictor::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
-                                   std::vector<BaseDataPtr> &frame_output) {
+void SSDPredictor::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
+                                  std::vector<BaseDataPtr> &frame_output) {
   // only one input slot -> PyramidImage
   HOBOT_CHECK(frame_input.size() == 1);
   const auto frame_img_ = frame_input[0];
@@ -136,7 +112,7 @@ void SSD_Predictor::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
   RUN_PROCESS_TIME_PROFILER("SSD PostProcess");
   RUN_FPS_PROFILER("SSD PostProcess");
 }
-void SSD_Predictor::ParseConfig(const std::string &config_file) {
+void SSDPredictor::ParseConfig(const std::string &config_file) {
   FR_Config cfg_jv;
   std::ifstream infile(config_file.c_str());
   infile >> cfg_jv;
@@ -170,7 +146,7 @@ void SSD_Predictor::ParseConfig(const std::string &config_file) {
        << " model_file_path: " << model_file_path_;
 }
 
-void SSD_Predictor::GetModelInfo(const std::string &model_name) {
+void SSDPredictor::GetModelInfo(const std::string &model_name) {
   uint32_t output_layer_num = bpu_handle_.output_num;
   LOGD << "output_layer_num = " << output_layer_num
        << ", output_num = " << out_num_ << std::endl;
@@ -182,7 +158,7 @@ void SSD_Predictor::GetModelInfo(const std::string &model_name) {
   }
 }
 
-std::string SSD_Predictor::GetParentPath(const std::string &path) {
+std::string SSDPredictor::GetParentPath(const std::string &path) {
   auto pos = path.rfind('/');
   if (std::string::npos != pos) {
     auto parent = path.substr(0, pos);

@@ -32,7 +32,6 @@ class BBoxFilter : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-  void OnProfilerChanged(bool on) override;
 };
 
 class BBoxScoreFilter : public BBoxFilter {

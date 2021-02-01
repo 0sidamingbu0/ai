@@ -56,8 +56,6 @@ class FilterMethod : public Method {
 
   std::string GetVersion() const override { return "0.0.16"; }
 
-  void OnProfilerChanged(bool on) override {}
-
  private:
   //  filter by stop id
   bool MatchStopId(const int32_t &id);

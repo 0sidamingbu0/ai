@@ -16,9 +16,6 @@
 #include "DnnPredictMethod/DnnPredictMethod.h"
 #include "dnn_util.h"
 #include "bpu_predict/bpu_predict_extension.h"
-#ifdef X3
-#include "./bpu_predict_x3.h"
-#endif
 
 namespace xstream {
 

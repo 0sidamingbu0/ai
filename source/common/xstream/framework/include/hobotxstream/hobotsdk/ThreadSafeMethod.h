@@ -74,8 +74,6 @@ class ThreadSafeMethod {
   virtual void Finalize() { method_->Finalize(); }
   /// 获取Method基本信息
   virtual MethodInfo GetMethodInfo() { return method_->GetMethodInfo(); }
-  /// 用于告知Method整个SDK的Profiler状态更改
-  virtual void OnProfilerChanged(bool on) { method_->OnProfilerChanged(on); }
 };
 using ThreadSafeMethodPtr = std::shared_ptr<ThreadSafeMethod>;
 }  // namespace xstream

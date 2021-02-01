@@ -32,7 +32,7 @@ link_directories(
 # 头文件路径信息
 
 set(BASE_LIBRARIES opencv_world pthread jsoncpp protobuf
-    xproto_msgtype vioplugin smartplugin  hbmedia guvc zmq)
+    xproto_msgtype vioplugin smartplugin  hbmedia guvc zmq alsadevice)
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})
 

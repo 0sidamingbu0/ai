@@ -40,13 +40,12 @@ int XStreamFlow::Init() {
 }
 
 int XStreamFlow::Init(MethodFactoryPtr method_factory) {
+  int ret = 0;
   std::unique_lock<std::mutex> locker(mutex_);
   if (is_initial_) {
     return -2;
   }
   auto config = std::make_shared<XStreamConfig>();
-  int ret;
-
   config->method_factory_ = method_factory;
   if (0 == (ret = config->LoadFile(config_file_))) {
     if (0 == (ret = scheduler_->Init(config, profiler_))) {
@@ -136,7 +135,7 @@ OutputDataPtr XStreamFlow::OnError(int64_t error_code,
 // 同步接口，单路输出
 OutputDataPtr XStreamFlow::SyncPredict(InputDataPtr input) {
   if (!input || input->datas_.size() <= 0) {
-    OnError(HOBOTXSTREAM_ERROR_INPUT_INVALID, "input error");
+    return OnError(HOBOTXSTREAM_ERROR_INPUT_INVALID, "input error");
   }
   std::promise<std::vector<OutputDataPtr>> promise;
   auto future = promise.get_future();

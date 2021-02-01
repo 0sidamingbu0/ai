@@ -98,6 +98,11 @@ include_directories(
         source/common/xproto/plugins/hbipcplugin/include/
         source/common/xproto/plugins/websocketplugin/include/
         source/common/xproto/plugins/uvcplugin/include/
+        source/common/xproto/plugins/commongdcplugin/include/
+        source/common/xproto/plugins/aioplugin/include/
+        source/common/xproto/plugins/alsadevice/include/
+        source/common/xproto/plugins/multisourcewebsocketplugin/include/
+        source/common/xproto/plugins/multisourcesmartplugin/include/
         source/common/xstream/vision_type/include
         source/common/xproto/plugins/media_codec/include
         source/common/viowrapper/include
@@ -189,7 +194,12 @@ endif()
 add_subdirectory(source/common/xproto/plugins/websocketplugin)
 if (${PLATFORM_X3})
 add_subdirectory(source/common/xproto/plugins/uvcplugin)
+add_subdirectory(source/common/xproto/plugins/aioplugin)
+add_subdirectory(source/common/xproto/plugins/alsadevice)
 add_subdirectory(source/solution_zoo/video_box/)
+add_subdirectory(source/common/xproto/plugins/multisourcesmartplugin)
+add_subdirectory(source/common/xproto/plugins/multisourcewebsocketplugin)
+add_subdirectory(source/common/xproto/plugins/commongdcplugin)
 if (${X3_MEDIA_CODEC})
 add_subdirectory(source/common/xproto/plugins/media_codec)
 endif()
@@ -229,3 +239,10 @@ add_subdirectory(source/solution_zoo/face_body_multisource/)
 add_subdirectory(source/solution_zoo/yolov3_mobilenetv2_example/)
 add_subdirectory(source/solution_zoo/yolov3_mobilenetv2_example/ExampleWebsocketPlugin)
 add_subdirectory(source/solution_zoo/yolov3_mobilenetv2_example/ExampleSmartPlugin)
+
+install(DIRECTORY deps/bpu_predict/${ARCHITECTURE}/include
+        DESTINATION ${OUTPUT_ROOT}/bpu_predict)
+install(DIRECTORY deps/uWS/include
+        DESTINATION ${OUTPUT_ROOT}/third_party/uWS)
+install(DIRECTORY deps/jsoncpp/include
+        DESTINATION ${OUTPUT_ROOT}/third_party/jsoncpp)

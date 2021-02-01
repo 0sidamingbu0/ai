@@ -1,0 +1,1804 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. BPU SDK API Doc v1.25 &mdash; AI Express用户手册 2.9.0 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+        <script src="../../../../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/overview.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/xstream.html">XStream算法SDK编程框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/xproto.html">XProto原型应用开发框架开发指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/solution.html">场景参考解决方案</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/tools.html">工具集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/integration.html">如何集成模型至AI-EXPRESS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/faq.html">常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/version.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../BuildAll/doc/copyright.html">版权声明</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">AI Express用户手册</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">1. </span>BPU SDK API Doc v1.25</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../../../_sources/common/bpu-predict/docs/bpu_sdk_api_doc_en/_source/bpu-sdk-api-doc-en.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bpu-sdk-api-doc-v1-25">
+<h1><span class="section-number">1. </span>BPU SDK API Doc v1.25<a class="headerlink" href="#bpu-sdk-api-doc-v1-25" title="永久链接至标题">¶</a></h1>
+<p>[TOC]</p>
+<div class="section" id="revision-history">
+<h2><span class="section-number">1.1. </span>Revision History<a class="headerlink" href="#revision-history" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>DATE</th>
+<th>VERSION</th>
+<th>DESCRIPTIONS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2020-06-02</td>
+<td>1.10</td>
+<td>1. modified the Note of <code>HB_BPU_runModel</code> and added descriptions of <code>core_id</code><br>2. modified representation method of image data format and the <code>BPU_TENSOR_S</code> struct</td>
+</tr>
+<tr>
+<td>2020-06-28</td>
+<td>1.11</td>
+<td>1. added the preemption interface <code>HB_BPU_setModelPrior</code><br>2. modified the descriptions of the <code>HB_BPU_resize</code> and <code>HB_BPU_getResizeResultWithoutPadding</code> interfaces</td>
+</tr>
+<tr>
+<td>2020-7-10</td>
+<td>1.12</td>
+<td>1. modified the <code>BPU_TENSOR_S</code> struct in section 2.1.3<br>2. modified the descriptions of data types in section 2.1.4 and added the description of unsupported batch mode<br>3. added 2 interface descriptions: 2.3.13 <code>HB_BPU_getHWCIndex</code> and 2.3.14 <code>HB_BPU_getHW</code></td>
+</tr>
+<tr>
+<td>2020-7-13</td>
+<td>1.13</td>
+<td>1. <code>HB_BPU_resize</code> interface added pym resize functionality</td>
+</tr>
+<tr>
+<td>2020-7-13</td>
+<td>1.14</td>
+<td>1. added interface description of <code>HB_BPU_getMemoryUsage</code></td>
+</tr>
+<tr>
+<td>2020-7-15</td>
+<td>1.15</td>
+<td>1. corrected description of the <code>HB_BPU_getMemoryUsage</code> interface<br>2. added description of enumerated values of <code>HB_BPU_setGlobalConfig</code></td>
+</tr>
+<tr>
+<td>2020-7-20</td>
+<td>1.16</td>
+<td>1. added descriptions of the <code>HB_SYS_virAddAlloc</code> interface<br>2. added descriptions of the <code>HB_SYS_virAddrFree</code> interface</td>
+</tr>
+<tr>
+<td>2020-07-23</td>
+<td>1.17</td>
+<td>1. added descriptions of the <code>HB_BPU_loadModelFromFile</code> interface<br>2. added descriptions of the <code>HB_BPU_getVersion</code> interface<br>3. added descriptions of the <code>HB_BPU_runModelWithBbox</code> interface<br>4. added descriptions of the <code>HB_BPU_createGroup</code> interface<br>5. added descriptions of the <code>HB_BPU_setModelGroup</code> interface<br>6. added descriptions of the <code>HB_BPU_setGroupProportion</code> interface<br>7. added descriptions of the <code>HB_BPU_deleteGroup</code> interface<br>8. added descriptions of the <code>HB_BPU_parseDetThreshResult</code> interface<br>9. added descriptions of the <code>HB_BPU_parseChannelMaxResult</code> interface<br>10. added descriptions of the <code>HB_BPU_parseDPPResult</code> interface<br>11. added descriptions of the <code>HB_BPU_parseRPPResult</code> interface</td>
+</tr>
+<tr>
+<td>2020-07-23</td>
+<td>1.18</td>
+<td>1. the pym resize in resize added environment variable <code>PYM_FRAME_DEPTH</code></td>
+</tr>
+<tr>
+<td>2020-08-04</td>
+<td>1.19</td>
+<td>1. modified interface definition and parameter descriptions of the <code>HB_BPU_runModelWithBbox</code> interface<br>2. modified descriptions of <code>HB_BPU_getMemoryUsage</code><br>3. added descriptions of the <code>BPU_constructCameraBufferFromPyramidBuffer</code> interface<br>4. added descriptions of the <code>BPU_getCameraInfoFromCameraBuffer</code> interface</td>
+</tr>
+<tr>
+<td>2020-08-07</td>
+<td>1.20</td>
+<td>1. changed interface name of <code>BPU_ConstructCameraBufferFromPyramidBuffer</code> into <code>BPU_getRelatedCameraBufferFromPyramidBuffer</code>,<br>and changed the descriptions of release instructions<br>2. modified parameter descriptions of <code>BPU_getCameraInfoFromCameraBuffer</code></td>
+</tr>
+<tr>
+<td>2020-08-10</td>
+<td>1.21</td>
+<td>1. added <code>HB_BPU_resize</code> image size restrictions<br>2. added descriptions of the prolonged operation time of <code>HB_BPU_setModelPrior</code> low priority models</td>
+</tr>
+<tr>
+<td>2020-08-24</td>
+<td>1.22</td>
+<td>1. <code>HB_BPU_resize</code> can specify bpu core</td>
+</tr>
+<tr>
+<td>2020-09-23</td>
+<td>1.23</td>
+<td>optimized the descriptions of compiler restriction of the resize interface</td>
+</tr>
+<tr>
+<td>2020-11-09</td>
+<td>1.24</td>
+<td>1. added Global Config option: <code>BPU_GLOBAL_ENGINE_TYPE</code>, <code>BPU_GLOBAL_CUSTOM_OP_LIB_PATH</code>, <code>BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES</code><br>2. the runModel interface now supports resizing input data to match model input requirements</td>
+</tr>
+<tr>
+<td>2020-11-20</td>
+<td>1.25</td>
+<td>1. deleted pym resize functionality<br>2. added the descriptions of layout and padding</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="descriptions-of-system-software-interfaces">
+<h2><span class="section-number">1.2. </span>1.Descriptions of System Software Interfaces<a class="headerlink" href="#descriptions-of-system-software-interfaces" title="永久链接至标题">¶</a></h2>
+<p>This section describes the API interfaces of system software.</p>
+<div class="section" id="definition-of-data-struct">
+<h3><span class="section-number">1.2.1. </span>1.1.Definition of Data Struct<a class="headerlink" href="#definition-of-data-struct" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_MEMORY_S</span> <span class="p">{</span>
+  <span class="kt">uint64_t</span> <span class="n">phyAddr</span><span class="p">;</span>
+  <span class="kt">void</span> <span class="o">*</span><span class="n">virAddr</span><span class="p">;</span>
+  <span class="kt">size_t</span> <span class="n">memSize</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_MEMORY_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code> struct is used for defining bpu memory.</p>
+</div>
+<div class="section" id="memory-function-api">
+<h3><span class="section-number">1.2.2. </span>1.2 Memory Function API<a class="headerlink" href="#memory-function-api" title="永久链接至标题">¶</a></h3>
+<div class="section" id="hb-sys-bpumemalloc">
+<h4><span class="section-number">1.2.2.1. </span>1.2.1 HB_SYS_bpuMemAlloc<a class="headerlink" href="#hb-sys-bpumemalloc" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_bpuMemAlloc</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span>
+                       <span class="kt">size_t</span> <span class="n">alloc_mem_size</span><span class="p">,</span>
+                       <span class="kt">bool</span> <span class="n">cachable</span><span class="p">,</span>
+                       <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">mem</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>In the Bernoulli ASIC architecture, BPU and CPU share the same memory space. Here an independent BPU memory structure is offered because BPU needs to consume a contigurous physical memory and thus memory allocation using specific function is required. Such function returns the allocated memory(including both physical and virtual) addresses. Amongst, the virtual address can be read/write directly and pass into subsequent BPU operations.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> is used for specifying the name of the allocated memory so that it can be labelled. It will also be used for when analysis memory state in the future.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alloc_mem_size</span></code> denotes expected memory size.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cachable</span></code> denotes whether or not the allocated memory has the cache label.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code> denotes the <code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code> type struct pointer. This struct is passed in by caller and its content is passed in from within the function, including: the physical address, virtual address and memory size.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-sys-flushmemcache">
+<h4><span class="section-number">1.2.2.2. </span>1.2.2 HB_SYS_flushMemCache<a class="headerlink" href="#hb-sys-flushmemcache" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define HB_SYS_MEM_CACHE_INVALIDATE (1)    </span><span class="c1">// flush memory to CPU</span>
+<span class="cp">#define HB_SYS_MEM_CACHE_CLEAN (2)         </span><span class="c1">// flush CPU to memory</span>
+<span class="kt">int</span> <span class="nf">HB_SYS_flushMemCache</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">mem</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flag</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Because memory allocated as <code class="docutils literal notranslate"><span class="pre">cachable</span></code> has a cache mark, the data written/read by CPU could be cached and cause stale data.</p>
+<p><img alt="memory_architecture" src="../../../../../_images/memory_architecture1.png" /></p>
+<p>Memory architecture of Bernoulli is shown as above. As you can see that there is a cache between CPU and memory, but there isn’t one between BPU and memory. So the flush interface provides 2 different methods to deal with different scenarios.</p>
+<ol class="simple">
+<li><p>In the scenario where CPU writes memory, it is possible that data in memory are stale when BPU reads them because data were written into cache, rather than into memory. Therefore, data in cache must be flushed into memory by using the <code class="docutils literal notranslate"><span class="pre">HB_SYS_BPU_MEM_CACHE_CLEAN</span></code> parameter.</p></li>
+<li><p>In the other scenario when CPU has ever read the data in memory, it is possible that data were stored in cache. In such case if BPU has written memory and yet CPU still reads data from cache, CPU would read incorrect data. Therefore, those data in cache must be cleaned by using the <code class="docutils literal notranslate"><span class="pre">HB_SYS_BPU_MEM_CACHE_INVALIDATE</span></code> parameter.</p></li>
+</ol>
+<p><strong>TIPS:</strong></p>
+<p>Specify output to <code class="docutils literal notranslate"><span class="pre">cachable</span></code> and flush cache data into memory to obtain the up-to-date data. As CPU will possibly visit model results multiple times, specifying output to <code class="docutils literal notranslate"><span class="pre">cachable</span></code> can accelerate access speed using cache.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code> denotes the BPU memory struct pointer allocated by the <code class="docutils literal notranslate"><span class="pre">memAlloc</span></code> interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flag</span></code> denotes the direction of flush operation. For more details please see the abovementioned <strong>DESCRIPTIONS</strong>.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-sys-ismemcachable">
+<h4><span class="section-number">1.2.2.3. </span>1.2.3 HB_SYS_isMemCachable<a class="headerlink" href="#hb-sys-ismemcachable" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_isMemCachable</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">mem</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Checks if bpu memory is <code class="docutils literal notranslate"><span class="pre">cachable</span></code>.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code> refers to the BPU memory struct pointer allocated by the <code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code> interface.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Cachable if returns 1; non-cachable if returns 0.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-sys-bpumemfree">
+<h4><span class="section-number">1.2.2.4. </span>1.2.4 HB_SYS_bpuMemFree<a class="headerlink" href="#hb-sys-bpumemfree" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_bpuMemFree</span><span class="p">(</span><span class="n">BPU_MEMORY</span> <span class="o">*</span><span class="n">mem</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Frees BPU memory. Passes into <code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code> struct pointer, modifies the struct internally and set all fields into illegal fields to prevent from using the struct again.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code> refers to the BPU memory struct pointer allocated by the <code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code> interface.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-sys-getmeminfo">
+<h4><span class="section-number">1.2.2.5. </span>1.2.5 HB_SYS_getMemInfo<a class="headerlink" href="#hb-sys-getmeminfo" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_getMemInfo</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">virAddr</span><span class="p">,</span> <span class="kt">uint64_t</span> <span class="o">*</span><span class="n">phyAddr</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">is_cachable</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>This API is used for checking whether passed-in pointers are pointing to BPU memory, if so, then returns the corresponding physical address; otherwise returns failure. And when returning failure, contents of <code class="docutils literal notranslate"><span class="pre">phyAddr</span></code> and <code class="docutils literal notranslate"><span class="pre">is_cachable</span></code> will be undefined.</p>
+<p><strong>PARAMETERS:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">virAddr</span></code> refers to the virtual address pointer that shall be converted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phyAddr</span></code> returns corresponding physical address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_cachable</span></code> returns if memory is <code class="docutils literal notranslate"><span class="pre">cachable</span></code>.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type. It returns <code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code> if successful and other values indicates failures.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-sys-viraddralloc">
+<h4><span class="section-number">1.2.2.6. </span>1.2.6 HB_SYS_virAddrAlloc<a class="headerlink" href="#hb-sys-viraddralloc" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_virAddrAlloc</span><span class="p">(</span><span class="kt">void</span> <span class="o">**</span><span class="n">virAddr</span><span class="p">,</span><span class="k">const</span> <span class="kt">uint64_t</span> <span class="o">*</span><span class="n">phyAddr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">alloc_mem_size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>This interface is used for converting the passed-in memory physical address into virtual address.</p>
+<p><strong>PARAMETERS:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">virAddr</span></code> returns pointer of virtual address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phyAddr</span></code> returns pointer of the physical address which need to be converted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alloc_mem_size</span></code> denotes memory size.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type; it returns <code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code> if successful. All other returns indicate failures.</p></li>
+</ol>
+<p><strong>NOTE: Please remember to free the converted virtual address after use.</strong></p>
+</div>
+<div class="section" id="hb-sys-viraddrfree">
+<h4><span class="section-number">1.2.2.7. </span>1.2.7 HB_SYS_virAddrFree<a class="headerlink" href="#hb-sys-viraddrfree" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_virAddrFree</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">virAddr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>This interfaces is used for freeing the memory corresponds to its virtual address.</p>
+<p><strong>PARAMETERS:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">virAddr</span></code> refers to the virtual address.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type; returns <code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code> if successful. All other returns indicate failures.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="section" id="bpu-predict-api">
+<h2><span class="section-number">1.3. </span>2.BPU predict API<a class="headerlink" href="#bpu-predict-api" title="永久链接至标题">¶</a></h2>
+<div class="section" id="definitions-of-data-structs">
+<h3><span class="section-number">1.3.1. </span>2.1 Definitions of Data Structs<a class="headerlink" href="#definitions-of-data-structs" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_OP_TYPE_E</span> <span class="p">{</span>
+  <span class="n">BPU_OP_TYPE_CONV</span><span class="p">,</span>
+  <span class="n">BPU_OP_TYPE_UNKNOWN</span><span class="p">,</span>
+<span class="p">}</span> <span class="n">BPU_OP_TYPE_E</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_LAYOUT_E</span> <span class="p">{</span>
+  <span class="n">BPU_LAYOUT_NONE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="n">BPU_LAYOUT_NHWC</span><span class="p">,</span>
+  <span class="n">BPU_LAYOUT_NCHW</span><span class="p">,</span>
+<span class="p">}</span> <span class="n">BPU_LAYOUT_E</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BPU_MODEL_MAX_SHAPE_DIM (8)</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_DATA_SHAPE_S</span> <span class="p">{</span>
+  <span class="n">BPU_LAYOUT_E</span> <span class="n">layout</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">ndim</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">BPU_MODEL_MAX_SHAPE_DIM</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">BPU_DATA_SHAPE_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_DATA_TYPE_E</span> <span class="p">{</span>
+  <span class="c1">// all IMG types are unit8</span>
+  <span class="n">BPU_TYPE_IMG_Y</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_YUV_NV12</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_YUV444</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_BGR</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_BGRP</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_RGB</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_RGBP</span><span class="p">,</span>
+  <span class="n">BPU_TYPE_IMG_NV12_SEPARATE</span><span class="p">,</span>   <span class="c1">// for separate yuv nv12</span>
+  <span class="n">BPU_TYPE_TENSOR_U8</span><span class="p">,</span>           <span class="c1">// for uint8 tensor</span>
+  <span class="n">BPU_TYPE_TENSOR_S8</span><span class="p">,</span>           <span class="c1">// for signed int8</span>
+  <span class="n">BPU_TYPE_TENSOR_F32</span><span class="p">,</span>          <span class="c1">// for float32</span>
+  <span class="n">BPU_TYPE_TENSOR_S32</span><span class="p">,</span>          <span class="c1">// for int32</span>
+  <span class="n">BPU_TYPE_TENSOR_U32</span><span class="p">,</span>         <span class="c1">// for uint32</span>
+  <span class="n">BPU_TYPE_MAX</span><span class="p">,</span>
+<span class="p">}</span> <span class="n">BPU_DATA_TYPE_E</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RUN_CTRL_S</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">core_id</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">resize_type</span><span class="p">;</span>  <span class="c1">// 1: resize input data if input shape is not same with</span>
+                    <span class="c1">// model input shape; other value: no resize</span>
+<span class="p">}</span> <span class="n">BPU_RUN_CTRL_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="section" id="bpu-model-node-s">
+<h4><span class="section-number">1.3.1.1. </span>2.1.1 BPU_MODEL_NODE_S<a class="headerlink" href="#bpu-model-node-s" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_MODEL_NODE_S</span> <span class="p">{</span>
+  <span class="n">BPU_OP_TYPE_E</span> <span class="n">op_type</span><span class="p">;</span>  <span class="c1">// only used for output node</span>
+  <span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">;</span>
+  <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">shape</span><span class="p">;</span>
+  <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">aligned_shape</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+  <span class="n">uint8</span> <span class="o">*</span><span class="n">shifts</span><span class="p">;</span>            <span class="c1">// only used for output node</span>
+  <span class="kt">int</span> <span class="n">shift_len</span><span class="p">;</span>            <span class="c1">// only used for output node</span>
+<span class="p">}</span> <span class="n">BPU_MODEL_NODE_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BPU_MODEL_NODE_S</span></code> struct describes the information of model input/output nodes, incl.:</p>
+<ol>
+<li><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code> refers to op type of node</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code> denotes model required input/output data type.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code> represents input/output shape of the model(in training).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> indicates the input/output shape required by model run as models must align with 8 or 16 bytes when running on BPU. This is usually achieved by adding padding to ordinary shape.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> string of model name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shifts</span></code> and <code class="docutils literal notranslate"><span class="pre">shit_len</span></code> in training, model output is convolution, output data type are int8 or int32, but the actual training results is float32. So we need to convert int8/int32 into float32. Here the shift value is used for converting into float32. <code class="docutils literal notranslate"><span class="pre">shift_len</span></code> size is the same as that of convolution filter.</p>
+<p>Conversion equation: <strong>f_result[c] = out_i[c] / (1 &lt;&lt; shift[c])</strong>.</p>
+<p>Wherein:</p>
+<ol class="simple">
+<li><p>c is ranging from 0~num_filter, i.e. output channel num.</p></li>
+<li><p>f_result is float value.</p></li>
+<li><p>out_i refers to output int8 or int32 values.</p></li>
+<li><p>shift refers to corresponding shift value.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="bpu-model-s">
+<h4><span class="section-number">1.3.1.2. </span>2.1.2 BPU_MODEL_S<a class="headerlink" href="#bpu-model-s" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BPU_MODEL_MAX_NODE_NUM (16)</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_MODEL_S</span> <span class="p">{</span>
+  <span class="kt">void</span> <span class="o">*</span><span class="n">handle</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">input_num</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">output_num</span><span class="p">;</span>
+  <span class="n">BPU_MODEL_NODE_S</span> <span class="n">inputs</span><span class="p">[</span><span class="n">BPU_MODEL_MAX_NODE_NUM</span><span class="p">];</span>
+  <span class="n">BPU_MODEL_NODE_S</span> <span class="n">outputs</span><span class="p">[</span><span class="n">BPU_MODEL_MAX_NODE_NUM</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">BPU_MODEL_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BPU_MODEL_S</span></code> indicates model information. Wherein:</p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code> is used for indicating the pointer of an internal object of a model, in which all model information is stored. Specify its value in the <code class="docutils literal notranslate"><span class="pre">HB_BPU_loadModel</span></code> interface and reset to NULL in the <code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code> interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inputs</span></code> indicates model input node information. Node information is in the node struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">outputs</span></code> same as inputs struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_num</span></code> and <code class="docutils literal notranslate"><span class="pre">output_num</span></code> respectively indicates the input and output node number of model.</p></li>
+</ol>
+</div>
+<div class="section" id="bpu-tensor-s">
+<h4><span class="section-number">1.3.1.3. </span>2.1.3 BPU_TENSOR_S<a class="headerlink" href="#bpu-tensor-s" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_TENSOR_S</span> <span class="p">{</span>
+  <span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">;</span>
+  <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">data_shape</span><span class="p">;</span>
+  <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">aligned_shape</span><span class="p">;</span>
+  <span class="n">BPU_MEMORY_S</span> <span class="n">data</span><span class="p">;</span>
+  <span class="n">BPU_MEMORY_S</span> <span class="n">data_ext</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_TENSOR_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BPU_TENSOR_S</span></code> struct is used for describing structures of various data, such as image and features(speech features, image features of other model output etc.). Wherein:</p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code>refers to data type and layout(of image) of tensor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_shape</span></code> describes data size and layout.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> describes the data shape after padding.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> is used for storing the specific data address.</p></li>
+<li><p>As a compensation to the data field, <code class="docutils literal notranslate"><span class="pre">data_ext</span></code> is used for storing the addresses of additional data in the scenario to separate the Y and UV of NV12(data type is <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_NV12_SEPARATE</span></code>). When separating Y and UV, data is used for storing Y and <code class="docutils literal notranslate"><span class="pre">data_ext</span></code> is used for storing UV.</p></li>
+</ol>
+</div>
+<div class="section" id="descriptions-of-data-type-and-layout">
+<h4><span class="section-number">1.3.1.4. </span>2.1.4 Descriptions of Data Type and Layout<a class="headerlink" href="#descriptions-of-data-type-and-layout" title="永久链接至标题">¶</a></h4>
+<p>​As one single <code class="docutils literal notranslate"><span class="pre">BPU_TENSOR_S</span></code> struct is used for denoting all data, <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">type</span></code>, <code class="docutils literal notranslate"><span class="pre">layout</span></code> and <code class="docutils literal notranslate"><span class="pre">shape</span></code> have different combinations in different scenarios. Usages in typical scenarios is described as below.</p>
+<div class="section" id="layout-description">
+<h5><span class="section-number">1.3.1.4.1. </span>2.1.4.1 Layout Description<a class="headerlink" href="#layout-description" title="永久链接至标题">¶</a></h5>
+<p>​There are NHWC and NCHW layouts, in which N represents quantity, C represents channel, H represents height and W represents width. NCHW actually represents [W H C N], in which the first element is 000, the second extends towards W direction, i.e. 001, then 002, 003, then towards H direction, i.e. 004, 005, 006, 007… down to 019, the towards C direction as 020, 021, 022 … continues, until 319, then towards N direction. NHWC, in similar manner, represents [C W H N], whose first element is 000, and second element extends towards C direction, i.e. 020, 040, 060… all the way down to 300, then towards W goes 001 021 041 061…301… and goes towards H when reaches 303, i.e.004, 024…304…down to 319 then turns into N, i.e. 320, 340… the a in the image below refers to 4 dimensions.</p>
+<p><img alt="data_layout" src="../../../../../_images/data_layout1.png" /></p>
+</div>
+<div class="section" id="image-data-type">
+<h5><span class="section-number">1.3.1.4.2. </span>2.1.4.2 Image Data Type<a class="headerlink" href="#image-data-type" title="永久链接至标题">¶</a></h5>
+<p>​All image data start with <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_</span></code>, currently supported types include: single Y, YUV_NV12, YUV444, BGR, RGB, BGRP and RGBP. Type of all images is uint8, which complies with the definition of image data type. As shape is defined as multidimensional tensor, the following must be described:</p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-689l{background-color:#FFF;border-color:inherit;color:#002B36;font-weight:bold;text-align:center;vertical-align:middle}
+.tg .tg-d6jc{background-color:#EEEFF2;border-color:inherit;color:#002B36;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-sju9{background-color:#EEEFF2;color:#002B36;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-3l22{background-color:#FFF;border-color:inherit;color:#002B36;text-align:left;vertical-align:middle}
+.tg .tg-m6bv{background-color:#EEEFF2;border-color:inherit;color:#002B36;text-align:left;vertical-align:top}
+.tg .tg-yl0f{background-color:#FFF;color:#002B36;text-align:left;vertical-align:middle}
+</style><table class="tg">
+<thead>
+  <tr>
+    <th class="tg-689l">IMAGE TYPE</th>
+    <th class="tg-d6jc"><span style="font-style:normal;background-color:#EEEFF2">`shape`</span></th>
+    <th class="tg-d6jc"><span style="font-style:normal;background-color:#EEEFF2">`aligned_shape`</span></th>
+    <th class="tg-sju9"><span style="font-style:normal;background-color:#EEEFF2">`data`</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_Y`</span></td>
+    <td class="tg-3l22">[0] = n <br>[1] = c <br>[2] = h <br>[3] = w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">Y data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_YUV_NV12`</span></td>
+    <td class="tg-3l22">[0] = n <br>[1] = c <br>[2] = h <br>[3] = w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">YUV_NV12 data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_YUV444`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=h <br>[2]=w <br>[3]=c</td>
+    <td class="tg-3l22">[0]=n <br>[1]=h-stride <br>[2]=w-stride <br>[3]=c</td>
+    <td class="tg-yl0f">YUV444 data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_BGR`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=h <br>[2]=w <br>[3]=c</td>
+    <td class="tg-3l22">[0]=n <br>[1]=h-stride <br>[2]=w-stride <br>[3]=c</td>
+    <td class="tg-yl0f">BGR data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_BGRP`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h <br>[3]=w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">B/G/R data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_RGB`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=h <br>[2]=w <br>[3]=c</td>
+    <td class="tg-3l22">[0]=n <br>[1]=h-stride <br>[2]=w-stride <br>[3]=c</td>
+    <td class="tg-yl0f">RGB data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_RGBP`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h <br>[3]=w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">R/G/B data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_NV12_SEPARATE`</span></td>
+    <td class="tg-3l22">[0] = 1 <br>[1] = 3 <br>[2] = h <br>[3] = w</td>
+    <td class="tg-3l22">[0] = 1 <br>[1] = 3 <br>[2] = h-stride <br>[3] = w-stride</td>
+    <td class="tg-yl0f">data stores component of Y and <br>data1 stores components of UV</td>
+  </tr>
+</tbody>
+</table><p><strong>WHEREIN:</strong></p>
+<ol class="simple">
+<li><p>NHWC and NCHW 4D data structures are used for denoting <code class="docutils literal notranslate"><span class="pre">shape</span></code> and the <code class="docutils literal notranslate"><span class="pre">layout</span></code> of <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>.</p></li>
+<li><p>Y/NV12/BGRP/RGBP are denoted by NCHW layout.</p></li>
+<li><p>YUV444/BGR/RGB are denoted by NHWC.</p></li>
+<li><p>Channel of Y = 1, channel of NV12 = 3 and channels of other image formats are 3.</p></li>
+<li><p>n denotes image frame number, n &gt; 1 indicates batch mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_NV12_SEPARATE</span></code> denotes that Y and UV components are discrete. It is used in the scenario where Y and UV are separate.</p></li>
+<li><p>Y/NV12/NV12_SEPARATE require that w-stride of Y and UV shall be multiple of 16.</p></li>
+<li><p>When accessing to data, usually <code class="docutils literal notranslate"><span class="pre">h_stride</span></code> is not used, but it is required that <code class="docutils literal notranslate"><span class="pre">h_stride</span></code> &gt;= h.</p></li>
+<li><p>To prevent reading incorrect memory, <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">memSize</span></code> &gt;= h_stride * w_stride.</p></li>
+<li><p>Please refer to the following diagram for the details of image layouts in memory(please note that below image layout only tries to explain the image layout, presently BPU SDK does not support batch mode):</p></li>
+</ol>
+<p><img alt="image_format" src="../../../../../_images/image_format1.png" /></p>
+</div>
+<div class="section" id="feature-data">
+<h5><span class="section-number">1.3.1.4.3. </span>2.1.4.3 Feature Data<a class="headerlink" href="#feature-data" title="永久链接至标题">¶</a></h5>
+<p>Names of feature data begin with <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_</span></code> prefix and support int8, int32, unit32 and float32 data. They are:</p>
+<ol class="simple">
+<li><p>stored in the <code class="docutils literal notranslate"><span class="pre">data</span></code> field.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code> denotes feature dimensionality and layout.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> denotes the aligned dimension of feature, it requires that <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">memSize</span></code> equals corresponding <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> size.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="section" id="bpu-alignment-rules">
+<h3><span class="section-number">1.3.2. </span>2.2 BPU Alignment Rules<a class="headerlink" href="#bpu-alignment-rules" title="永久链接至标题">¶</a></h3>
+<p>This section introduces the alignment rules of BPU, including requirements of start address and data alignment. This section is composed by 3 following parts:</p>
+<ol>
+<li><p>Model input requirements: BPU does not restrict size or parity of model input. It supports both 416x416 input(e.g. yolo) and 227x227 input(e.g. squeezeNet). As for the special NV12, HW must be even numbers, because UV equals half of Y.</p></li>
+<li><p>Requirements of stride: usually BPU’s stride requimrents can be determined in accordance with <code class="docutils literal notranslate"><span class="pre">shape</span></code> and <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>. The <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> refers to the requirement of stride alignment. However for nv12 and Y inputs, the W stride must be multiples of 16. For padding, specific value is not concerned and can be 0 or non-0.</p>
+<p><img alt="alignment_rule_1" src="../../../../../_images/alignment_rule_11.png" /></p>
+<p>As shown in the above graph, the green part is the original image and the yellow part refers to padding. If <code class="docutils literal notranslate"><span class="pre">org_w</span></code> denotes the original image width and <code class="docutils literal notranslate"><span class="pre">org_h</span></code> denotes the original height, due to the fact that W is multiple of 16 and H is multiple of 2, <code class="docutils literal notranslate"><span class="pre">org_w</span></code> and <code class="docutils literal notranslate"><span class="pre">org_h</span></code> shall add padding so that size of the padded image equals multiple of 16, and that height equals multiple of 2.</p>
+</li>
+<li><p>Requirements of start address: all memory passed into BPU must be 16-bytes aligned’</p></li>
+</ol>
+<p>For instance: as for the 227x227 squeezeNet input, model shall be trained in accordance with 227x227 input:</p>
+<ol class="simple">
+<li><p>If model input uses NV12 image format, W stride shall be 240(multiple of 16) and H shall be 228(expanded to even number), i.e., NV12 input size shall be 228x240, the extra pixels are padding and do not affect final results. In other words, BPU is still to calculate in accordance with 227x227, yet such requirement is made because the input are passed into BPU directly.</p></li>
+<li><p>If model input uses image formats, such as BGR/RGB/BGRP/RGBP/YUV444, corresponding padding shall be converted on ARM CPU inside the <code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code> and <code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code> interfaces, and <code class="docutils literal notranslate"><span class="pre">w_stride</span></code> shall be introduced, similar to NV12 format.</p></li>
+</ol>
+<p>Other feature input are processed according to the <code class="docutils literal notranslate"><span class="pre">align_shape</span></code> in model node information. In case the <code class="docutils literal notranslate"><span class="pre">valid_shape</span></code> of model input from the interface is 1x10x10x3, <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> is 1x16x16x4, then padding shall be added according to <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>, shown as below:</p>
+<p><img alt="alignment_rule_2" src="../../../../../_images/alignment_rule_21.png" /></p>
+<p>The yellow part in the above image denotes <code class="docutils literal notranslate"><span class="pre">valid_h</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_w</span></code> and <code class="docutils literal notranslate"><span class="pre">valid_c</span></code> of the original feature data. Padding shall be added respectively complying with the w, h and c of <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>.</p>
+</div>
+<div class="section" id="api-descriptions">
+<h3><span class="section-number">1.3.3. </span>2.3 API Descriptions<a class="headerlink" href="#api-descriptions" title="永久链接至标题">¶</a></h3>
+<div class="section" id="hb-bpu-loadmodel">
+<h4><span class="section-number">1.3.3.1. </span>2.3.1 HB_BPU_loadModel<a class="headerlink" href="#hb-bpu-loadmodel" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModel</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">model_data</span><span class="p">,</span> <span class="kt">int</span> <span class="n">model_size</span><span class="p">,</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Loads a BPU model to obtain the corresponding struct object. The <code class="docutils literal notranslate"><span class="pre">BPU_MODEL_S</span></code> struct is passed in from outside and this function fills model information into the struct directly.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model_data</span></code> refers to the memory address pointing to the data where model is stored. It can be an ordinary memory, i.e. unnecessarily to be allocated as BPU memory. Mind that <code class="docutils literal notranslate"><span class="pre">model_data</span></code> memory can be freed after model is loaded successfully.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_size</span></code> refers to memory size of model data.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes the struct pointer of the model being loaded. As each model is stored in an individual file, the currently returned handle denotes the model. In addition, please note that packaging multiple models into one file is NOT supported.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The return value of int type. 0 indicates successful execution, other values indicate failures. Descriptions of failure root causes in string can be obtained by inputting the corresponding error codes of the <code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName</span></code>(err).</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-releasemodel">
+<h4><span class="section-number">1.3.3.2. </span>2.3.2 HB_BPU_releaseModel<a class="headerlink" href="#hb-bpu-releasemodel" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_releaseModel</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Frees the loaded BPU model. Contents of model struct can be modified internally.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes the object pointer of model struct.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The return of int type. 0 indicates successful execution, other values indicate failures.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-geterrorname">
+<h4><span class="section-number">1.3.3.3. </span>2.3.3 HB_BPU_getErrorName<a class="headerlink" href="#hb-bpu-geterrorname" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">HB_BPU_getErrorName</span><span class="p">(</span><span class="kt">int</span> <span class="n">error_code</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Converts error code into readable strings in order to facilitate problem tracking. Because thread of this function is safe, it can be used anywhere.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">error_code</span></code> refers to return values from other BPU APIs.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The string pointer of constant</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-setglobalconfig">
+<h4><span class="section-number">1.3.3.4. </span>2.3.4 HB_BPU_setGlobalConfig<a class="headerlink" href="#hb-bpu-setglobalconfig" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_GLOBAL_CONFIG_E</span> <span class="p">{</span>
+  <span class="n">BPU_GLOBAL_CONFIG_MAX_TASK_NUM</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE</span><span class="p">,</span>  <span class="c1">// This config is discarded.</span>
+  <span class="n">BPU_GLOBAL_CONFIG_DEBUG</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_CONV_MAPPING_FILE</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_CONV_DUMP_PATH</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_ENGINE_TYPE</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_CUSTOM_OP_LIB_PATH</span><span class="p">,</span>
+  <span class="n">BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES</span><span class="p">,</span>
+<span class="p">}</span> <span class="n">BPU_GLOBAL_CONFIG_E</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_E</span></code> enumerates the global control parameters that can be specified by <code class="docutils literal notranslate"><span class="pre">bpu_predict</span></code>.</p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_MAX_TASK_NUM</span></code> specifies the upper limit of task numbers to be run simultaneously, default as 32. In other words, it is allowed to submit 32 model run tasks simultaneously.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE</span></code> specifies the internally maintained mem pool size, default as 128. In other words, at most 128 buffers can be stored into mem pool. Users can control memory occupation of BPU by adjusting this value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_DEBUG</span></code> specifies whether to enter debug mode, options include: <code class="docutils literal notranslate"><span class="pre">info</span></code>, <code class="docutils literal notranslate"><span class="pre">debug</span></code>, <code class="docutils literal notranslate"><span class="pre">warn</span></code> and <code class="docutils literal notranslate"><span class="pre">error</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">debug</span></code> denotes to turn on <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> and <code class="docutils literal notranslate"><span class="pre">INFO</span></code> logs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code> denotes to turn on <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> and <code class="docutils literal notranslate"><span class="pre">INFO</span></code> level logs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">warn</span></code> denotes to turn on both <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> and <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> level logs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">error</span></code> denotes to open <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> level log. Debug log can also be specified by the <code class="docutils literal notranslate"><span class="pre">HB_BPU_DEBUG_LOG=</span></code> environment variable.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONV_MAPPING_FILE</span></code> refers to the path of convolution node mapping file when compiling debug model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONV_DUMP_PATH</span></code> refers to the directory path to where the conv nodes output in bpu segment is dumped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE</span></code> if set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> or <code class="docutils literal notranslate"><span class="pre">true</span></code>, then memory usage of the <code class="docutils literal notranslate"><span class="pre">LoadModel</span></code> interface will be counted. It must work in conjunction with the <code class="docutils literal notranslate"><span class="pre">HB_BPU_setGlobalConfig</span></code> interface. <strong>NOTE: there will be performance loss when the memory usage functionality is enabled, hence please do NOT enable this statistical functionality in production environment.</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_ENGINE_TYPE</span></code> specifies the engine type used for inferencing in SDK, values are as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">native</span></code> denotes native engine type.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">group</span></code> is default value, it denotes group engine type.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CUSTOM_OP_LIB_PATH</span></code> refers to the lib path of custom op.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES</span></code> based on performance considerations, a caching mechanism is used within SDK when dealing with BPU memory, this configuration option belongs to a cache freeing strategic configuration. E.g., if it is configured as <code class="docutils literal notranslate"><span class="pre">N</span></code>, then a certain piece of cache will NOT be allowed to be used and will be freed when over N time(s). When N &lt;= 0, the caching mechanism will not be used. The default value is 64.</p></li>
+</ol>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setGlobalConfig</span><span class="p">(</span><span class="n">BPU_GLOBAL_CONFIG_E</span> <span class="n">config_key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">config_value</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>This function is used for specifying global control information of <code class="docutils literal notranslate"><span class="pre">bpu_predict</span></code>. To make this interface valid, it must be invoked before loading model.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">config_key</span></code> denotes the config enumeration type that shall be specified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">config_value</span></code> values in string. Specific configurable values can be found in the definition of enumeration value. Configuration values are passed in by strings. E.g., either <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code> shall be passed in when specifying <code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_DEBUG</span></code>.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-runmodel">
+<h4><span class="section-number">1.3.3.5. </span>2.3.5 HB_BPU_runModel<a class="headerlink" href="#hb-bpu-runmodel" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">void</span><span class="o">*</span> <span class="n">BPU_TASK_HANDLE</span><span class="p">;</span>  <span class="c1">// denotes the asynchronously executed task handle</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RUN_CTRL_S</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">core_id</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">resize_type</span><span class="p">;</span>  <span class="c1">// 1: resize input data if input shape is not same with</span>
+                    <span class="c1">// model input shape; other value: no resize</span>
+<span class="p">}</span> <span class="n">BPU_RUN_CTRL_S</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">HB_BPU_runModel</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                   <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">input_data</span><span class="p">[],</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">input_num</span><span class="p">,</span>
+                   <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
+                   <span class="k">const</span> <span class="n">BPU_RUN_CTRL_S</span> <span class="o">*</span><span class="n">run_ctrl</span><span class="p">,</span>
+                   <span class="kt">bool</span> <span class="n">is_sync</span><span class="p">,</span>
+                   <span class="n">BPU_TASK_HANDLE</span> <span class="o">*</span><span class="n">task_handle</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Performs model once using input data. It is divided into synchronous and asynchronous methods. When synchronous method is enabled, current thread will be blocked invoking this interface, until the end of model run. When asynchronous method is enabled, will return immediately invoking this interface, and then wait for model run ends using <code class="docutils literal notranslate"><span class="pre">task_handle</span></code>.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> refers to the struct object pointer of the model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_data</span></code> denotes input data tensor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input-num</span></code> denotes input data number and shall match model input number.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code> denotes output data tensor</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output-num</span></code> denotes output data number and shall match model output number.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_ctrl</span></code> denotes the control information of current operation, e.g. it specifies <code class="docutils literal notranslate"><span class="pre">core_id</span></code>, or whether to resize the input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_sync</span></code> denotes if the current operation uses synchronous mode. <code class="docutils literal notranslate"><span class="pre">true</span></code> denotes synchronous mode is on, <code class="docutils literal notranslate"><span class="pre">false</span></code> denotes off.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p>It will return <code class="docutils literal notranslate"><span class="pre">task_handle</span></code> in case of asynchronous interface. This handle can wait for the end of model run in subsequent <code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code> interface.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE:</strong></p>
+<ol class="simple">
+<li><p><strong>About</strong> <code class="docutils literal notranslate"><span class="pre">core-id</span></code><strong>. Values ranage of</strong> <code class="docutils literal notranslate"><span class="pre">core-id</span></code> <strong>is [0, max_core_num].</strong> <code class="docutils literal notranslate"><span class="pre">max_core_num</span></code> <strong>refers to total core number of BPU and it equals 2 on x2/j2/x3/j3 boards. When it is needed to run dual-core models, i.e., using dual-core to run data in one frame,</strong> <code class="docutils literal notranslate"><span class="pre">max_core_num</span></code> <strong>shall be specified as</strong> <code class="docutils literal notranslate"><span class="pre">core_id</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core_id</span></code> <strong>doesn’t take effect in asynchronous mode. BPU cores are allocated automatically and internally depending on system load.</strong></p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-waitmodeldone">
+<h4><span class="section-number">1.3.3.6. </span>2.3.6 HB_BPU_waitModelDone<a class="headerlink" href="#hb-bpu-waitmodeldone" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_waitModelDone</span><span class="p">(</span><span class="n">BPU_TASK_HANDLE</span> <span class="o">*</span><span class="n">task_handle</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Waits for the end of model run and is applied to asynchronous scenario. Current thread will be blocked when invoking this function, until model run is over. If model run were complete when invoking this function, then function shall return directly, which means that model run results have been stored into <code class="docutils literal notranslate"><span class="pre">output_data</span></code>, and that results are readable.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">task_handle</span></code> denotes the handle of a single model run. This handle is returned by the <code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code> interface and shall not be used for any other purposes. After this function returns in asynchronous scenarios, <code class="docutils literal notranslate"><span class="pre">task_handle</span></code> shall be freed by invoking <code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseTask</span></code>.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-releasetask">
+<h4><span class="section-number">1.3.3.7. </span>2.3.7 HB_BPU_releaseTask<a class="headerlink" href="#hb-bpu-releasetask" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_releaseTask</span><span class="p">(</span><span class="n">BPU_TASK_HANDLE</span> <span class="o">*</span><span class="n">task_handle</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Frees <code class="docutils literal notranslate"><span class="pre">task_handle</span></code> and is applied to asynchronous scenarios. It shall be invoked after <code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code>.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">task_handle</span></code> denotes the handle of a single model run. It is returned by the <code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code> interface.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-resize">
+<h4><span class="section-number">1.3.3.8. </span>2.3.8 HB_BPU_resize<a class="headerlink" href="#hb-bpu-resize" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_RESIZE_TYPE_E</span> <span class="p">{</span>
+  <span class="n">BPU_RESIZE_TYPE_BILINEAR</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_RESIZE_TYPE_E</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RESIZE_CTRL_S</span> <span class="p">{</span>
+  <span class="n">BPU_RESIZE_TYPE_E</span> <span class="n">resize_type</span><span class="p">;</span>
+  <span class="n">BPU_DATA_TYPE_E</span> <span class="n">output_type</span><span class="p">;</span>
+  <span class="n">Int</span> <span class="n">core_id</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_RESIZE_CTRL_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_resize</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span> <span class="n">BPU_TENSOR_S</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="n">BPU_RESIZE_CTRL_S</span> <span class="o">*</span><span class="n">ctrl_param</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Resizes input tensor data, convert into the size specified by dest tensor and store into the tensor data in dest. dest space will NOT be allocated inside the function and shall be allocated from outside instead. Please refer to the [Image Data Type](##### 2.1.4.2 Image Data Type) section for specific formats.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code> refers to descriptions of input data. When input data format use nv12 or nv12_separate, w must align with 16 and 2 must align with 2. As for other input formats, both w and h align with 2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code> denotes control parameters of resize.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">resize_type</span></code> denotes resize type. Currently ONLY support bilinear interpolation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code> denotes expected output data type. Please refer to the <strong>OUTPUT TYPE DESCRIPTIONS:</strong> below for more details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core_id</span></code> indicates the BPU core on which resize will be running. Specifying as 0 or 1 indicates that resize will run on BPU core 0 or 1. Other values indicates that the BPU core will be dispatched by bpu_predict.</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dest</span></code> describes output data and resizes images in accordance with the specified height and width in it.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>OUTPUT TYPE DESCRIPTIONS:</strong></p>
+<ol class="simple">
+<li><p>When <code class="docutils literal notranslate"><span class="pre">output_type</span></code> in <code class="docutils literal notranslate"><span class="pre">ctrl_params</span></code> is specified as <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code>, output data type is int8 and satisfy BPU requirement, so they can be passed into BPU directly. Hence, output tensor memory shall be allocated based on the aligned size using the <code class="docutils literal notranslate"><span class="pre">HB_BPU_getImageAlignedShape</span></code> interface.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">output_type</span></code> in <code class="docutils literal notranslate"><span class="pre">ctrl_params</span></code> is specified as <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_U8</span></code>, output data are normal images whose format is the same with input data, and output tensor size satisfy the <code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code> requirement specified in output tensor.</p></li>
+</ol>
+<p>Below showcases a table of supported conversion methods:</p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-8m8h{background-color:#cbcefb;border-color:inherit;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+</style><table class="tg" style="undefined;table-layout: fixed; width: 638px">
+<colgroup>
+<col style="width: 82.7988px">
+<col style="width: 83.7988px">
+<col style="width: 75.7988px">
+<col style="width: 75.7988px">
+<col style="width: 67.7988px">
+<col style="width: 85.7988px">
+<col style="width: 84.7988px">
+<col style="width: 81.7988px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-8m8h"></th>
+    <th class="tg-8m8h">Y-only</th>
+    <th class="tg-8m8h">YUV444</th>
+    <th class="tg-8m8h">BGR</th>
+    <th class="tg-8m8h">RGB</th>
+    <th class="tg-8m8h">BGRP</th>
+    <th class="tg-8m8h">RGBP</th>
+    <th class="tg-8m8h">YUV_NV12</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-8m8h">Y-only</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">YUV444</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">BGR</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">RGB</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">BGRP</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">RGBP</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">YUV_NV12</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+  </tr>
+</tbody>
+</table><p><strong>NOTE:</strong></p>
+<ol class="simple">
+<li><p>√ represents currently supported conversion method.</p></li>
+<li><p>○ represents those conversion methods which can be supported by existing ASIC architecture but not yet realized.</p></li>
+<li><p>x represents unsupported in existing ASIC architecture.</p></li>
+<li><p>max./min. resize level is 256, i.e. [1/256,256]. Equation is (src-1)/(dst-1). size requirement HxW &lt;= 4094x4080, i.e. maximum H of resized image is 4094 and maximum W is 4080.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-cropandresize">
+<h4><span class="section-number">1.3.3.9. </span>2.3.9 HB_BPU_cropAndResize<a class="headerlink" href="#hb-bpu-cropandresize" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_ROI_S</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">y1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">x2</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">y2</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_ROI_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_cropAndResize</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span> 
+                        <span class="k">const</span> <span class="n">BPU_ROI_S</span> <span class="o">*</span><span class="n">input_roi</span><span class="p">,</span>
+                        <span class="n">BPU_TENSOR_S</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> 
+                        <span class="n">BPU_RESIZE_CTRL_S</span> <span class="o">*</span><span class="n">ctrl_param</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Input tensor data are cropped in accordance with roi, then perform resize and store into the tensor data in <code class="docutils literal notranslate"><span class="pre">dest</span></code>. <code class="docutils literal notranslate"><span class="pre">dest</span></code> space is allocated from outside the function, rather than from the inside. shape[0] of <code class="docutils literal notranslate"><span class="pre">dest</span></code> is specified as target height, shape[1] as target width.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code> describes input data and resizes images according to the type in struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_roi</span></code> denotes the roi where resize is required, in which the top left and bottom right coordinates are stored.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code> denotes the control parameters used by resize:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">resize_type</span></code> denotes interpolation type. Currently only supports bilinear interpolation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code> denotes expected output data type. Please refer to the above mentioned <strong>OUTPUT TYPE DESCRIPTIONS:</strong> for more details.</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dest</span></code> describes output data.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE:</strong></p>
+<p><strong>1. The difference between <code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code> and <code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code> is that the former resizes image roi while the latter resizes the entire image. Supported conversion methods and notes of <code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code> is the same as that of <code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>.</strong></p>
+<p><strong>2. Size of the original image before crop shall satisfy HxW &lt;= 4094x4080.</strong></p>
+</div>
+<div class="section" id="hb-bpu-getimagealignedshape">
+<h4><span class="section-number">1.3.3.10. </span>2.3.10 HB_BPU_getImageAlignedShape<a class="headerlink" href="#hb-bpu-getimagealignedshape" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getImageAlignedShape</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span> 
+                               <span class="kt">int</span> <span class="o">*</span><span class="n">aligned_size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Calculates the aligned shape in accordance with input shape. This interface can work in conjunction with <code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code> and <code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code> in order to obtain the allocated memory size required by resize results.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code> describes input shape.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aligned_size</span></code> denotes the memory size of input shape after alignment.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-getresizeresultwithoutpadding">
+<h4><span class="section-number">1.3.3.11. </span>2.3.11 HB_BPU_getResizeResultWithoutPadding<a class="headerlink" href="#hb-bpu-getresizeresultwithoutpadding" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getResizeResultWithoutPadding</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span>
+                                         <span class="k">const</span> <span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">,</span>
+                                         <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span>
+									     <span class="kt">void</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">dest_size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>When the <code class="docutils literal notranslate"><span class="pre">output_type</span></code>of <code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code> in <code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code> or <code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code> is specified as <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code> type, test returned dest data can be used for model run, but cannot be converted into images because of the padding process from inside. Therefore, in case you need to obtain resize results as images, invoke this interface to obtain the actual resize results. As dest space is allocated from outside the function rather than from the inside, dest space size equals actual image size. For example, as for RGB image: h * w * 3.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code> denotes resize results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code> denotes image type of resize.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code> describes shape of resize results. It shall work in conjunction with <code class="docutils literal notranslate"><span class="pre">data_type</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dest_size</span></code> denotes size of dest space and is used for checking if dest memory is sufficient so as to prevent buffer overflow.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dest</span></code> denotes output data addresses and is allocated from outside. Its memory size equals HxWxC. In currently supported image types, <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_Y</span></code> shall be 1, while all the rest shall be 3.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-setmodelprior">
+<h4><span class="section-number">1.3.3.12. </span>2.3.12 HB_BPU_setModelPrior<a class="headerlink" href="#hb-bpu-setmodelprior" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setModelPrior</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Used for specifying those high priority models that can preempt other models. When running 2 models on a single core simultaneously, usually the 2 models try to occupy the same core, and hence their execution time affect one another and it can lead to larger latency than that of when running one model. So if one of the models is specified as higher prioritized model, it will perform the preemption operation in order to decrease its own latency, hence whose latency shall be basically the same as that of when running it along. While for the other model of low priority, the execution time of the very frame that has been preempted will be prolonged.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> refers to struct object pointer of model and indicates that the model to run.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE:</strong></p>
+<p><strong>1. The model with low priority must add a <code class="docutils literal notranslate"><span class="pre">max_time_per_fc</span></code> parameter(measured in us).</strong></p>
+<p><strong>2. The environment variable <code class="docutils literal notranslate"><span class="pre">BPLAT_CORELIMIT=1</span></code> must be specified when using this interface.</strong></p>
+<p><strong>3. The system will determine that model execution fails in case the execution time of the low priority model is larger than 10s.</strong></p>
+</div>
+<div class="section" id="hb-bpu-gethwcindex">
+<h4><span class="section-number">1.3.3.13. </span>2.3.13 HB_BPU_getHWCIndex<a class="headerlink" href="#hb-bpu-gethwcindex" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getHWCIndex</span><span class="p">(</span><span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">,</span>
+                       <span class="k">const</span> <span class="n">BPU_LAYOUT_E</span> <span class="o">*</span><span class="n">layout</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="o">*</span><span class="n">h_idx</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="o">*</span><span class="n">w_idx</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="o">*</span><span class="n">c_idx</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>An auxiliary interface which provides traverse capacity and returns position indexes of height/width/channel in the (BPU_DATA_SHAPE_S.d)dimensional array according to <code class="docutils literal notranslate"><span class="pre">data_type</span></code> and <code class="docutils literal notranslate"><span class="pre">layout</span></code>. <code class="docutils literal notranslate"><span class="pre">layout</span></code> will become invalid parameter and <code class="docutils literal notranslate"><span class="pre">NULL</span></code> can be passed in when <code class="docutils literal notranslate"><span class="pre">data_type</span></code> equals <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_XXX</span></code>. While when <code class="docutils literal notranslate"><span class="pre">data_type</span></code> equals <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_XXX</span></code>, the <code class="docutils literal notranslate"><span class="pre">layout</span></code> parameter must be specified correctly. For example, if <code class="docutils literal notranslate"><span class="pre">data_type</span></code> equals <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_YUV_NV12</span></code>, as the corresponding <code class="docutils literal notranslate"><span class="pre">layout</span></code> is NCHW, returned <code class="docutils literal notranslate"><span class="pre">h_idx=2</span></code>, <code class="docutils literal notranslate"><span class="pre">w_idx=3</span></code> and <code class="docutils literal notranslate"><span class="pre">c_idx=1</span></code>. Else if <code class="docutils literal notranslate"><span class="pre">data_type</span></code> equals <code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code>, as corresponding type is feature which has no layout information, the <code class="docutils literal notranslate"><span class="pre">layout</span></code> parameter must be specified correctly. According to model requirement, assume that the <code class="docutils literal notranslate"><span class="pre">layout</span></code> parameter is specified as <code class="docutils literal notranslate"><span class="pre">BPU_LAYOUT_NHWC</span></code>, <code class="docutils literal notranslate"><span class="pre">h_idx=1</span></code>, <code class="docutils literal notranslate"><span class="pre">w_idx=2</span></code> and <code class="docutils literal notranslate"><span class="pre">c_idx=3</span></code>.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code> refers to data type of model input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">layout</span></code> refers to the <code class="docutils literal notranslate"><span class="pre">layout</span></code> of model input. <strong>NOTE: when data_type is image(BPU_TYPE_IMG_XXX), layout will be invalid parameter and can be NULL. Otherwise when data_type is feature(BPU_TYPE_TENSOR_XXX), layout will be a compulsory parameter.</strong></p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">h_idx</span></code> refers to the position index of height.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w_idx</span></code> refers to the position index of width.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">c_idx</span></code> refers to the position index of channel.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-gethw">
+<h4><span class="section-number">1.3.3.14. </span>2.3.14 HB_BPU_getHW<a class="headerlink" href="#hb-bpu-gethw" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getHW</span><span class="p">(</span><span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">,</span>
+                 <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span>
+                 <span class="kt">int</span> <span class="o">*</span><span class="n">height</span><span class="p">,</span>
+                 <span class="kt">int</span> <span class="o">*</span><span class="n">width</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Obtains the height and width of model input based on model shape.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code> refers to the data type of model input. A compulsory parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code> corresponding dimensional struct. A compulsory parameter.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code> denotes height in the dimensional array in <code class="docutils literal notranslate"><span class="pre">shape</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code> denotes width in the dimensional array in <code class="docutils literal notranslate"><span class="pre">shape</span></code>.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-getmemoryusage">
+<h4><span class="section-number">1.3.3.15. </span>2.3.15 HB_BPU_getMemoryUsage<a class="headerlink" href="#hb-bpu-getmemoryusage" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getMemoryUsage</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                          <span class="kt">size_t</span> <span class="o">*</span><span class="n">bpu_peak_memory_usage</span><span class="p">,</span>
+                          <span class="kt">size_t</span> <span class="o">*</span><span class="n">bpu_memory_occupation</span><span class="p">,</span>
+                          <span class="kt">size_t</span> <span class="o">*</span><span class="n">cpu_peak_memory_usage</span><span class="p">,</span>
+                          <span class="kt">size_t</span> <span class="o">*</span><span class="n">cpu_memory_occupation</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>An auxiliary interface that provides statistics of model loading memory capacity. After successfully invokes the <code class="docutils literal notranslate"><span class="pre">HB_BPU_loadModel</span></code> interface, passes in model struct pointer to invoke this interface, users can obtain the peak and resident memories loaded by the model. <strong>NOTE: the global configuration BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE must be specified as TRUE when calculating memory using this interface, i.e. to invoke HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE,”TRUE”) before loading model.</strong></p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes the struct object pointer of the model.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bpu_peak_memory_usage</span></code> denotes the peak bpu memory during model loading, measured in byte.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bpu_memory_occupation</span></code> denotes the resident bpu memory after model is loaded(won’t be freed until the <code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code> is invoked), measured in byte.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu_peak_memory_usage</span></code> denotes the peak cpu memory during model loading, measured in byte.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu_memory_occupation</span></code> denotes the resident cpu memory after model is loaded(won’t be freed until the <code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code> is invoked)，measured in byte.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-loadmodelfromfile">
+<h4><span class="section-number">1.3.3.16. </span>2.3.16 HB_BPU_loadModelFromFile<a class="headerlink" href="#hb-bpu-loadmodelfromfile" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModelFromFile</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">model_file_name</span><span class="p">,</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Loads a BPU model from model file to obtain its struct object. the <code class="docutils literal notranslate"><span class="pre">BPU_MODEL_S</span></code> struct is passed in from outside and this function fills model information into the struct.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model_file_name</span></code> is the path name of model file.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes the struct pointer which loading model information. As currently model is stored in one file, the returned handle represents the same model. It is not supported to packaging multiple models into one file.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Return values in int type. 0 denotes successful execution, other values denotes failures whose specific causes can be obtained via the string returns by invoking <code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code> using error code.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-getversion">
+<h4><span class="section-number">1.3.3.17. </span>2.3.17 HB_BPU_getVersion<a class="headerlink" href="#hb-bpu-getversion" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">HB_BPU_getVersion</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Acquires the version number of BPU SDK.</p>
+<p><strong>INPUT:</strong></p>
+<p>None.</p>
+<p><strong>OUTPUT:</strong></p>
+<p>None.</p>
+<p><strong>RETURN:</strong></p>
+<p>BPU SDK’s version number in strings.</p>
+</div>
+<div class="section" id="hb-bpu-runmodelwithbbox">
+<h4><span class="section-number">1.3.3.18. </span>2.3.18 HB_BPU_runModelWithBbox<a class="headerlink" href="#hb-bpu-runmodelwithbbox" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span>typedef struct hb_BPU_BBOX {
+  float x1;       # refers to the top left x coordinate of box
+  float y1;       # refers to the top left y coordinate of box
+  float x2;       # refers to the bottom right x coordinate of box
+  float y2;       # refers to the bottom right y coordinate of box
+  float score;    # box score
+  int type;       # box type
+  bool resizable; # whether or not resize the box. Resize will be done by software if hardware cannot resize the box
+} BPU_BBOX;
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_runModelWithBbox</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                            <span class="n">BPU_ADDR_INFO_S</span> <span class="n">down_scales</span><span class="p">[],</span>
+                            <span class="kt">int</span> <span class="n">down_scale_layers</span><span class="p">,</span>
+                            <span class="n">BPU_BBOX</span> <span class="n">bbox</span><span class="p">[],</span>
+                            <span class="kt">int</span> <span class="n">bbox_num</span><span class="p">,</span>
+                            <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
+                            <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
+                            <span class="k">const</span> <span class="n">BPU_RUN_CTRL_S</span> <span class="o">*</span><span class="n">run_ctrl</span><span class="p">,</span>
+                            <span class="kt">bool</span> <span class="n">is_sync</span><span class="p">,</span>
+                            <span class="kt">int</span> <span class="o">*</span><span class="n">resizable_cnt</span><span class="p">,</span>
+                            <span class="n">BPU_TASK_HANDLE</span> <span class="o">*</span><span class="n">task_handle</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Runs model using input data. Wherein input data refer to the combination of multiple resized layers and multiple BBoxes(Bbox coordinates are based on the original image, i.e. <code class="docutils literal notranslate"><span class="pre">down_scales[0]</span></code>). For each BBox, approporiate resized layers are selected from within the API, and based on which, crop and resize will be performed in order to match model input shape. After that, resize results will serve as the model inputs to be performed.There are 2 execution methods, namely the synchronous and asynchronous execution methods. When the synchronous method is enabled, by invoking this interface, the current thread will be blocked until model run completes. Otherwise when the asynchronous method is enabled, invoking this interface will return immediately and <code class="docutils literal notranslate"><span class="pre">task_handle</span></code> shall be used to wait for the completion of model run.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes the struct object pointer of the model to be run. Currently ONLY support the model whose <code class="docutils literal notranslate"><span class="pre">input</span></code> is <code class="docutils literal notranslate"><span class="pre">resizer</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">down_scales</span></code> denotes multiple resized image layers, note that images are downsized only. Currently the actual source of this parameter is the <code class="docutils literal notranslate"><span class="pre">down_scale</span></code> layer of pyramid data returned by the pyramid related interfaces in io. Details of <code class="docutils literal notranslate"><span class="pre">BPU_ADDR_INFO_S</span></code> struct please refer to the section <code class="docutils literal notranslate"><span class="pre">2.4.3</span> <span class="pre">BPU_convertCameraInfo</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">down_scale_layers</span></code> denotes the valid resized layers in <code class="docutils literal notranslate"><span class="pre">down_scales</span></code> array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code> denotes bbox array pointer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code> denotes number of bbox.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code> denotes output data tensor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code> denotes the number of output data and must be the same as number of model output. Please do not confuse the two parameters <code class="docutils literal notranslate"><span class="pre">output_num</span></code> and <code class="docutils literal notranslate"><span class="pre">output_data</span></code>. The former denotes model output number, while the latter denotes the contiguous memory of tensor multiplies n <code class="docutils literal notranslate"><span class="pre">bbox_num</span></code> of each model output. Let’s explain by below example: Let the output of resizer model be A and B, if there are 20 detection boxes as input, then n <code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>=20, <code class="docutils literal notranslate"><span class="pre">output_num</span></code>=2, <code class="docutils literal notranslate"><span class="pre">output_data[0]</span></code>=20 memories of A tensor, <code class="docutils literal notranslate"><span class="pre">output_data[1]</span></code>= 20 memories of B tensor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_ctrl</span></code> denotes the control information of the model run. E.g. <code class="docutils literal notranslate"><span class="pre">core_id</span></code>. Whether or not to use the <code class="docutils literal notranslate"><span class="pre">RoiResize</span></code> feature when the resizer hardware cannot support.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_sync</span></code> denotes whether the model run uses synchronous mode. <code class="docutils literal notranslate"><span class="pre">true</span></code> denotes synchronous mode, <code class="docutils literal notranslate"><span class="pre">false</span></code> denotes asynchronous mode.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">resizable_cnt</span></code> denotes the resizable number of bbox. The caller can determine the actual number of output based on this output value.</p></li>
+<li><p>Returns <code class="docutils literal notranslate"><span class="pre">task_handle</span></code> if the asynchronous mode is enabled. This handle can wait for the completion of model run in the subsequent <code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code> interface.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">core_id</span></code> ranges between [0, max_core_num], <code class="docutils literal notranslate"><span class="pre">max_core_num</span></code> denotes total core number of BPU and as for x2/j2/x3/j3, <code class="docutils literal notranslate"><span class="pre">max_core_num</span></code> equals 2. When running dual-core model is required, i.e. to run one frame using dual-core, <code class="docutils literal notranslate"><span class="pre">core_id</span></code> shall be specified as <code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core_id</span></code> won’t take effect in asynchronous mode and BPU core will be dispatch automatically by the system according to load condition.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-creategroup">
+<h4><span class="section-number">1.3.3.19. </span>2.3.19 HB_BPU_createGroup<a class="headerlink" href="#hb-bpu-creategroup" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_createGroup</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Creates a BPU group. A BPU group is such a resource assurance approach that affiliates multiple models into the same group in order to restrict the resource utilization of the group. BPU restricts the resource utilization of model within a certain range.</p>
+<p><strong>INPUT:</strong></p>
+<p>None.</p>
+<p><strong>OUTPUT:</strong></p>
+<p>None.</p>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The BPU group id which has been created.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-setmodelgroup">
+<h4><span class="section-number">1.3.3.20. </span>2.3.20 HB_BPU_setModelGroup<a class="headerlink" href="#hb-bpu-setmodelgroup" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setModelGroup</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span> <span class="kt">int</span> <span class="n">group_id</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Affiliates models into group(s).</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes model struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">group_id</span></code> denotes group id。</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<p>None.</p>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-setgroupproportion">
+<h4><span class="section-number">1.3.3.21. </span>2.3.21 HB_BPU_setGroupProportion<a class="headerlink" href="#hb-bpu-setgroupproportion" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setGroupProportion</span><span class="p">(</span><span class="kt">int</span> <span class="n">group_id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">proportion</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Restricts the BPU utilization of a certain group.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">group_id</span></code> denotes group id。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">proportion</span></code> refers to BPU utilization proportion ranged between [0,100]. The utilization proportion is calculated using the ratio between the specified proportion and 100(proportion/100).</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<p>None.</p>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE:</strong></p>
+<p>​This interface ONLY restricts the BPU utilization proportion not to exceed 100%, however, as for particular models, the ratio between BPU utilization and proportion could be nonlinear because BPU utilization is also restricted by other factors e.g.: CPU load, io load and whether or not there are CPU OPs etc.</p>
+</div>
+<div class="section" id="hb-bpu-deletegroup">
+<h4><span class="section-number">1.3.3.22. </span>2.3.22 HB_BPU_deleteGroup<a class="headerlink" href="#hb-bpu-deletegroup" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_deleteGroup</span><span class="p">(</span><span class="kt">int</span> <span class="n">group_id</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Deletes a certain group.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">group_id</span></code> denotes group id.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p>None.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-parsedetthreshresult">
+<h4><span class="section-number">1.3.3.23. </span>2.3.23 HB_BPU_parseDetThreshResult<a class="headerlink" href="#hb-bpu-parsedetthreshresult" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseDetThreshResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                                <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
+                                <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
+                                <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">class_names</span><span class="p">,</span>
+                                <span class="kt">int</span> <span class="n">class_num</span><span class="p">,</span>
+								<span class="n">BPU_BBOX</span> <span class="o">**</span><span class="n">bbox</span><span class="p">,</span>
+                                <span class="kt">int</span> <span class="o">*</span><span class="n">bbox_num</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The post-process interface of special detection model which used for parsing Bbox.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes model struct pointer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code> denotes the output tensor array of model run result.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code> denotes output tensor number.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">class_names</span></code> denotes the names of class array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">class_num</span></code> denotes the number of class array.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code> denotes parsed bbox array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code> denotes number of array.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-parsechannelmaxresult">
+<h4><span class="section-number">1.3.3.24. </span>2.3.24 HB_BPU_parseChannelMaxResult<a class="headerlink" href="#hb-bpu-parsechannelmaxresult" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseChannelMaxResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                                 <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
+                                 <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">result_num</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="o">*</span><span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The post-process interface of special detection model which used for parsing classification results.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes model struct pointer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code> denotes the output tensor array of model run result.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code> denotes the number of output tensor array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">result_num</span></code> denotes the number of parsing results and must be the same as <code class="docutils literal notranslate"><span class="pre">output_num</span></code>.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">result</span></code> denotes the parsed array.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-parsedppresult">
+<h4><span class="section-number">1.3.3.25. </span>2.3.25 HB_BPU_parseDPPResult<a class="headerlink" href="#hb-bpu-parsedppresult" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseDPPResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                          <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
+                          <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
+                          <span class="n">BPU_BBOX</span> <span class="o">**</span><span class="n">bbox</span><span class="p">,</span>
+                          <span class="kt">int</span> <span class="o">*</span><span class="n">bbox_num</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The post-process interface of special detection model which used for parsing detection Bbox.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes model struct pointer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code> denotes output tensor array of model run result.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code> denotes number of output tensor array.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code> denotes the parsed bbox array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code> denotes the number of bbox array.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-parserppresult">
+<h4><span class="section-number">1.3.3.26. </span>2.3.26 HB_BPU_parseRPPResult<a class="headerlink" href="#hb-bpu-parserppresult" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_BBOX_F32</span> <span class="p">{</span>
+  <span class="kt">float</span> <span class="n">left</span><span class="p">;</span>
+  <span class="kt">float</span> <span class="n">top</span><span class="p">;</span>
+  <span class="kt">float</span> <span class="n">right</span><span class="p">;</span>
+  <span class="kt">float</span> <span class="n">bottom</span><span class="p">;</span>
+  <span class="kt">float</span> <span class="n">score</span><span class="p">;</span>
+  <span class="kt">float</span> <span class="n">class_label</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_BBOX_F32</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_BBOX_INT16</span> <span class="p">{</span>
+  <span class="kt">int16_t</span> <span class="n">left</span><span class="p">;</span>
+  <span class="kt">int16_t</span> <span class="n">top</span><span class="p">;</span>
+  <span class="kt">int16_t</span> <span class="n">right</span><span class="p">;</span>
+  <span class="kt">int16_t</span> <span class="n">bottom</span><span class="p">;</span>
+  <span class="kt">int8_t</span> <span class="n">score</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">class_label</span><span class="p">;</span>
+  <span class="kt">int16_t</span> <span class="n">padding</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">BPU_BBOX_INT16</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RPP_BBOX</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">bbox_num</span><span class="p">;</span>
+  <span class="k">enum</span> <span class="p">{</span> <span class="n">bbox_type_int16</span><span class="p">,</span> <span class="n">bbox_type_f32</span> <span class="p">}</span> <span class="n">result_type</span><span class="p">;</span>
+  <span class="n">BPU_BBOX_INT16</span> <span class="o">*</span><span class="n">bbox_ptr_int16</span><span class="p">;</span>
+  <span class="n">BPU_BBOX_F32</span> <span class="o">*</span><span class="n">bbox_ptr_f32</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_RPP_BBOX</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseRPPResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
+                          <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
+                          <span class="kt">int</span> <span class="n">output_index</span><span class="p">,</span>
+                          <span class="n">BPU_RPP_BBOX</span> <span class="o">*</span><span class="n">rpp_bbox</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>The post-process interface of a certain output of special detection model which used for parsing detection Bbox.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> denotes model struct pointer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code> denotes the output tensor arrary of model run result.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_index</span></code> denotes the element indexes in output tensor array.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rpp_bbox</span></code> denotes the parsed bbox.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-loadmodelpackage">
+<h4><span class="section-number">1.3.3.27. </span>2.3.27 HB_BPU_loadModelPackage<a class="headerlink" href="#hb-bpu-loadmodelpackage" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModelPackage</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">model_data</span><span class="p">,</span>
+                            <span class="kt">int</span> <span class="n">model_size</span><span class="p">,</span>
+                            <span class="n">BPU_MODEL_PACKAGE_S</span> <span class="o">*</span><span class="n">model_pack_s</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Load BPU model package to get the struct object which represents the model. <code class="docutils literal notranslate"><span class="pre">BPU_MODEL_PACKAGE_S</span></code> struct shall be passed in from outside and this function fills model information in the package into the struct.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model_data</span></code> points to the memory address where model data are stored. The memory here can be allocated as ordinary memory, rather than BPU memory. <code class="docutils literal notranslate"><span class="pre">model_data</span></code> memory can be freed after successfully loading the model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_size</span></code> refers to the memory size of model data.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model_pack_s</span></code>：denotes the struct pointer of the model package information being loaded.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The int type return values. 0 denotes successful execution while other values denote failures. Specific reasons of failures will be returned by error code in strings when invoking <code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-loadmodelpackagefromfile">
+<h4><span class="section-number">1.3.3.28. </span>2.3.28 HB_BPU_loadModelPackageFromFile<a class="headerlink" href="#hb-bpu-loadmodelpackagefromfile" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModelPackageFromFile</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">file_path</span><span class="p">,</span>
+                                    <span class="n">BPU_MODEL_PACKAGE_S</span> <span class="o">*</span><span class="n">model_pack_s</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Load BPU model package to get the struct object which represents the model. <code class="docutils literal notranslate"><span class="pre">BPU_MODEL_PACKAGE_S</span></code> struct shall be passed in from outside and this function fills model information in the package into the struct.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">file_path</span></code> donotes the file path of model package</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model_pack_s</span></code> denotes the struct pointer of the model package information being loaded.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The int type return values. 0 denotes successful execution while other values denote failures. Specific reasons of failures will be returned by error code in strings when invoking <code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>.</p></li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-releasemodelpackage">
+<h4><span class="section-number">1.3.3.29. </span>2.3.29 HB_BPU_releaseModelPackage<a class="headerlink" href="#hb-bpu-releasemodelpackage" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_releaseModelPackage</span><span class="p">(</span><span class="n">BPU_MODEL_PACKAGE_S</span> <span class="o">*</span><span class="n">model_package_s</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Free loaded BPU model package. The <code class="docutils literal notranslate"><span class="pre">model_package_s</span></code> struct will be modified from inside this API.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model_package_s</span></code> denotes the object pointer of model package struct.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>The int type return values. 0 denotes successful execution while other values denote failures.</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="io-interface-descriptions">
+<h3><span class="section-number">1.3.4. </span>2.4 IO Interface Descriptions<a class="headerlink" href="#io-interface-descriptions" title="永久链接至标题">¶</a></h3>
+<p>Here the IO interfaces refers to the toolchain encapsulated interfaces which are designed to make it easier to utilize IO functionality. If you want to utilize more flexible IO functionalities, it is recommended to utilize those interfaces offered by the system software package.</p>
+<div class="section" id="bpu-createcamerahandle">
+<h4><span class="section-number">1.3.4.1. </span>2.4.1 BPU_createCameraHandle<a class="headerlink" href="#bpu-createcamerahandle" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">BPUCameraHandle</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">BPU_createCameraHandle</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">vio_config_file_name</span><span class="p">,</span>
+						   <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">camera_config_file_name</span><span class="p">,</span>
+			               <span class="kt">int</span> <span class="n">cam_cfg_index</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">port</span><span class="p">,</span>
+                           <span class="n">BPUCameraHandle</span> <span class="o">*</span><span class="n">handle</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Creates a camera object and returns the handle which denotes the camera object. The handle is passed in from outside and assigned from within the function.</p>
+<p><strong>NOTE: it is NOT allowed to repeatedly create multiple camera objects for one camera.</strong></p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">vio_config_file_name</span></code> denotes vio configuration filename.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">camera_config_file_name</span></code> denotes camera configuration filename.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code> denotes the index of the config field corresponding to the <code class="docutils literal notranslate"><span class="pre">camera</span></code> class in camera configuration file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">port</span></code> denotes the port id of the config field corresponding to the <code class="docutils literal notranslate"><span class="pre">camera</span></code> class in camera configuration file.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code> denotes the created camera handle which used for subsequent camera image capturing.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE: both <code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> are parameters in camera configuration file. Usually the board can support different types of cameras, therefore we need to find the field of the corresponding camera. Mind that configuration file is in json, and the corresponding camera parameters can be found by the <code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code> and <code class="docutils literal notranslate"><span class="pre">port_id</span></code>. Examples of configuration files can be found in our example. Typically both <code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> are specified as 0 ONLY in the single camera scenario.</strong></p>
+</div>
+<div class="section" id="bpu-getcameraimagedata">
+<h4><span class="section-number">1.3.4.2. </span>2.4.2 BPU_getCameraImageData<a class="headerlink" href="#bpu-getcameraimagedata" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_getCameraImageData</span><span class="p">(</span><span class="n">BPUCameraHandle</span> <span class="o">*</span><span class="n">handle</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="o">*</span><span class="n">info</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Obtains image data of current camera.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code> denotes the created camera handle.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code> denotes to obtain existing camera images</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="bpu-convertcamerainfo">
+<h4><span class="section-number">1.3.4.3. </span>2.4.3 BPU_convertCameraInfo<a class="headerlink" href="#bpu-convertcamerainfo" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_ADDR_INFO_S</span> <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">width</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">height</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">step</span><span class="p">;</span>
+  <span class="kt">uint64_t</span> <span class="n">y_paddr</span><span class="p">;</span>
+  <span class="kt">uint64_t</span> <span class="n">c_paddr</span><span class="p">;</span>
+  <span class="kt">uint64_t</span> <span class="n">y_vaddr</span><span class="p">;</span>
+  <span class="kt">uint64_t</span> <span class="n">c_vaddr</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_ADDR_INFO_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BPU_ADDR_INFO_S</span></code> denotes the image descriptions of camera input. Camera image format is yuv nv12.</p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code> denotes image width.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code> denotes image height.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">step</span></code> denotes the step along the direction where image is heading.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y_paddr</span></code> denotes the start physical address of y data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">c_paddr</span></code> denotes the start physical address of uv data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y_vaddr</span></code> denotes the start virtual address of y data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">c_vaddr</span></code> denotes the start virtual address of uv data.</p></li>
+</ol>
+<p><strong>NOTE: physical addresses of y and uv CANNOT be accessed to from outside and can ONLY be passed into BPU for computation. If you wish to browse camera images, you can access to the read only virtual address.</strong></p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_CAMERA_IMAGE_INFO_S</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">frame_id</span><span class="p">;</span>
+  <span class="kt">int64_t</span> <span class="n">timestamp</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">img_format</span><span class="p">;</span>
+  <span class="n">BPU_ADDR_INFO_S</span> <span class="n">src_img</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">cam_id</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">BPU_CAMERA_IMAGE_INFO_S</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code> denotes the descriptions of camera input images.</p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_id</span></code> denotes the frame number of current image.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> denotes the current time stamp.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">img_format</span></code> denotes image format and ONLY supports yuv nv12.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src_img</span></code> denotes image data descriptions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_id</span></code> denotes camera id.</p></li>
+</ol>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_convertCameraInfo</span><span class="p">(</span><span class="n">BPU_CAMERA_IMAGE_INFO_S</span> <span class="o">*</span><span class="n">cam_info</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="n">buffer</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code> contains a large volume of output information. To make it easy to use, invoke this interface to convert camera buffer into the <code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code> struct, in order to expose some simple information including: frame number, time stamp and image related data.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code> denotes the captured current image information.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_info</span></code> denotes the struct of conversion results.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE: the BPU_CAMERA_IMAGE_INFO_S struct and the BPUCameraBuffer share the same piece of information memory. Please do NOT free the BPUCameraBuffer when using the BPU_CAMERA_IMAGE_INFO_S.</strong></p>
+</div>
+<div class="section" id="bpu-releasecamerabuffer">
+<h4><span class="section-number">1.3.4.4. </span>2.4.4 BPU_releaseCameraBuffer<a class="headerlink" href="#bpu-releasecamerabuffer" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_releaseCameraBuffer</span><span class="p">(</span><span class="n">BPUCameraHandle</span> <span class="n">handle</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="n">buffer</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Frees camera image data.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code> denotes camera handle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code> denotes current image information.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="bpu-releasecamerahandle">
+<h4><span class="section-number">1.3.4.5. </span>2.4.5 BPU_releaseCameraHandle<a class="headerlink" href="#bpu-releasecamerahandle" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_releaseCameraHandle</span><span class="p">(</span><span class="n">BPUCameraHandle</span> <span class="n">handle</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Frees camera handle.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code> denotes the created camera handle.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+<div class="section" id="bpu-getrelatedcamerabufferfrompyramidbuffer">
+<h4><span class="section-number">1.3.4.6. </span>2.4.6 BPU_getRelatedCameraBufferFromPyramidBuffer<a class="headerlink" href="#bpu-getrelatedcamerabufferfrompyramidbuffer" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_getRelatedCameraBufferFromPyramidBuffer</span><span class="p">(</span><span class="n">BPUPyramidBuffer</span> <span class="n">pyr_buffer</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="o">*</span><span class="n">info</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Constructs associated <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code> struct from <code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code>.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code> denotes the <code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code> type input parameter and can be obtained by pyramid related interfaces such as the <code class="docutils literal notranslate"><span class="pre">BPU_getPyramidResult</span></code>.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code> denotes the <code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code> based <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code> pointer.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+<p><strong>NOTE: remember that after this interface is invoked, the <code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span> <span class="pre">pyr_buffer</span></code> shall not be freed in advance if the <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span> <span class="pre">*info</span></code> were used subsequently because inside info and <code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code>, pyramid related data resources are shared. Consequently, the <code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code> must be freed invoking corresponding interface after <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span></code> is used. It is unnecessary to free the <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span></code> as it is freed when freeing the <code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code>.</strong></p>
+</div>
+<div class="section" id="bpu-getcamerainfofromcamerabuffe">
+<h4><span class="section-number">1.3.4.7. </span>2.4.7 BPU_getCameraInfoFromCameraBuffe<a class="headerlink" href="#bpu-getcamerainfofromcamerabuffe" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_getCameraInfoFromCameraBuffer</span><span class="p">(</span><span class="n">BPUCameraBuffer</span> <span class="n">buffer</span><span class="p">,</span>
+                                      <span class="kt">int</span> <span class="n">level</span><span class="p">,</span>
+                                      <span class="kt">int</span> <span class="n">height</span><span class="p">,</span>
+                                      <span class="kt">int</span> <span class="n">width</span><span class="p">,</span>
+                                      <span class="n">BPU_CAMERA_IMAGE_INFO_S</span> <span class="o">*</span><span class="n">cam_info</span><span class="p">,</span>
+                                      <span class="kt">int</span> <span class="o">*</span><span class="n">matched_level</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>DESCRIPTIONS:</strong></p>
+<p>Obtains corresponding pyramid layer information <code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code> based on the search condition from <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>. The search conditions include <code class="docutils literal notranslate"><span class="pre">level</span></code> and <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">width)</span></code>.</p>
+<p><strong>INPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code> denotes <code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code> type input parameter, it represents the camera pyramid data that can be obtained from the <code class="docutils literal notranslate"><span class="pre">BPU_getCameraImageData</span></code> interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">level</span></code> denotes the specific layer to serve as search condition. When level &gt;=0, the interface will take <code class="docutils literal notranslate"><span class="pre">level</span></code> as search condition and ignore the <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">weight)</span></code> parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code> denotes height.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code> denotes width. As search condition, <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">width)</span></code> can obtain pyramid layer information. **NOTE: as the interface will preempt level as search condition, level must be minus when using <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">width)</span></code> as search condition.</p></li>
+</ol>
+<p><strong>OUTPUT:</strong></p>
+<ol class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_info</span></code> denotes the <code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code> struct pointer obtained according to search conditions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matched_level</span></code> obtains matched <code class="docutils literal notranslate"><span class="pre">level</span></code> based on search conditions.</p></li>
+</ol>
+<p><strong>RETURN:</strong></p>
+<ol class="simple">
+<li><p>Error code in int type.</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 版权所有 2020, Horizon Robotics
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

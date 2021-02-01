@@ -17,11 +17,10 @@
 #include "hobotxstream/method.h"
 #include "horizon/vision_type/vision_type.hpp"
 
-#include "vehicle_common_utility/data_type.hpp"
-#include "vehicle_common_utility/utils.hpp"
-#include "vehicle_match_strategy/config_params_type.hpp"
-#include "vehicle_match_strategy/pairs_match_api.hpp"
-#include "vehicle_snap_strategy_namespace.hpp"
+#include "match_utility/data_type.hpp"
+#include "match_utility/utils.hpp"
+#include "match_strategy/config_params_type.hpp"
+#include "match_strategy/pairs_match_api.hpp"
 
 namespace xstream {
 
@@ -40,10 +39,9 @@ class VehiclePlateMatchMethod : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-  void OnProfilerChanged(bool on) override;
 
  private:
-  std::shared_ptr<hobot::vehicle_snap_strategy::PairsMatchAPI> matcher;
+  std::shared_ptr<hobot::vehicle_match_strategy::PairsMatchAPI> matcher;
 };
 
 }  // namespace xstream

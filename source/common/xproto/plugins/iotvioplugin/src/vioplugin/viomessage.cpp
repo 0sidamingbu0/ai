@@ -32,6 +32,7 @@ ImageVioMessage::ImageVioMessage(
   if (image_frame.size() > 0) {
     time_stamp_ = image_frame[0]->time_stamp;
     sequence_id_ = image_frame[0]->frame_id;
+    channel_ = image_frame[0]->channel_id;
     image_.resize(image_frame.size());
   }
   is_valid_uri_ = is_valid;

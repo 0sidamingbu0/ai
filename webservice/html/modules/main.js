@@ -169,10 +169,12 @@ function multipathInit() {
 
 function wsInit(i, port) {
   let { socketIP, cameraId, id, netId } = socketParameters;
+
   // 部署
   hostport = document.location.host;
   socketIP = hostport.replace(/_/g, '.');
   socket = new ReconnectingWebSocket(`ws://${socketIP}:${port}`, null, { binaryType: 'arraybuffer' });
+
   // 本地开发用
   // let ip = '10.103.74.106'
   // let socket = new ReconnectingWebSocket(`ws://${ip}:${port}`, null, { binaryType: 'arraybuffer' });
@@ -228,7 +230,7 @@ function transformData(buffer) {
   // console.log(222, unit8Array)
   let message = AwesomeMessage.decode(unit8Array);
   let object = AwesomeMessage.toObject(message);
-  // console.log(3333, object);
+  // console.log(333, object);
 
   let imageBlob;
   let imageWidth = 1920;
@@ -248,10 +250,6 @@ function transformData(buffer) {
         object['img_']['buf_'] &&
         object['img_']['buf_'].length
     ) {
-      // if (imageWidth !== object['img_']['width_'] || imageHeight !== object['img_']['height_']) {
-      //   // console.log(111, imageWidth)
-      //   FullFloatMatrix = fullFloatMatrix(imageWidth, imageHeight);
-      // }
       imageBlob = new Blob([object['img_']['buf_']], { type: 'image/jpeg' });
       imageWidth = object['img_']['width_'] || 1920
       imageHeight = object['img_']['height_'] || 1080
@@ -277,7 +275,8 @@ function transformData(buffer) {
           }
           let labelStart = 0;
           let labelCount = 20;
-          let labelBodyBox = null
+          let labelBodyBox = null;
+          let k = 0;
 
           // 检测框
           if (messageShowSelect.boxes && item['boxes_'] && item['boxes_'].length ) {
@@ -350,6 +349,8 @@ function transformData(buffer) {
               // 分割的颜色参数
               labelStart = val['type_'] === "segmentation_label_start" ? val['value_'] : 0
               labelCount = val['type_'] === "segmentation_label_count" ? val['value_'] : 20
+              // 分割的系数
+              k = val['type_'] === 'expansion_ratio' && val['value_'] ?  val['value_'] : 0
               // 摔倒
               if (val['type_'] === 'fall' && val['value_'] === 1) {
                 obj.fall.fallShow = true;
@@ -379,24 +380,22 @@ function transformData(buffer) {
               }
               // 车牌框数据
               if (messageShowSelect.attributes && val['attributes_'] && val['attributes_'].length) {
-                val['attributes_'].map(obj => {
-                  if (obj['valueString_']) {
+                val['attributes_'].map(v => {
+                  if (v['valueString_']) {
                     obj.attributes.attributes.push({
-                      type: obj['type_'],
-                      value: obj['valueString_'],
-                      score: messageShowSelect.scoreShow ? obj['score_'] : undefined
+                      type: v['type_'],
+                      value: v['valueString_'],
+                      score: messageShowSelect.scoreShow ? v['score_'] : undefined
                     })
                   }
                 })
               }
             })
           }
-          // 全图分割 segmentation parking_mask
-          if (
-              item['floatMatrixs_'] &&
-              item['floatMatrixs_'].length
-          ) {
-            if (item['floatMatrixs_'][0]['type_'] === 'segmentation' && messageShowSelect.floatMatrixs) {
+          // 全图分割 segmentation
+          if ( item['floatMatrixs_'] && item['floatMatrixs_'].length ) {
+            let floatType = item['floatMatrixs_'][0]['type_']
+            if (floatType === 'segmentation' && messageShowSelect.floatMatrixs) {
               let color = [];
               let step = 255 * 3 / labelCount;
               for (let i = 0; i < labelCount; ++i) {
@@ -421,43 +420,80 @@ function transformData(buffer) {
                   data: floatdata
                 })
               }
-            } else if (item['floatMatrixs_'][0]['type_'] === 'matting' && messageShowSelect.floatMatrixsMatting && labelBodyBox && FullFloatMatrix) {
-              let floatdata = FullFloatMatrix;
-              let labelWidth = labelBodyBox.box2.x - labelBodyBox.box1.x;
-              let labelHeight = labelBodyBox.box2.y - labelBodyBox.box1.y;
-              let dataWidth = Math.trunc(item['floatMatrixs_'][0]['arrays_'][0]['value_'].length * labelWidth / 224)
-              let dataHeight = Math.trunc(item['floatMatrixs_'][0]['arrays_'].length * labelHeight / 224)
+            } else { // 抠图分割
+              if (messageShowSelect.floatMatrixsMatting && labelBodyBox && FullFloatMatrix) {
+                let labelWidth = labelBodyBox.box2.x - labelBodyBox.box1.x;
+                let labelHeight = labelBodyBox.box2.y - labelBodyBox.box1.y;
+                if (floatType === 'matting') {
+                  let dataWidth = Math.trunc(item['floatMatrixs_'][0]['arrays_'][0]['value_'].length * labelWidth / 224)
+                  let dataHeight = Math.trunc(item['floatMatrixs_'][0]['arrays_'].length * labelHeight / 224)
+    
+                  let datas = scaleData(dataWidth, dataHeight, item['floatMatrixs_'][0]['arrays_']);
+                  
+                  datas.map((values, i) => {
+                    values['value_'].map((valuess, j) => {
+                      if (valuess > 0) {
+                        let x = (j - labelWidth / 224 * 16) + labelBodyBox.box1.x;
+                        let y = (i - labelHeight / 224 * 16) + labelBodyBox.box1.y;
+                        let index = Math.trunc(y) * 1920 * 4 + Math.trunc(x) * 4 + 3;
+                        FullFloatMatrix[index] = 255 - valuess;
+                      }
+                    })
+                  })
+                  obj.segmentation.push({ type: 'full_img', w: imageWidth, h: imageHeight, data: FullFloatMatrix })
+                } else if (floatType === 'matting_trimapfree' && k >= 0){
+                  // 计算出状态 3
+                  let expand_roi_x1 = labelBodyBox.box1.x - labelWidth * k;
+                  let expand_roi_y1 = labelBodyBox.box1.y - labelHeight * k;
+                  let expand_roi_height = Math.trunc(labelHeight + 2 * labelHeight * k);
+                  let expand_roi_width = Math.trunc(labelWidth + 2 * labelWidth * k);
 
-              let datas = scaleData(dataWidth, dataHeight, item['floatMatrixs_'][0]['arrays_'])
-              // console.log(555, dataWidth, dataHeight, datas)
-              
-              datas.map((values, i) => {
-                values['value_'].map((valuess, j) => {
-                  if (valuess > 0) {
-                    let col = j;
-                    let row = i;
-                    let x = (col - labelWidth / 224 * 16) + labelBodyBox.box1.x;
-                    let y = (row - labelHeight / 224 * 16) + labelBodyBox.box1.y;
-                    let index = Math.trunc(y) * 1920 * 4 + Math.trunc(x) * 4 + 3
-                    floatdata[index] = 255 - valuess
+                  // 计算出状态 2 的缩放系数
+                  let ratio = 0;
+                  let ratio1 = item['floatMatrixs_'][0]['arrays_'].length * 1.0 / expand_roi_height;
+                  let ratio2 = item['floatMatrixs_'][0]['arrays_'][0]['value_'].length * 1.0 / expand_roi_width;
+                  
+                  if (ratio1 > ratio2) {
+                    ratio = ratio2;
+                  } else {
+                    ratio = ratio1;
                   }
-                })
-              })
 
-              obj.segmentation.push({ type: 'full_img', w: imageWidth, h: imageHeight, data: floatdata })
+                  // 计算出状态 2 的框
+                  let resize_roi_height = Math.trunc(expand_roi_height * ratio);
+                  let resize_roi_width = Math.trunc(expand_roi_width * ratio);
 
-              // let floatdata = []
-              // item['floatMatrixs_'][0]['arrays_'].map(values => {
-              //   values['value_'].map(index => {
-              //     floatdata.push(255, 255, 255, 255-index)
-              //   })
-              // })
-              // obj.segmentation.push({
-              //   type: 'full_img',
-              //   w: item['floatMatrixs_'][0]['arrays_'][0]['value_'].length,
-              //   h: item['floatMatrixs_'][0]['arrays_'].length,
-              //   data: floatdata
-              // })
+                  // 创建一个 resize_matting[resize_roi_height][resize_roi_width] 的数组,
+                  // 并将抠图结果映射到状态 2 的框即 resize_matting 数组
+                  let arrHeight  = [...new Array(resize_roi_height).keys()];
+                  let arrWidth  =  [...new Array(resize_roi_width).keys()];
+                  let resize_matting = arrHeight.map((values) => {
+                    return {
+                      value_: arrWidth.map(valuess => {
+                        return item['floatMatrixs_'][0]['arrays_'][values]['value_'][valuess];
+                      })
+                    }
+                  });
+
+                  // 二插值计算出状态 1
+                  let expand_matting = scaleData(expand_roi_width, expand_roi_height, resize_matting);
+
+                  // 渲染到 原图
+                  expand_matting.map((values, i) => {
+                    values['value_'].map((valuess, j) => {
+                      let row = i + expand_roi_y1;
+                      let col = j + expand_roi_x1;
+                      if (valuess > 0 && row >= 0 && col >= 0 && row < 1080 && col < 1980) {
+                        let temp = 255 - valuess;
+                        let index = Math.trunc(row) * 1920 * 4 + Math.trunc(col) * 4 + 3;
+                        FullFloatMatrix[index] = Math.min(FullFloatMatrix[index], temp);
+                      }
+                    })
+                  })
+
+                  obj.segmentation.push({ type: 'full_img', w: imageWidth, h: imageHeight, data: FullFloatMatrix })
+                }
+              }
             }
           }
           smartMsgData.push(obj);

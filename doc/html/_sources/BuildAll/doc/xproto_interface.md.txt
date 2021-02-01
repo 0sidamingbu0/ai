@@ -66,13 +66,6 @@ class XPlugin : public std::enable_shared_from_this<XPlugin> {
   }
   // 处理register的msg类型，如有需要，push自己的msg到总线
   virtual void OnMsg(XProtoMessagePtr msg) = 0;
-  // 用于流量管理
-  virtual int GetPluginMsgCount() = 0;
-  virtual int GetPluginMsgLimit() = 0;
-  virtual void SetPluginMsgLimit(int msg_limit_count) = 0;
-  // plugin处理msg时间监控
-  virtual int GetMsgMonitorTime() = 0;
-  virtual void SetMsgMonitorTime(int msg_monitor_time) = 0;
 
   virtual std::string desc() const {
     return "XPlugin";
@@ -136,76 +129,6 @@ using XPluginPtr = std::shared_ptr<XPlugin>;
 
 ##### 说明
 处理总线消息：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 该接口接收处理总线消息，接口中不能block时间过长. 
-
-----
-#### XPlugin::GetPluginMsgCount
-##### 定义
-**virtual int GetPluginMsgCount() = 0;**
-
-##### 参数
-无
-
-##### 返回值
-+ *int*: 返回plugin待处理的msg数量
-
-##### 说明
-获取plugin待处理msg数量：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于获取plugin中待处理的msg数量. 
-
-----
-#### XPlugin::GetPluginMsgLimit
-##### 定义
-**virtual int GetPluginMsgLimit() = 0;**
-
-##### 参数
-无
-
-##### 返回值
-+ *int*: 返回plugin处理msg数量上限
-
-##### 说明
-获取plugin处理msg数量上限：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于获取plugin中待处理的msg数量上限. 
-
-----
-#### XPlugin::SetPluginMsgLimit
-##### 定义
-**virtual void SetPluginMsgLimit(int *msg_limit_count*) = 0;**
-
-##### 参数
-+ int *msg_limit_count*: 设置plugin能处理的msg数量上限. 
-
-##### 返回值
-无
-
-##### 说明
-设置plugin处理msg数量上限：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于设置plugin中待处理的msg数量上限. 
-
-----
-#### XPlugin::GetMsgMonitorTime
-##### 定义
-**virtual int GetMsgMonitorTime() = 0;**
-
-##### 参数
-无
-
-##### 返回值
-+ *int*: msg处理超时时间
-
-##### 说明
-获取msg处理超时时间：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于获取plugin处理msg的超时时间. 
-
-----
-#### XPlugin::SetMsgMonitorTime
-##### 定义
-**virtual void SetMsgMonitorTime(int *msg_monitor_time*) = 0;**
-
-##### 参数
-+ int *msg_monitor_time*: msg处理超时时间
-
-##### 返回值
-无
-
-##### 说明
-设置msg处理超时时间：该接口需要继承`XPlugin`类的自定义Plugin实现该接口定义. 用于设置plugin处理msg的超时时间. 
 
 ----
 #### XPlugin::PushMsg
@@ -289,15 +212,17 @@ class XPluginAsync : public XPlugin {
   // 注册监听消息类型到总线+plugin的初始化
   int Init() override;
   int DeInit() override;
+  // 获取plugin当前正在排队处理消息的数量
+  virtual int GetPluginMsgCount();
+  // plugin处理消息数量限制
+  virtual int GetPluginMsgLimit();
+  virtual void SetPluginMsgLimit(int msg_limit_count);
+  // plugin处理msg时间预警
+  virtual int GetMsgMonitorTime();
+  virtual void SetMsgMonitorTime(int msg_monitor_time);
+
   // 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制
   void OnMsg(XProtoMessagePtr msg) override;
-  int GetPluginMsgCount() override;
-  // plugin处理消息数量限制
-  int GetPluginMsgLimit() override;
-  void SetPluginMsgLimit(int msg_limit_count) override;
-  // plugin处理msg时间预警
-  int GetMsgMonitorTime() override;
-  void SetMsgMonitorTime(int msg_monitor_time) override;
   // 启动Plugin
   virtual int Start() {
     return 0;
@@ -377,6 +302,77 @@ class XPluginAsync : public XPlugin {
 ##### 说明
 反初始化Plugin：该接口需要继承`XPluginAsync`类的自定义Plugin实现该接口定义. 该接口用来反初始化Plugin.  
 继承自*XPluginAsync*子plugin类，在完成自己的反初始化任务后，最后需要调用*XPluginAsync::DeInit*接口以反初始化父类.
+
+----
+
+#### XPluginAsync::GetPluginMsgCount
+##### 定义
+**virtual int GetPluginMsgCount();**
+
+##### 参数
+无
+
+##### 返回值
++ *int*: 返回plugin待处理的msg数量
+
+##### 说明
+获取plugin待处理msg数量，用于获取plugin中待处理的msg数量. 
+
+----
+#### XPluginAsync::GetPluginMsgLimit
+##### 定义
+**virtual int GetPluginMsgLimit();**
+
+##### 参数
+无
+
+##### 返回值
++ *int*: 返回plugin处理msg数量上限
+
+##### 说明
+获取plugin处理msg数量上限。
+
+----
+#### XPluginAsync::SetPluginMsgLimit
+##### 定义
+**virtual void SetPluginMsgLimit(int *msg_limit_count*);**
+
+##### 参数
++ int *msg_limit_count*: 设置plugin能处理的msg数量上限. 
+
+##### 返回值
+无
+
+##### 说明
+设置plugin处理msg数量上限。
+
+----
+#### XPluginAsync::GetMsgMonitorTime
+##### 定义
+**virtual int GetMsgMonitorTime();**
+
+##### 参数
+无
+
+##### 返回值
++ *int*: msg处理超时时间
+
+##### 说明
+获取msg处理超时时间。
+
+----
+#### XPluginAsync::SetMsgMonitorTime
+##### 定义
+**virtual void SetMsgMonitorTime(int *msg_monitor_time*);**
+
+##### 参数
++ int *msg_monitor_time*: msg处理超时时间
+
+##### 返回值
+无
+
+##### 说明
+设置msg处理超时时间。
 
 ----
 #### XPluginAsync::PushMsg

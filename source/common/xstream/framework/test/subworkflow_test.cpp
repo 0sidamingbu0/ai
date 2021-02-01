@@ -81,4 +81,36 @@ TEST(WorkflowTest, MultiOutput) {
   infile.close();
   EXPECT_EQ(cfg_jv, config->cfg_jv_);
 }
+
+TEST(WorkflowTest, ConfigError) {
+  LOGD << "config error test" << std::endl;
+  auto config = std::make_shared<xstream::XStreamConfig>();
+  // "method_config_file", "method_config" both exist
+  EXPECT_EQ(-1, config->LoadFile(
+      "./test/configs_subworkflow/methodconfig_error.json"));
+  // template format error
+  EXPECT_EQ(-1, config->LoadFile(
+      "./test/configs_subworkflow/config_templateformat_error.json"));
+  // @include path error
+  EXPECT_NE(0, config->LoadFile(
+      "./test/configs_subworkflow/config_includepath_error1.json"));
+
+  // template parameter error
+  // "parameters" no exits
+  EXPECT_NE(0, config->LoadFile(
+      "./test/configs_subworkflow/config_templateparam_error1.json"));
+  // "parameters" size
+  EXPECT_NE(0, config->LoadFile(
+      "./test/configs_subworkflow/config_templateparam_error2.json"));
+  // "parameters" name
+  EXPECT_NE(0, config->LoadFile(
+      "./test/configs_subworkflow/config_templateparam_error3.json"));
+  // "parameters" type
+  EXPECT_NE(0, config->LoadFile(
+      "./test/configs_subworkflow/config_templateparam_error4.json"));
+
+  // "template_name" error
+  EXPECT_NE(0, config->LoadFile(
+      "./test/configs_subworkflow/config_templateparam_error5.json"));
+}
 }  // namespace subworkflow_test

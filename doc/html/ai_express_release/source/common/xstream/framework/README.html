@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>Overview &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -343,7 +343,7 @@
 <h4>编译<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
 <p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>CentOS平台</p></li>
+<li><p>CentOS平台(CentOS7, gcc4.8.5)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
@@ -352,7 +352,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Ubuntu平台</p></li>
+<li><p>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -361,7 +361,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Linaro-aarch64平台</p></li>
+<li><p>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -1056,12 +1056,12 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </tr>
 </tbody>
 </table><p><strong>optional</strong><br /><strong>——sched_upper</strong> : workflow调度线程<br /><strong>——sched_down</strong> :  workflow中node的公共守护线程   ***<br /><em><strong>如果设置线程优先级，建议这两个线程的优先级高于每个node的线程优先级</strong></em><br /><em><strong>node</strong></em><br /><strong>——thread_list</strong> :  指定了node执行线程index的数组，基于thread_list可以实现多个node之间共享执行线程。<br /><strong>——thread_priority</strong> : 线程的优先级设置。</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;thread_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-      <span class="nt">&quot;thread_priority&quot;</span><span class="p">:</span>
-      <span class="p">{</span>
-        <span class="nt">&quot;policy&quot;</span><span class="p">:</span> <span class="s2">&quot;SCHED_FIFO&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;priority&quot;</span><span class="p">:</span> <span class="mi">10</span>
-      <span class="p">},</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>&quot;thread_list&quot;: [0],
+      &quot;thread_priority&quot;:
+      {
+        &quot;policy&quot;: &quot;SCHED_FIFO&quot;,
+        &quot;priority&quot;: 10
+      },
 </pre></div>
 </div>
 </div>
@@ -1111,16 +1111,16 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 </div>
 <p>每帧数据FrameWork Data有序列号sequence_id标记，还需增加每路输出OutputData的唯一标记output_type_，在config文件中获取。
 多路输出的Json配置方式为：</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span> <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;output_type&quot;</span><span class="p">:</span> <span class="s2">&quot;out1&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;outputs&quot;</span><span class="p">:[</span><span class="s2">&quot;face_head_box_filter&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;output_type&quot;</span><span class="p">:</span> <span class="s2">&quot;out2&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;outputs&quot;</span><span class="p">:[</span><span class="s2">&quot;face_head_box_filter2&quot;</span><span class="p">]</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span> &quot;outputs&quot;: [
+    {
+      &quot;output_type&quot;: &quot;out1&quot;,
+      &quot;outputs&quot;:[&quot;face_head_box_filter&quot;]
+    },
+    {
+      &quot;output_type&quot;: &quot;out2&quot;,
+      &quot;outputs&quot;:[&quot;face_head_box_filter2&quot;]
+    }
+  ],
 </pre></div>
 </div>
 </div>

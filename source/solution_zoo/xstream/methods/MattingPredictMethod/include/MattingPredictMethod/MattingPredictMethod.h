@@ -16,9 +16,7 @@
 #include <vector>
 #include "DnnPredictMethod/DnnPredictMethod.h"
 #include "bpu_predict/bpu_predict_extension.h"
-#ifdef X3
-#include "./bpu_predict_x3.h"
-#endif
+
 namespace xstream {
 
 class MattingPredictMethod : public DnnPredictMethod {

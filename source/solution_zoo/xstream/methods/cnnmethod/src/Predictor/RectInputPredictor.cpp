@@ -110,8 +110,11 @@ void RectInputPredictor::Do(CNNMethodRunData *run_data) {
       if (ret == -1) {
         return;
       }
+      LOGI << "resizable_cnt: " << resizable_cnt;
       for (int32_t i = 0, bpu_box_idx = 0; i < box_num; i++) {
         if (valid_box[i]) {
+          LOGD << "BPU_BBOX " << bpu_box_idx << ", resizable: "
+               << boxes[bpu_box_idx].resizable;
           valid_box[i] = boxes[bpu_box_idx].resizable;
           if (valid_box[i]) {
             auto p_norm_roi =

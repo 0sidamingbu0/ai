@@ -33,6 +33,10 @@ ls /sys/class/video4linux/ -all
 
 ![检查](./image/usb_camera_detected_successfully.png "红框中内容存在，表示摄像头连接正常")
 
+## 镜像升级
+
+镜像升级参考： https://developer.horizon.ai/forum/id=5f156192740aaf0beb3119dd
+
 ## IP设置
 使用系统自带的工具设置IP地址
 ```C++
@@ -63,6 +67,8 @@ cma内存用于vio图像链路以及bpu内存，若程序运行起来，提示bp
 
 查看系统cma内存的方式：使用memstat命令，看cma_reserved的大小。
 
+注意：不同版本的系统，内存分配机制不一样，memstat不一定能够查看到cma_reserved大小.
+
 程序运行过程中，可以通过如下命令查看当前系统正在运行的所有程序占用的cma内存大小：
 
 ```
@@ -76,7 +82,29 @@ setenv ion_size  1024
 saveenv
 ```
 
-## 编译、部署及示例运行
+## 镜像编译
+如下命令针对X3 DVB开发板，DDR型号为samsung 2G，其他硬件规格请咨询地平线同事支持。
+
+EMMC镜像：
+
+```
+bash ./gen_disk.sh -b xj3 -u -t Release -m samsung -a 2
+```
+
+OTA镜像：
+```
+bash ./gen_ota.sh -b xj3 -u -t Release -m samsung -a 2
+```
+
+## 镜像文件系统无写入权限
+镜像烧录成功后，默认只有几个分区有读写权限，比如/app。/userdata默认只有读取权限，无写入权限。
+
+若希望对所有分区都能够写入，则可以执行如下命令：
+```
+mount -o remount,rw /
+```
+
+## 程序编译、部署及示例运行
 ### 编译
 这里以编译X3的版本为例，其他平台类似。
 获取aiexpress开发包后解压，执行命令：
@@ -185,6 +213,23 @@ aiexpress的部署包默认是web模式，运行solution后，使用Chrome浏览
 | 1 | web模式 |
 | 2 | uvc模式 |
 
+
+## 视频盒子使用HDMI显示
+运行视频盒子示例前，需要使用HDMI显示。系统默认未开启HDMI显示功能，系统烧录成功后，可以参考如下方法，开启HDMI显示。
+
+1. 使用串口连接开发板，然后重启X3设备
+2. 重启后根据提示随意按任意键进入uboot模式。
+3. 在uboot模式中敲入如下命令：
+```
+setenv bootargs earlycon console=ttyS0,921600 clk_ignore_unused video=hobot:x3sdb-hdmi kgdboc=ttyS0
+
+saveenv
+
+boot
+```
+
+系统重启后，HDMI显示器上显示地平线LOGO，则说明HDMI显示设置成功。
+
 ## 多路IPM图像回灌
 multi_input_hapi_ipm参考方案支持回灌多路IPM图像，IPM图像格式支持nv12和jpg，分辨率为256*512(注：模型输入分辨率)
 回灌步骤：
@@ -217,7 +262,7 @@ fb_pipe0.list文件中填写第1路回灌图片路径列表，fb_pipe1.list对�
 多路回灌时，要求每一路的图片数量必须相同。
 比如第一路回灌，fb_pipe0.list中填写N个图片路径，那么第二、三、四路回灌，也必须填写N个图片路径。
 
-## 视频盒子本地调试
+## VLC设置RTP Over TCP
 
 在使用vlc调试本地RTSP视频流时，可能也会遇到视频码流花屏的情况，这里建议vlc播放器也选择tcp协议。
 vlc使用tcp协议具体设置如下：
@@ -229,3 +274,17 @@ vlc使用tcp协议具体设置如下：
 然后选择输入/编解码器，选中RTP over RTSP(TCP)，然后保存。
 
 ![设置](./image/vlc_rtsp_local02.png "vlc设置tcp协议02")
+
+## potplayer播放uvc及切换码流
+
+使用potplayer拉取uvc视频播放时，选择打开设备，然后选择相应分辨率和编码方式即可拉取对应的码流。
+
+![open_uvc](./image/potplayer_open_uvc.png "potplayer播放uvc视频")
+
+uvc支持动态配置分辨率，可在potplayer端选择属性切换：
+
+![set_uvc](./image/potplayer_set_uvc_attr.png "potplayer配置uvc视频")
+
+然后可通过uvc的属性功能验证设备端的属性是否切换成功。
+
+![get_uvc](./image/potplayer_get_uvc_attr.png "potplayer查看uvc属性")

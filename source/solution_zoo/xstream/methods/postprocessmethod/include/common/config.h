@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include "json/json.h"
 
-namespace xstream {
+namespace postprocessmethod {
 
 class Config {
  public:
@@ -99,6 +99,6 @@ class Config {
  protected:
   Json::Value config_;
 };
-}  // namespace xstream
+}  // namespace postprocessmethod
 
 #endif  // UTIL_CONFIG_H_

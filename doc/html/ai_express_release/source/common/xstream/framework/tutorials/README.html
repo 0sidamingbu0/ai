@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tutorials &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>tutorials &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -163,8 +163,8 @@
 </div>
 <div class="section" id="id1">
 <h1>编译<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
-<div class="section" id="tutorials-centos">
-<h2>编译tutorials(CentOS平台)<a class="headerlink" href="#tutorials-centos" title="永久链接至标题">¶</a></h2>
+<div class="section" id="tutorials-centos-centos7-gcc4-8-5">
+<h2>编译tutorials(CentOS平台, CentOS7, gcc4.8.5)<a class="headerlink" href="#tutorials-centos-centos7-gcc4-8-5" title="永久链接至标题">¶</a></h2>
 <p>编译命令如下：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> output/xstream/tutorials/ <span class="o">&amp;&amp;</span> mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
 cmake .. -DX86_ARCH<span class="o">=</span>ON -DX86_CENTOS<span class="o">=</span>ON 
@@ -172,8 +172,8 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 </div>
-<div class="section" id="tutorials-ubuntu">
-<h2>编译tutorials(Ubuntu平台)<a class="headerlink" href="#tutorials-ubuntu" title="永久链接至标题">¶</a></h2>
+<div class="section" id="tutorials-ubuntu-ubuntu18-04-gcc7-5-0">
+<h2>编译tutorials(Ubuntu平台, Ubuntu18.04, gcc7.5.0)<a class="headerlink" href="#tutorials-ubuntu-ubuntu18-04-gcc7-5-0" title="永久链接至标题">¶</a></h2>
 <p>编译命令如下：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> output/xstream/tutorials/ <span class="o">&amp;&amp;</span> mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
 cmake .. -DX86_ARCH<span class="o">=</span>ON
@@ -181,8 +181,8 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 </div>
-<div class="section" id="tutorials-aarch64">
-<h2>编译tutorials(aarch64平台)<a class="headerlink" href="#tutorials-aarch64" title="永久链接至标题">¶</a></h2>
+<div class="section" id="tutorials-aarch64-gcc-linaro-6-5-2018-12">
+<h2>编译tutorials(aarch64平台, gcc-linaro-6.5-2018.12)<a class="headerlink" href="#tutorials-aarch64-gcc-linaro-6-5-2018-12" title="永久链接至标题">¶</a></h2>
 <p>编译命令如下：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">output</span><span class="o">/</span><span class="n">xstream</span><span class="o">/</span><span class="n">tutorials</span><span class="o">/</span> <span class="o">&amp;&amp;</span> <span class="n">mkdir</span> <span class="n">build</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">build</span> 
 <span class="n">cmake</span> <span class="o">..</span> 

@@ -56,8 +56,6 @@ class MultiSourceMethod : public Method {
   // 获取Method基本信息
   MethodInfo GetMethodInfo() override { return methodinfo_; }
 
-  // 用于告知Method整个SDK的Profiler状态更改
-  void OnProfilerChanged(bool on) override {}
   static void SetMethodInfo(const MethodInfo &methodinfo);
 
  private:

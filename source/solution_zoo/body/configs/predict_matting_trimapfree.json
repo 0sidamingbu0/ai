@@ -1,3 +1,4 @@
 {
-    "model_file_path": "../../models/matting_trimapfree.hbm"
+    "model_file_path": "../../models/matting_trimapfree.hbm",
+    "expansion_ratio": 0.1
 }

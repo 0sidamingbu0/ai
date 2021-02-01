@@ -28,6 +28,7 @@ XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_IMAGE_MESSAGE)
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_DROP_MESSAGE)
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_DROP_IMAGE_MESSAGE)
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_FACE_PIC_IMAGE_MESSAGE)
+XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_INFO_IMAGE_MESSAGE)
 namespace horizon {
 namespace vision {
 namespace xproto {
@@ -270,7 +271,18 @@ void VioPlugin::ClearAllQueue() {
 #ifdef USE_MC
 int VioPlugin::OnGetAPImage(XProtoMessagePtr msg) {
   for (auto &viosp : vio_produce_handles_) {
-    viosp->OnGetAPImage(msg);
+    std::string param = "success";
+    if (kHorizonVisionSuccess != viosp->OnGetAPImage(msg)) {
+      param = "fail";
+    }
+    // push response msg
+    auto vio_resp_msg = std::make_shared<InfoVioMessage>();
+    vio_resp_msg->sequence_id_ =
+            std::static_pointer_cast<APImageMessage>(msg)->sequence_id_;
+    vio_resp_msg->param_ = param;
+    LOGD << "push msg " << vio_resp_msg->type()
+         << " " << vio_resp_msg->sequence_id_;
+    PushMsg(vio_resp_msg);
   }
   return kHorizonVisionSuccess;
 }

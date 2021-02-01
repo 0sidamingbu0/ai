@@ -78,6 +78,7 @@ void SmartPlugin::ParseConfig() {
   xstream_workflow_cfg_feature_file_ =
       config_->GetSTDStringValue("xstream_workflow_file_feature");
   enable_profile_ = config_->GetBoolValue("enable_profile");
+  enable_recog_ = config_->GetBoolValue("enable_recog");
   profile_log_file_ = config_->GetSTDStringValue("profile_log_path");
   if (config_->HasMember("enable_result_to_json")) {
     result_to_json = config_->GetBoolValue("enable_result_to_json");
@@ -142,29 +143,34 @@ int SmartPlugin::Init() {
 
   RegisterMsg(TYPE_IMAGE_MESSAGE,
               std::bind(&SmartPlugin::Feed, this, std::placeholders::_1));
+  if (enable_recog_ == true) {
+    if (xstream_workflow_cfg_pic_file_ != "") {
+      pic_sdk_.reset(xstream::XStreamSDK::CreateSDK());
+      pic_sdk_->SetConfig("config_file", xstream_workflow_cfg_pic_file_);
+      if (pic_sdk_->Init() != 0) {
+        LOGE << "smart plugin init failed!!!";
+        return kHorizonVisionInitFail;
+      }
 
-  pic_sdk_.reset(xstream::XStreamSDK::CreateSDK());
-  pic_sdk_->SetConfig("config_file", xstream_workflow_cfg_pic_file_);
-  if (pic_sdk_->Init() != 0) {
-    LOGE << "smart plugin init failed!!!";
-    return kHorizonVisionInitFail;
+      pic_sdk_->SetCallback(
+          std::bind(&SmartPlugin::OnCallbackPic, this, std::placeholders::_1));
+    }
+    if (xstream_workflow_cfg_feature_file_ != "") {
+      feature_sdk_.reset(xstream::XStreamSDK::CreateSDK());
+      feature_sdk_->SetConfig("config_file",
+          xstream_workflow_cfg_feature_file_);
+      if (feature_sdk_->Init() != 0) {
+        LOGE << "smart plugin init failed!!!";
+        return kHorizonVisionInitFail;
+      }
+      feature_sdk_->SetCallback(
+       std::bind(&SmartPlugin::OnCallbackFeature, this, std::placeholders::_1));
+    }
+    RegisterMsg(TYPE_FACE_PIC_IMAGE_MESSAGE,
+                std::bind(&SmartPlugin::FeedPic, this, std::placeholders::_1));
+    RegisterMsg(TYPE_RECOG_MESSAGE,
+        std::bind(&SmartPlugin::FeedRecog, this, std::placeholders::_1));
   }
-
-  pic_sdk_->SetCallback(
-      std::bind(&SmartPlugin::OnCallbackPic, this, std::placeholders::_1));
-  feature_sdk_.reset(xstream::XStreamSDK::CreateSDK());
-  feature_sdk_->SetConfig("config_file", xstream_workflow_cfg_feature_file_);
-  if (feature_sdk_->Init() != 0) {
-    LOGE << "smart plugin init failed!!!";
-    return kHorizonVisionInitFail;
-  }
-
-  feature_sdk_->SetCallback(
-      std::bind(&SmartPlugin::OnCallbackFeature, this, std::placeholders::_1));
-  RegisterMsg(TYPE_FACE_PIC_IMAGE_MESSAGE,
-              std::bind(&SmartPlugin::FeedPic, this, std::placeholders::_1));
-  RegisterMsg(TYPE_RECOG_MESSAGE,
-              std::bind(&SmartPlugin::FeedRecog, this, std::placeholders::_1));
   video_processor_->Init(channel_num_, display_mode_, smart_vo_cfg_,
                          encode_smart_, running_venc_1080p_, running_venc_720p_,
                          running_vot_);
@@ -211,7 +217,7 @@ int SmartPlugin::FeedPic(XProtoMessagePtr msg) {
   std::cout << "FeedPic,smart plugin got one msg" << std::endl;
   auto valid_frame = std::static_pointer_cast<VioMessage>(msg);
   xstream::InputDataPtr input = Convertor::ConvertInput(valid_frame.get());
-  if (pic_sdk_->AsyncPredict(input) != 0) {
+  if (!pic_sdk_ || (pic_sdk_->AsyncPredict(input) != 0)) {
     return kHorizonVisionFailure;
   }
   return 0;
@@ -264,7 +270,7 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
     } else if (output->name_ == "snap_list") {
       auto snap_v =
           std::dynamic_pointer_cast<xstream::BaseDataVector>(output);
-      if (snap_v->datas_.size() > 0) {
+      if ((feature_sdk_) && (snap_v->datas_.size() > 0)) {
         LOGE << "snap_v size:" << snap_v->datas_.size();
         xstream::InputDataPtr input = std::make_shared<xstream::InputData>();
         input->datas_.emplace_back(output);

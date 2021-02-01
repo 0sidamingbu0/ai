@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>概述 &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>概述 &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -337,11 +337,6 @@ make -j <span class="o">&amp;&amp;</span> make install
   <span class="p">}</span>
   <span class="c1">// 处理register的msg类型，如有需要，push自己的msg到总线</span>
   <span class="k">virtual</span> <span class="kt">void</span> <span class="n">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="c1">// 用于流量管理</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgCount</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgLimit</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">desc</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s">&quot;XPlugin&quot;</span><span class="p">;</span>
   <span class="p">}</span>
@@ -363,11 +358,17 @@ make -j <span class="o">&amp;&amp;</span> make install
   <span class="c1">// 注册监听消息类型到总线+plugin的初始化</span>
   <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
   <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
+  <span class="c1">// 获取plugin当前正在排队处理消息的数量</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgCount</span><span class="p">();</span>
+  <span class="c1">// plugin处理消息数量限制</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgLimit</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
+  <span class="c1">// plugin处理msg时间预警</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetMsgMonitorTime</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetMsgMonitorTime</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_monitor_time</span><span class="p">);</span>
+
   <span class="c1">// 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制</span>
   <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">);</span>
-  <span class="kt">int</span> <span class="nf">GetPluginMsgCount</span><span class="p">();</span>
-  <span class="kt">int</span> <span class="nf">GetPluginMsgLimit</span><span class="p">();</span>
-  <span class="kt">void</span> <span class="nf">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
   <span class="c1">// 启动Plugin</span>
   <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Start</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>

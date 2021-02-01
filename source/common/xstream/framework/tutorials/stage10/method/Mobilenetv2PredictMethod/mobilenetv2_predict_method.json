@@ -1,3 +1,10 @@
 {
-    "model_file_path": "../models/mobilenetv2_nv12_hybrid_horizonrt.bin"
+    "model_file_path": "../models/mobilenetv2_nv12_hybrid_horizonrt.bin",
+    "dnn_is_sync": false,
+    "dnn_run_with_roi": false,
+    "resize_type": 0,
+    "dnn_model_group": false,
+    "dnn_model_group_id": 0,
+    "src_image_witdh": 1920,
+    "src_image_height": 1080
 }

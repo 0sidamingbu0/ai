@@ -49,27 +49,32 @@ int Mobilenetv2PostProcessMethod::ParseDnnResult(
     DnnAsyncData &dnn_result,
     std::vector<BaseDataPtr> &frame_result) {
   LOGD << "Mobilenetv2PostProcessMethod ParseDnnResult";
+  auto xstream_det_result = std::make_shared<xstream::BaseDataVector>();
 
   // 一个检测框对应一次预测
   std::vector<hobot::vision::BBox> result;
   for (size_t i = 0; i < dnn_result.output_tensors.size(); i++) {
     auto &tensors = dnn_result.output_tensors[i];
+
+    if (tensors.size() == 0) {  // 预处理或预测失败
+      auto xstream_box = std::make_shared<
+          xstream::XStreamData<hobot::vision::BBox>>();
+      xstream_box->state_ = DataState::INVALID;
+      xstream_det_result->datas_.push_back(xstream_box);
+      continue;
+    }
+
     HOBOT_CHECK(tensors.size() == 1);  // 模型仅一层输出
 
     hobot::vision::BBox cls;
     GetMaxResult(tensors[0], cls);
-    result.push_back(cls);
-  }
+    LOGD << "id: " << cls.id
+         << ", category_name: " << cls.category_name;
 
-  // 转换BaseData
-  auto xstream_det_result = std::make_shared<xstream::BaseDataVector>();
-  for (size_t i = 0; i < result.size(); ++i) {
-    const auto &box = result[i];
-    LOGD << "id: " << box.id
-         << ", category_name: " << box.category_name;
+    // 转换BaseData
     auto xstream_box = std::make_shared<
         xstream::XStreamData<hobot::vision::BBox>>();
-    xstream_box->value = std::move(box);
+    xstream_box->value = std::move(cls);
     xstream_det_result->datas_.push_back(xstream_box);
   }
   frame_result.push_back(xstream_det_result);

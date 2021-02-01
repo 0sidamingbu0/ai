@@ -28,5 +28,12 @@
   "smart_transfer_mode_desc": "0: hid, 1: rndis",
   "ap_mode": false,
   "input_h264_filename": "test.264",
-  "local_forward": 0
+  "local_forward": 0,
+  "matting_trimapfree_expansion_ratio": 0.1,
+  "audio_enable": 0,
+  "uac_rate": 48000,
+  "uac_chn": 2,
+  "uac_buffer_time": 0,
+  "uac_nperiods": 4,
+  "uac_period_size_": 1024
 }

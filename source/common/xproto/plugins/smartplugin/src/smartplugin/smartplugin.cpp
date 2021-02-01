@@ -40,6 +40,8 @@
 #include "websocketplugin/attribute_convert/attribute_convert.h"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "smartplugin/mergehandbody.h"
+#include "smartplugin/keypointconvertor.h"
 
 #ifdef USE_MC
 #include "mcplugin/mcmessage.h"
@@ -238,6 +240,15 @@ typedef struct {
   uint64 valid_palm_for_palmpat_thr_ = 150;
   int gesture_mute_outside = 20;  // base on 1080p
   int palm_move_dist_thr = 5;  // base on 1080p
+  // start calculate gesture direction only when
+  // the Euclidean distance between start and end point exceeds thr
+  float gesture_direction_activate_thr = 0.005;
+  // calculate gesture direction using last N points
+  size_t gesture_direction_cal_N_pts = 15;
+  // direction is valid when angle with horizontal/vertical is less than thr
+  int gesture_direction_angle_thr = 30;
+  // fit is valid when err is less than thr
+  float gesture_direction_fit_err_thr = 0.05;
 } gesture_thr_t;
 
 bool gesture_as_event = false;
@@ -937,6 +948,11 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
             }
             auto attrs = smart_target[face_key]->add_attributes_();
             attrs->set_type_("dist");
+            // todo
+            // distance is calculated from face box,
+            // use face box score as distance score
+            // calculate distance score from face pose is more accurate
+            attrs->set_score_(face_box->value.score);
             attrs->set_value_(dist);
             attrs->set_value_string_(std::to_string(dist));
           }
@@ -1175,15 +1191,19 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
           LOGE << "Not found the track_id target";
           continue;
         } else {
+          // 默认外扩系数k=0.2
+          float k = matting_trimapfree_expansion_ratio_;
+          auto attribute = smart_target[body_key]->add_attributes_();
+          attribute->set_type_("expansion_ratio");
+          attribute->set_value_(k);
+
           auto float_matrix = smart_target[body_key]->add_float_matrixs_();
           float_matrix->set_type_("matting_trimapfree");
 
           auto body_box = body_box_list[i]->value;
           auto mask = one_mask->value;
-          int h_w = sqrt(mask.values.size());
-          cv::Mat mask_mat(h_w, h_w, CV_32FC1, mask.values.data());  // 512x512
-
-          mask_mat *= 255;
+          cv::Mat mask_mat(mask.height, mask.width,
+                           CV_32FC1, mask.values.data());
           mask_mat.convertTo(mask_mat, CV_8UC1);  // mask_mat: 0-255
 
           for (int h = 0; h < mask_mat.rows; h++) {
@@ -1225,8 +1245,16 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
             float width = x2 - x1;
             float height = y2 - y1;
 
-            // 外扩系数k=0.2 TODO
+            // 外扩系数k=0.2
             float k = 0.2;
+            int attributes_size = target->attributes__size();
+            for (int j = 0; j < attributes_size; j++) {
+              auto attribute = target->mutable_attributes_(j);
+              if (attribute->type_() == "expansion_ratio") {
+                k = attribute->value_();
+              }
+            }
+
             float expand_roi_x1 = x1 - width * k;
             // float expand_roi_x2 = x2 + width * k;
             float expand_roi_y1 = y1 - height * k;
@@ -1264,7 +1292,8 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
                     if (one_matting.ptr<uchar>(row)[col] > 0 &&
                         x >= 0 && x < 1920 && y >=0 && y < 1080)
                       matting.ptr<uchar>(y)[x] =
-                          one_matting.ptr<uchar>(row)[col];
+                          std::max(one_matting.ptr<uchar>(row)[col],
+                                   matting.ptr<uchar>(y)[x]);
                   }
                 }
               }
@@ -2268,6 +2297,7 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
           auto attrs = target->add_attributes_();
           attrs->set_type_("gesture");
           attrs->set_value_(gesture_ret);
+          attrs->set_score_(gesture_vote->value.score);
           LOGD << "track_id_ " << target->track_id_()
                << " gesture:" << gesture_ret
                << "  hand id:" << hand_id << "  frame_id:" << frame_id;
@@ -2340,21 +2370,135 @@ std::string CustomSmartMessage::Serialize(int ori_w, int ori_h, int dst_w,
                    << "  fit_residual_err:"
                    << gesture_info_cache_[hand_id].fit_residual_err;
             } else {
+              // move direction strategy
+              // 1、使用最近的N点，如果第一个点和最后一个点的欧氏距离超过阈值，激活方向计算
+              size_t start_idx = 0;
+              if (hand_gesture_info->points.size() >=
+                      gesture_thr.gesture_direction_cal_N_pts) {
+                start_idx = hand_gesture_info->points.size() -
+                        gesture_thr.gesture_direction_cal_N_pts;
+              }
+
+              // serialize move trace points
               auto points = target->add_points_();
               points->set_type_("gesture_move");
-              const auto& coord_start = hand_gesture_info->points.front();
-              const auto& coord_end = hand_gesture_info->points.back();
-              auto p_start = points->add_points_();
-              p_start->set_x_(coord_start.x);
-              p_start->set_y_(coord_start.y);
-              auto p_end = points->add_points_();
-              p_end->set_x_(coord_end.x);
-              p_end->set_y_(coord_end.y);
-              LOGD << "gesture:" << gesture_ret
-                   << "  move coord size:" <<
-                              hand_gesture_info->frame_infos.size()
-                   << "  start:" << coord_start.x << "," << coord_start.y
-                   << "  end:" << coord_end.x << "," << coord_end.y;
+              for (auto idx = start_idx;
+                   idx < hand_gesture_info->points.size(); idx++) {
+                const auto& coord = hand_gesture_info->points[idx];
+                auto pt = points->add_points_();
+                pt->set_x_(coord.x);
+                pt->set_y_(coord.y);
+              }
+
+              const auto& start_pt = hand_gesture_info->points.at(start_idx);
+              const auto& end_pt = hand_gesture_info->points.back();
+              auto dist = sqrt(pow(start_pt.x - end_pt.x, 2) +
+                               pow(start_pt.y - end_pt.y, 2));
+              // 为了适应不同距离，根据手掌宽度计算阈值
+              float activate_thr = gesture_thr.gesture_direction_activate_thr *
+                      hand_box_list[i]->value.Width() *
+                      std::min(hand_gesture_info->points.size(),
+                               gesture_thr.gesture_direction_cal_N_pts);
+              if (dist >= activate_thr) {
+                // 超过阈值才激活方向计算
+                // 2、使用最近的N点做线性拟合
+                std::vector<cv::Point> contours;
+                for (auto idx = start_idx;
+                     idx < hand_gesture_info->points.size(); idx++) {
+                  const auto& coord = hand_gesture_info->points[idx];
+                  contours.push_back(coord);
+                }
+
+                cv::Vec4f line;
+                cv::fitLine(contours,
+                            line,
+                            CV_DIST_L2,
+                            0,
+                            0.01,
+                            0.01);
+
+                // 3、根据拟合结果计算方向（水平还是垂直）
+                float cos_theta = line[0];
+                float sin_theta = line[1];
+                float x0 = line[2], y0 = line[3];
+                float k = sin_theta / cos_theta;
+                float b = y0 - k * x0;
+                float phi = atan2(sin_theta, cos_theta) + 3.14 / 2.0;
+
+                // -1: unknown; 0: vertical; 1: horizontal
+                int line_direction = -1;
+//                if (phi < 3.14/4. || phi > 3.* 3.14 /4.) {
+//                  // ~vertical line
+//                  line_direction = 0;
+//                } else {
+//                  line_direction = 1;
+//                }
+
+                // 拟合直线与水平方向的角度，范围[0-90]
+                // 可用于更精细的方向判断
+                // 例如[0-30]范围表示水平方向，[60-90]表示垂直方向，用于过滤模棱两可的方向
+                float line_angle_baseon_horizontal =
+                        abs(phi / 3.14 * 180 - 90);
+                LOGD << "line_angle_baseon_horizontal: "
+                     << line_angle_baseon_horizontal;
+//                {
+//                  auto attrs = smart_target[hand_key]->add_attributes_();
+//                  attrs->set_type_("gesture_angle");
+//                  attrs->set_value_(static_cast<int>(
+//                                            line_angle_baseon_horizontal));
+//                }
+                if (line_angle_baseon_horizontal <=
+                        gesture_thr.gesture_direction_angle_thr) {
+                  line_direction = 1;
+                } else if (line_angle_baseon_horizontal >=
+                        90 - gesture_thr.gesture_direction_angle_thr) {
+                  line_direction = 0;
+                } else {
+                  line_direction = -1;
+                }
+
+                // 4、根据方向计算拟合残差，不同方向计算方法不同
+                float err_sum = 0;
+                for (const auto& pt : contours) {
+                  if (1 == line_direction) {
+                    err_sum += abs(k * pt.x + b - pt.y);
+                  } else if (0 == line_direction) {
+                    err_sum += abs((pt.y - b) / k - pt.x);
+                  }
+                }
+                float err_average = err_sum / contours.size();
+                float err_ratio = err_average / hand_box_list[i]->value.Width();
+
+                // 5、残差小于阈值判断为可用拟合
+                if (err_ratio <= gesture_thr.gesture_direction_fit_err_thr &&
+                        line_direction >= 0) {
+                  // 6、根据起始点计算上下左右
+                  gesture_direction direction = gesture_direction::UNKONWN;
+                  // 0: vertical; 1: horizontal
+                  if (0 == line_direction) {
+                    if (start_pt.y < end_pt.y) {
+                      direction = gesture_direction::DOWN;
+                    } else {
+                      direction = gesture_direction::UP;
+                    }
+                  } else if (1 == line_direction) {
+                    if (start_pt.x < end_pt.x) {
+                      direction = gesture_direction::RIGHT;
+                    } else {
+                      direction = gesture_direction::LEFT;
+                    }
+                  }
+
+                  {
+                    auto attrs = smart_target[hand_key]->add_attributes_();
+                    attrs->set_type_("gesture_direction");
+                    attrs->set_value_(static_cast<int>(direction));
+                  }
+                  LOGD << frame_id << " hand id: " << hand_box_list[i]->value.id
+                       << "  angle: " << line_angle_baseon_horizontal
+                       << "  direction: " << static_cast<int>(direction);
+                }
+              }
             }
           }
         }
@@ -2459,6 +2603,23 @@ void SmartPlugin::ParseConfig() {
     gesture_thr.conflict_gesture_thr_ =
             config_->GetIntValue("conflict_gesture_thr");
   }
+  if (config_->HasMember("gesture_direction_activate_thr")) {
+    gesture_thr.gesture_direction_activate_thr =
+            config_->GetFloatValue("gesture_direction_activate_thr");
+  }
+  if (config_->HasMember("gesture_direction_cal_N_pts")) {
+    gesture_thr.gesture_direction_cal_N_pts =
+            config_->GetIntValue("gesture_direction_cal_N_pts");
+  }
+  if (config_->HasMember("gesture_direction_angle_thr")) {
+    gesture_thr.gesture_direction_angle_thr =
+            config_->GetIntValue("gesture_direction_angle_thr");
+  }
+  if (config_->HasMember("gesture_direction_fit_err_thr")) {
+    gesture_thr.gesture_direction_fit_err_thr =
+            config_->GetFloatValue("gesture_direction_fit_err_thr");
+  }
+
   LOGI << "gesture_mute_outside:" << gesture_thr.gesture_mute_outside
        << " palm_move_dist_thr:" << gesture_thr.palm_move_dist_thr
        << " valid_palm_for_palmpat_thr:"
@@ -2467,7 +2628,11 @@ void SmartPlugin::ParseConfig() {
        << gesture_thr.dynamic_gesture_vanish_thr
        << " static_gesture_vanish_thr:" << gesture_thr.static_gesture_vanish_thr
        << " static_dynamic_dist_thr:" << gesture_thr.static_dynamic_dist_thr
-       << " conflict_gesture_thr:" << gesture_thr.conflict_gesture_thr_;
+       << " conflict_gesture_thr:" << gesture_thr.conflict_gesture_thr_
+       << " gesture_direction_activate_thr:"
+       << gesture_thr.gesture_direction_activate_thr
+       << " gesture_direction_cal_N_pts:"
+       << gesture_thr.gesture_direction_cal_N_pts;
 
   dist_calibration_w =
           config_->GetIntValue("distance_calibration_width");
@@ -2478,6 +2643,9 @@ void SmartPlugin::ParseConfig() {
        << " dist_fit_factor:" << dist_fit_factor
        << " dist_fit_impower:" << dist_fit_impower
        << " dist_smooth:" << dist_smooth;
+  hand_id_merge_ = config_->GetBoolValue("hand_id_merge", true);
+  convert_keypoint_format_ =
+      config_->GetBoolValue("convert_keypoint_format", false);
 }
 
 int SmartPlugin::Init() {
@@ -2770,6 +2938,14 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
       }
     }
 #endif
+  }
+
+  if (hand_id_merge_) {
+    MergeHandBody::Instance()->UpdateHandTrackID(xstream_out);
+  }
+
+  if (convert_keypoint_format_) {
+    KeyPointConvertor::ConverKeyPoint(xstream_out);
   }
 
   auto smart_msg = CreateSmartMessage(xstream_out);

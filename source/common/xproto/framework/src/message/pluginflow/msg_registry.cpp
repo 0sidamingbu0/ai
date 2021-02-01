@@ -22,17 +22,6 @@ namespace horizon {
 namespace vision {
 namespace xproto {
 
-XPluginMsgTypeHandle
-XPluginMsgRegistry::RegisterOrGet(const std::string &name) {
-  std::lock_guard<std::mutex> lck(mutex_);
-  if (fmap_.count(name) == 0) {
-    fmap_[name] = counter_++;
-    return fmap_[name];
-  } else {
-    return fmap_.at(name);
-  }
-}
-
 XPluginMsgTypeHandle XPluginMsgRegistry::Register(const std::string &name) {
   std::lock_guard<std::mutex> lck(mutex_);
   if (fmap_.count(name)) {

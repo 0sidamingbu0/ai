@@ -10,7 +10,6 @@
  */
 
 #include "CNNMethod/util/ModelInfo.h"
-#include "bpu_predict/bpu_internal.h"
 #include "hobotlog/hobotlog.hpp"
 
 namespace xstream {

@@ -56,6 +56,14 @@ class WebsocketPlugin : public xproto::XPluginAsync {
   std::string desc() const { return "MultiWebsocketPlugin"; }
 
  private:
+  // 这里需要与SmartPlugin产生的感知消息匹配
+  // 一般情况，若SmartPlugin的派生类产生新的消息类型
+  // (继承CustomSmartMessage),则需要继承WebsocketPlugin，
+  // 重写GetSmartMessageType接口
+  virtual std::string GetSmartMessageType() {
+    // 当前解决方案默认使用TYPE_SMART_MESSAGE
+    return TYPE_SMART_MESSAGE;
+  }
   int FeedVideo(XProtoMessagePtr msg);
   int FeedSmart(XProtoMessagePtr msg);
   int SendSmartMessage(SmartMessagePtr msg, x3::FrameMessage &fm);

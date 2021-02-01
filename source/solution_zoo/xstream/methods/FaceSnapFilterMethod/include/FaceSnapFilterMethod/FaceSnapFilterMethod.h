@@ -188,8 +188,6 @@ class FaceSnapFilterMethod : public Method {
 
   std::string GetVersion() const override { return "0.0.15"; }
 
-  void OnProfilerChanged(bool on) override { }
-
  private:
   typedef XStreamData<hobot::vision::ImageFrame> XRocImageFrame;
   typedef XStreamData<hobot::vision::BBox> XRocBBox;

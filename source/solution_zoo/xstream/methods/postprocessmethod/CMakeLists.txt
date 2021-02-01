@@ -24,7 +24,10 @@ set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME}/)
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/PostProcessMethod/PostProcessMethod.h
         DESTINATION ${MY_OUTPUT_ROOT}/include/PostProcessMethod)
-
+install(FILES ${PROJECT_SOURCE_DIR}/include/PostProcessMethod/PostProcessor/PostProcessor.h
+        DESTINATION ${MY_OUTPUT_ROOT}/include/PostProcessMethod/PostProcessor)
+install(FILES ${PROJECT_SOURCE_DIR}/include/common/config.h
+        DESTINATION ${MY_OUTPUT_ROOT}/include/common/)
 #install(DIRECTORY ${PROJECT_SOURCE_DIR}/configs
 #        DESTINATION ${MY_OUTPUT_ROOT}/)
 

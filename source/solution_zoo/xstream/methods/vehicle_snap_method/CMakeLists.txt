@@ -33,7 +33,17 @@ target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME})
 install(TARGETS ${PROJECT_NAME}
     DESTINATION ${MY_OUTPUT_ROOT}/lib)
-install(FILES ${PROJECT_SOURCE_DIR}/include/vehicle_snap_strategy/vehicle_snap_strategy_api.hpp
+install(FILES 
+        ${PROJECT_SOURCE_DIR}/include/vehicle_snap_strategy/vehicle_snap_strategy_api.hpp
+        ${PROJECT_SOURCE_DIR}/include/vehicle_snap_strategy_namespace.hpp
     DESTINATION ${MY_OUTPUT_ROOT}/include/${PROJECT_NAME}/)
+install(FILES 
+        ${PROJECT_SOURCE_DIR}/include/vehicle_common_utility/data_type.hpp
+        ${PROJECT_SOURCE_DIR}/include/vehicle_common_utility/utils.hpp
+    DESTINATION ${MY_OUTPUT_ROOT}/include/${PROJECT_NAME}/vehicle_common_utility)
+install(FILES 
+        ${PROJECT_SOURCE_DIR}/include/vehicle_match_strategy/config_params_type.hpp
+        ${PROJECT_SOURCE_DIR}/include/vehicle_match_strategy/pairs_match_api.hpp
+    DESTINATION ${MY_OUTPUT_ROOT}/include/${PROJECT_NAME}/vehicle_match_strategy)
 
 add_subdirectory(test)

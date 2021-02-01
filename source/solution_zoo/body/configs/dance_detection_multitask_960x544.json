@@ -12,6 +12,7 @@
     "mask",
     "lowpassfilter_hand_lmk",
     "lowpassfilter_lmk_106pts",
+    "gesture",
     "gesture_vote",
     "hand_disappeared_track_id_list",
     "bound_rect_filter",

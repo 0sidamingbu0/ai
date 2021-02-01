@@ -30,7 +30,6 @@
 
 namespace xstream {
 
-std::mutex CNNMethod::init_mutex_;
 int32_t CNNMethod::Init(const std::string &cfg_path) {
   LOGI << "CNNMethod Init";
   std::ifstream infile(cfg_path.c_str());
@@ -53,7 +52,6 @@ int32_t CNNMethod::Init(const std::string &cfg_path) {
   HOBOT_CHECK(fn_iter != g_post_fun_map.end()) << "post_fn unknown:" << post_fn;
   post_predict_.reset(PostPredictorFactory::GetPostPredictor(fn_iter->second));
 
-  std::unique_lock<std::mutex> lock(init_mutex_);
   predictor_->Init(config_);
   post_predict_->Init(config_);
   return 0;

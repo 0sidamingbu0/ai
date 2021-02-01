@@ -42,7 +42,7 @@ class PostProcessor {
   int ReleaseTensor(std::shared_ptr<std::vector<BPU_TENSOR_S>> tensor);
 
  protected:
-  std::shared_ptr<Config> config_;
+  std::shared_ptr<postprocessmethod::Config> config_;
   std::shared_ptr<std::vector<BPU_TENSOR_S>> input_tensors_ = nullptr;
   std::shared_ptr<std::vector<BPU_TENSOR_S>> output_tensors_ = nullptr;
   std::shared_ptr<BPU_TASK_HANDLE> task_handle_ = nullptr;

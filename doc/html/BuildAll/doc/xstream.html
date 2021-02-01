@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>XStream算法SDK编程框架开发指南 &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>XStream算法SDK编程框架开发指南 &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -273,7 +273,7 @@
 <h2>XStream组成<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <p>XStream源码由XStream-Framework、tutorials、vision_type、imagetools组成。各个组件的功能描述如下：</p>
 <ul class="simple">
-<li><p>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Metho的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发</p></li>
+<li><p>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发</p></li>
 <li><p>tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性</p></li>
 <li><p>vision_type: 沉淀了视觉相关的数据结构，比如金字塔图像、矩形框、分割、分类属性等。沉淀的solution中大量使用这些数据结构。客户基于XStream-Framework重新开发，可以不依赖vision_type</p></li>
 <li><p>imagetools: 沉淀了一套图像处理的C++库，内部封装了OpenCV、libyuv、libturbojpeg等开源库，提供图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。客户基于XStream-Framework重新开发，可以不依赖imagetools</p></li>
@@ -444,8 +444,6 @@
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">GetVersion</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 获取Method基本信息</span>
   <span class="k">virtual</span> <span class="n">MethodInfo</span> <span class="n">GetMethodInfo</span><span class="p">();</span>
-  <span class="c1">/// 用于告知Method整个SDK的Profiler状态更改</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">OnProfilerChanged</span><span class="p">(</span><span class="kt">bool</span> <span class="n">on</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
   <span class="c1">// 数据处理函数，第一个参数是输入数据（双重vector，外层vector表示batch是多帧的输入</span>
   <span class="c1">// 内层的vector表示单帧的数据列表），</span>
@@ -514,31 +512,31 @@
 <li><p><strong>CreateMethod</strong>：用户在自定义Method后，需要通过实现CreateMethod完成Method实例创建。MethodFactory的工厂函数会根据不同的method_name名字返回对应的Method的实例，workflow中用到的Method都需要添加到该函数中。</p></li>
 </ul>
 <p>示例：参考下面Methode Node定义实例，需要实例化FasterRCNN Method和CNNMethod。</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;method_type&quot;</span><span class="p">:</span> <span class="s2">&quot;FasterRCNNMethod&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;image&quot;</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;rgb_face_box&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;rgb_lmk&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;rgb_pose&quot;</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;method_config_file&quot;</span><span class="p">:</span> <span class="s2">&quot;face_pose_lmk.json&quot;</span>
-<span class="p">},</span>
-<span class="p">{</span>
-  <span class="nt">&quot;method_type&quot;</span><span class="p">:</span> <span class="s2">&quot;CNNMethod&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;unique_name&quot;</span><span class="p">:</span> <span class="s2">&quot;age_gender&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;rgb_face_box&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image&quot;</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;age&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;gender&quot;</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;method_config_file&quot;</span><span class="p">:</span> <span class="s2">&quot;age_gender.json&quot;</span>
-<span class="p">}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+  &quot;method_type&quot;: &quot;FasterRCNNMethod&quot;,
+  &quot;inputs&quot;: [
+    &quot;image&quot;
+  ],
+  &quot;outputs&quot;: [
+    &quot;rgb_face_box&quot;,
+    &quot;rgb_lmk&quot;,
+    &quot;rgb_pose&quot;
+  ],
+  &quot;method_config_file&quot;: &quot;face_pose_lmk.json&quot;
+},
+{
+  &quot;method_type&quot;: &quot;CNNMethod&quot;,
+  &quot;unique_name&quot;: &quot;age_gender&quot;,
+  &quot;inputs&quot;: [
+    &quot;rgb_face_box&quot;,
+    &quot;image&quot;
+  ],
+  &quot;outputs&quot;: [
+    &quot;age&quot;,
+    &quot;gender&quot;
+  ],
+  &quot;method_config_file&quot;: &quot;age_gender.json&quot;
+}
 </pre></div>
 </div>
 <p>实现具体的CreateMethod：</p>
@@ -957,8 +955,6 @@
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">GetVersion</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s">&quot;BBoxFilter_test_v0.0.1&quot;</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="c1">// 当workflow的profile状态发生变化时，调用该函数.</span>
-  <span class="kt">void</span> <span class="n">OnProfilerChanged</span><span class="p">(</span><span class="kt">bool</span> <span class="n">on</span><span class="p">)</span> <span class="k">override</span> <span class="p">{}</span>
 
  <span class="k">private</span><span class="o">:</span>
   <span class="c1">// 过滤bbox的面积阈值</span>

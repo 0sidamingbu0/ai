@@ -17,6 +17,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "hobotlog/hobotlog.hpp"
+#include "bpu_predict/bpu_predict_extension.h"
 
 namespace xstream {
 

@@ -8,10 +8,13 @@
  */
 
 #include "multisourcesmartplugin/convert.h"
+
 #include <memory>
+#include <string>
+
+#include "hobotlog/hobotlog.hpp"
 #include "hobotxsdk/xstream_data.h"
 #include "multisourcesmartplugin/util.h"
-#include "hobotlog/hobotlog.hpp"
 #include "xproto_msgtype/vioplugin_data.h"
 
 using ImageFramePtr = std::shared_ptr<hobot::vision::ImageFrame>;
@@ -19,7 +22,8 @@ namespace horizon {
 namespace vision {
 namespace xproto {
 namespace multisourcesmartplugin {
-xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
+xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input,
+                                              std::string input_name) {
   xstream::InputDataPtr inputdata(new xstream::InputData());
   HOBOT_CHECK(input != nullptr && input->num_ > 0 && input->is_valid_uri_);
   for (uint32_t image_index = 0; image_index < 1; ++image_index)
@@ -46,11 +50,13 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
 
     if (image_index == uint32_t{0}) {
       if (input->num_ == 1) {
-        xstream_input_data->name_ = "image";  // need to update, by hangjun.yang
+        xstream_input_data->name_ = input_name;  // default is image
       } else {
+        LOGW << "image input name may has error";
         xstream_input_data->name_ = "rgb_image";
       }
     } else {
+      LOGW << "image input name may has error";
       xstream_input_data->name_ = "nir_image";
     }
 
@@ -62,7 +68,8 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
 }
 
 xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input,
-                                              uint32_t image_index) {
+                                              uint32_t image_index,
+                                              std::string input_name) {
   xstream::InputDataPtr inputdata(new xstream::InputData());
   HOBOT_CHECK(input != nullptr && input->num_ > image_index &&
               input->is_valid_uri_);
@@ -84,7 +91,7 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input,
     xstream_input_data = std::make_shared<xstream::BaseData>();
     xstream_input_data->state_ = xstream::DataState::INVALID;
   }
-  xstream_input_data->name_ = "image";  // need to update, by hangjun.yang
+  xstream_input_data->name_ = input_name;  // default is image
 
   LOGI << "input name:" << xstream_input_data->name_;
   inputdata->datas_.emplace_back(xstream_input_data);
@@ -93,7 +100,8 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input,
 }
 
 xstream::InputDataPtr Convertor::ConvertInput(const IpmImageMessage *input,
-                                              uint32_t idx) {
+                                              uint32_t idx,
+                                              std::string input_name) {
   xstream::InputDataPtr inputdata(new xstream::InputData());
   HOBOT_CHECK(input != nullptr && input->num_ > 0 && input->is_valid_uri_);
   LOGI << "convertInput index = " << idx;
@@ -115,7 +123,7 @@ xstream::InputDataPtr Convertor::ConvertInput(const IpmImageMessage *input,
     xstream_input_data->state_ = xstream::DataState::INVALID;
   }
 
-  xstream_input_data->name_ = "image";
+  xstream_input_data->name_ = input_name;
   LOGI << "input name: " << xstream_input_data->name_;
   inputdata->datas_.emplace_back(xstream_input_data);
   return inputdata;

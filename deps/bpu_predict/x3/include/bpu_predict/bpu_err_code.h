@@ -50,6 +50,7 @@ extern "C" {
 #define BPU_ERR_INVALID_MODEL_NAME (BPU_ERR_BASE - 111)
 #define BPU_ERR_INVALID_CORE_ID (BPU_ERR_BASE - 112)
 #define BPU_ERR_INVALID_PARAMETER (BPU_ERR_BASE - 113)
+#define BPU_ERR_LOAD_MODEL_PACKAGE_FAILED (BPU_ERR_BASE - 114)
 #define BPU_ERR_RUNTASK_ALLOC_FAILED (BPU_ERR_BASE - 200)
 #define BPU_ERR_RUNTASK_INIT_FAILED (BPU_ERR_BASE - 201)
 #define BPU_ERR_RUNTASK_ADD_FAILED (BPU_ERR_BASE - 202)
@@ -106,9 +107,14 @@ extern "C" {
 
 #define BPU_ERR_OUTPUT_NUM_LESS_THAN_BBOX_NUMBER (BPU_ERR_BASE - 249)
 
-#define BPU_ERR_PYM_NO_SUITABLE_LEVEL (BPU_ERR_PYM_BASE - 250)
+#define BPU_ERR_PYM_NO_SUITABLE_LEVEL (BPU_ERR_BASE - 250)
 
 #define BPU_ERR_RUNTASK_SET_INPUT_CAMERA_BUFF_NULLPTR (BPU_ERR_BASE - 251)
+#define BPU_ERR_RUNTASK_SET_INPUT_NORMALIZE_ROI_ERROR (BPU_ERR_BASE - 252)
+#define BPU_ERR_RUNTASK_SET_INPUT_UNSUPPORTED_FEATURE (BPU_ERR_BASE - 253)
+#define BPU_ERR_RUNTASK_SET_INPUT_RESIZE_RIO_FAILED (BPU_ERR_BASE - 254)
+#define BPU_ERR_CHECK_MODEL_VALIDITY_FAILED (BPU_ERR_BASE - 255)
+#define BPU_ERR_MODEL_OUTPUT_NUM_ERROR (BPU_ERR_BASE - 256)
 
 // vio related error in bpu io
 #define BPU_ERR_VIO_BASE (-2000)
@@ -305,6 +311,14 @@ static inline const char* BPU_getErrorName(int error) {
       return "bpu pyramid no suitable level";
     case BPU_ERR_RUNTASK_SET_INPUT_CAMERA_BUFF_NULLPTR:
       return "bpu model runtask parameter input camera buffer is null";
+    case BPU_ERR_RUNTASK_SET_INPUT_NORMALIZE_ROI_ERROR:
+      return "bpu model runtask set input normalize roi failed";
+    case BPU_ERR_RUNTASK_SET_INPUT_UNSUPPORTED_FEATURE:
+      return "bpu model runtask set input unsupported feature";
+    case BPU_ERR_RUNTASK_SET_INPUT_RESIZE_RIO_FAILED:
+      return "bpu model runtask set input resize rio failed";
+    case BPU_ERR_CHECK_MODEL_VALIDITY_FAILED:
+      return "bpu model check model validity failed";
     case BPU_ERR_VIO_BASE:
       return "vio base error";
     case BPU_ERR_VIO_PAESER_FAIL:

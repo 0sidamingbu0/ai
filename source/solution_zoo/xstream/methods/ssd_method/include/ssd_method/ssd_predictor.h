@@ -11,17 +11,16 @@
 #include <vector>
 
 #include "bpu_predict/bpu_predict_extension.h"
-#include "hobot_vision/bpu_model_manager.hpp"
 #include "hobotxsdk/xstream_data.h"
 #include "horizon/vision_type/vision_type.hpp"
 #include "ssd_method/config.h"
 #include "ssd_method/ssd_post_process_module.h"
 
 namespace xstream {
-class SSD_Predictor {
+class SSDPredictor {
  public:
-  SSD_Predictor() {}
-  virtual ~SSD_Predictor();
+  SSDPredictor() {}
+  virtual ~SSDPredictor();
 
   int Init(const std::string &config_file);
   void RunSingleFrame(const std::vector<xstream::BaseDataPtr> &frame_input,
@@ -45,8 +44,6 @@ class SSD_Predictor {
   int pyramid_layer_;
   std::vector<int> model_out_types_;
   BPU_MODEL_S bpu_handle_;
-  std::vector<BPU_Buffer_Handle> out_buf_;
-  BPUModelInfo output_info_;
   std::vector<std::string> method_outs_;
 
   std::shared_ptr<Config> config_;

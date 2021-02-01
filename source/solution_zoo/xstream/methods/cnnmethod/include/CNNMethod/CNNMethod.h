@@ -38,14 +38,12 @@ class CNNMethod : public Method {
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;
   virtual std::string GetVersion() const;
-  virtual void OnProfilerChanged(bool on) {}
 
  private:
   std::shared_ptr<Predictor> predictor_;
   std::shared_ptr<PostPredictor> post_predict_;
 
   std::shared_ptr<CNNMethodConfig> config_;
-  static std::mutex init_mutex_;
 };
 }  // namespace xstream
 #endif  // INCLUDE_CNNMETHOD_CNNMETHOD_H_

@@ -25,7 +25,6 @@
 #include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 #include "bpu_predict/bpu_predict_extension.h"
-#include "hobot_vision/bpu_model_manager.hpp"
 #include "horizon/vision_type/vision_type.hpp"
 #include "horizon/vision_type/vision_type_common.h"
 
@@ -100,6 +99,7 @@ class Predictor {
   NormParams norm_params_;
   std::string post_fn_;
   int core_id_ = 2;
+  int resize_type_ = 0;
 
  private:
   int FilterRoi(hobot::vision::BBox *src, hobot::vision::BBox *dst, int src_w,

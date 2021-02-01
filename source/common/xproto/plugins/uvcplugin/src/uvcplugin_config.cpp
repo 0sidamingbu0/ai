@@ -33,6 +33,7 @@ UvcConfig::UvcConfig(const std::string &path) : path_(path) {
   is_cbr_ = 1;
   bitrate_ = 2000;
   h264_encode_time_ = 0;
+  audio_enable_ = 0;
 }
 
 bool UvcConfig::LoadConfig() {
@@ -141,6 +142,10 @@ bool UvcConfig::CheckConfig() {
   }
   if (json_.isMember("h264_encode_time")) {
     h264_encode_time_ = json_["h264_encode_time"].asInt();
+  }
+
+  if (json_.isMember("audio_enable")) {
+    audio_enable_ = json_["audio_enable"].asInt();
   }
   // check the value
   // to do ..

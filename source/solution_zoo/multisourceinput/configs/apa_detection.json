@@ -4,7 +4,7 @@
     ],
     "outputs": [
       "image",
-      "parking_box"
+      "parking_orient_box"
     ],
     "workflow": [
       {
@@ -27,7 +27,7 @@
           "run_data"
         ],
         "outputs": [
-          "parking_box"
+          "parking_orient_box"
         ],
         "method_config_file": "postprocess_apa_detection.json"
       }

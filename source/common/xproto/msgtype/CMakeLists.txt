@@ -38,11 +38,13 @@ target_link_libraries(${PROJECT_NAME} xproto ${BASE_LIBRARIES})
 # add_subdirectory(test)
 
 # make install才会安装
-set(OUTPUT_ROOT ${PROJECT_SOURCE_DIR}/output)
-set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${CMAKE_PROJECT_NAME})
+if (NOT ${PARENT_BUILD})
+set(OUTPUT_ROOT ${CMAKE_SOURCE_DIR}/output)
+endif ()
+set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME})
 install(DIRECTORY
         ${CMAKE_SOURCE_DIR}/build/lib/
         DESTINATION ${MY_OUTPUT_ROOT}/lib/)
 install(DIRECTORY
-        ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/
-        DESTINATION ${MY_OUTPUT_ROOT}/include/${CMAKE_PROJECT_NAME})
+        ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
+        DESTINATION ${MY_OUTPUT_ROOT}/include)

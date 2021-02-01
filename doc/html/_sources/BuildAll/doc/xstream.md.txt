@@ -28,7 +28,7 @@ XStream除了支持客户完成自定义Method开发、Workflow配置和算法SD
 ## XStream组成
 XStream源码由XStream-Framework、tutorials、vision_type、imagetools组成。各个组件的功能描述如下：  
 
-* XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Metho的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发
+* XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发
 
 * tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性
 
@@ -196,8 +196,6 @@ class Method {
   virtual std::string GetVersion() const = 0;
   /// 获取Method基本信息
   virtual MethodInfo GetMethodInfo();
-  /// 用于告知Method整个SDK的Profiler状态更改
-  virtual void OnProfilerChanged(bool on) = 0;
 
   // 数据处理函数，第一个参数是输入数据（双重vector，外层vector表示batch是多帧的输入
   // 内层的vector表示单帧的数据列表），
@@ -682,8 +680,6 @@ class BBoxFilter : public Method {
   std::string GetVersion() const override {
     return "BBoxFilter_test_v0.0.1";
   }
-  // 当workflow的profile状态发生变化时，调用该函数.
-  void OnProfilerChanged(bool on) override {}
 
  private:
   // 过滤bbox的面积阈值

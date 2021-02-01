@@ -32,7 +32,6 @@ class TimeoutAlarm : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-  void OnProfilerChanged(bool on) override;
 
  private:
   int timeout_;

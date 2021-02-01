@@ -537,6 +537,42 @@ int HorizonVisionFreeBodySmartData(HorizonVisionBodySmartData *smart) {
   return kHorizonVisionSuccess;
 }
 
+int HorizonVisionAllocHandSmartData(HorizonVisionHandSmartData **psmart) {
+  CHECK_NULL(psmart)
+  *psmart = static_cast<HorizonVisionHandSmartData *>(
+      std::calloc(1, sizeof(HorizonVisionHandSmartData)));
+  return kHorizonVisionSuccess;
+}
+
+int HorizonVisionCopyHandSmartData(HorizonVisionHandSmartData *smart_data,
+                                   HorizonVisionHandSmartData *new_smart) {
+  CHECK_NULL(smart_data)
+  CHECK_NULL(new_smart)
+  *new_smart = *smart_data;
+  return kHorizonVisionSuccess;
+}
+
+int HorizonVisionDupHandSmartData(HorizonVisionHandSmartData *smart_data,
+                                  HorizonVisionHandSmartData **pnew_smart) {
+  CHECK_NULL(smart_data)
+  CHECK_SUCCESS(HorizonVisionAllocHandSmartData(pnew_smart))
+  CHECK_SUCCESS(HorizonVisionCopyHandSmartData(smart_data, *pnew_smart))
+  return kHorizonVisionSuccess;
+}
+
+int HorizonVisionCleanHandSmartData(HorizonVisionHandSmartData *smart) {
+  CHECK_NULL(smart)
+
+  return kHorizonVisionSuccess;
+}
+
+int HorizonVisionFreeHandSmartData(HorizonVisionHandSmartData *smart) {
+  CHECK_NULL(smart)
+  HorizonVisionCleanHandSmartData(smart);
+  std::free(smart);
+  return kHorizonVisionSuccess;
+}
+
 int HorizonVisionAllocSmartData(HorizonVisionSmartData **psmart, int num) {
   CHECK_NULL(psmart)
   if (num == 0) {
@@ -548,6 +584,7 @@ int HorizonVisionAllocSmartData(HorizonVisionSmartData **psmart, int num) {
   for (auto i = 0; i < num; ++i) {
     smart_data[i].face = nullptr;
     smart_data[i].body = nullptr;
+    smart_data[i].hand = nullptr;
     smart_data[i].face_extra = nullptr;
   }
   *psmart = smart_data;
@@ -569,6 +606,10 @@ int HorizonVisionCopySmartData(HorizonVisionSmartData *smart_data,
   if (smart_data->body) {
     CHECK_SUCCESS(
         HorizonVisionDupBodySmartData(smart_data->body, &new_smart->body))
+  }
+  if (smart_data->hand) {
+    CHECK_SUCCESS(
+        HorizonVisionDupHandSmartData(smart_data->hand, &new_smart->hand))
   }
   if (smart_data->face_extra) {
     new_smart->face_extra = reinterpret_cast<HorizonVisionFaceExtraInfo *>
@@ -592,6 +633,8 @@ int HorizonVisionCleanSmartData(HorizonVisionSmartData *smart) {
   smart->face = nullptr;
   HorizonVisionFreeBodySmartData(smart->body);
   smart->body = nullptr;
+  HorizonVisionFreeHandSmartData(smart->hand);
+  smart->hand = nullptr;
   if (smart->face_extra) {
     std::free(smart->face_extra);
   }

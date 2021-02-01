@@ -33,7 +33,6 @@ class BBoxFilter : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-  void OnProfilerChanged(bool on) override;
 
  private:
   std::atomic<float> area_threshold_;

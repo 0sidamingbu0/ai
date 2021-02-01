@@ -33,8 +33,6 @@ class Average : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-
-  void OnProfilerChanged(bool on) override {}
 };
 
 class StandardDeviation : public Method {
@@ -54,7 +52,6 @@ class StandardDeviation : public Method {
   InputParamPtr GetParameter() const override;
 
   std::string GetVersion() const override;
-  void OnProfilerChanged(bool on) override {}
 };
 
 // class ValueParam : public xstream::InputParam {

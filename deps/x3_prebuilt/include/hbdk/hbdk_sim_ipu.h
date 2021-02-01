@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <cstring>
 #else
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #endif  // __cplusplus

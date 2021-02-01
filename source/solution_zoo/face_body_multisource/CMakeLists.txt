@@ -8,16 +8,14 @@ file(GLOB PROJECT_INC
     "include/*.h"
     "include/*.hpp"
     "include/smartplugin/*.h"
-    "include/smartplugin/utils/*.h"
-    #"include/horizon/vision/*.h"
-    "include/smartplugin/message/*.h"
+    "include/websocketplugin/*.h"
 )
 
 # 源文件路径信息
 file(GLOB PROJECT_SRC
     "src/solution_main.cpp"
     "src/smartplugin/*.cpp"
-    "src/smartplugin/message/*.cc"
+    "src/websocketplugin/*.cpp"
     "src/smartplugin/xstream/*.cpp"
 )
 
@@ -29,7 +27,6 @@ set(SOURCE_FILES
 include_directories(
     include
     include/smartplugin
-    include/smartplugin/message
     smartplugin
 )
 
@@ -56,7 +53,8 @@ set(Method_LIBS
 )
 
 set(BASE_LIBRARIES hobotlog xstream vision_type_util
-    jsoncpp protobuf vioplugin xproto_msgtype xproto)
+    jsoncpp protobuf vioplugin xproto_msgtype xproto
+    multisourcesmartplugin multisourcewebsocketplugin)
 
 set(OpenCVLib opencv_world)
 # set(OPERATION_LIBRARIES ipc_tracking xstream-imagetools )

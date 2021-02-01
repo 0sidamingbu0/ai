@@ -68,8 +68,6 @@ class TestInitMethod : public Method {
   InputParamPtr GetParameter() const override { return InputParamPtr(); }
 
   std::string GetVersion() const override { return "0.0.0"; }
-
-  void OnProfilerChanged(bool on) override {}
 };
 
 }  //  namespace xstream

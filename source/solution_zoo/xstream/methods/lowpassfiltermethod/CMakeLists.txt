@@ -25,8 +25,8 @@ target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})
 
 set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME}/)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/LowPassFilterMethod/LowPassFilterMethod.h
-        DESTINATION ${MY_OUTPUT_ROOT}/include/LowPassFilterMethod)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include
+        DESTINATION ${MY_OUTPUT_ROOT})
 
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${MY_OUTPUT_ROOT}/lib)

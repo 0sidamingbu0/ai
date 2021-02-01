@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>LowPassFilterMethod &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>LowPassFilterMethod &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -166,22 +166,22 @@
 <div class="section" id="id2">
 <h2>原理<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>在去抖动过程中，滤波是一种常见方法，但是滤波会存在一个抖动和延迟平衡的问题，以一阶低通滤波器为例：</p>
-<p><img alt="一阶低通滤波" src="../../../../../_images/one_order2.png" /></p>
+<p><img alt="一阶低通滤波" src="../../../../../_images/one_order1.png" /></p>
 <p>当α比较小的时候可以起到比较好的滤波作用，突变值可以很好被消除，所以对抖动的抵抗能力就比较强。但是当我们的信号正常变化的时候，由于α系数的关系，会导致滤波后的信号的变化出现滞后，并且α越小，这种滞后就越严重——这也就是延迟问题。</p>
 <p>One Euro Filter就是针对jitter(抖动)和lag(延迟)的问题，提出了一种改进的，自适应的低通滤波器。</p>
 <p>当信号变化的不剧烈的时候，大家对抖动比较敏感，使用比较小的α，这样可以尽量减小抖动。</p>
 <p>当信号变化比较剧烈的时候，大家对延迟比较敏感，就使用较大的α，这样可以让滤波信号快速跟踪上原始信号变化，减小延迟。</p>
 <p>具体方法如下：
 RC电路系统中，时间常数time constant τ和截断频率cutoff frequency fc之间的关系如下：</p>
-<p><img alt="时间常数" src="../../../../../_images/t-f2.png" /></p>
+<p><img alt="时间常数" src="../../../../../_images/t-f1.png" /></p>
 <p>信号的采样周期为Te，那么我们定义α为：</p>
-<p><img alt="alpha" src="../../../../../_images/alpha2.png" /></p>
+<p><img alt="alpha" src="../../../../../_images/alpha1.png" /></p>
 <p>然后根据低通滤波公式，随着fc减小，τ会增大，α减小，这样可以比较好的消除jitter；反之，可以减小lag。
 所以我们可以通过动态调节fc来达到自适应调节的功能，one euro filter定义了</p>
-<p><img alt="fc" src="../../../../../_images/fc2.png" /></p>
-<p>其中<img alt="Xi" src="../../../../../_images/Xi2.png" />是原始信号的梯度（两次采样除以采样周期），再经过一次低通滤波，这里的低通滤波的截止频率是固定的，这样可以避免梯度非常大，而导致抖动：</p>
-<p><img alt="dX" src="../../../../../_images/dX2.png" /></p>
-<p><img alt="X" src="../../../../../_images/X2.png" /></p>
+<p><img alt="fc" src="../../../../../_images/fc1.png" /></p>
+<p>其中<img alt="Xi" src="../../../../../_images/Xi1.png" />是原始信号的梯度（两次采样除以采样周期），再经过一次低通滤波，这里的低通滤波的截止频率是固定的，这样可以避免梯度非常大，而导致抖动：</p>
+<p><img alt="dX" src="../../../../../_images/dX1.png" /></p>
+<p><img alt="X" src="../../../../../_images/X1.png" /></p>
 <p>这里的αd是在固定截止频率f的情况下得到的。</p>
 <p>这里我们发现α和fc成正常相关，α和防lag成正相关，和防jitter成负相关。
 当我们的系统信号X变化较剧烈时，会导致fc变大，从而α增大，使系统向防lag一方倾斜；

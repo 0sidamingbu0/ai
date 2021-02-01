@@ -360,9 +360,10 @@ typedef enum hbrt_layout_type_t {
 
   LAYOUT_NCWH_ZHW_16N8C,
   LAYOUT_NCWH_ZHW_32N4C,
-  LAYOUT_NCHW_ZHW_32N,
+  LAYOUT_NCWH_ZHW_32N,
   // LAYOUT_NCHW_8N,
 
+  LAYOUT_NHCW_2H16W,
   LAYOUT_NUM,
 
 } hbrt_layout_type_t;

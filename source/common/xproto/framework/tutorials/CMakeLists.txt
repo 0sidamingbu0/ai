@@ -27,11 +27,12 @@ if (${X86_ARCH})
     message("tool chain:${CMAKE_CXX_COMPILER}")
     add_definitions(-std=c++11)
     include_directories(
-      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/jsoncpp/include/
-      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/hobotlog/include/
+      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/hobotlog/include/
+      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/jsoncpp/include/
     )
     link_directories(
-      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/hobotlog/lib
+      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/hobotlog/lib/
+      ${XPROTO_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/jsoncpp/lib/
     )
   endif ()
 else ()

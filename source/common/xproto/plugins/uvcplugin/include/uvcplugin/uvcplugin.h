@@ -21,6 +21,7 @@
 #include "uvc/uvc.h"
 #include "uvc/uvc_gadget.h"
 #include "./uvc_server.h"
+#include "./uac_server.h"
 #include "./uvcplugin_config.h"
 #include "./venc_client.h"
 #include "xproto/message/pluginflow/flowmsg.h"
@@ -52,6 +53,8 @@ class UvcPlugin : public xproto::XPluginAsync {
   int FeedSmart(XProtoMessagePtr msg);
   int FeedVideoDrop(XProtoMessagePtr msg);
   int FeedMc(XProtoMessagePtr msg);
+  int FeedMicphoneAudioMsg(XProtoMessagePtr msg);
+  int FeedMicphoneAudio(XProtoMessagePtr msg);
   void ParseConfig();
   int Reset();
   int ParseConfig(std::string config_file);
@@ -80,6 +83,8 @@ class UvcPlugin : public xproto::XPluginAsync {
   std::shared_ptr<std::thread> monitor_thread_;
   std::shared_ptr<std::thread> dwc3_thread_;
 
+  std::shared_ptr<UacServer> uac_server_;
+
   int origin_image_width_ = 1920;  // update by FeedVideo
   int origin_image_height_ = 1080;
   int dst_image_width_ = 1920;  // update by FeedVideo
@@ -89,9 +94,13 @@ class UvcPlugin : public xproto::XPluginAsync {
   std::mutex video_send_mutex_;
   int video_sended_without_recv_count_;
   hobot::CThreadPool encode_thread_;
+  hobot::CThreadPool send_audio_thread_;
   bool print_timestamp_ = false;
   int efd_;
   int monitor_flag_;
+  // uac dev
+  alsa_device_t* uac_dev_;
+  int audio_enable_ = 0;
 };
 }  // namespace Uvcplugin
 }  // namespace xproto

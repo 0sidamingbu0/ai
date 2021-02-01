@@ -19,9 +19,13 @@
 #include "hb_vot.h"
 #include "hobot_vision/blocking_queue.hpp"
 #include "horizon/vision_type/vision_msg.h"
+#include "media_codec/media_codec_manager.h"
+#include "hbmedia/hb_vp_api.h"
+#include "utils/jsonConfigWrapper.h"
 
 namespace horizon {
 namespace vision {
+using horizon::vision::xproto::mcplugin::JsonConfigWrapper;
 
 struct RecogResult_t {
   uint64_t track_id;
@@ -48,22 +52,28 @@ struct VotDrawCtrl_t {
   bool draw_age_gender_dist = true;
   bool draw_body_kps = false;
   bool draw_id = false;
+  // true: draw fps on img
+  bool draw_fps = true;
+  bool draw_gesture_val = false;
+  bool draw_hand_id = false;
 };
 
 class VotModule
 {
  public:
-  static std::shared_ptr<VotModule>& Instance() {
+  static std::shared_ptr<VotModule>& Instance(std::string config = "") {
     static std::shared_ptr<VotModule> vot_module_;
     static std::once_flag init_flag;
-    std::call_once(init_flag, [](){
-        vot_module_ = std::shared_ptr<VotModule>(new VotModule());
+    std::call_once(init_flag, [&](){
+        vot_module_ = std::shared_ptr<VotModule>(new VotModule(config));
     });
     return vot_module_;
   }
 
   ~VotModule();
   int Input(const std::shared_ptr<VotData_t>&);
+  int Init();
+  int DeInit();
   int Start();
   int Stop();
 
@@ -77,9 +87,7 @@ class VotModule
   char *buffer_;
   std::atomic_bool stop_;
 
-  VotModule();
-  int Init();
-  int DeInit();
+  explicit VotModule(const std::string&);
 
   void bgr_to_nv12(uint8_t *bgr, char *buf);
   std::shared_ptr<char> PlotImage(const std::shared_ptr<VotData_t>& vot_data);
@@ -116,6 +124,13 @@ class VotModule
   // false: do not plot vio drop img
   bool plot_drop_img_ = false;
 
+  // true: input img with smart data drawing to encoder and save output
+  bool en_encoder_ = false;
+  // 0: input img with smart drawing to encoder, 1: input raw img to encoder
+  int encoder_input_ = 0;
+  std::string encoder_output_save_file_ = "draw.h264";
+  std::ofstream ofs_encoder_output_;
+
   int frame_fps_ = -1;
 
   VotDrawCtrl_t vot_draw_ctrl_;
@@ -147,6 +162,34 @@ class VotModule
     "Palmpat",
     "Palm"
   };
+
+  std::unordered_map<int, std::string> map_gesture_direction_ {
+          {0, ""}, {1, "left"}, {2, "right"}, {3, "up"}, {4, "down"}
+  };
+
+  std::shared_ptr<JsonConfigWrapper> config_ = nullptr;
+  typedef struct {
+    int veChn = 0;
+    PAYLOAD_TYPE_E format = PT_H264;
+    int width = 1920;
+    int height = 1080;
+    int bitrate = 5000;
+    bool is_cbr = true;
+    int frame_buf_depth = 3;
+
+    bool vp_init_local = false;
+    uint32_t vp_pool_cnt = 32;
+
+    char *mmz_vaddr = nullptr;
+    uint64_t mmz_paddr;
+    uint32_t mmz_size;
+  } vencParam;
+  vencParam venc_param_;
+  VIDEO_FRAME_S pstFrame;
+  std::shared_ptr<std::thread> recv_stream_task_ = nullptr;
+
+  int InitCodecManager();
+  int DeinitCodecManager();
 };
 
 }  // namespace vision

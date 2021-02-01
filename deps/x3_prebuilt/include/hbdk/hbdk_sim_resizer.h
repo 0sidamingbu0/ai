@@ -18,6 +18,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 HBDK_PUBLIC hbrt_error_t hbrtSimResizeYUV420(uint8_t* result, uint8_t* src_y, uint8_t* src_uv, uint32_t src_h,

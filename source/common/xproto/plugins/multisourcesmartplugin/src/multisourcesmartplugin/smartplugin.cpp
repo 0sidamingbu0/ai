@@ -31,6 +31,7 @@
 
 #include "xproto_msgtype/vioplugin_data.h"
 #include "xproto_msgtype/gdcplugin_data.h"
+#include "xproto_msgtype/commongdcplugin_data.h"
 #include "xproto_msgtype/protobuf/x3.pb.h"
 
 #include "multisourcesmartplugin/data.h"
@@ -47,6 +48,7 @@ using horizon::vision::xproto::XProtoMessagePtr;
 using horizon::vision::xproto::basic_msgtype::VioMessage;
 using ImageFramePtr = std::shared_ptr<hobot::vision::ImageFrame>;
 using XStreamImageFramePtr = xstream::XStreamData<ImageFramePtr>;
+using horizon::vision::xproto::basic_msgtype::CustomGdcMessage;
 using horizon::vision::xproto::basic_msgtype::IpmImageMessage;
 
 using xstream::InputDataPtr;
@@ -347,7 +349,7 @@ int SmartPlugin::Init() {
   RegisterMsg(TYPE_IMAGE_MESSAGE,
               std::bind(&SmartPlugin::Feed, this, std::placeholders::_1));
 
-  RegisterMsg(TYPE_IPM_MESSAGE,
+  RegisterMsg(TYPE_GDC_MESSAGE,
               std::bind(&SmartPlugin::FeedIpm, this, std::placeholders::_1));
 
   RegisterMsg(TYPE_MULTI_IMAGE_MESSAGE,
@@ -375,8 +377,8 @@ int SmartPlugin::Feed(XProtoMessagePtr msg) {
     for (unsigned int i = 0; i < target_sdk.size(); i++) {
       int sdk_idx = target_sdk[i];
       // 创建xstream的输入
-      xstream::InputDataPtr input =
-          Convertor::ConvertInput(valid_frame.get(), image_idx);
+      xstream::InputDataPtr input = Convertor::ConvertInput(
+          valid_frame.get(), image_idx, GetWorkflowInputImageName(sdk_idx));
       // 设置Source ID
       for (unsigned int j = 0; j < source_map_[sdk_idx].size(); j++) {
         if (source_map_[sdk_idx][j] == source_id) {
@@ -426,8 +428,8 @@ int SmartPlugin::FeedMulti(XProtoMessagePtr msg) {
     for (unsigned int i = 0; i < target_sdk.size(); i++) {
       int sdk_idx = target_sdk[i];
       // 创建xstream的输入
-      xstream::InputDataPtr input =
-        Convertor::ConvertInput(valid_frame.get());
+      xstream::InputDataPtr input = Convertor::ConvertInput(
+          valid_frame.get(), GetWorkflowInputImageName(sdk_idx));
       // 设置Source ID
       for (unsigned int j = 0; j < source_map_[sdk_idx].size(); j++) {
         if (source_map_[sdk_idx][j] == source_id) {
@@ -458,49 +460,8 @@ int SmartPlugin::FeedMulti(XProtoMessagePtr msg) {
 }
 
 int SmartPlugin::FeedIpm(XProtoMessagePtr msg) {
-  auto valid_frame = std::static_pointer_cast<IpmImageMessage>(msg);
-  LOGI << "FeedIpm(), image num: " << valid_frame->ipm_imgs_.size();
-
-  for (size_t img_idx = 0; img_idx < valid_frame->ipm_imgs_.size(); ++img_idx) {
-    auto source_id = valid_frame->ipm_imgs_[img_idx]->channel_id;
-    auto frame_id = valid_frame->ipm_imgs_[img_idx]->frame_id;
-
-    auto iter = source_target_.find(source_id);
-    if (iter == source_target_.end()) {
-      LOGF << "Unknow Source ID: " << source_id;
-      continue;
-    }
-    LOGD << "Source ID: " << source_id;
-
-    auto target_sdk = iter->second;
-    for (unsigned int i = 0; i < target_sdk.size(); ++i) {
-      int sdk_idx = target_sdk[i];
-      xstream::InputDataPtr input =
-        Convertor::ConvertInput(valid_frame.get(), img_idx);
-      for (unsigned int j = 0; j < source_map_[sdk_idx].size(); ++j) {
-        if (source_map_[sdk_idx][j] == static_cast<int>(source_id)) {
-          input->source_id_ = j;
-          break;
-        }
-      }
-      input->context_ = (const void *)((uintptr_t)sdk_idx);   // NOLINT
-
-      SmartInput *input_wrapper = new SmartInput();
-      input_wrapper->frame_info = valid_frame;
-      input_wrapper->context = input_wrapper;
-      input_wrapper->type = "IpmImage";
-      monitor_->PushFrame(input_wrapper);
-
-      if (sdk_[sdk_idx]->AsyncPredict(input) <= 0) {
-        LOGW << "Async failed: " << sdk_idx << ", source id: " << source_id;
-        auto input = monitor_->PopFrame(source_id, frame_id);
-        if (input.ref_count == 0) {
-          delete static_cast<SmartInput *>(input.context);
-        }
-        continue;
-      }
-    }
-  }
+  auto valid_frame = std::static_pointer_cast<CustomGdcMessage>(msg);
+  LOGI << "FeedIpm(), image num: " << valid_frame->image_.size();
   return 0;
 }
 
@@ -546,13 +507,13 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
 
   for (const auto &output : xstream_out->datas_) {
     LOGD << output->name_ << ", type is " << output->type_;
-    if (output->name_ == "rgb_image" || output->name_ == "image") {
+    if (output->name_ == GetWorkflowInputImageName(sdk_idx)) {
       rgb_image = dynamic_cast<XStreamImageFramePtr *>(output.get());
     }
   }
   HOBOT_CHECK(rgb_image);
 
-  auto smart_msg = std::make_shared<CustomSmartMessage>(xstream_out);
+  auto smart_msg = CreateSmartMessage(xstream_out);
   // Set origin input named "image" as output always.
   smart_msg->time_stamp = rgb_image->value->time_stamp;
   smart_msg->frame_id = rgb_image->value->frame_id;

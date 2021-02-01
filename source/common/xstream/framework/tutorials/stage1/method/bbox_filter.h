@@ -90,7 +90,6 @@ class BBoxFilter : public Method {
   std::string GetVersion() const override {
     return "";
   }
-  void OnProfilerChanged(bool on) override {}
 };
 
 }  // namespace xstream

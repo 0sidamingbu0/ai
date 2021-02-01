@@ -1,0 +1,1659 @@
+# BPU SDK API Doc v1.25
+
+[TOC]
+
+## Revision History
+
+| DATE | VERSION | DESCRIPTIONS |
+|-|-|-|
+| 2020-06-02 | 1.10 | 1. modified the Note of `HB_BPU_runModel` and added descriptions of `core_id`<br>2. modified representation method of image data format and the `BPU_TENSOR_S` struct  |
+| 2020-06-28 | 1.11 | 1. added the preemption interface `HB_BPU_setModelPrior`<br>2. modified the descriptions of the `HB_BPU_resize` and `HB_BPU_getResizeResultWithoutPadding` interfaces |
+| 2020-7-10 | 1.12 | 1. modified the `BPU_TENSOR_S` struct in section 2.1.3<br>2. modified the descriptions of data types in section 2.1.4 and added the description of unsupported batch mode<br>3. added 2 interface descriptions: 2.3.13 `HB_BPU_getHWCIndex` and 2.3.14 `HB_BPU_getHW` |
+| 2020-7-13 | 1.13 | 1. `HB_BPU_resize` interface added pym resize functionality |
+| 2020-7-13 | 1.14 | 1. added interface description of `HB_BPU_getMemoryUsage` |
+| 2020-7-15 | 1.15 | 1. corrected description of the `HB_BPU_getMemoryUsage` interface<br>2. added description of enumerated values of `HB_BPU_setGlobalConfig` |
+| 2020-7-20 | 1.16 | 1. added descriptions of the `HB_SYS_virAddAlloc` interface<br>2. added descriptions of the `HB_SYS_virAddrFree` interface |
+| 2020-07-23 | 1.17 | 1. added descriptions of the `HB_BPU_loadModelFromFile` interface<br>2. added descriptions of the `HB_BPU_getVersion` interface<br>3. added descriptions of the `HB_BPU_runModelWithBbox` interface<br>4. added descriptions of the `HB_BPU_createGroup` interface<br>5. added descriptions of the `HB_BPU_setModelGroup` interface<br>6. added descriptions of the `HB_BPU_setGroupProportion` interface<br>7. added descriptions of the `HB_BPU_deleteGroup` interface<br>8. added descriptions of the `HB_BPU_parseDetThreshResult` interface<br>9. added descriptions of the `HB_BPU_parseChannelMaxResult` interface<br>10. added descriptions of the `HB_BPU_parseDPPResult` interface<br>11. added descriptions of the `HB_BPU_parseRPPResult` interface |
+| 2020-07-23 | 1.18 | 1. the pym resize in resize added environment variable `PYM_FRAME_DEPTH` |
+| 2020-08-04 | 1.19 | 1. modified interface definition and parameter descriptions of the `HB_BPU_runModelWithBbox` interface<br>2. modified descriptions of `HB_BPU_getMemoryUsage`<br>3. added descriptions of the `BPU_constructCameraBufferFromPyramidBuffer` interface<br>4. added descriptions of the `BPU_getCameraInfoFromCameraBuffer` interface |
+| 2020-08-07 | 1.20 | 1. changed interface name of `BPU_ConstructCameraBufferFromPyramidBuffer` into `BPU_getRelatedCameraBufferFromPyramidBuffer`,<br>and changed the descriptions of release instructions<br>2. modified parameter descriptions of `BPU_getCameraInfoFromCameraBuffer` |
+| 2020-08-10 | 1.21 | 1. added `HB_BPU_resize` image size restrictions<br>2. added descriptions of the prolonged operation time of `HB_BPU_setModelPrior` low priority models |
+| 2020-08-24 | 1.22 | 1. `HB_BPU_resize` can specify bpu core |
+| 2020-09-23 | 1.23 | optimized the descriptions of compiler restriction of the resize interface |
+| 2020-11-09 | 1.24 | 1. added Global Config option: `BPU_GLOBAL_ENGINE_TYPE`, `BPU_GLOBAL_CUSTOM_OP_LIB_PATH`, `BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES`<br>2. the runModel interface now supports resizing input data to match model input requirements |
+| 2020-11-20 | 1.25 | 1. deleted pym resize functionality<br>2. added the descriptions of layout and padding |
+
+## 1.Descriptions of System Software Interfaces
+
+This section describes the API interfaces of system software.
+
+### 1.1.Definition of Data Struct
+
+```c
+typedef struct hb_BPU_MEMORY_S {
+  uint64_t phyAddr;
+  void *virAddr;
+  size_t memSize;
+} BPU_MEMORY_S;
+```
+
+The `BPU_MEMORY_S` struct is used for defining bpu memory.
+
+### 1.2 Memory Function API
+
+#### 1.2.1 HB_SYS_bpuMemAlloc
+
+```c
+int HB_SYS_bpuMemAlloc(const char *name,
+                       size_t alloc_mem_size,
+                       bool cachable,
+                       BPU_MEMORY_S *mem);
+```
+
+**DESCRIPTIONS:**
+
+In the Bernoulli ASIC architecture, BPU and CPU share the same memory space. Here an independent BPU memory structure is offered because BPU needs to consume a contigurous physical memory and thus memory allocation using specific function is required. Such function returns the allocated memory(including both physical and virtual) addresses. Amongst, the virtual address can be read/write directly and pass into subsequent BPU operations.
+
+**INPUT:**
+
+1. `name` is used for specifying the name of the allocated memory so that it can be labelled. It will also be used for when analysis memory state in the future.
+2. `alloc_mem_size` denotes expected memory size.
+3. `cachable` denotes whether or not the allocated memory has the cache label.
+
+**OUTPUT:**
+
+1. `mem` denotes the `BPU_MEMORY_S` type struct pointer. This struct is passed in by caller and its content is passed in from within the function, including: the physical address, virtual address and memory size.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 1.2.2 HB_SYS_flushMemCache
+
+```c
+#define HB_SYS_MEM_CACHE_INVALIDATE (1)    // flush memory to CPU
+#define HB_SYS_MEM_CACHE_CLEAN (2)         // flush CPU to memory
+int HB_SYS_flushMemCache(const BPU_MEMORY_S *mem, int flag);
+```
+
+**DESCRIPTIONS:**
+
+Because memory allocated as `cachable` has a cache mark, the data written/read by CPU could be cached and cause stale data.
+
+![memory_architecture](./images/memory_architecture.png)
+
+Memory architecture of Bernoulli is shown as above. As you can see that there is a cache between CPU and memory, but there isn't one between BPU and memory. So the flush interface provides 2 different methods to deal with different scenarios.
+
+1. In the scenario where CPU writes memory, it is possible that data in memory are stale when BPU reads them because data were written into cache, rather than into memory. Therefore, data in cache must be flushed into memory by using the `HB_SYS_BPU_MEM_CACHE_CLEAN` parameter.
+2. In the other scenario when CPU has ever read the data in memory, it is possible that data were stored in cache. In such case if BPU has written memory and yet CPU still reads data from cache, CPU would read incorrect data. Therefore, those data in cache must be cleaned by using the `HB_SYS_BPU_MEM_CACHE_INVALIDATE` parameter.
+
+**TIPS:**
+
+Specify output to `cachable` and flush cache data into memory to obtain the up-to-date data. As CPU will possibly visit model results multiple times, specifying output to `cachable` can accelerate access speed using cache.
+
+**INPUT:**
+
+1. `mem` denotes the BPU memory struct pointer allocated by the `memAlloc` interface.
+2. `flag` denotes the direction of flush operation. For more details please see the abovementioned **DESCRIPTIONS**.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 1.2.3 HB_SYS_isMemCachable
+
+```c
+int HB_SYS_isMemCachable(const BPU_MEMORY_S *mem);
+```
+
+**DESCRIPTIONS:**
+
+Checks if bpu memory is `cachable`.
+
+**INPUT:**
+
+1. `mem` refers to the BPU memory struct pointer allocated by the `HB_SYS_bpuMemAlloc` interface.
+
+**RETURN:**
+
+1. Cachable if returns 1; non-cachable if returns 0.
+
+#### 1.2.4 HB_SYS_bpuMemFree
+
+```c
+int HB_SYS_bpuMemFree(BPU_MEMORY *mem);
+```
+
+**DESCRIPTIONS:**
+
+Frees BPU memory. Passes into `BPU_MEMORY_S` struct pointer, modifies the struct internally and set all fields into illegal fields to prevent from using the struct again.
+
+**INPUT:**
+
+1. `mem` refers to the BPU memory struct pointer allocated by the `HB_SYS_bpuMemAlloc` interface.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 1.2.5 HB_SYS_getMemInfo
+
+```c
+int HB_SYS_getMemInfo(const void *virAddr, uint64_t *phyAddr, int *is_cachable);
+```
+
+**DESCRIPTIONS:**
+
+This API is used for checking whether passed-in pointers are pointing to BPU memory, if so, then returns the corresponding physical address; otherwise returns failure. And when returning failure, contents of `phyAddr` and `is_cachable` will be undefined.
+
+**PARAMETERS:**
+
+1. `virAddr` refers to the virtual address pointer that shall be converted.
+2. `phyAddr` returns corresponding physical address.
+3. `is_cachable` returns if memory is `cachable`.
+
+**RETURN:**
+
+1. Error code in int type. It returns `BPU_OK` if successful and other values indicates failures.
+
+#### 1.2.6 HB_SYS_virAddrAlloc
+
+```c
+int HB_SYS_virAddrAlloc(void **virAddr,const uint64_t *phyAddr, size_t alloc_mem_size);
+```
+
+**DESCRIPTIONS:**
+
+This interface is used for converting the passed-in memory physical address into virtual address.
+
+**PARAMETERS:**
+
+1. `virAddr` returns pointer of virtual address.
+2. `phyAddr` returns pointer of the physical address which need to be converted.
+3. `alloc_mem_size` denotes memory size.
+
+**RETURN:**
+
+1. Error code in int type; it returns `BPU_OK` if successful. All other returns indicate failures.
+
+**NOTE: Please remember to free the converted virtual address after use.**
+
+#### 1.2.7 HB_SYS_virAddrFree
+
+```c
+int HB_SYS_virAddrFree(const void *virAddr);
+```
+
+**DESCRIPTIONS:**
+
+This interfaces is used for freeing the memory corresponds to its virtual address.
+
+**PARAMETERS:**
+
+1. `virAddr` refers to the virtual address.
+
+**RETURN:**
+
+1. Error code in int type; returns `BPU_OK` if successful. All other returns indicate failures.
+
+## 2.BPU predict API
+
+### 2.1 Definitions of Data Structs
+
+```c
+typedef enum hb_BPU_OP_TYPE_E {
+  BPU_OP_TYPE_CONV,
+  BPU_OP_TYPE_UNKNOWN,
+} BPU_OP_TYPE_E;
+```
+
+```c
+typedef enum hb_BPU_LAYOUT_E {
+  BPU_LAYOUT_NONE = 0,
+  BPU_LAYOUT_NHWC,
+  BPU_LAYOUT_NCHW,
+} BPU_LAYOUT_E;
+```
+
+```c
+#define BPU_MODEL_MAX_SHAPE_DIM (8)
+typedef struct hb_BPU_DATA_SHAPE_S {
+  BPU_LAYOUT_E layout;
+  int ndim;
+  int d[BPU_MODEL_MAX_SHAPE_DIM];
+} BPU_DATA_SHAPE_S;
+```
+
+```c
+typedef enum hb_BPU_DATA_TYPE_E {
+  // all IMG types are unit8
+  BPU_TYPE_IMG_Y,
+  BPU_TYPE_IMG_YUV_NV12,
+  BPU_TYPE_IMG_YUV444,
+  BPU_TYPE_IMG_BGR,
+  BPU_TYPE_IMG_BGRP,
+  BPU_TYPE_IMG_RGB,
+  BPU_TYPE_IMG_RGBP,
+  BPU_TYPE_IMG_NV12_SEPARATE,   // for separate yuv nv12
+  BPU_TYPE_TENSOR_U8,           // for uint8 tensor
+  BPU_TYPE_TENSOR_S8,           // for signed int8
+  BPU_TYPE_TENSOR_F32,          // for float32
+  BPU_TYPE_TENSOR_S32,          // for int32
+  BPU_TYPE_TENSOR_U32,         // for uint32
+  BPU_TYPE_MAX,
+} BPU_DATA_TYPE_E;
+```
+
+```c
+typedef struct hb_BPU_RUN_CTRL_S {
+  int core_id;
+  int resize_type;  // 1: resize input data if input shape is not same with
+                    // model input shape; other value: no resize
+} BPU_RUN_CTRL_S;
+```
+
+#### 2.1.1 BPU_MODEL_NODE_S
+
+```c
+typedef struct hb_BPU_MODEL_NODE_S {
+  BPU_OP_TYPE_E op_type;  // only used for output node
+  BPU_DATA_TYPE_E data_type;
+  BPU_DATA_SHAPE_S shape;
+  BPU_DATA_SHAPE_S aligned_shape;
+  const char *name;
+  uint8 *shifts;            // only used for output node
+  int shift_len;            // only used for output node
+} BPU_MODEL_NODE_S;
+```
+
+**DESCRIPTIONS:**
+
+The `BPU_MODEL_NODE_S` struct describes the information of model input/output nodes, incl.:
+
+1. `op_type` refers to op type of node
+2. `data_type` denotes model required input/output data type.
+3. `shape` represents input/output shape of the model(in training).
+4. `aligned_shape` indicates the input/output shape required by model run as models must align with 8 or 16 bytes when running on BPU. This is usually achieved by adding padding to ordinary shape.
+5. `name` string of model name.
+6. `shifts` and `shit_len` in training, model output is convolution, output data type are int8 or int32, but the actual training results is float32. So we need to convert int8/int32 into float32. Here the shift value is used for converting into float32. `shift_len` size is the same as that of convolution filter.
+
+   Conversion equation: **f_result[c] = out_i[c] / (1 << shift[c])**.
+
+   Wherein:
+
+   1. c is ranging from 0~num_filter, i.e. output channel num.
+   2. f_result is float value.
+   3. out_i refers to output int8 or int32 values.
+   4. shift refers to corresponding shift value.
+
+#### 2.1.2 BPU_MODEL_S
+
+```c
+#define BPU_MODEL_MAX_NODE_NUM (16)
+typedef struct hb_BPU_MODEL_S {
+  void *handle;
+  int input_num;
+  int output_num;
+  BPU_MODEL_NODE_S inputs[BPU_MODEL_MAX_NODE_NUM];
+  BPU_MODEL_NODE_S outputs[BPU_MODEL_MAX_NODE_NUM];
+} BPU_MODEL_S;
+```
+
+**DESCRIPTIONS:**
+
+`BPU_MODEL_S` indicates model information. Wherein:
+
+1. `handle` is used for indicating the pointer of an internal object of a model, in which all model information is stored. Specify its value in the `HB_BPU_loadModel` interface and reset to NULL in the `HB_BPU_releaseModel` interface.
+2. `inputs` indicates model input node information. Node information is in the node struct.
+3. `outputs` same as inputs struct.
+4. `input_num` and `output_num` respectively indicates the input and output node number of model.
+
+#### 2.1.3 BPU_TENSOR_S
+
+```c
+typedef struct hb_BPU_TENSOR_S {
+  BPU_DATA_TYPE_E data_type;
+  BPU_DATA_SHAPE_S data_shape;
+  BPU_DATA_SHAPE_S aligned_shape;
+  BPU_MEMORY_S data;
+  BPU_MEMORY_S data_ext;
+} BPU_TENSOR_S;
+```
+
+**DESCRIPTIONS:**
+
+The `BPU_TENSOR_S` struct is used for describing structures of various data, such as image and features(speech features, image features of other model output etc.). Wherein:
+
+1. `data_type`refers to data type and layout(of image) of tensor.
+2. `data_shape` describes data size and layout.
+3. `aligned_shape` describes the data shape after padding.
+4. `data` is used for storing the specific data address.
+5. As a compensation to the data field, `data_ext` is used for storing the addresses of additional data in the scenario to separate the Y and UV of NV12(data type is `BPU_TYPE_IMG_NV12_SEPARATE`). When separating Y and UV, data is used for storing Y and `data_ext` is used for storing UV.
+
+#### 2.1.4 Descriptions of Data Type and Layout
+
+​As one single `BPU_TENSOR_S` struct is used for denoting all data, `data type`, `layout` and `shape` have different combinations in different scenarios. Usages in typical scenarios is described as below.
+
+##### 2.1.4.1 Layout Description
+
+​There are NHWC and NCHW layouts, in which N represents quantity, C represents channel, H represents height and W represents width. NCHW actually represents [W H C N], in which the first element is 000, the second extends towards W direction, i.e. 001, then 002, 003, then towards H direction, i.e. 004, 005, 006, 007... down to 019, the towards C direction as 020, 021, 022 ... continues, until 319, then towards N direction. NHWC, in similar manner, represents [C W H N], whose first element is 000, and second element extends towards C direction, i.e. 020, 040, 060... all the way down to 300, then towards W goes 001 021 041 061...301... and goes towards H when reaches 303, i.e.004, 024...304...down to 319 then turns into N, i.e. 320, 340... the a in the image below refers to 4 dimensions.
+
+![data_layout](./images/data_layout.png)
+
+##### 2.1.4.2 Image Data Type
+
+​All image data start with `BPU_TYPE_IMG_`, currently supported types include: single Y, YUV_NV12, YUV444, BGR, RGB, BGRP and RGBP. Type of all images is uint8, which complies with the definition of image data type. As shape is defined as multidimensional tensor, the following must be described:
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-689l{background-color:#FFF;border-color:inherit;color:#002B36;font-weight:bold;text-align:center;vertical-align:middle}
+.tg .tg-d6jc{background-color:#EEEFF2;border-color:inherit;color:#002B36;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-sju9{background-color:#EEEFF2;color:#002B36;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-3l22{background-color:#FFF;border-color:inherit;color:#002B36;text-align:left;vertical-align:middle}
+.tg .tg-m6bv{background-color:#EEEFF2;border-color:inherit;color:#002B36;text-align:left;vertical-align:top}
+.tg .tg-yl0f{background-color:#FFF;color:#002B36;text-align:left;vertical-align:middle}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-689l">IMAGE TYPE</th>
+    <th class="tg-d6jc"><span style="font-style:normal;background-color:#EEEFF2">`shape`</span></th>
+    <th class="tg-d6jc"><span style="font-style:normal;background-color:#EEEFF2">`aligned_shape`</span></th>
+    <th class="tg-sju9"><span style="font-style:normal;background-color:#EEEFF2">`data`</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_Y`</span></td>
+    <td class="tg-3l22">[0] = n <br>[1] = c <br>[2] = h <br>[3] = w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">Y data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_YUV_NV12`</span></td>
+    <td class="tg-3l22">[0] = n <br>[1] = c <br>[2] = h <br>[3] = w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">YUV_NV12 data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_YUV444`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=h <br>[2]=w <br>[3]=c</td>
+    <td class="tg-3l22">[0]=n <br>[1]=h-stride <br>[2]=w-stride <br>[3]=c</td>
+    <td class="tg-yl0f">YUV444 data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_BGR`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=h <br>[2]=w <br>[3]=c</td>
+    <td class="tg-3l22">[0]=n <br>[1]=h-stride <br>[2]=w-stride <br>[3]=c</td>
+    <td class="tg-yl0f">BGR data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_BGRP`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h <br>[3]=w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">B/G/R data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_RGB`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=h <br>[2]=w <br>[3]=c</td>
+    <td class="tg-3l22">[0]=n <br>[1]=h-stride <br>[2]=w-stride <br>[3]=c</td>
+    <td class="tg-yl0f">RGB data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_RGBP`</span></td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h <br>[3]=w</td>
+    <td class="tg-3l22">[0]=n <br>[1]=c <br>[2]=h-stride <br>[3]=w-stride</td>
+    <td class="tg-yl0f">R/G/B data</td>
+  </tr>
+  <tr>
+    <td class="tg-m6bv"><span style="font-style:normal;background-color:#EEEFF2">`BPU_TYPE_IMG_NV12_SEPARATE`</span></td>
+    <td class="tg-3l22">[0] = 1 <br>[1] = 3 <br>[2] = h <br>[3] = w</td>
+    <td class="tg-3l22">[0] = 1 <br>[1] = 3 <br>[2] = h-stride <br>[3] = w-stride</td>
+    <td class="tg-yl0f">data stores component of Y and <br>data1 stores components of UV</td>
+  </tr>
+</tbody>
+</table>
+
+**WHEREIN:**
+
+1. NHWC and NCHW 4D data structures are used for denoting `shape` and the `layout` of `aligned_shape`.
+2. Y/NV12/BGRP/RGBP are denoted by NCHW layout.
+3. YUV444/BGR/RGB are denoted by NHWC.
+4. Channel of Y = 1, channel of NV12 = 3 and channels of other image formats are 3.
+5. n denotes image frame number, n > 1 indicates batch mode.
+6. `BPU_TYPE_IMG_NV12_SEPARATE` denotes that Y and UV components are discrete. It is used in the scenario where Y and UV are separate.
+7. Y/NV12/NV12_SEPARATE require that w-stride of Y and UV shall be multiple of 16.
+8. When accessing to data, usually `h_stride` is not used, but it is required that `h_stride` >= h.
+9. To prevent reading incorrect memory, `data memSize` >= h_stride * w_stride.
+10. Please refer to the following diagram for the details of image layouts in memory(please note that below image layout only tries to explain the image layout, presently BPU SDK does not support batch mode):
+
+![image_format](./images/image_format.png)
+
+##### 2.1.4.3 Feature Data
+
+Names of feature data begin with `BPU_TYPE_TENSOR_` prefix and support int8, int32, unit32 and float32 data. They are:
+
+1. stored in the `data` field.
+2. `shape` denotes feature dimensionality and layout.
+3. `aligned_shape` denotes the aligned dimension of feature, it requires that `data memSize` equals corresponding `aligned_shape` size.
+
+### 2.2 BPU Alignment Rules
+
+This section introduces the alignment rules of BPU, including requirements of start address and data alignment. This section is composed by 3 following parts:
+
+1. Model input requirements: BPU does not restrict size or parity of model input. It supports both 416x416 input(e.g. yolo) and 227x227 input(e.g. squeezeNet). As for the special NV12, HW must be even numbers, because UV equals half of Y.
+2. Requirements of stride: usually BPU's stride requimrents can be determined in accordance with `shape` and `aligned_shape`. The `aligned_shape` refers to the requirement of stride alignment. However for nv12 and Y inputs, the W stride must be multiples of 16. For padding, specific value is not concerned and can be 0 or non-0.
+
+    ![alignment_rule_1](./images/alignment_rule_1.png)
+
+    As shown in the above graph, the green part is the original image and the yellow part refers to padding. If `org_w` denotes the original image width and `org_h` denotes the original height, due to the fact that W is multiple of 16 and H is multiple of 2, `org_w` and `org_h` shall add padding so that size of the padded image equals multiple of 16, and that height equals multiple of 2.
+
+3. Requirements of start address: all memory passed into BPU must be 16-bytes aligned'
+
+For instance: as for the 227x227 squeezeNet input, model shall be trained in accordance with 227x227 input:
+
+1. If model input uses NV12 image format, W stride shall be 240(multiple of 16) and H shall be 228(expanded to even number), i.e., NV12 input size shall be 228x240, the extra pixels are padding and do not affect final results. In other words, BPU is still to calculate in accordance with 227x227, yet such requirement is made because the input are passed into BPU directly.
+2. If model input uses image formats, such as BGR/RGB/BGRP/RGBP/YUV444, corresponding padding shall be converted on ARM CPU inside the `HB_BPU_runModel` and `HB_BPU_resize` interfaces, and `w_stride` shall be introduced, similar to NV12 format.
+
+Other feature input are processed according to the `align_shape` in model node information. In case the `valid_shape` of model input from the interface is 1x10x10x3, `aligned_shape` is 1x16x16x4, then padding shall be added according to `aligned_shape`, shown as below:
+
+![alignment_rule_2](./images/alignment_rule_2.png)
+
+The yellow part in the above image denotes `valid_h`, `valid_w` and `valid_c` of the original feature data. Padding shall be added respectively complying with the w, h and c of `aligned_shape`.
+
+### 2.3 API Descriptions
+
+#### 2.3.1 HB_BPU_loadModel
+
+```c
+int HB_BPU_loadModel(const void *model_data, int model_size, BPU_MODEL_S *model);
+```
+
+**DESCRIPTIONS:**
+
+Loads a BPU model to obtain the corresponding struct object. The `BPU_MODEL_S` struct is passed in from outside and this function fills model information into the struct directly.
+
+**INPUT:**
+
+1. `model_data` refers to the memory address pointing to the data where model is stored. It can be an ordinary memory, i.e. unnecessarily to be allocated as BPU memory. Mind that `model_data` memory can be freed after model is loaded successfully.
+2. `model_size` refers to memory size of model data.
+
+**OUTPUT:**
+
+1. `model` denotes the struct pointer of the model being loaded. As each model is stored in an individual file, the currently returned handle denotes the model. In addition, please note that packaging multiple models into one file is NOT supported.
+
+**RETURN:**
+
+1. The return value of int type. 0 indicates successful execution, other values indicate failures. Descriptions of failure root causes in string can be obtained by inputting the corresponding error codes of the `HB_BPU_getErrorName`(err).
+
+#### 2.3.2 HB_BPU_releaseModel
+
+```c
+int HB_BPU_releaseModel(BPU_MODEL_S *model);
+```
+
+**DESCRIPTIONS:**
+
+Frees the loaded BPU model. Contents of model struct can be modified internally.
+
+**INPUT:**
+
+1. `model` denotes the object pointer of model struct.
+
+**RETURN:**
+
+1. The return of int type. 0 indicates successful execution, other values indicate failures.
+
+#### 2.3.3 HB_BPU_getErrorName
+
+```c
+const char *HB_BPU_getErrorName(int error_code);
+```
+
+**DESCRIPTIONS:**
+
+Converts error code into readable strings in order to facilitate problem tracking. Because thread of this function is safe, it can be used anywhere.
+
+**INPUT:**
+
+1. `error_code` refers to return values from other BPU APIs.
+
+**RETURN:**
+
+1. The string pointer of constant
+
+#### 2.3.4 HB_BPU_setGlobalConfig
+
+```c
+typedef enum hb_BPU_GLOBAL_CONFIG_E {
+  BPU_GLOBAL_CONFIG_MAX_TASK_NUM,
+  BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE,  // This config is discarded.
+  BPU_GLOBAL_CONFIG_DEBUG,
+  BPU_GLOBAL_CONV_MAPPING_FILE,
+  BPU_GLOBAL_CONV_DUMP_PATH,
+  BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE,
+  BPU_GLOBAL_ENGINE_TYPE,
+  BPU_GLOBAL_CUSTOM_OP_LIB_PATH,
+  BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES,
+} BPU_GLOBAL_CONFIG_E;
+```
+
+**DESCRIPTIONS:**
+
+The `BPU_GLOBAL_CONFIG_E` enumerates the global control parameters that can be specified by `bpu_predict`.
+
+  1. `BPU_GLOBAL_CONFIG_MAX_TASK_NUM` specifies the upper limit of task numbers to be run simultaneously, default as 32. In other words, it is allowed to submit 32 model run tasks simultaneously.
+  2. `BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE` specifies the internally maintained mem pool size, default as 128. In other words, at most 128 buffers can be stored into mem pool. Users can control memory occupation of BPU by adjusting this value.
+  3. `BPU_GLOBAL_CONFIG_DEBUG` specifies whether to enter debug mode, options include: `info`, `debug`, `warn` and `error`.
+
+      - `debug` denotes to turn on `DEBUG`, `ERROR`, `WARNING` and `INFO` logs.
+      - `info` denotes to turn on `ERROR`, `WARNING` and `INFO` level logs.
+      - `warn` denotes to turn on both `ERROR` and `WARNING` level logs.
+      - `error` denotes to open `ERROR` level log. Debug log can also be specified by the `HB_BPU_DEBUG_LOG=` environment variable.
+  4. `BPU_GLOBAL_CONV_MAPPING_FILE` refers to the path of convolution node mapping file when compiling debug model.
+  5. `BPU_GLOBAL_CONV_DUMP_PATH` refers to the directory path to where the conv nodes output in bpu segment is dumped.
+  6. `BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE` if set to `TRUE` or `true`, then memory usage of the `LoadModel` interface will be counted. It must work in conjunction with the `HB_BPU_setGlobalConfig` interface. **NOTE: there will be performance loss when the memory usage functionality is enabled, hence please do NOT enable this statistical functionality in production environment.**
+  7. `BPU_GLOBAL_ENGINE_TYPE` specifies the engine type used for inferencing in SDK, values are as follows:
+      - `native` denotes native engine type.
+      - `group` is default value, it denotes group engine type.
+  8. `BPU_GLOBAL_CUSTOM_OP_LIB_PATH` refers to the lib path of custom op.
+  9. `BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES` based on performance considerations, a caching mechanism is used within SDK when dealing with BPU memory, this configuration option belongs to a cache freeing strategic configuration. E.g., if it is configured as `N`, then a certain piece of cache will NOT be allowed to be used and will be freed when over N time(s). When N <= 0, the caching mechanism will not be used. The default value is 64.
+
+```c
+int HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_E config_key, const char* config_value);
+```
+
+**DESCRIPTIONS:**
+
+This function is used for specifying global control information of `bpu_predict`. To make this interface valid, it must be invoked before loading model.
+
+**INPUT:**
+
+1. `config_key` denotes the config enumeration type that shall be specified.
+2. `config_value` values in string. Specific configurable values can be found in the definition of enumeration value. Configuration values are passed in by strings. E.g., either `0` or `1` shall be passed in when specifying `BPU_GLOBAL_CONFIG_DEBUG`.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.5 HB_BPU_runModel
+
+```c
+typedef void* BPU_TASK_HANDLE;  // denotes the asynchronously executed task handle
+
+typedef struct hb_BPU_RUN_CTRL_S {
+  int core_id;
+  int resize_type;  // 1: resize input data if input shape is not same with
+                    // model input shape; other value: no resize
+} BPU_RUN_CTRL_S;
+
+int HB_BPU_runModel(const BPU_MODEL_S *model,
+                   const BPU_TENSOR_S input_data[], const int input_num,
+                   const BPU_TENSOR_S output_data[], const int output_num,
+                   const BPU_RUN_CTRL_S *run_ctrl,
+                   bool is_sync,
+                   BPU_TASK_HANDLE *task_handle);
+```
+
+**DESCRIPTIONS:**
+
+Performs model once using input data. It is divided into synchronous and asynchronous methods. When synchronous method is enabled, current thread will be blocked invoking this interface, until the end of model run. When asynchronous method is enabled, will return immediately invoking this interface, and then wait for model run ends using `task_handle`.
+
+**INPUT:**
+
+1. `model` refers to the struct object pointer of the model.
+2. `input_data` denotes input data tensor.
+3. `input-num` denotes input data number and shall match model input number.
+4. `output_data` denotes output data tensor
+5. `output-num` denotes output data number and shall match model output number.
+6. `run_ctrl` denotes the control information of current operation, e.g. it specifies `core_id`, or whether to resize the input.
+7. `is_sync` denotes if the current operation uses synchronous mode. `true` denotes synchronous mode is on, `false` denotes off.
+
+**OUTPUT:**
+
+1. It will return `task_handle` in case of asynchronous interface. This handle can wait for the end of model run in subsequent `HB_BPU_waitModelDone` interface.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE:**
+
+  1. **About** `core-id`**. Values ranage of** `core-id` **is [0, max_core_num].** `max_core_num` **refers to total core number of BPU and it equals 2 on x2/j2/x3/j3 boards. When it is needed to run dual-core models, i.e., using dual-core to run data in one frame,** `max_core_num` **shall be specified as** `core_id`.
+  2. `core_id` **doesn't take effect in asynchronous mode. BPU cores are allocated automatically and internally depending on system load.**
+
+#### 2.3.6 HB_BPU_waitModelDone
+
+```c
+int HB_BPU_waitModelDone(BPU_TASK_HANDLE *task_handle);
+```
+
+**DESCRIPTIONS:**
+
+Waits for the end of model run and is applied to asynchronous scenario. Current thread will be blocked when invoking this function, until model run is over. If model run were complete when invoking this function, then function shall return directly, which means that model run results have been stored into `output_data`, and that results are readable.
+
+**INPUT:**
+
+1. `task_handle` denotes the handle of a single model run. This handle is returned by the `HB_BPU_runModel` interface and shall not be used for any other purposes. After this function returns in asynchronous scenarios, `task_handle` shall be freed by invoking `HB_BPU_releaseTask`.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.7 HB_BPU_releaseTask
+
+```c
+int HB_BPU_releaseTask(BPU_TASK_HANDLE *task_handle);
+```
+
+**DESCRIPTIONS:**
+
+Frees `task_handle` and is applied to asynchronous scenarios. It shall be invoked after `HB_BPU_waitModelDone`.
+
+**INPUT:**
+
+1. `task_handle` denotes the handle of a single model run. It is returned by the `HB_BPU_runModel` interface.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.8 HB_BPU_resize
+
+```c
+typedef enum hb_BPU_RESIZE_TYPE_E {
+  BPU_RESIZE_TYPE_BILINEAR;
+} BPU_RESIZE_TYPE_E;
+```
+
+```c
+typedef struct hb_BPU_RESIZE_CTRL_S {
+  BPU_RESIZE_TYPE_E resize_type;
+  BPU_DATA_TYPE_E output_type;
+  Int core_id;
+} BPU_RESIZE_CTRL_S;
+```
+
+```c
+int HB_BPU_resize(const BPU_TENSOR_S *src, BPU_TENSOR_S *dest, BPU_RESIZE_CTRL_S *ctrl_param);
+```
+
+**DESCRIPTIONS:**
+
+Resizes input tensor data, convert into the size specified by dest tensor and store into the tensor data in dest. dest space will NOT be allocated inside the function and shall be allocated from outside instead. Please refer to the [Image Data Type](##### 2.1.4.2 Image Data Type) section for specific formats.
+
+**INPUT:**
+
+1. `src` refers to descriptions of input data. When input data format use nv12 or nv12_separate, w must align with 16 and 2 must align with 2. As for other input formats, both w and h align with 2.
+2. `ctrl_param` denotes control parameters of resize.
+   - `resize_type` denotes resize type. Currently ONLY support bilinear interpolation.
+   - `output_type` denotes expected output data type. Please refer to the **OUTPUT TYPE DESCRIPTIONS:** below for more details.
+   - `core_id` indicates the BPU core on which resize will be running. Specifying as 0 or 1 indicates that resize will run on BPU core 0 or 1. Other values indicates that the BPU core will be dispatched by bpu_predict.
+
+**OUTPUT:**
+
+1. `dest` describes output data and resizes images in accordance with the specified height and width in it.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**OUTPUT TYPE DESCRIPTIONS:**
+
+1. When `output_type` in `ctrl_params` is specified as `BPU_TYPE_TENSOR_S8`, output data type is int8 and satisfy BPU requirement, so they can be passed into BPU directly. Hence, output tensor memory shall be allocated based on the aligned size using the `HB_BPU_getImageAlignedShape` interface.
+2. When `output_type` in `ctrl_params` is specified as `BPU_TYPE_TENSOR_U8`, output data are normal images whose format is the same with input data, and output tensor size satisfy the `aligned_shape` requirement specified in output tensor.
+
+Below showcases a table of supported conversion methods:
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-8m8h{background-color:#cbcefb;border-color:inherit;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 638px">
+<colgroup>
+<col style="width: 82.7988px">
+<col style="width: 83.7988px">
+<col style="width: 75.7988px">
+<col style="width: 75.7988px">
+<col style="width: 67.7988px">
+<col style="width: 85.7988px">
+<col style="width: 84.7988px">
+<col style="width: 81.7988px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-8m8h"></th>
+    <th class="tg-8m8h">Y-only</th>
+    <th class="tg-8m8h">YUV444</th>
+    <th class="tg-8m8h">BGR</th>
+    <th class="tg-8m8h">RGB</th>
+    <th class="tg-8m8h">BGRP</th>
+    <th class="tg-8m8h">RGBP</th>
+    <th class="tg-8m8h">YUV_NV12</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-8m8h">Y-only</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">YUV444</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">BGR</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">RGB</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">BGRP</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">RGBP</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+    <td class="tg-c3ow">x</td>
+  </tr>
+  <tr>
+    <td class="tg-8m8h">YUV_NV12</td>
+    <td class="tg-c3ow">x</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">○</td>
+    <td class="tg-c3ow">√</td>
+  </tr>
+</tbody>
+</table>
+
+**NOTE:**
+
+1. √ represents currently supported conversion method.
+2. ○ represents those conversion methods which can be supported by existing ASIC architecture but not yet realized.
+3. x represents unsupported in existing ASIC architecture.
+4. max./min. resize level is 256, i.e. [1/256,256]. Equation is (src-1)/(dst-1). size requirement HxW <= 4094x4080, i.e. maximum H of resized image is 4094 and maximum W is 4080.
+
+#### 2.3.9 HB_BPU_cropAndResize
+
+```c
+typedef struct hb_BPU_ROI_S {
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+} BPU_ROI_S;
+```
+
+```c
+int HB_BPU_cropAndResize(const BPU_TENSOR_S *src, 
+                        const BPU_ROI_S *input_roi,
+                        BPU_TENSOR_S *dest, 
+                        BPU_RESIZE_CTRL_S *ctrl_param);
+```
+
+**DESCRIPTIONS:**
+
+Input tensor data are cropped in accordance with roi, then perform resize and store into the tensor data in `dest`. `dest` space is allocated from outside the function, rather than from the inside. shape[0] of `dest` is specified as target height, shape[1] as target width.
+
+**INPUT:**
+
+1. `src` describes input data and resizes images according to the type in struct.
+2. `input_roi` denotes the roi where resize is required, in which the top left and bottom right coordinates are stored.
+3. `ctrl_param` denotes the control parameters used by resize:
+    - `resize_type` denotes interpolation type. Currently only supports bilinear interpolation.
+    - `output_type` denotes expected output data type. Please refer to the above mentioned **OUTPUT TYPE DESCRIPTIONS:** for more details.
+
+**OUTPUT:**
+
+1. `dest` describes output data.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE:**
+
+  **1. The difference between `HB_BPU_cropAndResize` and `HB_BPU_resize` is that the former resizes image roi while the latter resizes the entire image. Supported conversion methods and notes of `HB_BPU_cropAndResize` is the same as that of `HB_BPU_resize`.**
+  
+  **2. Size of the original image before crop shall satisfy HxW <= 4094x4080.**
+
+#### 2.3.10 HB_BPU_getImageAlignedShape
+
+```c
+int HB_BPU_getImageAlignedShape(const BPU_DATA_SHAPE_S *shape, 
+                               int *aligned_size);
+```
+
+**DESCRIPTIONS:**
+
+Calculates the aligned shape in accordance with input shape. This interface can work in conjunction with `HB_BPU_cropAndResize` and `HB_BPU_resize` in order to obtain the allocated memory size required by resize results.
+
+**INPUT:**
+
+1. `shape` describes input shape.
+
+**OUTPUT:**
+
+1. `aligned_size` denotes the memory size of input shape after alignment.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.11 HB_BPU_getResizeResultWithoutPadding
+
+```c
+int HB_BPU_getResizeResultWithoutPadding(const BPU_MEMORY_S *src,
+                                         const BPU_DATA_TYPE_E data_type,
+                                         const BPU_DATA_SHAPE_S *shape,
+									     void *dest, const int dest_size);
+```
+
+**DESCRIPTIONS:**
+
+When the `output_type`of `ctrl_param` in `HB_BPU_resize` or `HB_BPU_cropAndResize` is specified as `BPU_TYPE_TENSOR_S8` type, test returned dest data can be used for model run, but cannot be converted into images because of the padding process from inside. Therefore, in case you need to obtain resize results as images, invoke this interface to obtain the actual resize results. As dest space is allocated from outside the function rather than from the inside, dest space size equals actual image size. For example, as for RGB image: h \* w \* 3.
+
+**INPUT:**
+
+1. `src` denotes resize results.
+2. `data_type` denotes image type of resize.
+3. `shape` describes shape of resize results. It shall work in conjunction with `data_type`.
+4. `dest_size` denotes size of dest space and is used for checking if dest memory is sufficient so as to prevent buffer overflow.
+
+**OUTPUT:**
+
+1. `dest` denotes output data addresses and is allocated from outside. Its memory size equals HxWxC. In currently supported image types, `BPU_TYPE_IMG_Y` shall be 1, while all the rest shall be 3.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.12 HB_BPU_setModelPrior
+
+```c
+int HB_BPU_setModelPrior(BPU_MODEL_S *model);
+```
+
+**DESCRIPTIONS:**
+
+Used for specifying those high priority models that can preempt other models. When running 2 models on a single core simultaneously, usually the 2 models try to occupy the same core, and hence their execution time affect one another and it can lead to larger latency than that of when running one model. So if one of the models is specified as higher prioritized model, it will perform the preemption operation in order to decrease its own latency, hence whose latency shall be basically the same as that of when running it along. While for the other model of low priority, the execution time of the very frame that has been preempted will be prolonged.
+
+**INPUT:**
+
+1. `model` refers to struct object pointer of model and indicates that the model to run.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE:**
+
+  **1. The model with low priority must add a `max_time_per_fc` parameter(measured in us).**
+
+  **2. The environment variable `BPLAT_CORELIMIT=1` must be specified when using this interface.**
+
+  **3. The system will determine that model execution fails in case the execution time of the low priority model is larger than 10s.**
+
+#### 2.3.13 HB_BPU_getHWCIndex
+
+```c
+int HB_BPU_getHWCIndex(BPU_DATA_TYPE_E data_type,
+                       const BPU_LAYOUT_E *layout,
+                       int *h_idx,
+                       int *w_idx,
+                       int *c_idx);
+```
+
+**DESCRIPTIONS:**
+
+An auxiliary interface which provides traverse capacity and returns position indexes of height/width/channel in the (BPU_DATA_SHAPE_S.d)dimensional array according to `data_type` and `layout`. `layout` will become invalid parameter and `NULL` can be passed in when `data_type` equals `BPU_TYPE_IMG_XXX`. While when `data_type` equals `BPU_TYPE_TENSOR_XXX`, the `layout` parameter must be specified correctly. For example, if `data_type` equals `BPU_TYPE_IMG_YUV_NV12`, as the corresponding `layout` is NCHW, returned `h_idx=2`, `w_idx=3` and `c_idx=1`. Else if `data_type` equals `BPU_TYPE_TENSOR_S8`, as corresponding type is feature which has no layout information, the `layout` parameter must be specified correctly. According to model requirement, assume that the `layout` parameter is specified as `BPU_LAYOUT_NHWC`, `h_idx=1`, `w_idx=2` and `c_idx=3`.
+
+**INPUT:**
+
+1. `data_type` refers to data type of model input.
+2. `layout` refers to the `layout` of model input. **NOTE: when data_type is image(BPU_TYPE_IMG_XXX), layout will be invalid parameter and can be NULL. Otherwise when data_type is feature(BPU_TYPE_TENSOR_XXX), layout will be a compulsory parameter.**
+
+**OUTPUT:**
+
+1. `h_idx` refers to the position index of height.
+2. `w_idx` refers to the position index of width.
+3. `c_idx` refers to the position index of channel.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.14 HB_BPU_getHW
+
+```c
+int HB_BPU_getHW(BPU_DATA_TYPE_E data_type,
+                 const BPU_DATA_SHAPE_S *shape,
+                 int *height,
+                 int *width);
+```
+
+**DESCRIPTIONS:**
+
+Obtains the height and width of model input based on model shape.
+
+**INPUT:**
+
+1. `data_type` refers to the data type of model input. A compulsory parameter.
+2. `shape` corresponding dimensional struct. A compulsory parameter.
+
+**OUTPUT:**
+
+1. `height` denotes height in the dimensional array in `shape`.
+2. `width` denotes width in the dimensional array in `shape`.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.15 HB_BPU_getMemoryUsage
+
+```c
+int HB_BPU_getMemoryUsage(BPU_MODEL_S *model,
+                          size_t *bpu_peak_memory_usage,
+                          size_t *bpu_memory_occupation,
+                          size_t *cpu_peak_memory_usage,
+                          size_t *cpu_memory_occupation);
+```
+
+**DESCRIPTIONS:**
+
+An auxiliary interface that provides statistics of model loading memory capacity. After successfully invokes the `HB_BPU_loadModel` interface, passes in model struct pointer to invoke this interface, users can obtain the peak and resident memories loaded by the model. **NOTE: the global configuration BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE must be specified as TRUE when calculating memory using this interface, i.e. to invoke HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE,"TRUE") before loading model.**
+
+**INPUT:**
+
+1. `model` denotes the struct object pointer of the model.
+
+**OUTPUT:**
+
+1. `bpu_peak_memory_usage` denotes the peak bpu memory during model loading, measured in byte.
+2. `bpu_memory_occupation` denotes the resident bpu memory after model is loaded(won't be freed until the `HB_BPU_releaseModel` is invoked), measured in byte.
+3. `cpu_peak_memory_usage` denotes the peak cpu memory during model loading, measured in byte.
+4. `cpu_memory_occupation` denotes the resident cpu memory after model is loaded(won't be freed until the `HB_BPU_releaseModel` is invoked)，measured in byte.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.16 HB_BPU_loadModelFromFile
+
+```c
+int HB_BPU_loadModelFromFile(const char *model_file_name, BPU_MODEL_S *model);
+```
+
+**DESCRIPTIONS:**
+
+Loads a BPU model from model file to obtain its struct object. the `BPU_MODEL_S` struct is passed in from outside and this function fills model information into the struct.
+
+**INPUT:**
+
+1. `model_file_name` is the path name of model file.
+
+**OUTPUT:**
+
+1. `model` denotes the struct pointer which loading model information. As currently model is stored in one file, the returned handle represents the same model. It is not supported to packaging multiple models into one file.
+
+**RETURN:**
+
+1. Return values in int type. 0 denotes successful execution, other values denotes failures whose specific causes can be obtained via the string returns by invoking `HB_BPU_getErrorName(err)` using error code.
+
+#### 2.3.17 HB_BPU_getVersion
+
+```c
+const char *HB_BPU_getVersion();
+```
+
+**DESCRIPTIONS:**
+
+Acquires the version number of BPU SDK.
+
+**INPUT:**
+
+None.
+
+**OUTPUT:**
+
+None.
+
+**RETURN:**
+
+BPU SDK's version number in strings.
+
+#### 2.3.18 HB_BPU_runModelWithBbox
+
+```c
+typedef struct hb_BPU_BBOX {
+  float x1;       # refers to the top left x coordinate of box
+  float y1;       # refers to the top left y coordinate of box
+  float x2;       # refers to the bottom right x coordinate of box
+  float y2;       # refers to the bottom right y coordinate of box
+  float score;    # box score
+  int type;       # box type
+  bool resizable; # whether or not resize the box. Resize will be done by software if hardware cannot resize the box
+} BPU_BBOX;
+```
+
+```c
+int HB_BPU_runModelWithBbox(const BPU_MODEL_S *model,
+                            BPU_ADDR_INFO_S down_scales[],
+                            int down_scale_layers,
+                            BPU_BBOX bbox[],
+                            int bbox_num,
+                            const BPU_TENSOR_S output_data[],
+                            int output_num,
+                            const BPU_RUN_CTRL_S *run_ctrl,
+                            bool is_sync,
+                            int *resizable_cnt,
+                            BPU_TASK_HANDLE *task_handle);
+```
+
+**DESCRIPTIONS:**
+
+Runs model using input data. Wherein input data refer to the combination of multiple resized layers and multiple BBoxes(Bbox coordinates are based on the original image, i.e. `down_scales[0]`). For each BBox, approporiate resized layers are selected from within the API, and based on which, crop and resize will be performed in order to match model input shape. After that, resize results will serve as the model inputs to be performed.There are 2 execution methods, namely the synchronous and asynchronous execution methods. When the synchronous method is enabled, by invoking this interface, the current thread will be blocked until model run completes. Otherwise when the asynchronous method is enabled, invoking this interface will return immediately and `task_handle` shall be used to wait for the completion of model run.
+
+**INPUT:**
+
+1. `model` denotes the struct object pointer of the model to be run. Currently ONLY support the model whose `input` is `resizer`.
+2. `down_scales` denotes multiple resized image layers, note that images are downsized only. Currently the actual source of this parameter is the `down_scale` layer of pyramid data returned by the pyramid related interfaces in io. Details of `BPU_ADDR_INFO_S` struct please refer to the section `2.4.3 BPU_convertCameraInfo`.
+3. `down_scale_layers` denotes the valid resized layers in `down_scales` array.
+4. `bbox` denotes bbox array pointer.
+5. `bbox_num` denotes number of bbox.
+6. `output_data` denotes output data tensor.
+7. `output_num` denotes the number of output data and must be the same as number of model output. Please do not confuse the two parameters `output_num` and `output_data`. The former denotes model output number, while the latter denotes the contiguous memory of tensor multiplies n `bbox_num` of each model output. Let's explain by below example: Let the output of resizer model be A and B, if there are 20 detection boxes as input, then n `bbox_num`=20, `output_num`=2, `output_data[0]`=20 memories of A tensor, `output_data[1]`= 20 memories of B tensor.
+8. `run_ctrl` denotes the control information of the model run. E.g. `core_id`. Whether or not to use the `RoiResize` feature when the resizer hardware cannot support.
+9. `is_sync` denotes whether the model run uses synchronous mode. `true` denotes synchronous mode, `false` denotes asynchronous mode.
+
+**OUTPUT:**
+
+1. `resizable_cnt` denotes the resizable number of bbox. The caller can determine the actual number of output based on this output value.
+2. Returns `task_handle` if the asynchronous mode is enabled. This handle can wait for the completion of model run in the subsequent `HB_BPU_waitModelDone` interface.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE:**
+
+1. `core_id` ranges between [0, max_core_num], `max_core_num` denotes total core number of BPU and as for x2/j2/x3/j3, `max_core_num` equals 2. When running dual-core model is required, i.e. to run one frame using dual-core, `core_id` shall be specified as `max_core_num`.
+2. `core_id` won't take effect in asynchronous mode and BPU core will be dispatch automatically by the system according to load condition.
+
+#### 2.3.19 HB_BPU_createGroup
+
+```c
+int HB_BPU_createGroup();
+```
+
+**DESCRIPTIONS:**
+
+Creates a BPU group. A BPU group is such a resource assurance approach that affiliates multiple models into the same group in order to restrict the resource utilization of the group. BPU restricts the resource utilization of model within a certain range.
+
+**INPUT:**
+
+None.
+
+**OUTPUT:**
+
+None.
+
+**RETURN:**
+
+1. The BPU group id which has been created.
+
+#### 2.3.20 HB_BPU_setModelGroup
+
+```c
+int HB_BPU_setModelGroup(BPU_MODEL_S *model, int group_id);
+```
+
+**DESCRIPTIONS:**
+
+Affiliates models into group(s).
+
+**INPUT:**
+
+1. `model` denotes model struct.
+2. `group_id` denotes group id。
+
+**OUTPUT:**
+
+None.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.21 HB_BPU_setGroupProportion
+
+```c
+int HB_BPU_setGroupProportion(int group_id, int proportion);
+```
+
+**DESCRIPTIONS:**
+
+Restricts the BPU utilization of a certain group.
+
+**INPUT:**
+
+1. `group_id` denotes group id。
+2. `proportion` refers to BPU utilization proportion ranged between [0,100]. The utilization proportion is calculated using the ratio between the specified proportion and 100(proportion/100).
+
+**OUTPUT:**
+
+None.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE:**
+
+​This interface ONLY restricts the BPU utilization proportion not to exceed 100%, however, as for particular models, the ratio between BPU utilization and proportion could be nonlinear because BPU utilization is also restricted by other factors e.g.: CPU load, io load and whether or not there are CPU OPs etc.
+
+#### 2.3.22 HB_BPU_deleteGroup
+
+```c
+int HB_BPU_deleteGroup(int group_id);
+```
+
+**DESCRIPTIONS:**
+
+Deletes a certain group.
+
+**INPUT:**
+
+1. `group_id` denotes group id.
+
+**OUTPUT:**
+
+1. None.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.23 HB_BPU_parseDetThreshResult
+
+```c
+int HB_BPU_parseDetThreshResult(const BPU_MODEL_S *model,
+                                const BPU_TENSOR_S output_data[],
+                                int output_num,
+                                const char **class_names,
+                                int class_num,
+								BPU_BBOX **bbox,
+                                int *bbox_num);
+```
+
+**DESCRIPTIONS:**
+
+The post-process interface of special detection model which used for parsing Bbox.
+
+**INPUT:**
+
+1. `model` denotes model struct pointer.
+2. `output_data` denotes the output tensor array of model run result.
+3. `output_num` denotes output tensor number.
+4. `class_names` denotes the names of class array.
+5. `class_num` denotes the number of class array.
+
+**OUTPUT:**
+
+1. `bbox` denotes parsed bbox array.
+2. `bbox` denotes number of array.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.24 HB_BPU_parseChannelMaxResult
+
+```c
+int HB_BPU_parseChannelMaxResult(const BPU_MODEL_S *model,
+                                 const BPU_TENSOR_S output_data[],
+                                 int output_num,
+                                 int result_num,
+                                 int *result);
+```
+
+**DESCRIPTIONS:**
+
+The post-process interface of special detection model which used for parsing classification results.
+
+**INPUT:**
+
+1. `model` denotes model struct pointer.
+2. `output_data` denotes the output tensor array of model run result.
+3. `output_num` denotes the number of output tensor array.
+4. `result_num` denotes the number of parsing results and must be the same as `output_num`.
+
+**OUTPUT:**
+
+1. `result` denotes the parsed array.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.25 HB_BPU_parseDPPResult
+
+```c
+int HB_BPU_parseDPPResult(const BPU_MODEL_S *model,
+                          const BPU_TENSOR_S output_data[],
+                          int output_num,
+                          BPU_BBOX **bbox,
+                          int *bbox_num);
+```
+
+**DESCRIPTIONS:**
+
+The post-process interface of special detection model which used for parsing detection Bbox.
+
+**INPUT:**
+
+1. `model` denotes model struct pointer.
+2. `output_data` denotes output tensor array of model run result.
+3. `output_num` denotes number of output tensor array.
+
+**OUTPUT:**
+
+1. `bbox` denotes the parsed bbox array.
+2. `bbox_num` denotes the number of bbox array.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.26 HB_BPU_parseRPPResult
+
+```c
+typedef struct hb_BPU_BBOX_F32 {
+  float left;
+  float top;
+  float right;
+  float bottom;
+  float score;
+  float class_label;
+} BPU_BBOX_F32;
+typedef struct hb_BPU_BBOX_INT16 {
+  int16_t left;
+  int16_t top;
+  int16_t right;
+  int16_t bottom;
+  int8_t score;
+  uint8_t class_label;
+  int16_t padding[3];
+} BPU_BBOX_INT16;
+typedef struct hb_BPU_RPP_BBOX {
+  int bbox_num;
+  enum { bbox_type_int16, bbox_type_f32 } result_type;
+  BPU_BBOX_INT16 *bbox_ptr_int16;
+  BPU_BBOX_F32 *bbox_ptr_f32;
+} BPU_RPP_BBOX;
+```
+
+```c
+int HB_BPU_parseRPPResult(const BPU_MODEL_S *model,
+                          const BPU_TENSOR_S output_data[],
+                          int output_index,
+                          BPU_RPP_BBOX *rpp_bbox);
+```
+
+**DESCRIPTIONS:**
+
+The post-process interface of a certain output of special detection model which used for parsing detection Bbox.
+
+**INPUT:**
+
+1. `model` denotes model struct pointer.
+2. `output_data` denotes the output tensor arrary of model run result.
+3. `output_index` denotes the element indexes in output tensor array.
+
+**OUTPUT:**
+
+1. `rpp_bbox` denotes the parsed bbox.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.3.27 HB_BPU_loadModelPackage
+
+```c++
+int HB_BPU_loadModelPackage(const void *model_data,
+                            int model_size,
+                            BPU_MODEL_PACKAGE_S *model_pack_s);
+```
+
+**DESCRIPTIONS:**
+
+Load BPU model package to get the struct object which represents the model. `BPU_MODEL_PACKAGE_S` struct shall be passed in from outside and this function fills model information in the package into the struct.
+
+**INPUT:**
+
+1. `model_data` points to the memory address where model data are stored. The memory here can be allocated as ordinary memory, rather than BPU memory. `model_data` memory can be freed after successfully loading the model.
+2. `model_size` refers to the memory size of model data.
+
+**OUTPUT:**
+
+1. `model_pack_s`：denotes the struct pointer of the model package information being loaded.
+
+**RETURN:**
+
+1. The int type return values. 0 denotes successful execution while other values denote failures. Specific reasons of failures will be returned by error code in strings when invoking `HB_BPU_getErrorName(err)`.
+
+#### 2.3.28 HB_BPU_loadModelPackageFromFile
+
+```c++
+int HB_BPU_loadModelPackageFromFile(const char *file_path,
+                                    BPU_MODEL_PACKAGE_S *model_pack_s);
+```
+
+**DESCRIPTIONS:**
+
+Load BPU model package to get the struct object which represents the model. `BPU_MODEL_PACKAGE_S` struct shall be passed in from outside and this function fills model information in the package into the struct.
+
+**INPUT:**
+
+1. `file_path` donotes the file path of model package
+
+**OUTPUT:**
+
+1. `model_pack_s` denotes the struct pointer of the model package information being loaded.
+
+**RETURN:**
+
+1. The int type return values. 0 denotes successful execution while other values denote failures. Specific reasons of failures will be returned by error code in strings when invoking `HB_BPU_getErrorName(err)`.
+
+#### 2.3.29 HB_BPU_releaseModelPackage
+
+```c
+int HB_BPU_releaseModelPackage(BPU_MODEL_PACKAGE_S *model_package_s);
+```
+
+**DESCRIPTIONS:**
+
+Free loaded BPU model package. The `model_package_s` struct will be modified from inside this API.
+
+**INPUT:**
+
+1. `model_package_s` denotes the object pointer of model package struct.
+
+**RETURN:**
+
+1. The int type return values. 0 denotes successful execution while other values denote failures.
+
+### 2.4 IO Interface Descriptions
+
+Here the IO interfaces refers to the toolchain encapsulated interfaces which are designed to make it easier to utilize IO functionality. If you want to utilize more flexible IO functionalities, it is recommended to utilize those interfaces offered by the system software package.
+
+#### 2.4.1 BPU_createCameraHandle
+
+```c
+typedef void *BPUCameraHandle;
+
+int BPU_createCameraHandle(const char *vio_config_file_name,
+						   const char *camera_config_file_name,
+			               int cam_cfg_index,
+                           int port,
+                           BPUCameraHandle *handle);
+```
+
+**DESCRIPTIONS:**
+
+Creates a camera object and returns the handle which denotes the camera object. The handle is passed in from outside and assigned from within the function.
+
+**NOTE: it is NOT allowed to repeatedly create multiple camera objects for one camera.**
+
+**INPUT:**
+
+1. `vio_config_file_name` denotes vio configuration filename.
+2. `camera_config_file_name` denotes camera configuration filename.
+3. `cam_cfg_index` denotes the index of the config field corresponding to the `camera` class in camera configuration file.
+4. `port` denotes the port id of the config field corresponding to the `camera` class in camera configuration file.
+
+**OUTPUT:**
+
+1. `handle` denotes the created camera handle which used for subsequent camera image capturing.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE: both `cam_cfg_index` and `port` are parameters in camera configuration file. Usually the board can support different types of cameras, therefore we need to find the field of the corresponding camera. Mind that configuration file is in json, and the corresponding camera parameters can be found by the `cam_cfg_index` and `port_id`. Examples of configuration files can be found in our example. Typically both `cam_cfg_index` and `port` are specified as 0 ONLY in the single camera scenario.**
+
+
+#### 2.4.2 BPU_getCameraImageData
+
+```c
+int BPU_getCameraImageData(BPUCameraHandle *handle,BPUCameraBuffer *info);
+```
+
+**DESCRIPTIONS:**
+
+Obtains image data of current camera.
+
+**INPUT:**
+
+1. `handle` denotes the created camera handle.
+
+**OUTPUT:**
+
+1. `info` denotes to obtain existing camera images
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.4.3 BPU_convertCameraInfo
+
+```c
+typedef struct hb_BPU_ADDR_INFO_S {
+  uint16_t width;
+  uint16_t height;
+  uint16_t step;
+  uint64_t y_paddr;
+  uint64_t c_paddr;
+  uint64_t y_vaddr;
+  uint64_t c_vaddr;
+} BPU_ADDR_INFO_S;
+```
+
+**DESCRIPTIONS:**
+
+`BPU_ADDR_INFO_S` denotes the image descriptions of camera input. Camera image format is yuv nv12.
+
+  1. `width` denotes image width.
+  2. `height` denotes image height.
+  3. `step` denotes the step along the direction where image is heading.
+  4. `y_paddr` denotes the start physical address of y data
+  5. `c_paddr` denotes the start physical address of uv data.
+  6. `y_vaddr` denotes the start virtual address of y data.
+  7. `c_vaddr` denotes the start virtual address of uv data.
+
+**NOTE: physical addresses of y and uv CANNOT be accessed to from outside and can ONLY be passed into BPU for computation. If you wish to browse camera images, you can access to the read only virtual address.**
+
+```c
+typedef struct hb_BPU_CAMERA_IMAGE_INFO_S {
+  int frame_id;
+  int64_t timestamp;
+  int img_format;
+  BPU_ADDR_INFO_S src_img;
+  int cam_id;
+} BPU_CAMERA_IMAGE_INFO_S;
+```
+
+**DESCRIPTIONS:**
+
+`BPU_CAMERA_IMAGE_INFO_S` denotes the descriptions of camera input images.
+
+  1. `frame_id` denotes the frame number of current image.
+  2. `timestamp` denotes the current time stamp.
+  3. `img_format` denotes image format and ONLY supports yuv nv12.
+  4. `src_img` denotes image data descriptions.
+  5. `cam_id` denotes camera id.
+
+```c
+int BPU_convertCameraInfo(BPU_CAMERA_IMAGE_INFO_S *cam_info,BPUCameraBuffer buffer);
+```
+
+**DESCRIPTIONS:**
+
+`BPUCameraBuffer` contains a large volume of output information. To make it easy to use, invoke this interface to convert camera buffer into the `BPU_CAMERA_IMAGE_INFO_S` struct, in order to expose some simple information including: frame number, time stamp and image related data.
+
+ **INPUT:**
+
+1. `buffer` denotes the captured current image information.
+
+**OUTPUT:**
+
+1. `cam_info` denotes the struct of conversion results.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE: the BPU_CAMERA_IMAGE_INFO_S struct and the BPUCameraBuffer share the same piece of information memory. Please do NOT free the BPUCameraBuffer when using the BPU_CAMERA_IMAGE_INFO_S.**
+
+#### 2.4.4 BPU_releaseCameraBuffer
+
+```c
+int BPU_releaseCameraBuffer(BPUCameraHandle handle,BPUCameraBuffer buffer);
+```
+
+**DESCRIPTIONS:**
+
+Frees camera image data.
+
+**INPUT:**
+
+1. `handle` denotes camera handle.
+2. `buffer` denotes current image information.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.4.5 BPU_releaseCameraHandle
+
+```c
+int BPU_releaseCameraHandle(BPUCameraHandle handle);
+```
+
+**DESCRIPTIONS:**
+
+Frees camera handle.
+
+**INPUT:**
+
+1. `handle` denotes the created camera handle.
+
+**RETURN:**
+
+1. Error code in int type.
+
+#### 2.4.6 BPU_getRelatedCameraBufferFromPyramidBuffer
+
+```c
+int BPU_getRelatedCameraBufferFromPyramidBuffer(BPUPyramidBuffer pyr_buffer,BPUCameraBuffer *info);
+```
+
+**DESCRIPTIONS:**
+
+Constructs associated `BPUCameraBuffer` struct from `BPUPyramidBuffer`.
+
+**INPUT:**
+
+1. `pyr_buffer` denotes the `BPUPyramidBuffer` type input parameter and can be obtained by pyramid related interfaces such as the `BPU_getPyramidResult`.
+
+**OUTPUT:**
+
+1. `info` denotes the `pyr_buffer` based `BPUCameraBuffer` pointer.
+
+**RETURN:**
+
+1. Error code in int type.
+
+**NOTE: remember that after this interface is invoked, the `BPUPyramidBuffer pyr_buffer` shall not be freed in advance if the `BPUCameraBuffe *info` were used subsequently because inside info and `pyr_buffer`, pyramid related data resources are shared. Consequently, the `BPUPyramidBuffer` must be freed invoking corresponding interface after `BPUCameraBuffe` is used. It is unnecessary to free the `BPUCameraBuffe` as it is freed when freeing the `BPUPyramidBuffer`.**
+
+#### 2.4.7 BPU_getCameraInfoFromCameraBuffe
+
+```c
+int BPU_getCameraInfoFromCameraBuffer(BPUCameraBuffer buffer,
+                                      int level,
+                                      int height,
+                                      int width,
+                                      BPU_CAMERA_IMAGE_INFO_S *cam_info,
+                                      int *matched_level);
+```
+
+**DESCRIPTIONS:**
+
+Obtains corresponding pyramid layer information `BPU_CAMERA_IMAGE_INFO_S` based on the search condition from `BPUCameraBuffer`. The search conditions include `level` and `(height, width)`.
+
+**INPUT:**
+
+1. `buffer` denotes `BPUCameraBuffer` type input parameter, it represents the camera pyramid data that can be obtained from the `BPU_getCameraImageData` interface.
+2. `level` denotes the specific layer to serve as search condition. When level >=0, the interface will take `level` as search condition and ignore the `(height, weight)` parameter.
+3. `height` denotes height.
+4. `width` denotes width. As search condition, `(height, width)` can obtain pyramid layer information. **NOTE: as the interface will preempt level as search condition, level must be minus when using `(height, width)` as search condition.
+
+**OUTPUT:**
+
+1. `cam_info` denotes the `BPU_CAMERA_IMAGE_INFO_S` struct pointer obtained according to search conditions.
+2. `matched_level` obtains matched `level` based on search conditions.
+
+**RETURN:**
+
+1. Error code in int type.

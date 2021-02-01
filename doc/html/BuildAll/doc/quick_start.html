@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>快速上手 &mdash; AI Express用户手册 2.8.0 文档</title>
+  <title>快速上手 &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -245,8 +245,8 @@ set<span class="o">(</span>CMAKE_CXX_COMPILER /opt/<span class="si">${</span><sp
 <li><p>使用Docker环境</p></li>
 </ul>
 <p>获取镜像及启动容器</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull hub.hobot.cc/aitools/tf-toolkit:v3.10.9
-docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.9
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull hub.hobot.cc/aitools/tf-toolkit:v3.10.10
+docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.10
 </pre></div>
 </div>
 <p><strong>b. Windows开发机环境准备</strong></p>
@@ -434,7 +434,7 @@ sh run_ut.sh
 <h2>4.独立编译生成xstream和xproto库<a class="headerlink" href="#xstreamxproto" title="永久链接至标题">¶</a></h2>
 <p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>CentOS平台</p></li>
+<li><p>CentOS平台(CentOS7, gcc4.8.5)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
@@ -443,7 +443,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Ubuntu平台</p></li>
+<li><p>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -452,7 +452,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Linaro-aarch64平台</p></li>
+<li><p>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build

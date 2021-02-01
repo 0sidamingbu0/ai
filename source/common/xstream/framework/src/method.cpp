@@ -27,8 +27,4 @@ std::string Method::GetVersion() const { return "Method::GetVersion()"; }
 
 // Get method info
 MethodInfo Method::GetMethodInfo() { return MethodInfo(); }
-
-// Change profiler status
-void Method::OnProfilerChanged(bool on) {}
-
 }  // namespace xstream

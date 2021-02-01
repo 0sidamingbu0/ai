@@ -97,7 +97,12 @@ void PlateVoteMethod::RunSingleFrame(
         std::static_pointer_cast<BaseDataVector>(frame_input[2])->datas_;
   }
 
-  HOBOT_CHECK(boxes.size() == vote_infos.size());
+  if (vote_infos.size() == 0) {
+    LOGW << "no vote info to process";
+    return;
+  }
+  HOBOT_CHECK(boxes.size() == vote_infos.size()) << "boxes.size(): "
+      << boxes.size() << ", vote_infos.size(): " << vote_infos.size();
   LOGI << "box num: " << boxes.size();
   for (size_t i = 0; i < boxes.size(); ++i) {
     const auto &box =

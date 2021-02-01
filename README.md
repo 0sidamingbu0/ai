@@ -50,8 +50,8 @@ set(CMAKE_CXX_COMPILER /opt/${工具链目录名}/bin/aarch64-linux-gnu-g++)
 获取镜像及启动容器
 
 ```bash
-docker pull hub.hobot.cc/aitools/tf-toolkit:v3.10.9
-docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.9
+docker pull hub.hobot.cc/aitools/tf-toolkit:v3.10.10
+docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.10
 ```
 
 **b. Windows开发机环境准备**
@@ -188,7 +188,7 @@ sh run_ut.sh
 
 AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。
 
-* CentOS平台
+* CentOS平台(CentOS7, gcc4.8.5)
 
 ```bash
 cd AI-EXPRESS/source/common/xstream/framework/
@@ -197,7 +197,7 @@ cmake .. -DX86_ARCH=ON -DX86_CENTOS=ON
 make -j && make install
 ```
 
-* Ubuntu平台
+* Ubuntu平台(Ubuntu18.04, gcc7.5.0)
 
 ```bash
 cd AI-EXPRESS/source/common/xstream/framework/
@@ -206,7 +206,7 @@ cmake .. -DX86_ARCH=ON
 make -j && make install
 ```
 
-* Linaro-aarch64平台
+* Linaro-aarch64平台(gcc-linaro-6.5-2018.12)
 
 ```bash
 cd AI-EXPRESS/source/common/xstream/framework/

@@ -14,40 +14,44 @@ if (${X86_ARCH})
   if (${X86_CENTOS})
     message("tool chain:${CMAKE_CXX_COMPILER}")
     add_definitions(-std=c++11)
+    set(CENTOS_THIRD_PARTY_DIR ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/centos/)
     include_directories(
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/centos/jsoncpp/include/
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/centos/hobotlog/include/
+      ${CENTOS_THIRD_PARTY_DIR}jsoncpp/include/
+      ${CENTOS_THIRD_PARTY_DIR}hobotlog/include/
       ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/vision_type/include/
     )
     link_directories(
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/centos/jsoncpp/lib
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/centos/hobotlog/lib
+      ${CENTOS_THIRD_PARTY_DIR}jsoncpp/lib/
+      ${CENTOS_THIRD_PARTY_DIR}hobotlog/lib/
     )
   else ()
     message("tool chain:${CMAKE_CXX_COMPILER}")
     add_definitions(-std=c++11)
+    set(UBUNTU_THIRD_PARTY_DIR ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/gcc_${CMAKE_CXX_COMPILER_VERSION}/)
     include_directories(
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/jsoncpp/include/
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/hobotlog/include/
+      ${UBUNTU_THIRD_PARTY_DIR}jsoncpp/include/
+      ${UBUNTU_THIRD_PARTY_DIR}hobotlog/include/
     )
     link_directories(
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/x86/ubuntu/hobotlog/lib
+      ${UBUNTU_THIRD_PARTY_DIR}jsoncpp/lib/
+      ${UBUNTU_THIRD_PARTY_DIR}hobotlog/lib/
     )
   endif ()
 else ()
   set(CMAKE_C_COMPILER /opt/gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc)
   set(CMAKE_CXX_COMPILER /opt/gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-g++)
   message("tool chain:${CMAKE_CXX_COMPILER}")
+  set(AARCH64_THIRD_PARTY_DIR ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/)
   include_directories(
-    ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/jsoncpp/include/
-    ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/hobotlog/include/
-    ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/opencv/include/
-    ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/gtest/include/
+    ${AARCH64_THIRD_PARTY_DIR}jsoncpp/include/
+    ${AARCH64_THIRD_PARTY_DIR}hobotlog/include/
+    ${AARCH64_THIRD_PARTY_DIR}opencv/include/
+    ${AARCH64_THIRD_PARTY_DIR}gtest/include/
   )
   link_directories(
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/hobotlog/lib
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/jsoncpp/lib
-      ${XSTREAM_TUTORIALS_CURRENT_DIR}/tutorials/third_party/aarch64/gtest/lib
+      ${AARCH64_THIRD_PARTY_DIR}jsoncpp/lib/
+      ${AARCH64_THIRD_PARTY_DIR}hobotlog/lib/
+      ${AARCH64_THIRD_PARTY_DIR}gtest/lib/
     )
 endif ()
 

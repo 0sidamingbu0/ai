@@ -48,7 +48,7 @@ struct CustomSmartMessage : SmartMessage {
   std::string Serialize() override;
   std::string Serialize(int ori_w, int ori_h, int dst_w, int dst_h) override;
   void *ConvertData() override;
- private:
+ protected:
   xstream::OutputDataPtr smart_result_;
 };
 
@@ -65,6 +65,25 @@ class SmartPlugin : public XPluginAsync {
   int Stop() override;
 
  private:
+  // 获取单路图像，workflow配置的图像输入节点名字，根据workflow_idx区分
+  // workflow_idx从0开始计数0,1,2...
+  // SmartPlugin派生类可以根据需要修改输入节点的名字
+  // 但是必须保证该接口返回的图像输入节点名字和xstream json配置中一致
+  virtual std::string GetWorkflowInputImageName(uint32_t workflow_idx) {
+    std::string input_name = "image";  // default
+    if (workflow_idx >= 0) {
+      input_name = "image";
+    }
+    return input_name;
+  }
+  // 创建xproto框架下感知结果的消息对象
+  // 感知结果消息对象必须是CustomSmartMessage或者集成自CustomSmartMessage
+  // 输入参数xstream_out为xstream workflow执行完成，xstream回调返回的数据对象
+  virtual std::shared_ptr<CustomSmartMessage> CreateSmartMessage(
+      xstream::OutputDataPtr xstream_out) {
+    return std::make_shared<CustomSmartMessage>(xstream_out);
+  }
+
   int Feed(XProtoMessagePtr msg);
   int FeedIpm(XProtoMessagePtr msg);
   int FeedMulti(XProtoMessagePtr msg);

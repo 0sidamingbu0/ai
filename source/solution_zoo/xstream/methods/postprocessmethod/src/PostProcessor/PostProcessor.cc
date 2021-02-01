@@ -32,7 +32,7 @@ int PostProcessor::Init(const std::string &cfg) {
     jsonReader->parse(
         cfg.c_str(), cfg.c_str() + cfg.length(), &config, &errs);
   }
-  config_.reset(new Config(config));
+  config_.reset(new postprocessmethod::Config(config));
   return 0;
 }
 

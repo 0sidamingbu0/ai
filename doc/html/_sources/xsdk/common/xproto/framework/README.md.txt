@@ -167,11 +167,6 @@ class XPlugin : public std::enable_shared_from_this<XPlugin> {
   }
   // 处理register的msg类型，如有需要，push自己的msg到总线
   virtual void OnMsg(XProtoMessagePtr msg) = 0;
-  // 用于流量管理
-  virtual int GetPluginMsgCount() = 0;
-  virtual int GetPluginMsgLimit() = 0;
-  virtual void SetPluginMsgLimit(int msg_limit_count) = 0;
-
   virtual std::string desc() const {
     return "XPlugin";
   }
@@ -193,11 +188,17 @@ class XPluginAsync : public XPlugin {
   // 注册监听消息类型到总线+plugin的初始化
   int Init() override;
   int DeInit() override;
+  // 获取plugin当前正在排队处理消息的数量
+  virtual int GetPluginMsgCount();
+  // plugin处理消息数量限制
+  virtual int GetPluginMsgLimit();
+  virtual void SetPluginMsgLimit(int msg_limit_count);
+  // plugin处理msg时间预警
+  virtual int GetMsgMonitorTime();
+  virtual void SetMsgMonitorTime(int msg_monitor_time);
+
   // 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制
   void OnMsg(XProtoMessagePtr msg);
-  int GetPluginMsgCount();
-  int GetPluginMsgLimit();
-  void SetPluginMsgLimit(int msg_limit_count);
   // 启动Plugin
   virtual int Start() {
     return 0;

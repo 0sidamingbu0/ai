@@ -22,7 +22,6 @@
 #include "./plat_cnn.h"
 #include "./result.h"
 #include "./config.h"
-#include "hobot_vision/bpu_model_manager.hpp"
 
 namespace faster_rcnn_method {
 

@@ -59,8 +59,8 @@ int WebsocketPlugin::Init() {
     return 0;
   }
 
-  RegisterMsg(TYPE_SMART_MESSAGE, std::bind(&WebsocketPlugin::FeedSmart, this,
-                                            std::placeholders::_1));
+  RegisterMsg(GetSmartMessageType(), std::bind(&WebsocketPlugin::FeedSmart,
+                                               this, std::placeholders::_1));
   RegisterMsg(TYPE_IMAGE_MESSAGE, std::bind(&WebsocketPlugin::FeedVideo, this,
                                             std::placeholders::_1));
   jpg_encode_thread_.CreatThread(1);
@@ -105,7 +105,7 @@ int WebsocketPlugin::Start() {
       LOGF << "websocket plugin Init uWS server failed";
       return -1;
     }
-    video_encode_chn_[ch_id] = 0;  //  init default chn
+    video_encode_chn_[ch_id] = 1;  //  init default chn
   }
 
   /* 1. media codec init */
@@ -341,12 +341,12 @@ void WebsocketPlugin::EncodeJpg(XProtoMessagePtr msg, uint32_t image_idx) {
   VioMessage *vio_msg = frame.get();
   auto timestamp = vio_msg->image_[image_idx]->time_stamp;
   int channel_id = vio_msg->image_[image_idx]->channel_id;
-  int encode_chn = 0;  //  default 0
+  int encode_chn = 1;  //  default 1
   if (video_encode_chn_.find(channel_id) != video_encode_chn_.end()) {
     encode_chn = video_encode_chn_[channel_id];
   }
   LOGI << "[websocket plugin] got one video, ch_id:" << channel_id
-       << ", encode_chn = " << encode_chn;
+       << ", encode_chn = " << encode_chn << ", time_stamp = " << timestamp;
   // get pyramid size
   auto pym_image = vio_msg->image_[image_idx];
   origin_image_width_ = pym_image->down_scale[0].width;

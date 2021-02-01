@@ -6,8 +6,7 @@
       "image",
       "face_bbox_list",
       "snap_list",
-      "face_feature",
-      "lmk_106pts"
+      "face_feature"
     ],
     "workflow": [
       {
@@ -36,20 +35,6 @@
           "rgb_face_disappeared_track_id_list"
         ],
         "method_config_file": "iou_method_param.json"
-      },
-      {
-        "method_type": "CNNMethod",
-        "unique_name": "lmk_106pts",
-        "timeout_duration": 2000,
-        "thread_count": 2,
-        "inputs": [
-          "face_bbox_list",
-          "image"
-        ],
-        "outputs": [
-          "lmk_106pts"
-        ],
-        "method_config_file": "lmk_106pts.json"
       },
       {
         "method_type": "CNNMethod",

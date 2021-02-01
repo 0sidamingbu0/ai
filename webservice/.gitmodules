@@ -1,0 +1,3 @@
+[submodule "html"]
+	path = html
+	url = git@gitlab.hobot.cc:ptd/cp/fe/open-explorer-web.git

@@ -384,6 +384,28 @@ sensor_cfg_func() {
     echo soc:usb-id > /sys/bus/platform/drivers/extcon-usb-gpio/unbind
     service adbd stop
     /etc/init.d/usb-gadget.sh start uvc-hid
+  elif [ $sensor == "sc8238" ]; then
+    echo "sensor is sc8238, default resolution 8M, 1080P X3 JPEG Codec..."
+    visual_cfg_func 4 1920 1080 5 4 0
+    solution_cfg_func 8
+    echo start > /sys/devices/virtual/graphics/iar_cdev/iar_test_attr
+    echo device > /sys/devices/platform/soc/b2000000.usb/role
+    echo soc:usb-id > /sys/bus/platform/drivers/extcon-usb-gpio/unbind
+    service adbd stop
+    /etc/init.d/usb-gadget.sh start uvc-hid
+    echo 0 > /proc/sys/kernel/printk
+    echo 0xc0120000 > /sys/bus/platform/drivers/ddr_monitor/axibus_ctrl/all
+    echo 0x03120000 > /sys/bus/platform/drivers/ddr_monitor/read_qos_ctrl/all
+    echo 0x03120000 > /sys/bus/platform/drivers/ddr_monitor/write_qos_ctrl/all
+    if [ $platform == "x3dev" ]; then
+      echo ""
+    elif [ $platform == "x3sdb" ]; then
+      # reset sc8238 mipi cam
+      echo 1 > /sys/class/vps/mipi_host1/param/snrclk_en
+      echo 24000000 > /sys/class/vps/mipi_host1/param/snrclk_freq
+      echo 1 > /sys/class/vps/mipi_host0/param/snrclk_en
+      echo 24000000 > /sys/class/vps/mipi_host0/param/snrclk_freq
+    fi
   else
     echo "error! sensor" $sensor "is not supported"
   fi
@@ -452,6 +474,7 @@ choose_x3_single_cam_func() {
   echo -e '\t5. single camera: s5kgm1sp_2160p, default 2160P'
   echo -e '\t6. single camera: usb_cam, default 1080P'
   echo -e '\t7. single camera: f37_1080p, default 1080P'
+  echo -e '\t8. single camera: sc8238, default 2160P'
   echo -e 'Which would you like? '
   set_data_source_func ${vio_cfg_file} ${vio_mode} ${data_source_num}
   if [ x"$run_mode" == x"ut" ];then
@@ -501,6 +524,12 @@ choose_x3_single_cam_func() {
       ;;
     7)  echo -e "\033[33m You choose 7:f37_1080p \033[0m"
       sensor=f37_1080p
+      set_cam_pipe_file_func $vio_mode $sensor
+      sensor_setting_func $platform $sensor ${vio_pipe_file}
+      sensor_cfg_func $platform $sensor
+      ;;
+    8)  echo -e "\033[33m You choose 8:sc8238 \033[0m"
+      sensor=sc8238
       set_cam_pipe_file_func $vio_mode $sensor
       sensor_setting_func $platform $sensor ${vio_pipe_file}
       sensor_cfg_func $platform $sensor
@@ -964,7 +993,10 @@ choose_platform_func() {
       ;;
     3)  echo -e "\033[33m You choose 3:x3sdb \033[0m"
       platform="x3sdb"
-      echo  1000000000 > /sys/class/devfreq/devfreq1/userspace/set_freq
+      echo userspace > /sys/devices/system/bpu/bpu0/devfreq/devfreq1/governor
+      echo userspace > /sys/devices/system/bpu/bpu1/devfreq/devfreq2/governor
+      echo 1000000000 >  /sys/devices/system/bpu/bpu0/devfreq/devfreq1/userspace/set_freq
+      echo 1000000000 >  /sys/devices/system/bpu/bpu1/devfreq/devfreq2/userspace/set_freq
       echo 105000 >/sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
       echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
       # use dynamic ion alloc memory
@@ -975,7 +1007,10 @@ choose_platform_func() {
       ;;
     4)  echo -e "\033[33m You choose 4:x3dev \033[0m"
       platform="x3dev"
-      echo  1000000000 > /sys/class/devfreq/devfreq1/userspace/set_freq
+      echo userspace > /sys/devices/system/bpu/bpu0/devfreq/devfreq1/governor
+      echo userspace > /sys/devices/system/bpu/bpu1/devfreq/devfreq2/governor
+      echo 1000000000 >  /sys/devices/system/bpu/bpu0/devfreq/devfreq1/userspace/set_freq
+      echo 1000000000 >  /sys/devices/system/bpu/bpu1/devfreq/devfreq2/userspace/set_freq
       echo 105000 >/sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
       echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
       # use dynamic ion alloc memory
@@ -1047,6 +1082,7 @@ choose_solution_func() {
   echo -e '\t15. multi_input_hapi_ipm'
   echo -e '\t16. matting'
   echo -e '\t17. yolov3_mobilenetv3_example'
+  echo -e '\t18. matting_trimapfree'
   # echo -e '\t30. vehicle'
   # echo -e '\t31. vehicle_v2'
   # echo -e '\t32. gtest_vision_type'
@@ -1136,19 +1172,12 @@ choose_solution_func() {
       fi
       ;;
     9)  echo -e "\033[33m You choose 9:face_body_multisouce \033[0m"
-      choose_platform_func "pass_viotype_ck"
-      vio_cfg_file=${vio_cfg_name}.$platform.fb
-      if [ $platform == "x3sdb" ];then
-        vio_cfg_file=${vio_cfg_name}.x3dev.fb
-      fi
-      echo "vio_cfg_file is ${vio_cfg_file}"
-      if [ $platform == "x3dev" -o $platform == "x3sdb" ];then
-        sed -i 's#\("data_source": \).*#\1"cached_image_list",#g' ${vio_cfg_file}
-      fi
+      choose_platform_func
+      visual_cfg_func 0 1280 720 -1 -1 -1
       if [ x"$run_mode" == x"ut" ];then
-        ./face_body_multisource/face_body_multisource ${vio_cfg_file} ./face_body_multisource/configs/face_body_solution.json -${log_level}
+        ./face_body_multisource/face_body_multisource ${vio_cfg_file} ./face_body_multisource/configs/face_body_solution.json ./configs/visualplugin_multisource.json -${log_level}
       else
-        ./face_body_multisource/face_body_multisource ${vio_cfg_file} ./face_body_multisource/configs/face_body_solution.json -${log_level} normal
+        ./face_body_multisource/face_body_multisource ${vio_cfg_file} ./face_body_multisource/configs/face_body_solution.json ./configs/visualplugin_multisource.json -${log_level} normal
       fi
       ;;
     10)  echo -e "\033[33m You choose 10:apa_vapi \033[0m"
@@ -1164,9 +1193,9 @@ choose_solution_func() {
       choose_platform_func
       visual_cfg_func 0 1280 720 -1 -1 -1
       if [ x"$run_mode" == x"ut" ];then
-        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_config.json ./configs/visualplugin_multisource.json -${log_level}
+        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_config.json ./configs/visualplugin_multisource.json ./configs/common_gdc_plugin.json -${log_level}
       else
-        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_config.json ./configs/visualplugin_multisource.json -${log_level} normal
+        ./multisourceinput/multisourceinput $vio_cfg_file ./apa/configs/apa_config.json ./configs/visualplugin_multisource.json ./configs/common_gdc_plugin.json -${log_level} normal
       fi
       ;;
     12)  echo -e "\033[33m You choose 12:apa_test \033[0m"
@@ -1206,6 +1235,15 @@ choose_solution_func() {
       echo "vio_cnfig_file: $vio_cfg_file"
       ./yolov3_solution/yolov3_solution $vio_cfg_file ./yolov3_solution/configs/solution_yolov3.json ./configs/visualplugin_body.json -${log_level} normal
       ;;
+    18)  echo -e "\033[33m You choose 18:matting_trimapfree \033[0m"
+      choose_platform_func
+      echo "vio_cnfig_file: $vio_cfg_file"
+      if [ x"$run_mode" == x"ut" ];then
+        ./body_solution/body_solution $vio_cfg_file ./body_solution/configs/matting_trimapfree_solution_multitask_960x544.json ./configs/visualplugin_body.json -${log_level}
+      else
+        ./body_solution/body_solution $vio_cfg_file ./body_solution/configs/matting_trimapfree_solution_multitask_960x544.json ./configs/visualplugin_body.json -${log_level} normal
+      fi
+      ;;
     # 30)  echo -e "\033[33m You choose 30:vehicle \033[0m"
     #   if [ x"$run_mode" == x"ut" ];then
     #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution.json ./configs/visualplugin_vehicle.json -${log_level}
@@ -1214,6 +1252,7 @@ choose_solution_func() {
     #   fi
     #   ;;
     # 31)  echo -e "\033[33m You choose 31:vehicle_v2 \033[0m"
+    #   choose_platform_func
     #   if [ x"$run_mode" == x"ut" ];then
     #     ./vehicle_solution/vehicle_solution $vio_cfg_file ./vehicle_solution/configs/vehicle_solution_v2x.json ./configs/visualplugin_vehicle.json -${log_level}
     #   else

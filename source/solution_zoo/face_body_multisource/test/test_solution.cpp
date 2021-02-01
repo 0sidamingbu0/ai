@@ -10,7 +10,7 @@
  */
 #include "hobotlog/hobotlog.hpp"
 #include "horizon/vision/util.h"
-#include "smartplugin/smartplugin.h"
+#include "smartplugin/smartplugin_multisource.h"
 #include "gtest/gtest.h"
 #include <fstream>
 #include <string>

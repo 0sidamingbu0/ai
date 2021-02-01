@@ -16,7 +16,6 @@
 #include <string>
 #include "DnnAsyncData.h"
 #include "DnnPostProcessMethod/DnnPostProcessMethod.h"
-#include "bpu_predict/bpu_predict_extension.h"
 
 namespace xstream {
 

@@ -39,7 +39,6 @@ class PostProcessMethod : public Method {
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;
   virtual std::string GetVersion() const;
-  virtual void OnProfilerChanged(bool on) {}
 
  protected:
   Json::Value config_;

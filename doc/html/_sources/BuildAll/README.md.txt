@@ -271,6 +271,10 @@ bash BuildAll/generate_coverage_report.sh
   * 安装Sphinx插件sphinx-markdown-tables用于转化markdown中的表格`sudo pip install sphinx-markdown-tables`
   * 安装Sphinx插件sphinx-rtd-theme用于使用sphinx-rtd-theme样式`sudo pip install sphinx-rtd-theme`
 
+**一键打包**
+一键生成aiot版本、文档、github版本包:
+`sudo bash BuildAll/release_all.sh`
+
 ## 编译
 * 在生成的发布包中，可以直接运行`sudo bash ./build.sh`，完成整个开发包的编译。
 * 如果您开发了自己的method, 或者其他solution方案，请在代码所在路径的CMakeLists.txt中增加对应的编译命令。

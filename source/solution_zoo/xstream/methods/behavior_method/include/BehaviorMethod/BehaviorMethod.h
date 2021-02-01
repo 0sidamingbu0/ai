@@ -38,7 +38,6 @@ class BehaviorMethod : public Method {
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;
   virtual std::string GetVersion() const;
-  virtual void OnProfilerChanged(bool on) {}
 
  private:
   Json::Value config_;

@@ -18,6 +18,7 @@
 #include "websocketplugin/convert.h"
 #include "xproto/message/pluginflow/msg_registry.h"
 #include "xproto_msgtype/protobuf/x3.pb.h"
+#include "smartplugin/smartplugin.h"
 #include "xproto_msgtype/smartplugin_data.h"
 #include "xproto_msgtype/vioplugin_data.h"
 #include "utils/time_helper.h"
@@ -30,6 +31,7 @@ namespace xproto {
 namespace websocketplugin {
 using horizon::vision::xproto::XPluginErrorCode;
 using horizon::vision::xproto::basic_msgtype::SmartMessage;
+using horizon::vision::xproto::smartplugin::CustomSmartMessage;
 using horizon::vision::xproto::basic_msgtype::VioMessage;
 using horizon::vision::xproto::websocketplugin::AttributeConvert;
 XPLUGIN_REGISTER_MSG_TYPE(XPLUGIN_UWS_MESSAGE)
@@ -275,6 +277,13 @@ int WebsocketPlugin::SendSmartMessage(SmartMessagePtr smart_msg,
   if (fm.mutable_img_()->width_() == 0) {
     // drop
     return XPluginErrorCode::ERROR_CODE_OK;
+  }
+  // 默认外扩系数0.2
+  auto msg = dynamic_cast<CustomSmartMessage *>(smart_msg.get());
+  if (msg != nullptr) {
+    msg->SetExpansionRatio(
+        config_->json_["matting_trimapfree_expansion_ratio"].isNumeric() ?
+        config_->json_["matting_trimapfree_expansion_ratio"].asFloat() : 0.2);
   }
   Convertor::PackSmartMsg(protocol, smart_msg.get(), config_->smart_type_,
                           origin_image_width_, origin_image_height_,

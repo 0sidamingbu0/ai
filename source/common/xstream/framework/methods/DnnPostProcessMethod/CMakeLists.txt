@@ -20,6 +20,8 @@ set(MY_OUTPUT_ROOT ${OUTPUT_ROOT}/${PROJECT_NAME}/)
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/DnnPostProcessMethod/DnnPostProcessMethod.h
         DESTINATION ${MY_OUTPUT_ROOT}/include/DnnPostProcessMethod)
+install(FILES ${PROJECT_SOURCE_DIR}/include/Config.h
+        DESTINATION ${MY_OUTPUT_ROOT}/include)
 
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${MY_OUTPUT_ROOT}/lib)

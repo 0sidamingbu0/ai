@@ -24,6 +24,7 @@
 #include "multisourcesmartplugin/smartplugin.h"
 #include "multisourcewebsocketplugin/websocketplugin.h"
 #include "vioplugin/vioplugin.h"
+#include "commongdcplugin/commongdcplugin.h"
 
 using horizon::vision::xproto::XPluginAsync;
 using horizon::vision::xproto::XProtoMessage;
@@ -33,6 +34,7 @@ using std::chrono::seconds;
 using horizon::vision::xproto::multisourcesmartplugin::SmartPlugin;
 using horizon::vision::xproto::vioplugin::VioPlugin;
 using horizon::vision::xproto::multisourcewebsocketplugin::WebsocketPlugin;
+using horizon::vision::xproto::commongdcplugin::CommonGdcPlugin;
 
 static bool exit_ = false;
 
@@ -72,7 +74,9 @@ int main(int argc, char **argv) {
   std::string vio_config_file = std::string(argv[1]);
   std::string smart_config_file = std::string(argv[2]);
   std::string websocket_config_file = std::string(argv[3]);
-  std::string log_level(argv[4]);
+  /* std::string gdc_config_file = "./configs/common_gdc_plugin.json"; */
+  std::string gdc_config_file = std::string(argv[4]);
+  std::string log_level(argv[5]);
   if (log_level == "-i") {
     SetLogLevel(HOBOT_LOG_INFO);
   } else if (log_level == "-d") {
@@ -89,8 +93,8 @@ int main(int argc, char **argv) {
     std::cout << "log option: [-i/-d/-w/-f] " << std::endl;
     return 0;
   }
-  if (argc == 6) {
-    run_mode.assign(argv[5]);
+  if (argc == 7) {
+    run_mode.assign(argv[6]);
     if (run_mode != "ut" && run_mode != "normal") {
       LOGE << "not support mode: " << run_mode;
       return 0;
@@ -134,6 +138,7 @@ int main(int argc, char **argv) {
 
   auto vio_plg = std::make_shared<VioPlugin>(vio_config_file);
   auto smart_plg = std::make_shared<SmartPlugin>(smart_config_file);
+  auto gdc_plg = std::make_shared<CommonGdcPlugin>(gdc_config_file);
   std::shared_ptr<XPluginAsync> display_plg = nullptr;
   if (display_mode == 0) {
     LOGW << "not support this mode..";
@@ -160,6 +165,12 @@ int main(int argc, char **argv) {
     return -1;
   }
 
+  ret = gdc_plg->Init();
+  if (ret != 0) {
+    LOGF << "Failed to init gdc plugin";
+    return -1;
+  }
+
   ret = display_plg->Start();
   if (ret != 0) {
     LOGF << "display start fail";
@@ -171,6 +182,13 @@ int main(int argc, char **argv) {
     LOGF << "smart plugin start failed";
     return -1;
   }
+
+  ret = gdc_plg->Start();
+  if (ret != 0) {
+    LOGF << "gdc plugin start failed";
+    return -1;
+  }
+
   ret = vio_plg->Start();
   if (ret != 0) {
     LOGF << "vio plugin start failed";
@@ -188,6 +206,8 @@ int main(int argc, char **argv) {
   vio_plg->Stop();
   vio_plg->DeInit();
   vio_plg = nullptr;
+  gdc_plg->Stop();
+  gdc_plg->DeInit();
   smart_plg->Stop();
   smart_plg->DeInit();
   display_plg->Stop();

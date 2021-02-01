@@ -42,8 +42,6 @@ void FasterDetect::Finalize() {
 
 std::string FasterDetect::GetVersion() const { return ""; }
 
-void FasterDetect::OnProfilerChanged(bool on) {}
-
 std::vector<std::vector<BaseDataPtr>> FasterDetect::DoProcess(
     const std::vector<std::vector<BaseDataPtr>> &input,
     const std::vector<InputParamPtr> &param) {

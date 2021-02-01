@@ -84,6 +84,11 @@ TEST(Interface, SyncPredict) {
   EXPECT_EQ(output->error_code_, 0);
   EXPECT_EQ(output->datas_.size(), inputdata->datas_.size());
   EXPECT_EQ(output->datas_.front()->state_, inputdata->datas_.front()->state_);
+
+  // anomaly situation
+  xstream::InputDataPtr inputdata_empty;
+  output = xstream->SyncPredict(inputdata_empty);
+  EXPECT_EQ(output->error_code_, HOBOTXSTREAM_ERROR_INPUT_INVALID);
   delete xstream;
 }
 
@@ -131,5 +136,22 @@ TEST(Interface, DisableParam) {
   EXPECT_EQ(output->error_code_, HOBOTXSTREAM_ERROR_OUTPUT_NOT_READY);
   // EXPECT_EQ(output->datas_.size(), inputdata->datas_.size());
 
+  delete xstream;
+}
+
+TEST(Interface, ExceedTaskNum) {
+  auto xstream = xstream::XStreamSDK::CreateSDK();
+  ASSERT_TRUE(xstream);
+  // set max task num = 0
+  EXPECT_EQ(0, xstream->SetConfig("config_file",
+                                  "./test/configs/limit_tasknum.json"));
+  EXPECT_EQ(0, xstream->Init());
+  xstream::InputDataPtr inputdata(new xstream::InputData());
+  auto xstream_input_data = std::make_shared<xstream::BaseData>();
+  xstream_input_data->name_ = "global_in";
+  xstream_input_data->state_ = xstream::DataState::INVALID;
+  inputdata->datas_.emplace_back(xstream_input_data);
+  auto output = xstream->SyncPredict(inputdata);
+  EXPECT_NE(output->error_code_, 0);
   delete xstream;
 }
