@@ -17,7 +17,6 @@
 #include "./yuv_utils.h"
 #include "FasterRCNNMethod/dump.h"
 
-#include "bpu_predict/bpu_io.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 #include "hobotxsdk/xstream_sdk.h"
@@ -82,13 +81,11 @@ int TestFasterRCNNImage(int argc, char **argv) {
       std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_img->value = cv_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_img);
-    std::vector<std::vector<BaseDataPtr>> xstream_output =
-      faster_rcnn_method.DoProcess(input, param);
-    assert(xstream_output.size() == 1);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_img);
+    std::vector<BaseDataPtr> xstream_output =
+        faster_rcnn_method.DoProcess(input, param);
     std::cout << "predict success: " << frame_id++ << std::endl;
   }
   faster_rcnn_method.Finalize();

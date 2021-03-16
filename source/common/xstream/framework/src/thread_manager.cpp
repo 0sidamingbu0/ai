@@ -23,6 +23,8 @@
 
 namespace xstream {
 
+uint ThreadManager::instance_num_ = 0;
+
 ThreadManager::~ThreadManager() {
   std::lock_guard<std::mutex> lck(thread_mutex_);
   for (auto it = threads_.begin(); it != threads_.end(); it++) {
@@ -32,10 +34,12 @@ ThreadManager::~ThreadManager() {
   threads_.clear();
 }
 
-XThreadRawPtr ThreadManager::CreateThread(uint32_t thread_idx) {
+XThreadRawPtr ThreadManager::CreateThread(
+    uint32_t thread_idx, std::string name) {
   std::lock_guard<std::mutex> lck(thread_mutex_);
   if (threads_.find(thread_idx) == threads_.end()) {
     threads_[thread_idx] = new XThread(thread_idx);
+    threads_[thread_idx]->SetThreadName(name);
   }
   return threads_[thread_idx];
 }

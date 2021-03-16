@@ -22,11 +22,13 @@ public:
     this->curr_time_stamp = -1;
     this->begin_time_stamp = -1;
     this->last_output_time_stamp = -1;
+    param_config = std::make_shared<hobot::iou_mot::ConfigMessage>();
   };
   explicit Tracker(time_t time_stamp) {
     this->curr_time_stamp = time_stamp;
     this->begin_time_stamp = time_stamp;
     this->last_output_time_stamp = time_stamp;
+    param_config = std::make_shared<hobot::iou_mot::ConfigMessage>();
   }
 
   ~Tracker() {
@@ -48,7 +50,17 @@ public:
     std::cout << box.x1 << " " << box.y1 << " " << box.x2 <<
     " " << box.y2 << std::endl;
   }
-private:
+  spConfigMessage GetParamConfig() { return param_config; }
+  void SetParamConfig(std::string config_path) {
+    if (config_path.empty()) {
+      return;
+    }
+    if (param_config) {
+      param_config->SetConfig(config_path);
+    }
+  }
+
+ private:
   void MatchTrack2Target(std::vector<std::tuple<int, int, double,
           std::string>> &matches, std::vector<int> &unmatches_tracks,
           std::vector<int> &unmatches_targets);
@@ -75,6 +87,7 @@ private:
   int img_height = 1080;
 
   Config config;
+  spConfigMessage param_config;
 };
 
 } // namespace iou_mot

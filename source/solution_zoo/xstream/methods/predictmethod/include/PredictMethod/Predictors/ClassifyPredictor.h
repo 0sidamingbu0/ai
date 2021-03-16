@@ -28,9 +28,8 @@ class ClassifyPredictor : public Predictors {
   ClassifyPredictor() {}
   virtual ~ClassifyPredictor() {}
 
-  std::vector<std::vector<BaseDataPtr>> Do(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> Do(const std::vector<BaseDataPtr> &input,
+                              const xstream::InputParamPtr &param) override;
 
  private:
   std::vector<BaseDataPtr> RunSingleFrame(

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>NumPy &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/common/pybind11/docs/advanced/pycpp/numpy.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -162,7 +167,7 @@
 <div class="section" id="buffer-protocol">
 <h2>Buffer protocol<a class="headerlink" href="#buffer-protocol" title="永久链接至标题">¶</a></h2>
 <p>Python supports an extremely general and convenient approach for exchanging
-data between plugin libraries. Types can expose a buffer view <a class="footnote-reference brackets" href="#f2" id="id2">1</a>, which
+data between plugin libraries. Types can expose a buffer view <a class="footnote-reference" href="#f2" id="id2">[1]</a>, which
 provides fast direct access to the raw internal data representation. Suppose we
 want to bind the following simplistic Matrix class:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Matrix</span> <span class="p">{</span>
@@ -203,7 +208,7 @@ completely avoid copy operations with Python expressions like
 <code class="docutils literal notranslate"><span class="pre">py::buffer_info</span></code> description record on demand describing a given matrix
 instance. The contents of <code class="docutils literal notranslate"><span class="pre">py::buffer_info</span></code> mirror the Python buffer protocol
 specification.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">buffer_info</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">buffer_info</span> <span class="p">{</span>
     <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
     <span class="kt">ssize_t</span> <span class="n">itemsize</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">format</span><span class="p">;</span>
@@ -270,15 +275,16 @@ as follows:</p>
 <p>For a much easier approach of binding Eigen types (although with some
 limitations), refer to the section on <span class="xref std std-doc">/advanced/cast/eigen</span>.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_buffers.cpp</span></code> contains a complete example
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_buffers.cpp</span></code> contains a complete example
 that demonstrates using the buffer protocol with pybind11 in more detail.</p>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="f2"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p><a class="reference external" href="http://docs.python.org/3/c-api/buffer.html">http://docs.python.org/3/c-api/buffer.html</a></p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://docs.python.org/3/c-api/buffer.html">http://docs.python.org/3/c-api/buffer.html</a></td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="arrays">
 <h2>Arrays<a class="headerlink" href="#arrays" title="永久链接至标题">¶</a></h2>
@@ -316,12 +322,12 @@ function overload.</p>
 need to register the memory layout of the type. This can be done via
 <code class="docutils literal notranslate"><span class="pre">PYBIND11_NUMPY_DTYPE</span></code> macro, called in the plugin definition code, which
 expects the type followed by field names:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">A</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
     <span class="kt">double</span> <span class="n">y</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">B</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="n">B</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">z</span><span class="p">;</span>
     <span class="n">A</span> <span class="n">a</span><span class="p">;</span>
 <span class="p">};</span>
@@ -372,8 +378,8 @@ arrays <code class="docutils literal notranslate"><span class="pre">x</span></co
 are of type  <code class="docutils literal notranslate"><span class="pre">numpy.dtype.int64</span></code> but need to be <code class="docutils literal notranslate"><span class="pre">numpy.dtype.int32</span></code> and
 <code class="docutils literal notranslate"><span class="pre">numpy.dtype.float32</span></code>, respectively).</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Only arithmetic, complex, and POD types passed by value or by <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">&amp;</span></code>
+<p class="first admonition-title">注解</p>
+<p class="last">Only arithmetic, complex, and POD types passed by value or by <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">&amp;</span></code>
 reference are vectorized; all other arguments are passed through as-is.
 Functions taking rvalue reference arguments cannot be vectorized.</p>
 </div>
@@ -417,8 +423,8 @@ simply using <code class="docutils literal notranslate"><span class="pre">vector
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_numpy_vectorize.cpp</span></code> contains a complete
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_numpy_vectorize.cpp</span></code> contains a complete
 example that demonstrates using <code class="xref py py-func docutils literal notranslate"><span class="pre">vectorize()</span></code> in more detail.</p>
 </div>
 </div>
@@ -466,20 +472,20 @@ returned instance.</p>
 that it can be used as a drop-in replacement for some existing, index-checked
 uses of <code class="docutils literal notranslate"><span class="pre">py::array</span></code>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">r.ndim()</span></code> returns the number of dimensions</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">r.data(1,</span> <span class="pre">2,</span> <span class="pre">...)</span></code> and <code class="docutils literal notranslate"><span class="pre">r.mutable_data(1,</span> <span class="pre">2,</span> <span class="pre">...)`</span></code> returns a pointer to
+<li><code class="docutils literal notranslate"><span class="pre">r.ndim()</span></code> returns the number of dimensions</li>
+<li><code class="docutils literal notranslate"><span class="pre">r.data(1,</span> <span class="pre">2,</span> <span class="pre">...)</span></code> and <code class="docutils literal notranslate"><span class="pre">r.mutable_data(1,</span> <span class="pre">2,</span> <span class="pre">...)`</span></code> returns a pointer to
 the <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">T</span></code> or <code class="docutils literal notranslate"><span class="pre">T</span></code> data, respectively, at the given indices.  The
-latter is only available to proxies obtained via <code class="docutils literal notranslate"><span class="pre">a.mutable_unchecked()</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">itemsize()</span></code> returns the size of an item in bytes, i.e. <code class="docutils literal notranslate"><span class="pre">sizeof(T)</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ndim()</span></code> returns the number of dimensions.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shape(n)</span></code> returns the size of dimension <code class="docutils literal notranslate"><span class="pre">n</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">size()</span></code> returns the total number of elements (i.e. the product of the shapes).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nbytes()</span></code> returns the number of bytes used by the referenced elements
-(i.e. <code class="docutils literal notranslate"><span class="pre">itemsize()</span></code> times <code class="docutils literal notranslate"><span class="pre">size()</span></code>).</p></li>
+latter is only available to proxies obtained via <code class="docutils literal notranslate"><span class="pre">a.mutable_unchecked()</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">itemsize()</span></code> returns the size of an item in bytes, i.e. <code class="docutils literal notranslate"><span class="pre">sizeof(T)</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ndim()</span></code> returns the number of dimensions.</li>
+<li><code class="docutils literal notranslate"><span class="pre">shape(n)</span></code> returns the size of dimension <code class="docutils literal notranslate"><span class="pre">n</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">size()</span></code> returns the total number of elements (i.e. the product of the shapes).</li>
+<li><code class="docutils literal notranslate"><span class="pre">nbytes()</span></code> returns the number of bytes used by the referenced elements
+(i.e. <code class="docutils literal notranslate"><span class="pre">itemsize()</span></code> times <code class="docutils literal notranslate"><span class="pre">size()</span></code>).</li>
 </ul>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_numpy_array.cpp</span></code> contains additional examples
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_numpy_array.cpp</span></code> contains additional examples
 demonstrating the use of this feature.</p>
 </div>
 </div>
@@ -506,28 +512,25 @@ operation on the C++ side:</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

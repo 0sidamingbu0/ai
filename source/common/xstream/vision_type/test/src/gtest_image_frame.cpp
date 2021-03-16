@@ -11,36 +11,36 @@
 TEST(HorizonVisionImageFrame, alloc_free) {
   HorizonVisionImageFrame *data;
   auto ret = HorizonVisionAllocImageFrame(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeImageFrame(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionImageFrame, dup_imgs) {
   int frame_num = 2;
   HorizonVisionImageFrame **frames = nullptr;
   auto ret = HorizonVisionAllocImageFrames(&frames, frame_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   for (auto i = 0; i < frame_num; ++i) {
     auto ret = HorizonVisionAllocImageFrame(&frames[i]);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
   }
   // test dup with data
   HorizonVisionImageFrame **dup_frames = nullptr;
   ret = HorizonVisionDupImageFrames(frames, frame_num, &dup_frames);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   ret = HorizonVisionFreeImageFrames(dup_frames, frame_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   // test dup without data
   HorizonVisionImageFrame **dup_frames_without_data = nullptr;
   ret = HorizonVisionDupImageFramesWithoutData(frames,
                                                frame_num,
                                                &dup_frames_without_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeImageFramesWithoutData(dup_frames_without_data,
                                                 frame_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionFreeImageFrames(frames, frame_num);
 }

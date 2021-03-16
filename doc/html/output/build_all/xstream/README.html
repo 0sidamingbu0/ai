@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Overview &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/output/build_all/xstream/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -158,94 +163,81 @@
            <div itemprop="articleBody">
             
   <!-- TOC --><ul class="simple">
-<li><p><a class="reference external" href="#overview">Overview</a></p>
-<ul>
-<li><p><a class="reference external" href="#xstream-framework%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98">XStream Framework解决什么问题</a></p></li>
-<li><p><a class="reference external" href="#xstream-frameowrk-%E6%A6%82%E8%BF%B0">XStream Frameowrk 概述</a></p>
-<ul>
-<li><p><a class="reference external" href="#xstream-framework%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97">XStream Framework核心模块</a></p></li>
-<li><p><a class="reference external" href="#xstream-framework%E9%A9%B1%E5%8A%A8%E5%BC%95%E6%93%8E">XStream Framework驱动引擎</a></p></li>
+<li><a class="reference external" href="#overview">Overview</a><ul>
+<li><a class="reference external" href="#xstream-framework%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98">XStream Framework解决什么问题</a></li>
+<li><a class="reference external" href="#xstream-frameowrk-%E6%A6%82%E8%BF%B0">XStream Frameowrk 概述</a><ul>
+<li><a class="reference external" href="#xstream-framework%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97">XStream Framework核心模块</a></li>
+<li><a class="reference external" href="#xstream-framework%E9%A9%B1%E5%8A%A8%E5%BC%95%E6%93%8E">XStream Framework驱动引擎</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#xstream-framework-%E7%94%A8%E6%88%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97">XStream-Framework 用户使用指南</a></p>
-<ul>
-<li><p><a class="reference external" href="#build">Build</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83">准备环境</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E5%AE%89%E8%A3%85cmake">安装cmake</a></p></li>
-<li><p><a class="reference external" href="#%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE">安装交叉编译工具链</a></p></li>
-<li><p><a class="reference external" href="#%E7%BC%96%E8%AF%91">编译</a></p></li>
+<li><a class="reference external" href="#xstream-framework-%E7%94%A8%E6%88%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97">XStream-Framework 用户使用指南</a><ul>
+<li><a class="reference external" href="#build">Build</a><ul>
+<li><a class="reference external" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83">准备环境</a><ul>
+<li><a class="reference external" href="#%E5%AE%89%E8%A3%85cmake">安装cmake</a></li>
+<li><a class="reference external" href="#%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE">安装交叉编译工具链</a></li>
+<li><a class="reference external" href="#%E7%BC%96%E8%AF%91">编译</a></li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C">编译结果</a></p></li>
-<li><p><a class="reference external" href="#%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF">环境信息</a></p></li>
+<li><a class="reference external" href="#%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C">编译结果</a></li>
+<li><a class="reference external" href="#%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF">环境信息</a></li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#step-by-step%E6%9E%84%E5%BB%BAxstream-sdk">Step by step构建XStream SDK</a></p>
-<ul>
-<li><p><a class="reference external" href="#xstream-sdk%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89">XStream SDK接口定义</a></p></li>
-<li><p><a class="reference external" href="#xstream-sdk%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E">XStream SDK接口说明</a></p>
-<ul>
-<li><p><a class="reference external" href="#createsdk">CreateSDK</a></p></li>
-<li><p><a class="reference external" href="#setconfig">SetConfig</a></p></li>
-<li><p><a class="reference external" href="#init">Init</a></p></li>
-<li><p><a class="reference external" href="#updatecondig">UpdateCondig</a></p></li>
-<li><p><a class="reference external" href="#setconfig-1">SetConfig</a></p></li>
-<li><p><a class="reference external" href="#getversion">GetVersion</a></p></li>
-<li><p><a class="reference external" href="#syncpredict">SyncPredict</a></p>
-<ul>
-<li><p><a class="reference external" href="#setcallback">SetCallback</a></p></li>
-<li><p><a class="reference external" href="#asyncpredict">AsyncPredict</a></p></li>
-<li><p><a class="reference external" href="#syncpredict2">SyncPredict2</a></p></li>
+<li><a class="reference external" href="#step-by-step%E6%9E%84%E5%BB%BAxstream-sdk">Step by step构建XStream SDK</a><ul>
+<li><a class="reference external" href="#xstream-sdk%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89">XStream SDK接口定义</a></li>
+<li><a class="reference external" href="#xstream-sdk%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E">XStream SDK接口说明</a><ul>
+<li><a class="reference external" href="#createsdk">CreateSDK</a></li>
+<li><a class="reference external" href="#setconfig">SetConfig</a></li>
+<li><a class="reference external" href="#init">Init</a></li>
+<li><a class="reference external" href="#updatecondig">UpdateCondig</a></li>
+<li><a class="reference external" href="#setconfig-1">SetConfig</a></li>
+<li><a class="reference external" href="#getversion">GetVersion</a></li>
+<li><a class="reference external" href="#syncpredict">SyncPredict</a><ul>
+<li><a class="reference external" href="#setcallback">SetCallback</a></li>
+<li><a class="reference external" href="#asyncpredict">AsyncPredict</a></li>
+<li><a class="reference external" href="#syncpredict2">SyncPredict2</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#xstream-sdk%E4%BD%BF%E7%94%A8">XStream SDK使用</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E5%88%9B%E5%BB%BAsdk">创建SDK</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E8%AE%BE%E7%BD%AExstream%E9%85%8D%E7%BD%AE%E5%88%9D%E5%A7%8B%E5%8C%96">设置XStream配置初始化</a></p></li>
+<li><a class="reference external" href="#xstream-sdk%E4%BD%BF%E7%94%A8">XStream SDK使用</a><ul>
+<li><a class="reference external" href="#%E5%88%9B%E5%BB%BAsdk">创建SDK</a><ul>
+<li><a class="reference external" href="#%E8%AE%BE%E7%BD%AExstream%E9%85%8D%E7%BD%AE%E5%88%9D%E5%A7%8B%E5%8C%96">设置XStream配置初始化</a></li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#xstream-sdk%E5%88%9D%E5%A7%8B%E5%8C%96">XStream SDK初始化</a></p></li>
-<li><p><a class="reference external" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E8%AE%BE%E7%BD%AE-callback">定义和设置 callback</a></p></li>
-<li><p><a class="reference external" href="#%E6%80%A7%E8%83%BD%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7-profiler">性能统计工具-profiler</a></p></li>
-<li><p><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE">异步运行-输入数据</a></p></li>
-<li><p><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C">异步运行</a></p></li>
-<li><p><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE">同步运行-输入数据</a></p></li>
-<li><p><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE">同步运行-输出数据</a></p></li>
-<li><p><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C-%E5%A4%9A%E8%B7%AF%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE">异步运行-多路输出数据</a></p></li>
-<li><p><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E5%A4%9A%E8%B7%AF%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE">同步运行-多路输出数据</a></p></li>
+<li><a class="reference external" href="#xstream-sdk%E5%88%9D%E5%A7%8B%E5%8C%96">XStream SDK初始化</a></li>
+<li><a class="reference external" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E8%AE%BE%E7%BD%AE-callback">定义和设置 callback</a></li>
+<li><a class="reference external" href="#%E6%80%A7%E8%83%BD%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7-profiler">性能统计工具-profiler</a></li>
+<li><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE">异步运行-输入数据</a></li>
+<li><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C">异步运行</a></li>
+<li><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE">同步运行-输入数据</a></li>
+<li><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE">同步运行-输出数据</a></li>
+<li><a class="reference external" href="#%E5%BC%82%E6%AD%A5%E8%BF%90%E8%A1%8C-%E5%A4%9A%E8%B7%AF%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE">异步运行-多路输出数据</a></li>
+<li><a class="reference external" href="#%E5%90%8C%E6%AD%A5%E8%BF%90%E8%A1%8C-%E5%A4%9A%E8%B7%AF%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE">同步运行-多路输出数据</a></li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#include-%E6%96%87%E4%BB%B6%E5%88%97%E8%A1%A8">include 文件列表</a></p></li>
-<li><p><a class="reference external" href="#%E5%AE%9E%E7%8E%B0methodfactory">实现MethodFactory</a></p></li>
-<li><p><a class="reference external" href="#%E9%80%9A%E8%BF%87config%E6%96%87%E4%BB%B6%E5%AE%9A%E4%B9%89workflow">通过Config文件定义workflow</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE">常用配置</a></p></li>
-<li><p><a class="reference external" href="#%E6%8C%87%E5%AE%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%E9%85%8D%E7%BD%AE">指定线程优先级的配置</a></p></li>
-<li><p><a class="reference external" href="#%E5%A4%9A%E8%B7%AF%E8%BE%93%E5%87%BA%E9%85%8D%E7%BD%AE">多路输出配置</a></p></li>
+<li><a class="reference external" href="#include-%E6%96%87%E4%BB%B6%E5%88%97%E8%A1%A8">include 文件列表</a></li>
+<li><a class="reference external" href="#%E5%AE%9E%E7%8E%B0methodfactory">实现MethodFactory</a></li>
+<li><a class="reference external" href="#%E9%80%9A%E8%BF%87config%E6%96%87%E4%BB%B6%E5%AE%9A%E4%B9%89workflow">通过Config文件定义workflow</a><ul>
+<li><a class="reference external" href="#%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE">常用配置</a></li>
+<li><a class="reference external" href="#%E6%8C%87%E5%AE%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%E9%85%8D%E7%BD%AE">指定线程优先级的配置</a></li>
+<li><a class="reference external" href="#%E5%A4%9A%E8%B7%AF%E8%BE%93%E5%87%BA%E9%85%8D%E7%BD%AE">多路输出配置</a></li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a></p>
-<ul>
-<li><p><a class="reference external" href="#%E9%94%99%E8%AF%AF%E7%A0%81">错误码</a></p></li>
-<li><p><a class="reference external" href="#%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">基础数据结构</a></p>
-<ul>
-<li><p><a class="reference external" href="#datastate">DataState</a></p></li>
-<li><p><a class="reference external" href="#basedata">BaseData</a></p></li>
-<li><p><a class="reference external" href="#basedatavector">BaseDataVector</a></p></li>
-<li><p><a class="reference external" href="#xstreamdata">XStreamData</a></p></li>
-<li><p><a class="reference external" href="#inputparam">InputParam</a></p></li>
-<li><p><a class="reference external" href="#disableparam">DisableParam</a></p></li>
-<li><p><a class="reference external" href="#sdkcommparam">SdkCommParam</a></p></li>
-<li><p><a class="reference external" href="#inputdata">InputData</a></p></li>
-<li><p><a class="reference external" href="#outputdata">OutputData</a></p></li>
-<li><p><a class="reference external" href="#xstreamcallback">XStreamCallback</a></p></li>
+<li><a class="reference external" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a><ul>
+<li><a class="reference external" href="#%E9%94%99%E8%AF%AF%E7%A0%81">错误码</a></li>
+<li><a class="reference external" href="#%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">基础数据结构</a><ul>
+<li><a class="reference external" href="#datastate">DataState</a></li>
+<li><a class="reference external" href="#basedata">BaseData</a></li>
+<li><a class="reference external" href="#basedatavector">BaseDataVector</a></li>
+<li><a class="reference external" href="#xstreamdata">XStreamData</a></li>
+<li><a class="reference external" href="#inputparam">InputParam</a></li>
+<li><a class="reference external" href="#disableparam">DisableParam</a></li>
+<li><a class="reference external" href="#sdkcommparam">SdkCommParam</a></li>
+<li><a class="reference external" href="#inputdata">InputData</a></li>
+<li><a class="reference external" href="#outputdata">OutputData</a></li>
+<li><a class="reference external" href="#xstreamcallback">XStreamCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -309,8 +301,8 @@
 <h3>XStream Framework驱动引擎<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
 <p>XStream目前底层可以由两种引擎驱动：</p>
 <ul class="simple">
-<li><p>NativeEngine：基于C++11实现的驱动引擎，完成graph构建、数据依赖、流式驱动、线程管理等基础功能；</p></li>
-<li><p>HobotSDK Engine:hobotsdk是地平线成熟的面向数据流的编程框架，xstream framework通过配置可以选择将hobotsdk作为底层驱动引擎，解决数据依赖、流式驱动与线程管理等核心问题，详细见<a class="reference external" href="./doc/hobotsdk_engine">hobotsdk engine</a></p></li>
+<li>NativeEngine：基于C++11实现的驱动引擎，完成graph构建、数据依赖、流式驱动、线程管理等基础功能；</li>
+<li>HobotSDK Engine:hobotsdk是地平线成熟的面向数据流的编程框架，xstream framework通过配置可以选择将hobotsdk作为底层驱动引擎，解决数据依赖、流式驱动与线程管理等核心问题，详细见<a class="reference external" href="./doc/hobotsdk_engine">hobotsdk engine</a></li>
 </ul>
 </div>
 </div>
@@ -343,7 +335,7 @@
 <h4>编译<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
 <p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>CentOS平台(CentOS7, gcc4.8.5)</p></li>
+<li>CentOS平台(CentOS7, gcc4.8.5)</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
@@ -352,7 +344,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</p></li>
+<li>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -361,7 +353,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</p></li>
+<li>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -380,11 +372,11 @@ make -j <span class="o">&amp;&amp;</span> make install
 <div class="section" id="id7">
 <h3>编译结果<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p>example:
+<li>example:
 <em>bin/bbox_filter_example</em><br />——以HobotXStream::BBox为数据类型, 基于XStream C++语言API编写的Example案例
 <em>bin/c_bbox_filter_example</em>
-——以HobotXStreamCapiBBox为数据类型， 基于XStream C语言API编写的Example案例</p></li>
-<li><p>unit test:
+——以HobotXStreamCapiBBox为数据类型， 基于XStream C语言API编写的Example案例</li>
+<li>unit test:
 <em>bin/config_test</em><br />—— 配置相关的单元测试
 <em>bin/cpp_api_test</em><br />—— C++ API的集中单元测试
 <em>bin/disable_method_test</em><br />—— 不同方式关闭特定method的单元测试
@@ -403,7 +395,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 <em>bin/xstream_callback_test</em>
 —— XStream callback回调的单元测试
 <em>bin/profiler_test</em>
-—— XStream 诊断记录的单元测试</p></li>
+—— XStream 诊断记录的单元测试</li>
 </ul>
 </div>
 <div class="section" id="id8">
@@ -440,20 +432,20 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
   <span class="k">static</span> <span class="n">XStreamSDK</span> <span class="o">*</span><span class="n">CreateSDK</span><span class="p">();</span>
 
   <span class="c1">/// key：config_file，用来设置workflow配置文件路径</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">SetConfig</span><span class="p">(</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">SetConfig</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">key</span><span class="p">,</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 设置授权路径、模型路径等等</span>
   <span class="c1">/// 初始化workflow</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 针对node更新配置参数</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">UpdateConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">,</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">UpdateConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">,</span>
                            <span class="n">InputParamPtr</span> <span class="n">ptr</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 获取node当前配置</span>
-  <span class="k">virtual</span> <span class="n">InputParamPtr</span> <span class="n">GetConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="n">InputParamPtr</span> <span class="nf">GetConfig</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 获取node的版本号</span>
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">GetVersion</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">unique_name</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 同步运行接口，单路输出</span>
-  <span class="k">virtual</span> <span class="n">OutputDataPtr</span> <span class="n">SyncPredict</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="n">OutputDataPtr</span> <span class="nf">SyncPredict</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 同步运行接口，多路输出</span>
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">OutputDataPtr</span><span class="o">&gt;</span> <span class="n">SyncPredict2</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="cm">/**</span>
@@ -466,10 +458,10 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <span class="cm">   *    只有当这一帧数据全部计算结束才会回调报告结果；如果设置了unique_name，则在异步调用中就会</span>
 <span class="cm">   *    上报当前节点的输出，但同步运行中不会回调。</span>
 <span class="cm">   */</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">SetCallback</span><span class="p">(</span><span class="n">XStreamCallback</span> <span class="n">callback</span><span class="p">,</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">SetCallback</span><span class="p">(</span><span class="n">XStreamCallback</span> <span class="n">callback</span><span class="p">,</span>
                           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 设置回调</span>
   <span class="c1">/// 异步运行接口</span>
-  <span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">AsyncPredict</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 异步接口</span>
+  <span class="k">virtual</span> <span class="kt">int64_t</span> <span class="nf">AsyncPredict</span><span class="p">(</span><span class="n">InputDataPtr</span> <span class="n">input</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 异步接口</span>
 <span class="p">};</span>
 <span class="p">}</span>  <span class="c1">// namespace xstream</span>
 </pre></div>
@@ -532,8 +524,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <div class="section" id="id11">
 <h3>XStream SDK使用<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p>Example 异步运行模式<br /><strong>以下代码中出现的ASSERT_TRUE, EXPECT_EQ, ASSERT_EQ等，来源于googletest。</strong>
-<strong>用于对返回值结果等做一些检查，实际应用中不需要使用。</strong><br />如以下代码所示:</p></li>
+<li>Example 异步运行模式<br /><strong>以下代码中出现的ASSERT_TRUE, EXPECT_EQ, ASSERT_EQ等，来源于googletest。</strong>
+<strong>用于对返回值结果等做一些检查，实际应用中不需要使用。</strong><br />如以下代码所示:</li>
 </ul>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>  <span class="k">auto</span> <span class="n">xstream</span> <span class="o">=</span> <span class="n">xstream</span><span class="o">::</span><span class="n">XStreamSDK</span><span class="o">::</span><span class="n">CreateSDK</span><span class="p">();</span>
   <span class="n">ASSERT_TRUE</span><span class="p">(</span><span class="n">xstream</span><span class="p">);</span>
@@ -572,8 +564,8 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Example 同步运行模式
-如以下代码所示:</p></li>
+<li>Example 同步运行模式
+如以下代码所示:</li>
 </ul>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>  <span class="k">auto</span> <span class="n">xstream</span> <span class="o">=</span> <span class="n">xstream</span><span class="o">::</span><span class="n">XStreamSDK</span><span class="o">::</span><span class="n">CreateSDK</span><span class="p">();</span>
   <span class="n">ASSERT_TRUE</span><span class="p">(</span><span class="n">xstream</span><span class="p">);</span>
@@ -598,7 +590,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 <p>接口:</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">XStreamSDK</span> <span class="o">*</span><span class="n">CreateSDK</span><span class="p">();</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">XStreamSDK</span> <span class="o">*</span><span class="nf">CreateSDK</span><span class="p">();</span>
 </pre></div>
 </div>
 <div class="section" id="xstream">
@@ -626,9 +618,9 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <div class="section" id="callback">
 <h4>定义和设置 callback<a class="headerlink" href="#callback" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>定义用户的Callback类,实现一个类似OnCallback函数，参数类型为
+<li>定义用户的Callback类,实现一个类似OnCallback函数，参数类型为
 <code class="docutils literal notranslate"><span class="pre">xstream::OutputDataPtr</span> <span class="pre">output</span></code>，用来处理XStream workflow的回调结果
-代码:</p></li>
+代码:</li>
 </ul>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">class</span> <span class="n">CallbackExample</span> <span class="p">{</span>
  <span class="nl">public</span><span class="p">:</span>
@@ -657,7 +649,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>设置callback</p></li>
+<li>设置callback</li>
 </ul>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">MethodCallback</span><span class="o">::</span><span class="n">Callback</span> <span class="n">callback</span><span class="p">;</span>
 <span class="n">xstream</span><span class="o">-&gt;</span><span class="n">SetCallback</span><span class="p">(</span>
@@ -671,7 +663,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <h4>性能统计工具-profiler<a class="headerlink" href="#profiler" title="永久链接至标题">¶</a></h4>
 <p>xstream内部提供了性能统计的工具，用户可以通过xstream的对外接口SetConfig打开或关闭该功能，默认该功能关闭。</p>
 <ul class="simple">
-<li><p>配置profiler功能</p></li>
+<li>配置profiler功能</li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">SetConfig(const</span> <span class="pre">std::string</span> <span class="pre">&amp;key,</span> <span class="pre">const</span> <span class="pre">std::string</span> <span class="pre">&amp;value)</span></code></p>
 <p>key为”profiler”, value为”on”, 表示打开性能统计功能。”off”表示关闭, 默认为关闭。<br />key为”profiler_file”, value为性能统计输出文件路径，用于设置性能统计文件的路径名称，框架层次的统计数据输出至该文件。</p>
@@ -685,7 +677,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </div>
 <p>Method内的统计数据默认输出至文件”PROFILER_METHOD.txt”, 用户若需要更改，可通过访问性能统计的全局单例设置智能策略内的统计数据：<code class="docutils literal notranslate"><span class="pre">Profiler::Get()-&gt;SetOutputFile(&quot;xx.txt&quot;)</span></code></p>
 <ul class="simple">
-<li><p>性能统计数据可视化</p></li>
+<li>性能统计数据可视化</li>
 </ul>
 <p>用户打开性能统计后，若统计结果输出到文件”profiler.txt”，可以通过访问<code class="docutils literal notranslate"><span class="pre">chrome://tracing/</span></code>，通过页面的<code class="docutils literal notranslate"><span class="pre">Load</span></code>按钮将文件加载，即可看到统计数据可视化界面。以下图为例，页面上的横坐标表示”时间”；前两行纵坐标表示对应Method处理的帧数；后两行纵坐标表示不同线程”thread_id”，同时页面左下角提供了工具以便用户查看数据细节。</p>
 <p><img alt="统计数据可视化" src="output/build_all/xstream/./doc/images/profiler.png" /></p>
@@ -693,14 +685,14 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <div class="section" id="id13">
 <h4>异步运行-输入数据<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>datas_: workflow输入的数据数组，要求非空。vector中每个数据对应一个数据slot，会送给workflow的
-相关node，作为它们的输入。 在CV场景下，输入数据一般来源于senser或ISP处理后的视频帧数据。</p></li>
-<li><p>params_: 对应请求的参数数组，可以为空。vector中每个数据对应一个具体node的参数。</p></li>
-<li><p>source_id_: 在多路输入的场景下用于分输入源,单一源情况赋值为 0</p></li>
-<li><p>context_: 透传的数据，该数据会透传到OutputData::context_字段, 通过该参数, 可以建立输入数据和输出数据的对应关系。</p></li>
+<li>datas_: workflow输入的数据数组，要求非空。vector中每个数据对应一个数据slot，会送给workflow的
+相关node，作为它们的输入。 在CV场景下，输入数据一般来源于senser或ISP处理后的视频帧数据。</li>
+<li>params_: 对应请求的参数数组，可以为空。vector中每个数据对应一个具体node的参数。</li>
+<li>source_id_: 在多路输入的场景下用于分输入源,单一源情况赋值为 0</li>
+<li>context_: 透传的数据，该数据会透传到OutputData::context_字段, 通过该参数, 可以建立输入数据和输出数据的对应关系。</li>
 </ul>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">/// 输入数据类型</span>
-<span class="k">struct</span> <span class="nc">InputData</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="n">InputData</span> <span class="p">{</span>
   <span class="c1">/// 用户输入的数据，比如图片channel、时间戳、框等等。</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
   <span class="c1">/// 当前请求自定义的参数</span>
@@ -730,7 +722,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <div class="section" id="id14">
 <h4>异步运行<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>异步运行</p></li>
+<li>异步运行</li>
 </ul>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/*调用异步运行接口*/</span>
   <span class="n">xstream</span><span class="o">-&gt;</span><span class="n">AsyncPredict</span><span class="p">(</span><span class="n">inputdata</span><span class="p">);</span>
@@ -756,7 +748,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 </div>
 <p>返回数据的结构:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">/// 输出数据类型</span>
-<span class="k">struct</span> <span class="nc">OutputData</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="n">OutputData</span> <span class="p">{</span>
   <span class="c1">/// 错误码</span>
   <span class="kt">int</span> <span class="n">error_code_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="c1">/// 错误信息</span>
@@ -855,7 +847,7 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <h3>实现MethodFactory<a class="headerlink" href="#methodfactory" title="永久链接至标题">¶</a></h3>
 <p>XStream在Init过程中需要调用method的工厂函数完成实例创建，MethodFactory的工厂函数会根据不同的method type名字返回对应的method的实例，workflow中用到的method都需要添加到该函数中，不然在构建sdk时会失败。<br />MethodFactory类定义在include/hobotxstream/method_factory.h中。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">/// Method 工厂方法</span>
- <span class="k">static</span> <span class="n">MethodPtr</span> <span class="n">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">);</span>
+ <span class="k">static</span> <span class="n">MethodPtr</span> <span class="nf">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>实现CreateMethod方法， 在这个函数中根据method_name,返回具体的method实例。 method_name来源于Config文件中的method_type字段</p>
@@ -863,17 +855,17 @@ c++语言版本 XStream SDK接口定义在 include/hobotxsdk/xstream_sdk.h</p>
 <span class="n">namespace</span> <span class="n">method_factory</span>
 <span class="n">MethodPtr</span> <span class="n">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
  <span class="k">if</span> <span class="p">(</span><span class="s">&quot;TestMethod&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="nf">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">TestMethod</span><span class="p">());</span>
+   <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">TestMethod</span><span class="p">());</span>
  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s">&quot;BBoxFilter&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="nf">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">BBoxFilter</span><span class="p">());</span>
+   <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">BBoxFilter</span><span class="p">());</span>
  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s">&quot;OrderTestMethod&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="nf">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">OrderTestThread</span><span class="p">());</span>
+   <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">OrderTestThread</span><span class="p">());</span>
  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s">&quot;threadsafeMethod&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="nf">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">SafeTestThread</span><span class="p">());</span>
+   <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">SafeTestThread</span><span class="p">());</span>
  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s">&quot;passthroughMethod&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="nf">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">passthroughMethod</span><span class="p">());</span>
+   <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="n">new</span> <span class="n">passthroughMethod</span><span class="p">());</span>
  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="nf">MethodPtr</span><span class="p">();</span>
+   <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">();</span>
  <span class="p">}</span>
 <span class="p">}</span>
 <span class="p">}</span>  <span class="c1">// namespace method_factory</span>
@@ -953,7 +945,7 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 指定method局部配置文件路径;路径是workflow配置文件所在位置的相对路径。
 *注 指定的是配置文件路径，在method::Init中需要从该路径重新读取进而解析Json config信息。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>       <span class="c1">/// 初始化</span>
-  <span class="n">virtual</span> <span class="kt">int</span> <span class="n">Init</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">config_file_path</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">virtual</span> <span class="kt">int</span> <span class="nf">Init</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">config_file_path</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
@@ -1189,7 +1181,7 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 <div class="section" id="basedata">
 <h5>BaseData<a class="headerlink" href="#basedata" title="永久链接至标题">¶</a></h5>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// xstream_data.h</span>
-<span class="k">struct</span> <span class="nc">BaseData</span> <span class="p">{</span>  <span class="c1">// 数据结构基类，框，lmk等等的基类</span>
+<span class="k">struct</span> <span class="n">BaseData</span> <span class="p">{</span>  <span class="c1">// 数据结构基类，框，lmk等等的基类</span>
   <span class="n">BaseData</span><span class="p">();</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">BaseData</span><span class="p">();</span>
 
@@ -1242,7 +1234,7 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 <div class="section" id="basedatavector">
 <h5>BaseDataVector<a class="headerlink" href="#basedatavector" title="永久链接至标题">¶</a></h5>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// xstream_data.h</span>
-<span class="k">struct</span> <span class="nc">BaseDataVector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">BaseDataVector</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">BaseDataVector</span><span class="p">();</span>
 
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
@@ -1267,8 +1259,8 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 <div class="section" id="xstreamdata">
 <h5>XStreamData<a class="headerlink" href="#xstreamdata" title="永久链接至标题">¶</a></h5>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// xstream_data.h</span>
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Dtype</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="nc">XStreamData</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Dtype</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nl">XStreamData</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">Dtype</span> <span class="n">value</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
@@ -1409,7 +1401,7 @@ node的唯一名称，同一种类型的method可以实例化多个不同的node
 <div class="section" id="inputdata">
 <h5>InputData<a class="headerlink" href="#inputdata" title="永久链接至标题">¶</a></h5>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// xstream_data.h</span>
-<span class="k">struct</span> <span class="nc">InputData</span> <span class="p">{</span>  <span class="c1">// 输入数据类型</span>
+<span class="k">struct</span> <span class="n">InputData</span> <span class="p">{</span>  <span class="c1">// 输入数据类型</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span>
       <span class="n">datas_</span><span class="p">;</span>  <span class="c1">// 用户输入的数据，比如图片channel、时间戳、框等等</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">params_</span><span class="p">;</span>  <span class="c1">// 当前请求自定义的参数</span>
@@ -1513,28 +1505,25 @@ typedef std::shared_ptr&lt;OutputData&gt; OutputDataPtr;</code>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

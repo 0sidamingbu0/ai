@@ -60,6 +60,22 @@ class Config {
     return ret;
   }
 
+
+
+  std::vector<int> GetSTDIntArray(std::string key,
+      std::vector<int>& default_value) {
+    auto value_js = config_[key.c_str()];
+    std::vector<int> ret;
+    if (value_js.isNull()) {
+      return default_value;
+    }
+    ret.resize(value_js.size());
+    for (Json::ArrayIndex i = 0; i < value_js.size(); ++i) {
+      ret[i] = value_js[i].asInt();
+    }
+    return ret;
+  }
+
   std::vector<std::shared_ptr<Config>> GetSubConfigArray(std::string key) {
     auto value_js = config_[key.c_str()];
     std::vector<std::shared_ptr<Config>> ret;

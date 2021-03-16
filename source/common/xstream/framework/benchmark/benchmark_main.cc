@@ -30,10 +30,6 @@ static void signal_handle(int param) {
   exit_ = true;
 }
 
-std::mutex mtx;
-std::condition_variable cv;  // 控制任务数量条件变量
-int task_num = 0;            // 任务数量
-
 int main(int argc, char const *argv[]) {
   if (argc < 2) {
     std::cout << "Usage : ./benchmark_main config"
@@ -60,14 +56,9 @@ int main(int argc, char const *argv[]) {
     data->name_ = "input";   // corresponding the inputs in workflow
     inputdata->datas_.push_back(data);
 
-    {
-      std::unique_lock<std::mutex> lck(mtx);
-      cv.wait(lck, [] {return task_num < 50;});
-    }
-
     // async mode
     flow->AsyncPredict(inputdata);
-    task_num++;
+    std::this_thread::sleep_for(std::chrono::microseconds(500));
   }
 
   // destruct xstream sdk object
@@ -77,7 +68,6 @@ int main(int argc, char const *argv[]) {
 
 
 void FrameFPS(xstream::OutputDataPtr output) {
-  std::unique_lock <std::mutex> lck(mtx);
   static auto last_time = std::chrono::system_clock::now();
   static int fps = 0;
   static int frameCount = 0;
@@ -92,6 +82,4 @@ void FrameFPS(xstream::OutputDataPtr output) {
     last_time = std::chrono::system_clock::now();
     std::cout << "fps = " << fps << std::endl;
   }
-  --task_num;
-  cv.notify_one();
 }

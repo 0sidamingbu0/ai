@@ -25,7 +25,8 @@ namespace rtspplugin {
 ImageVioMessage::ImageVioMessage(
     std::vector<std::shared_ptr<PymImageFrame>> &image_frame, uint32_t img_num,
     bool is_valid, int channel, std::shared_ptr<MediaPipeLine> pipeline,
-    void *data) {
+    void *data, const int index)
+    : index_(index) {
   type_ = TYPE_IMAGE_MESSAGE;
   num_ = img_num;
   channel_ = channel;

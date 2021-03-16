@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>概述 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/output/build_all/xproto/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -198,7 +203,7 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <div class="section" id="id6">
 <h4>消息基础类<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
 <p>消息基础类XProtoMessage，新的Message类型需要继承XProtoMessage。</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">XProtoMessage</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">XProtoMessage</span> <span class="p">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XProtoMessage</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 
@@ -210,7 +215,7 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Serialize</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ConvertData</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="o">*</span><span class="nf">ConvertData</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// need call delete() to release the output</span>
     <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
   <span class="p">}</span>
@@ -221,12 +226,12 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 </div>
 <p>消息的声明与定义：</p>
 <ul class="simple">
-<li><p>使用宏XPLUGIN_REGISTER_MSG_TYPE,自定义消息类型，每个消息名字唯一；</p></li>
-<li><p>监听消息的插件需要：</p></li>
-<li><p>实现消息处理函数；</p></li>
-<li><p>覆盖Init函数，在其中完成监听消息注册，并绑定对应的消息处理函数，</p></li>
-<li><p>及其他初始化工作，同时在函数返回前需要调用父plugin的Init方法，</p></li>
-<li><p>通常是XPluginAsync::Init()。</p></li>
+<li>使用宏XPLUGIN_REGISTER_MSG_TYPE,自定义消息类型，每个消息名字唯一；</li>
+<li>监听消息的插件需要：</li>
+<li>实现消息处理函数；</li>
+<li>覆盖Init函数，在其中完成监听消息注册，并绑定对应的消息处理函数，</li>
+<li>及其他初始化工作，同时在函数返回前需要调用父plugin的Init方法，</li>
+<li>通常是XPluginAsync::Init()。</li>
 </ul>
 <p>相关接口定义如下：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// 声明消息类型;每一类消息都有一个字符串形式的消息类型和结构体来表示.</span>
@@ -282,7 +287,7 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <h4>编译<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
 <p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>CentOS平台</p></li>
+<li>CentOS平台</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xproto/framework/
 mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
@@ -291,7 +296,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Ubuntu平台</p></li>
+<li>Ubuntu平台</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xproto/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -300,7 +305,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Linaro-aarch64平台</p></li>
+<li>Linaro-aarch64平台</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xproto/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -322,21 +327,21 @@ make -j <span class="o">&amp;&amp;</span> make install
 插件可能会生产消息或者向总线注册监听某类消息。如果生产消息需要调用PushMsg()将消息发送到总线分发;如果监听消息，需要实现消息处理函数，并在Init函数中注册需要监听的消息类型，绑定对应的消息处理函数，同时在Init函数返回前调用父plugin的Init方法，通常是XPluginAsync::Init()。
 插件提供了两个基础类XPlugin和XPluginAsync，继承这两个基础类之一可实现一个新的plugin，通过override的函数包括:<code class="docutils literal notranslate"><span class="pre">Init()、Start()、Stop()、Desc();</span></code>等接口来管理插件的生命周期。两个plugin基类功能上有些差异：</p>
 <ul class="simple">
-<li><p>XPlugin类：定义了管理周期的相关接口以及发送接收消息的接口，接收到的消息需要自己管理分发</p></li>
-<li><p>XPluginAsync类：在XPlugin的基础上，增加了消息的分发功能和流量管理，用户只需要实现消息回调函数即可</p></li>
+<li>XPlugin类：定义了管理周期的相关接口以及发送接收消息的接口，接收到的消息需要自己管理分发</li>
+<li>XPluginAsync类：在XPlugin的基础上，增加了消息的分发功能和流量管理，用户只需要实现消息回调函数即可</li>
 </ul>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">XPlugin</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XPlugin</span><span class="o">&gt;</span> <span class="p">{</span>
  <span class="k">public</span><span class="o">:</span>
   <span class="n">XPlugin</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XPlugin</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="c1">// 完成register msg和workflow的初始化操作</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">DeInit</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="c1">// 处理register的msg类型，如有需要，push自己的msg到总线</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">desc</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s">&quot;XPlugin&quot;</span><span class="p">;</span>
   <span class="p">}</span>
@@ -359,26 +364,26 @@ make -j <span class="o">&amp;&amp;</span> make install
   <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
   <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
   <span class="c1">// 获取plugin当前正在排队处理消息的数量</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgCount</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetPluginMsgCount</span><span class="p">();</span>
   <span class="c1">// plugin处理消息数量限制</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgLimit</span><span class="p">();</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetPluginMsgLimit</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
   <span class="c1">// plugin处理msg时间预警</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetMsgMonitorTime</span><span class="p">();</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetMsgMonitorTime</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_monitor_time</span><span class="p">);</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetMsgMonitorTime</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">SetMsgMonitorTime</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_monitor_time</span><span class="p">);</span>
 
   <span class="c1">// 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制</span>
   <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">);</span>
   <span class="c1">// 启动Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Start</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Start</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="c1">// 停止Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Stop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="cp">#ifdef PYAPI</span>
-  <span class="kt">void</span> <span class="n">RegMsg</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">type</span><span class="p">,</span>
+  <span class="kt">void</span> <span class="nf">RegMsg</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">type</span><span class="p">,</span>
               <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">pybind11</span><span class="o">::</span><span class="n">object</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">cb</span><span class="p">);</span>
 <span class="cp">#endif</span>
 
@@ -458,28 +463,25 @@ make -j <span class="o">&amp;&amp;</span> make install
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

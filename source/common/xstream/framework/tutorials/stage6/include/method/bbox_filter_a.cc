@@ -36,39 +36,33 @@ InputParamPtr BBoxFilterA::GetParameter() const {
   return InputParamPtr();
 }
 
-std::vector<std::vector<BaseDataPtr>> BBoxFilterA::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
+std::vector<BaseDataPtr> BBoxFilterA::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
   RUN_FPS_PROFILER("BBoxFilterA")
 
   std::cout << "BBoxFilterA::DoProcess begin " << input.size() << std::endl;
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());  // batch size
+  std::vector<BaseDataPtr> output;
   // one batch
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    // one slot
-    for (size_t j = 0; j < in_batch_i.size(); j++) {
-      out_batch_i.push_back(std::make_shared<BaseDataVector>());
-      if (in_batch_i[j]->state_ == DataState::INVALID) {
-        // std::cout << "input slot " << j << " is invalid" << std::endl;
-        continue;
-      }
-      auto in_rects = std::static_pointer_cast<BaseDataVector>(in_batch_i[j]);
-      auto out_rects = std::static_pointer_cast<BaseDataVector>(out_batch_i[j]);
-      // for (auto &in_rect : in_rects->datas_) {
-      //   auto bbox = std::static_pointer_cast<BBox>(in_rect);
-      //   {
-      //     std::cout << "filter out: "
-      //               << bbox->x1 << ","
-      //               << bbox->y1 << ","
-      //               << bbox->x2 << ","
-      //               << bbox->y2 << ", score: "
-      //               << bbox->score << std::endl;
-      //   }
-      // }
+  for (size_t j = 0; j < input.size(); j++) {
+    output.push_back(std::make_shared<BaseDataVector>());
+    if (input[j]->state_ == DataState::INVALID) {
+      // std::cout << "input slot " << j << " is invalid" << std::endl;
+      continue;
     }
+    auto in_rects = std::static_pointer_cast<BaseDataVector>(input[j]);
+    auto out_rects = std::static_pointer_cast<BaseDataVector>(output[j]);
+    // for (auto &in_rect : in_rects->datas_) {
+    //   auto bbox = std::static_pointer_cast<BBox>(in_rect);
+    //   {
+    //     std::cout << "filter out: "
+    //               << bbox->x1 << ","
+    //               << bbox->y1 << ","
+    //               << bbox->x2 << ","
+    //               << bbox->y2 << ", score: "
+    //               << bbox->score << std::endl;
+    //   }
+    // }
   }
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   std::cout << "BBoxFilterA::DoProcessing end " << std::endl;

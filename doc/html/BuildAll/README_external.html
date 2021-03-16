@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>XStream &mdash; AI Express用户手册 2.9.0 文档</title>
+  <title>AIExpress &mdash; AI Express用户手册 2.9.0 文档</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
-        <script src="../_static/translations.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script type="text/javascript" src="../_static/translations.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,18 +135,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>XStream</li>
+      <li>AIExpress</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/BuildAll/README_external.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -157,17 +162,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="xstream">
-<h1>XStream<a class="headerlink" href="#xstream" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="aiexpress">
+<h1>AIExpress<a class="headerlink" href="#aiexpress" title="永久链接至标题">¶</a></h1>
 </div>
 <div class="section" id="id1">
 <h1>介绍<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
-<p>XStream 发版包编译、运行介绍。</p>
+<p>AIExpress由<strong>XStream开发框架</strong>，<strong>XProto原型框架</strong>，<strong>内置参考解决方案</strong>三部分组成，覆盖算法模型集成和场景应用APP开发的全流程。</p>
 </div>
 <div class="section" id="id2">
-<h1>编译<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
+<h1>地平线相关组件版本的匹配关系<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
+<p>| AIExpress版本        |    浮点转换工具链版本  |  系统镜像版本         |
+| —————- | ————— | ————— |
+| 2.10.0           |  1.1.21  |       20210207         |
+| 2.9.0            |  1.1.20  |       20210104         |
+| 2.8.0            |  1.1.19  |       20201124         |
+| 2.7.0            |  1.1.18  |       20201023         |
+| 2.6.0            |  1.1.16  |       20200922         |</p>
+</div>
 <div class="section" id="id3">
-<h2>编译环境<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<h1>编译<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id4">
+<h2>编译环境<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
 <p>需提前准备好交叉编译工具链，默认路径如下：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_C_COMPILER</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">gcc</span><span class="o">-</span><span class="n">linaro</span><span class="o">-</span><span class="mf">6.5</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mf">2018.12</span><span class="o">-</span><span class="n">x86_64_aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">-</span><span class="n">gcc</span><span class="p">)</span>
 <span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_CXX_COMPILER</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">gcc</span><span class="o">-</span><span class="n">linaro</span><span class="o">-</span><span class="mf">6.5</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mf">2018.12</span><span class="o">-</span><span class="n">x86_64_aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">-</span><span class="n">g</span><span class="o">++</span><span class="p">)</span>
@@ -175,8 +190,8 @@
 </div>
 <p>如果交叉编译工具链地址变动，需同步修改CMakeLists.txt</p>
 </div>
-<div class="section" id="id4">
-<h2>编译命令<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id5">
+<h2>编译命令<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
 <p>版本包提供了编译脚本build.sh。 AI-Express是支持X2与X3平台，编译的时候需要指定平台信息。具体编译如下<br />X3版本编译：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bash</span> <span class="n">build</span><span class="o">.</span><span class="n">sh</span> <span class="n">x3</span>
 </pre></div>
@@ -188,8 +203,8 @@
 <p>编译的可执行文件和库在build/bin和build/lib目录下</p>
 </div>
 </div>
-<div class="section" id="id5">
-<h1>部署<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id6">
+<h1>部署<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h1>
 <p>版本包提供了部署脚本deploy.sh，可将模型、可执行程序、库文件、配置文件以及测试图片整理到deploy目录中。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bash</span> <span class="n">deploy</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
@@ -249,8 +264,8 @@ sh run_ut.sh
 </div>
 <p>单元测试脚本包含人脸、人体等解决方案，以及每个模块的单元测试程序。</p>
 </div>
-<div class="section" id="id6">
-<h1>运行<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id7">
+<h1>运行<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h1>
 <p>直接在开发板的deploy目录下，运行run.sh脚本即可运行指定的测试程序。根据提示，选择对应的序号即可。
 各个测试程序的介绍及运行方法请参考相应源码目录下的README.md。<br />运行时，只需要在x2/x3设备上运行run.sh脚本，程序跑起来后，在PC上打开Chrome/Edge浏览器，输入x2/x3设备的ip,即可查看展示效果。</p>
 <p>run.sh脚本运行的流程：</p>
@@ -530,8 +545,8 @@ sh run_ut.sh
 <td>浏览器输入XJ3的IP地址，点击预览即可</td>
 </tr>
 </tbody>
-</table><div class="section" id="id7">
-<h2>硬件说明<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+</table><div class="section" id="id8">
+<h2>硬件说明<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
 <p>| 开发板           |             备注                            |
 | ————–  | —————:                            |
 | 96board         | X2 96board开发板，demo中只配置了1080P的sensor  |
@@ -550,8 +565,8 @@ sh run_ut.sh
 |s5kgm  | 4000 x 3000 | 只有body、behavior、xbox这三个solution支持4000x3000分辨率输入  |
 |usb_cam| 1920 x 1080 | 目前在x3小板子上测试通过，还会继续优化，usb_camera型号参考https://developer.horizon.ai/forum/id=5f312d96cc8b1e59c8581511</p>
 </div>
-<div class="section" id="id8">
-<h2>回灌方式说明<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id9">
+<h2>回灌方式说明<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
 <p>X3版本回灌支持3种模式，分别为cache， jpg与nv12这3个模式，区别如下：
 | 回灌方式      |     功能说明       |   回灌图像配置   |
 | ———-     |     ————    | ——  |
@@ -562,8 +577,8 @@ sh run_ut.sh
 </div>
 <div class="section" id="ai">
 <h1>AI社区相关资源<a class="headerlink" href="#ai" title="永久链接至标题">¶</a></h1>
-<div class="section" id="id9">
-<h2>镜像烧录<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id10">
+<h2>镜像烧录<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
 <p>X3小板子镜像烧录需要的工具以及烧录过程可以参考：https://developer.horizon.ai/forum/id=5f1aa3ee86cc4d95e81a73e6</p>
 </div>
 <div class="section" id="x3usb-camera">
@@ -578,12 +593,12 @@ sh run_ut.sh
 <h2>行为分析behavior<a class="headerlink" href="#behavior" title="永久链接至标题">¶</a></h2>
 <p>行为分析solution，提供了摔倒检测的功能，功能搭建可以参考：https://developer.horizon.ai/forum/id=5efab48f38ca27ba028078dd</p>
 </div>
-<div class="section" id="id10">
-<h2>体感游戏<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id11">
+<h2>体感游戏<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
 <p>可以参考：https://developer.horizon.ai/forum/id=5ef05b412ab6590143c15d6a</p>
 </div>
-<div class="section" id="id11">
-<h2>手势识别<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id12">
+<h2>手势识别<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
 <p>可以参考：https://developer.horizon.ai/forum/id=5f30f806bec8bc98cb72b288</p>
 </div>
 <div class="section" id="uvc-device">
@@ -597,28 +612,25 @@ sh run_ut.sh
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

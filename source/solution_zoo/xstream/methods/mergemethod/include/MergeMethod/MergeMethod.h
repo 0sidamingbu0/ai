@@ -16,17 +16,17 @@
 #include <vector>
 
 #include "data_type/data_type.h"
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 
 namespace xstream {
 
-class MergeMethod : public Method {
+class MergeMethod : public SimpleMethod {
  public:
   int Init(const std::string &config_file_path) override;
 
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
   void Finalize() override;
 

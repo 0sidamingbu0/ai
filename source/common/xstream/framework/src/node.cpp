@@ -307,6 +307,8 @@ void Node::Handle(const FrameworkDataPtr &framework_data) {
   std::vector<std::vector<BaseDataPtr>> inputs = GetInputData(data);
   // 构造method params
   auto params = GetInputParams(data);
+  // 获取sequence_id_
+  uint64_t sequence_id = framework_data->sequence_id_;
   if (setting_timeout_duration_ms_ > 0) {
     // 注册timer
     state_info->timer_token_ = Timer::Instance()->AddTimer(
@@ -319,8 +321,8 @@ void Node::Handle(const FrameworkDataPtr &framework_data) {
         TimerTask::ONCE);
   }
   // 启动异步任务
-  method_manager_.ProcessAsyncTask(inputs, params,
-     method_callback, framework_data->source_id_);
+  method_manager_.ProcessAsyncTask(inputs, params, sequence_id,
+      method_callback, framework_data->source_id_);
 }
 
 std::vector<std::vector<BaseDataPtr>> Node::GetInputData(

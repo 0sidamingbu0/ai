@@ -9,7 +9,7 @@
  * */
 #include <fstream>
 #include "ExampleSmartPlugin.h"
-#include "xproto/msgtype/include/xproto_msgtype/protobuf/x3.pb.h"
+#include "xproto_msgtype/protobuf/x3.pb.h"
 
 namespace horizon {
 namespace vision {

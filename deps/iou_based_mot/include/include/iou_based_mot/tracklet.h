@@ -25,7 +25,8 @@ class TrackLet {
   TrackLet(const int & track_id,
           const sp_Target &target,
           const long long &frame_id,
-          const time_t &time_stamp);
+          const time_t &time_stamp,
+          const int max_trajectory_number);
 
   ~TrackLet();
 
@@ -45,9 +46,11 @@ class TrackLet {
   void add(const sp_Target &target,
           const long long & frame_id,
           const time_t & time_stamp,
+          int max_trajectory_number,
           double dist = 0.,
           std::string matched_state = "NC");
-  void MarkMissed(const time_t &time_stamp_now);
+  void MarkMissed(const time_t &time_stamp_now, int missing_time_thres,
+                          int remove_invisible_track_ms);
   sp_Target GetTargetOfTimeStamp(const time_t &time_stamp, bool &flag);
 };
 typedef std::shared_ptr<TrackLet> sp_TrackLet;

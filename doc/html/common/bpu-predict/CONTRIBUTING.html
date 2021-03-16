@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Workflow &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/common/bpu-predict/CONTRIBUTING.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -160,8 +165,8 @@
   <div class="section" id="workflow">
 <h1>Workflow<a class="headerlink" href="#workflow" title="永久链接至标题">¶</a></h1>
 <ol class="simple">
-<li><p>Clone</p></li>
-<li><p>Install code style tools</p></li>
+<li>Clone</li>
+<li>Install code style tools</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pre-commit<span class="o">==</span><span class="m">1</span>.17.0
 apt install clang-format-9
@@ -169,13 +174,13 @@ ln -s /usr/bin/clang-format-9 /usr/bin/clang-format
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>At your local repo root, run</p></li>
+<li>At your local repo root, run</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit install
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>Make change to your code and test. You can run all the existing unittests by the following command:</p></li>
+<li>Make change to your code and test. You can run all the existing unittests by the following command:</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO</span>
 unittest ...
@@ -183,20 +188,20 @@ unittest ...
 </div>
 <p>Then commit your change to the local branch using <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code></p>
 <ol class="simple">
-<li><p>Make pull request:</p></li>
+<li>Make pull request:</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arc diff
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>Change your code based on review comments. The new change should be added
-as NEW commit to your previous commits. Then you should update the revision</p></li>
+<li>Change your code based on review comments. The new change should be added
+as NEW commit to your previous commits. Then you should update the revision</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arc diff --update
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>Publish an accepted revision after review</p></li>
+<li>Publish an accepted revision after review</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arc land
 </pre></div>
@@ -216,28 +221,25 @@ And please comment all the public functions with the following style:</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

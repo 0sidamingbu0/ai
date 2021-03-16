@@ -23,7 +23,7 @@ message("config types: ${CMAKE_CONFIGURATION_TYPES}")
 add_definitions(-DHR_POSIX)
 add_definitions(-DHR_LINUX)
 
-set (VioPlugin source/common/xproto/plugins/vioplugin)
+set (VioPlugin source/solution_zoo/common/xproto_plugins/vioplugin)
 
 if (${RELEASE_LIB})
     set(CMAKE_BUILD_TYPE Release)
@@ -62,7 +62,11 @@ elseif (${PLATFORM_X3})
     add_definitions(-DX3)
     include_directories(
         deps/x3_prebuilt/include
-        deps/x3_prebuilt/include/hbmedia
+        deps/x3_prebuilt/include/appsdk
+        deps/x3_prebuilt/include/appsdk/cam
+        deps/x3_prebuilt/include/appsdk/vio
+        deps/x3_prebuilt/include/appsdk/alsa
+        deps/x3_prebuilt/include/bpu
     )
     if (${IOT_VIO_API})
         add_definitions(-DX3_IOT_VIO)
@@ -73,11 +77,15 @@ elseif (${PLATFORM_X3})
     if (${X3_MEDIA_CODEC})
     add_definitions(-DX3_MEDIA_CODEC)
     endif()
-    set (VioPlugin source/common/xproto/plugins/iotvioplugin)
-    set (IOT_VIO_SRC ${CMAKE_SOURCE_DIR}/source/common/xproto/plugins/iotvioplugin)
+    set (VioPlugin source/solution_zoo/common/xproto_plugins/iotvioplugin)
+    set (IOT_VIO_SRC ${CMAKE_SOURCE_DIR}/source/solution_zoo/common/xproto_plugins/iotvioplugin)
     message("x3 VioPlugin:${VioPlugin}#############")
-    link_directories(${CMAKE_SOURCE_DIR}/deps/x3_prebuilt/lib/
-                    ${CMAKE_SOURCE_DIR}/deps/x3_prebuilt/lib/hbmedia)
+    link_directories(
+        ${CMAKE_SOURCE_DIR}/deps/x3_prebuilt/lib/
+        ${CMAKE_SOURCE_DIR}/deps/x3_prebuilt/lib/appsdk
+        ${CMAKE_SOURCE_DIR}/deps/x3_prebuilt/lib/appsdk/hbmedia
+        ${CMAKE_SOURCE_DIR}/deps/x3_prebuilt/lib/appsdk/hbbpu
+        )
     set (ARCHITECTURE x3)
 else ()
     message(FATAL_ERROR "must set platform to PLATFORM_X2 or PLATFORM_X3")
@@ -91,20 +99,20 @@ include_directories(
         source/common
         source/common/xstream/framework/include
         source/common/xproto/framework/include/
-        source/common/xproto/msgtype/include/
+        source/solution_zoo/common/xproto_message/include/
         ${VioPlugin}/include/
-        source/common/xproto/plugins/smartplugin/include/
-        source/common/xproto/plugins/visualplugin/include/
-        source/common/xproto/plugins/hbipcplugin/include/
-        source/common/xproto/plugins/websocketplugin/include/
-        source/common/xproto/plugins/uvcplugin/include/
-        source/common/xproto/plugins/commongdcplugin/include/
-        source/common/xproto/plugins/aioplugin/include/
-        source/common/xproto/plugins/alsadevice/include/
-        source/common/xproto/plugins/multisourcewebsocketplugin/include/
-        source/common/xproto/plugins/multisourcesmartplugin/include/
+        source/solution_zoo/common/xproto_plugins/smartplugin/include/
+        source/solution_zoo/common/xproto_plugins/visualplugin/include/
+        source/solution_zoo/common/xproto_plugins/hbipcplugin/include/
+        source/solution_zoo/common/xproto_plugins/websocketplugin/include/
+        source/solution_zoo/common/xproto_plugins/uvcplugin/include/
+        source/solution_zoo/common/xproto_plugins/commongdcplugin/include/
+        source/solution_zoo/common/xproto_plugins/aioplugin/include/
+        source/solution_zoo/common/xproto_plugins/alsadevice/include/
+        source/solution_zoo/common/xproto_plugins/multisourcewebsocketplugin/include/
+        source/solution_zoo/common/xproto_plugins/multisourcesmartplugin/include/
         source/common/xstream/vision_type/include
-        source/common/xproto/plugins/media_codec/include
+        source/solution_zoo/common/xproto_plugins/media_codec/include
         source/common/viowrapper/include
         # methods
         source/solution_zoo/xstream/methods/cnnmethod/include
@@ -159,6 +167,11 @@ include_directories(
         deps/zeroMQ/include
 )
 
+if (${IOT_VIO_API})
+  include_directories(
+    ${VioPlugin}/src/iotviomanager/camera/plugin/include/
+    )
+endif ()
 
 link_directories(
         ${CMAKE_SOURCE_DIR}/deps/ipc_tracking/lib/
@@ -184,24 +197,24 @@ set(OUTPUT_ROOT ${CMAKE_SOURCE_DIR}/output/)
 
 
 add_subdirectory(source/common/xproto/framework)
-add_subdirectory(source/common/xproto/msgtype)
+add_subdirectory(source/solution_zoo/common/xproto_message)
 add_subdirectory(${VioPlugin})
-add_subdirectory(source/common/xproto/plugins/smartplugin)
-add_subdirectory(source/common/xproto/plugins/visualplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/smartplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/visualplugin)
 if (${PLATFORM_X2})
-add_subdirectory(source/common/xproto/plugins/hbipcplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/hbipcplugin)
 endif()
-add_subdirectory(source/common/xproto/plugins/websocketplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/websocketplugin)
 if (${PLATFORM_X3})
-add_subdirectory(source/common/xproto/plugins/uvcplugin)
-add_subdirectory(source/common/xproto/plugins/aioplugin)
-add_subdirectory(source/common/xproto/plugins/alsadevice)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/uvcplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/aioplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/alsadevice)
 add_subdirectory(source/solution_zoo/video_box/)
-add_subdirectory(source/common/xproto/plugins/multisourcesmartplugin)
-add_subdirectory(source/common/xproto/plugins/multisourcewebsocketplugin)
-add_subdirectory(source/common/xproto/plugins/commongdcplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/multisourcesmartplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/multisourcewebsocketplugin)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/commongdcplugin)
 if (${X3_MEDIA_CODEC})
-add_subdirectory(source/common/xproto/plugins/media_codec)
+add_subdirectory(source/solution_zoo/common/xproto_plugins/media_codec)
 endif()
 endif()
 add_subdirectory(source/common/xstream/framework)

@@ -33,7 +33,7 @@ TEST(ANTI_SPF_TEST, Basic) {
   std::string config_file = "./config/living.json";
   anti_spf_calculate_method.Init(config_file);
 
-  std::vector<std::vector<BaseDataPtr>> xstream_output;
+  std::vector<BaseDataPtr> xstream_output;
   for (int i = 0; i < 6; ++i) {
     std::shared_ptr<BaseDataVector> face_rects_ptr(new BaseDataVector());
     std::shared_ptr<XStreamData<BBox>> box(new XStreamData<BBox>());
@@ -49,19 +49,17 @@ TEST(ANTI_SPF_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(face_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(liveness_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(face_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(liveness_ptr);
 
     xstream_output = anti_spf_calculate_method.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 2u);
     auto out_track_ids_ptr = one_frame_out[0];
     auto out_liveness_ptr = one_frame_out[1];
@@ -96,16 +94,14 @@ TEST(ANTI_SPF_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(face_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(liveness_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(face_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(liveness_ptr);
 
     xstream_output = anti_spf_calculate_method.DoProcess(input, param);
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 2u);
     auto out_track_ids_ptr = one_frame_out[0];
     auto out_liveness_ptr = one_frame_out[1];
@@ -140,19 +136,17 @@ TEST(ANTI_SPF_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(face_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(liveness_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(face_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(liveness_ptr);
 
     xstream_output = anti_spf_calculate_method.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 2u);
     auto out_track_ids_ptr = one_frame_out[0];
     auto out_liveness_ptr = one_frame_out[1];
@@ -187,19 +181,17 @@ TEST(ANTI_SPF_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(face_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(liveness_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(face_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(liveness_ptr);
 
     xstream_output = anti_spf_calculate_method.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 2u);
     auto out_track_ids_ptr = one_frame_out[0];
     auto out_liveness_ptr = one_frame_out[1];
@@ -227,7 +219,7 @@ TEST(VEHICLE_TYPE_COLOR_TEST, Basic) {
   std::string config_file = "./config/vehicle_type_color.json";
   vehicle.Init(config_file);
 
-  std::vector<std::vector<BaseDataPtr>> xstream_output;
+  std::vector<BaseDataPtr> xstream_output;
   for (int i = 0; i < 6; ++i) {
     std::shared_ptr<BaseDataVector> vehicle_rects_ptr(new BaseDataVector());
     std::shared_ptr<XStreamData<BBox>> box(new XStreamData<BBox>());
@@ -242,19 +234,17 @@ TEST(VEHICLE_TYPE_COLOR_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(vehicle_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(vehicle_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(vehicle_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(vehicle_ptr);
 
     xstream_output = vehicle.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 1u);
     auto out_vehicle_ptr = one_frame_out[0];
     auto out_vehicle =
@@ -279,19 +269,17 @@ TEST(VEHICLE_TYPE_COLOR_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(vehicle_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(vehicle_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(vehicle_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(vehicle_ptr);
 
     xstream_output = vehicle.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 1u);
     auto out_vehicle_ptr = one_frame_out[0];
     auto out_vehicle =
@@ -310,7 +298,7 @@ TEST(PLATE_COLOR_TEST, Basic) {
   std::string config_file = "./config/plate_color.json";
   plate_color.Init(config_file);
 
-  std::vector<std::vector<BaseDataPtr>> xstream_output;
+  std::vector<BaseDataPtr> xstream_output;
   for (int i = 0; i < 6; ++i) {
     std::shared_ptr<BaseDataVector> plate_color_rects_ptr(new BaseDataVector());
     std::shared_ptr<XStreamData<BBox>> box(new XStreamData<BBox>());
@@ -326,19 +314,17 @@ TEST(PLATE_COLOR_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(plate_color_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(plate_color_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(plate_color_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(plate_color_ptr);
 
     xstream_output = plate_color.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 1u);
     auto out_plate_color_ptr = one_frame_out[0];
     auto out_plate_color =
@@ -366,19 +352,17 @@ TEST(PLATE_COLOR_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(plate_color_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(plate_color_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(plate_color_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(plate_color_ptr);
 
     xstream_output = plate_color.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), 1u);
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), 1u);
     auto out_plate_color_ptr = one_frame_out[0];
     auto out_plate_color =

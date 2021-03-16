@@ -54,6 +54,17 @@ inline void CoordinateTransform(
   y = y * 1.0 * src_image_height / model_input_hight;
 }
 
+// coordinate drift.
+// FCOS model use crop image for original image,
+// which needs coordinate drift for detection result.
+template<typename T>
+inline void CoordinateDrift(
+    T &x, T &y,
+    int x_drift, int y_drift) {
+  x += x_drift;
+  y += y_drift;
+}
+
 // numpy arange
 template<typename T>
 inline std::vector<T> Arange(T start, T stop, T step = 1) {

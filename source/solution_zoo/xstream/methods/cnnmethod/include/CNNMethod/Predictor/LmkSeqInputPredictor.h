@@ -23,6 +23,7 @@ class LmkSeqInputPredictor : public Predictor {
   virtual int32_t Init(std::shared_ptr<CNNMethodConfig> config);
   virtual void Do(CNNMethodRunData *run_data);
   virtual void UpdateParam(std::shared_ptr<CNNMethodConfig> config);
+  virtual bool IsNeedReorder();
 
  private:
   int input_shift_ = 7;

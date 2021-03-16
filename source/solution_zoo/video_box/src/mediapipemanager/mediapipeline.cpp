@@ -38,14 +38,14 @@ int MediaPipeLine::Init() {
   LOGD << "vdec frame_depth:" << module_info.frame_depth;
   int ret = vdec_module_->Init(vdec_group_id_, &module_info);
   if (ret != 0) {
-    LOGE << "vdec module init fail";
+    LOGE << "vdec module init fail, group:" << vdec_group_id_;
     return ret;
   }
-  module_info.frame_depth = 4;
+  module_info.frame_depth = vps_frame_depth_;
   LOGD << "vps frame_depth:" << module_info.frame_depth;
   ret = vps_module_->Init(vps_group_id_, &module_info);
   if (ret != 0) {
-    LOGE << "vps module init fail";
+    LOGE << "vps module init fail, group:" << vps_group_id_;
     return ret;
   }
 
@@ -83,11 +83,11 @@ int MediaPipeLine::Input(void *data) {
   last_recv_data_time_ = (uint64_t)tv.tv_sec;
 
   auto ret = vdec_module_->Input(data);
-  LOGI << "vdec in grp:" << GetGrpId() << "  ret:" << ret;
+  LOGD << "vdec in grp:" << GetGrpId() << "  ret:" << ret;
   if (set_prom_) {
     set_prom_ = false;
     promise_.set_value(ret);
-    LOGI << "promise_ set_value";
+    LOGD << "promise_ set_value";
   }
 
   return 0;
@@ -102,7 +102,7 @@ int MediaPipeLine::Output(void **data) {
   hb_vio_buffer_t hb_vio_buf;
   void *data_temp = nullptr;
   ret = vdec_module_->Output(&data_temp);
-  LOGI << "vdec out  grp:" << GetGrpId() << "  ret:" << ret;
+  LOGD << "vdec out  grp:" << GetGrpId() << "  ret:" << ret;
   if (ret != 0) {
     *data = nullptr;
     return -1;
@@ -135,7 +135,7 @@ int MediaPipeLine::Output(void **data) {
   hb_vio_buf.img_info.fd[0] = video_frame->stVFrame.fd[0];
   hb_vio_buf.img_info.fd[1] = video_frame->stVFrame.fd[1];
   ret = vps_module_->Input(&hb_vio_buf);
-  LOGI << "vps in  grp:" << GetGrpId() << "  ret:" << ret;
+  LOGD << "vps in  grp:" << GetGrpId() << "  ret:" << ret;
   if (ret != 0) {
     LOGW << "vps input timeout.";
     vdec_module_->OutputBufferFree(data_temp);
@@ -143,7 +143,7 @@ int MediaPipeLine::Output(void **data) {
     return -2;
   }
   ret = vps_module_->Output(data);
-  LOGI << "vps out  grp:" << GetGrpId() << "  ret:" << ret;
+  LOGD << "vps out  grp:" << GetGrpId() << "  ret:" << ret;
   vdec_module_->OutputBufferFree(data_temp);
   if (ret != 0) {
     LOGW << "vps output timeout.";

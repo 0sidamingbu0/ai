@@ -44,20 +44,12 @@ int GradingMethod::Init(const std::string &config_file_path) {
   return XSTREAM_GRADING_OK;
 }
 
-std::vector<std::vector<BaseDataPtr>> GradingMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
-
-  LOGI << "GradingMethod::DoProcess" << std::endl;
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    auto &param_batch_i = param[i];
-    grading_->ProcessFrame(in_batch_i, param_batch_i, &out_batch_i);
-  }
+std::vector<BaseDataPtr> GradingMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
+  LOGD << "GradingMethod::DoProcess" << std::endl;
+  std::vector<BaseDataPtr> output;
+  grading_->ProcessFrame(input, param, &output);
   return output;
 }
 

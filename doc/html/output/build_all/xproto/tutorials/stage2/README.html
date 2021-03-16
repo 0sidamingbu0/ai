@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>XProto示例 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/output/build_all/xproto/tutorials/stage2/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -168,7 +173,7 @@
 <span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">XPLUGIN_NUMBER_MESSAGE1</span><span class="p">)</span>      <span class="c1">// 注册消息</span>
 <span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">XPLUGIN_NUMBER_MESSAGE2</span><span class="p">)</span>      <span class="c1">// 注册消息</span>
 
-<span class="k">struct</span> <span class="nc">NumberProdMessage1</span> <span class="o">:</span> <span class="n">horizon</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">xproto</span><span class="o">::</span><span class="n">XProtoMessage</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">NumberProdMessage1</span> <span class="p">:</span> <span class="n">horizon</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">xproto</span><span class="o">::</span><span class="n">XProtoMessage</span> <span class="p">{</span>
   <span class="kt">float</span> <span class="n">num_</span><span class="p">;</span>
   <span class="k">explicit</span> <span class="nf">NumberProdMessage1</span><span class="p">(</span><span class="kt">float</span> <span class="n">num</span><span class="p">)</span> <span class="o">:</span><span class="n">num_</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="n">TYPE_NUMBER_MESSAGE1</span><span class="p">;</span>     <span class="c1">// 指定消息类型</span>
@@ -179,7 +184,7 @@
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
   <span class="p">}</span>
 <span class="p">};</span>
-<span class="k">struct</span> <span class="nc">NumberProdMessage2</span> <span class="o">:</span> <span class="n">horizon</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">xproto</span><span class="o">::</span><span class="n">XProtoMessage</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">NumberProdMessage2</span> <span class="p">:</span> <span class="n">horizon</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">xproto</span><span class="o">::</span><span class="n">XProtoMessage</span> <span class="p">{</span>
   <span class="kt">float</span> <span class="n">num_</span><span class="p">;</span>
   <span class="k">explicit</span> <span class="nf">NumberProdMessage2</span><span class="p">(</span><span class="kt">float</span> <span class="n">num</span><span class="p">)</span> <span class="o">:</span><span class="n">num_</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="n">TYPE_NUMBER_MESSAGE2</span><span class="p">;</span>     <span class="c1">// 指定消息类型</span>
@@ -316,28 +321,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -56,8 +56,12 @@ int BPU_getModelNameList(BPUHandle handle,
                          const char ***name_list,
                          int *name_list_cnt);
 
-enum BPUDtype { BPU_DTYPE_FLOAT32 = 0, BPU_DTYPE_INT8,  BPU_DTYPE_INT32,
-    BPU_DTYPE_INT64};
+enum BPUDtype {
+  BPU_DTYPE_FLOAT32 = 0,
+  BPU_DTYPE_INT8,
+  BPU_DTYPE_INT32,
+  BPU_DTYPE_INT64
+};
 
 struct BPUModelInfo {
   int num;                   // num of data
@@ -142,18 +146,16 @@ BPU_Buffer_Handle BPU_createEmptyBPUBuffer();
 int BPU_freeBPUBuffer(BPU_Buffer_Handle buff);
 
 /*
- * describe data buffer that come from pyramid module.
+ * describe data buffer.
  */
-typedef void *BPUPyramidBuffer;
-
-typedef void *BPUScalerBuffer;
-
-struct BPUFakeImage {
-  BPU_Buffer_Handle data;
-  int height;
-  int width;
-  int image_id;
-  uint64_t timestamp;
+struct Nv12BpuAddrInfo {
+  uint16_t width;
+  uint16_t height;
+  uint16_t step;
+  uint64_t y_paddr;
+  uint64_t uv_paddr;
+  uint64_t y_vaddr;
+  uint64_t uv_vaddr;
 };
 
 struct BPUBBox {
@@ -196,8 +198,7 @@ int BPU_releaseModelHandle(BPUHandle handle, BPUModelHandle model_handle);
  */
 int BPU_runModelFromPyramid(BPUHandle handle,
                             const char *model_name,
-                            BPUPyramidBuffer input,
-                            int pyr_level,
+                            const Nv12BpuAddrInfo *one_down_scale,
                             BPU_Buffer_Handle output[],
                             int nOutput,
                             BPUModelHandle *model_handle,
@@ -206,11 +207,12 @@ int BPU_runModelFromPyramid(BPUHandle handle,
                             int core_id = -1);
 
 /*
- * \brief run model with input data that come from input image data
+ * \brief run model with input data that come from input image data (NV12
+ * format， and w aligned to 16)
  */
 int BPU_runModelFromImage(BPUHandle handle,
                           const char *model_name,
-                          BPUFakeImage *input,
+                          BPU_Buffer_Handle nv12_image,
                           BPU_Buffer_Handle output[],
                           int nOutput,
                           BPUModelHandle *model_handle,
@@ -251,7 +253,8 @@ int BPU_runModelFromDDRWithConvertLayout(BPUHandle handle,
  */
 int BPU_runModelFromResizer(BPUHandle handle,
                             const char *model_name,
-                            BPUPyramidBuffer input,
+                            Nv12BpuAddrInfo down_scales[],
+                            int down_scale_num,
                             BPUBBox *bbox,
                             int nBox,
                             int *resizable_cnt,
@@ -265,8 +268,7 @@ int BPU_runModelFromResizer(BPUHandle handle,
  */
 int BPU_runModelCropPyramid(BPUHandle handle,
                             const char *model_name,
-                            BPUPyramidBuffer input,
-                            int pyr_level,
+                            const Nv12BpuAddrInfo *one_down_scale,
                             int start_x,
                             int start_y,
                             BPU_Buffer_Handle output[],
@@ -278,7 +280,7 @@ int BPU_runModelCropPyramid(BPUHandle handle,
 
 int BPU_runModelCropScalerBuffer(BPUHandle handle,
                                  const char *model_name,
-                                 BPUScalerBuffer input,
+                                 const Nv12BpuAddrInfo *scaler_buffer,
                                  int start_x,
                                  int start_y,
                                  BPU_Buffer_Handle output[],

@@ -89,7 +89,7 @@ Memory architecture of Bernoulli is shown as above. As you can see that there is
 
 **TIPS:**
 
-Specify output to `cachable` and flush cache data into memory to obtain the up-to-date data. As CPU will possibly visit model results multiple times, specifying output to `cachable` can accelerate access speed using cache.
+Specify model input/output memory as `cachable` in order to improve access speed by effectively using the cache memory.
 
 **INPUT:**
 
@@ -195,6 +195,38 @@ This interfaces is used for freeing the memory corresponds to its virtual addres
 **RETURN:**
 
 1. Error code in int type; returns `BPU_OK` if successful. All other returns indicate failures.
+
+#### 1.2.8 HB_BPU_dmacopy
+
+```c
+int HB_BPU_dmacopy(void *dst_addr, void *src_addr, uint32_t size);
+```
+
+**DESCRIPTIONS:**
+
+This interface is used for accomplishing memory copy using DMA fucnctionality.
+
+**PARAMETERS:**
+
+1. `dst_addr` denotes the target destination address of memory copy and should input virtual address pointer.
+2. `src_addr` denotes the source address of memory copy and should input virtual address pointer.
+3. `size` denotes memory copy size, size < 240M.
+
+**NOTE:**
+
+  **1. It returns error code in int type and prints `BPU_OK` if successful. Other values indicate failures.**
+
+  **2. `src_addr` and `dst_addr` need to allocate a chunk of contiguous physical memory using `HB_SYS_bpuMemAlloc`, so that the `virAddr` pointer in `BPU_MEMORY_S` can be passed in as a parameter.**
+
+  **3. Currently the DMA memory copy functionality only supports XJ3 dev board, XJ2 dev board doesn't have this functionality.**
+
+  **4. Please note that there will be an additional time consumption around 50us when initiating DMA memory copy for the first time.**
+
+  **5. As for non-cache memory, the DMA copy speed of those memories whose sizes are greater than 4k doubles CPU memory copy speed; the DMA copy speed of those memories whose sizes are smaller than 4K is similar with CPU memory copy speed.**
+
+  **6. As for cache memory, CPU memory copy speed is 5 times faster than DMA.**
+
+  **7. Recommended memory copy scheme: a) When CPU resource is sufficient, it is recommended to allocate cache memory and use CPU copy. b) When CPU resource is insufficient, it is recommended to use DMA copy.**
 
 ## 2.BPU predict API
 
@@ -1112,7 +1144,7 @@ Runs model using input data. Wherein input data refer to the combination of mult
 4. `bbox` denotes bbox array pointer.
 5. `bbox_num` denotes number of bbox.
 6. `output_data` denotes output data tensor.
-7. `output_num` denotes the number of output data and must be the same as number of model output. Please do not confuse the two parameters `output_num` and `output_data`. The former denotes model output number, while the latter denotes the contiguous memory of tensor multiplies n `bbox_num` of each model output. Let's explain by below example: Let the output of resizer model be A and B, if there are 20 detection boxes as input, then n `bbox_num`=20, `output_num`=2, `output_data[0]`=20 memories of A tensor, `output_data[1]`= 20 memories of B tensor.
+7. `output_num` denotes the number of output data and must be the same as number of model output. Please do not confuse the two parameters `output_num` and `output_data`. The former denotes model output number, while the latter denotes the contiguous memory of tensor multiplies nBBox of each model output. Let's explain by below example: Let the output of resizer model be A and B, if there are 20 detection boxes as input, then nBBox=20, `output_num`=2, `output_data[0]`=20 memories of A tensor, `output_data[1]`= 20 memories of B tensor.
 8. `run_ctrl` denotes the control information of the model run. E.g. `core_id`. Whether or not to use the `RoiResize` feature when the resizer hardware cannot support.
 9. `is_sync` denotes whether the model run uses synchronous mode. `true` denotes synchronous mode, `false` denotes asynchronous mode.
 
@@ -1373,48 +1405,48 @@ The post-process interface of a certain output of special detection model which 
 ```c++
 int HB_BPU_loadModelPackage(const void *model_data,
                             int model_size,
-                            BPU_MODEL_PACKAGE_S *model_pack_s);
+                            BPU_MODEL_PACKAGE_S *model_pack_s)
 ```
 
 **DESCRIPTIONS:**
 
-Load BPU model package to get the struct object which represents the model. `BPU_MODEL_PACKAGE_S` struct shall be passed in from outside and this function fills model information in the package into the struct.
+Load BPU model package to get the struct object representing the package. `BPU_MODEL_PACKAGE_S` should be passed in from outside the struct and this function fill model information in the package directly into the struct.
 
 **INPUT:**
 
-1. `model_data` points to the memory address where model data are stored. The memory here can be allocated as ordinary memory, rather than BPU memory. `model_data` memory can be freed after successfully loading the model.
-2. `model_size` refers to the memory size of model data.
+1. `model_data` points to the memory address where model data are stored. It can be ordinary memory and is unnecessarily to be allocated as BPU memory. `model_data` memory can be freed after model is loaded.
+2. `model_size` denotes the memory size of model data.
 
 **OUTPUT:**
 
-1. `model_pack_s`：denotes the struct pointer of the model package information being loaded.
+1. `model_pack_s` denotes the struct pointer who is loading model package information at present.
 
 **RETURN:**
 
-1. The int type return values. 0 denotes successful execution while other values denote failures. Specific reasons of failures will be returned by error code in strings when invoking `HB_BPU_getErrorName(err)`.
+1. Error code in int type. 0 indicates success and other values denotes failures whose specific causes can be obtained via the string returns by invoking `HB_BPU_getErrorName(err)` using error code.
 
 #### 2.3.28 HB_BPU_loadModelPackageFromFile
 
 ```c++
 int HB_BPU_loadModelPackageFromFile(const char *file_path,
-                                    BPU_MODEL_PACKAGE_S *model_pack_s);
+                                    BPU_MODEL_PACKAGE_S *model_pack_s)
 ```
 
 **DESCRIPTIONS:**
 
-Load BPU model package to get the struct object which represents the model. `BPU_MODEL_PACKAGE_S` struct shall be passed in from outside and this function fills model information in the package into the struct.
+Load BPU model package to get the struct object representing the package. `BPU_MODEL_PACKAGE_S` should be passed in from outside the struct and this function fill model information in the package directly into the struct.
 
 **INPUT:**
 
-1. `file_path` donotes the file path of model package
+1. `file_path` denotes the file path of model package.
 
 **OUTPUT:**
 
-1. `model_pack_s` denotes the struct pointer of the model package information being loaded.
+1. `model_pack_s` denotes the struct pointer who is loading model package information at present.
 
 **RETURN:**
 
-1. The int type return values. 0 denotes successful execution while other values denote failures. Specific reasons of failures will be returned by error code in strings when invoking `HB_BPU_getErrorName(err)`.
+1. Error code in int type. 0 indicates success and other values denotes failures whose specific causes can be obtained via the string returns by invoking `HB_BPU_getErrorName(err)` using error code.
 
 #### 2.3.29 HB_BPU_releaseModelPackage
 
@@ -1424,15 +1456,15 @@ int HB_BPU_releaseModelPackage(BPU_MODEL_PACKAGE_S *model_package_s);
 
 **DESCRIPTIONS:**
 
-Free loaded BPU model package. The `model_package_s` struct will be modified from inside this API.
+Free loaded BPU model package. The `model_package_s` struct should be modified from inside the function.
 
 **INPUT:**
 
-1. `model_package_s` denotes the object pointer of model package struct.
+1. `model_package_s` denotes the strucut object pointer of model package.
 
 **RETURN:**
 
-1. The int type return values. 0 denotes successful execution while other values denote failures.
+1. Error code in int type. 0 indicates success and other values denotes failures.
 
 ### 2.4 IO Interface Descriptions
 

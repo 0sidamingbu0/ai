@@ -187,12 +187,10 @@ TEST_F(FaceSnapFilterMethodTest, default_config) {
                   "\n}\n";
   EXPECT_EQ(content, param_gt);
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  auto &frame_input = input;
   frame_input.resize(3);
   for (int i = 0; i < 3; ++i) {
     frame_input[i] = std::static_pointer_cast<BaseData>(\
@@ -208,13 +206,12 @@ TEST_F(FaceSnapFilterMethodTest, default_config) {
     landmark->datas_.push_back(\
                 std::static_pointer_cast<BaseData>(landmark_[i]));
   }
-  EXPECT_EQ(input[0].size(), static_cast<size_t>(3));
+  EXPECT_EQ(input.size(), static_cast<size_t>(3));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), static_cast<size_t>(1));
-  EXPECT_EQ(output[0].size(), static_cast<size_t>(4));
+  EXPECT_EQ(output.size(), static_cast<size_t>(4));
   auto output_err_code =
-      std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+      std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), static_cast<size_t>(2));
   int actual_size = 0;
   for (size_t i = 0; i < output_box->datas_.size(); i++) {
@@ -235,12 +232,10 @@ TEST_F(FaceSnapFilterMethodTest, basic) {
   int ret = method.Init(config_path_);
 
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  auto &frame_input = input;
   frame_input.resize(3);
   for (int i = 0; i < 3; ++i) {
     frame_input[i] = std::static_pointer_cast<BaseData>(\
@@ -256,13 +251,12 @@ TEST_F(FaceSnapFilterMethodTest, basic) {
     landmark->datas_.push_back(\
                 std::static_pointer_cast<BaseData>(landmark_[i]));
   }
-  EXPECT_EQ(input[0].size(), static_cast<size_t>(3));
+  EXPECT_EQ(input.size(), static_cast<size_t>(3));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), static_cast<size_t>(1));
-  EXPECT_EQ(output[0].size(), static_cast<size_t>(4));
+  EXPECT_EQ(output.size(), static_cast<size_t>(4));
   auto output_err_code =
-      std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+      std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), static_cast<size_t>(2));
   int actual_size = 0;
   for (size_t i = 0; i < output_box->datas_.size(); i++) {
@@ -282,12 +276,10 @@ TEST_F(FaceSnapFilterMethodTest, normal) {
   FaceSnapFilterMethod method;
   int ret = method.Init(config_path_);
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  auto &frame_input = input;
   frame_input.resize(6);
   for (int i = 0; i < 6; ++i) {
     frame_input[i] = std::static_pointer_cast<BaseData>(\
@@ -314,14 +306,13 @@ TEST_F(FaceSnapFilterMethodTest, normal) {
         std::static_pointer_cast<BaseData>(occluded_attribute_[i]));
     occluded_attribute->datas_[i]->type_ = "Attribute";
   }
-  EXPECT_EQ(input[0].size(), static_cast<size_t>(6));
+  EXPECT_EQ(input.size(), static_cast<size_t>(6));
 
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), static_cast<size_t>(1));
-  EXPECT_EQ(output[0].size(), static_cast<size_t>(7));
+  EXPECT_EQ(output.size(), static_cast<size_t>(7));
   auto output_err_code =
-      std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+      std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), static_cast<size_t>(2));
   int actual_size = 0;
   for (size_t i = 0; i < output_box->datas_.size(); i++) {
@@ -374,12 +365,10 @@ TEST_F(FaceSnapFilterMethodTest, big_face_mode) {
   ret = method.UpdateParameter(method_param);
 
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  auto &frame_input = input;
   frame_input.resize(1);
   for (int i = 0; i < 1; ++i) {
     frame_input[i] = std::static_pointer_cast<BaseData>(\
@@ -391,11 +380,10 @@ TEST_F(FaceSnapFilterMethodTest, big_face_mode) {
     face_box->datas_.push_back(\
                 std::static_pointer_cast<BaseData>(face_box_[i]));
   }
-  EXPECT_EQ(input[0].size(), static_cast<size_t>(1));
+  EXPECT_EQ(input.size(), static_cast<size_t>(1));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), static_cast<size_t>(1));
-  EXPECT_EQ(output[0].size(), static_cast<size_t>(2));
-  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0][0]);
+  EXPECT_EQ(output.size(), static_cast<size_t>(2));
+  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0]);
   EXPECT_EQ(output_err_code->datas_.size(), static_cast<size_t>(2));
   int actual_size = 0;
   for (const auto &data : output_err_code->datas_) {
@@ -410,7 +398,7 @@ TEST_F(FaceSnapFilterMethodTest, big_face_mode) {
   err_code = std::static_pointer_cast<XRocFilterDescription>(
       output_err_code->datas_[1]);
   EXPECT_EQ(err_code->value, 0);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), static_cast<size_t>(2));
   actual_size = 0;
   for (const auto &data : output_box->datas_) {
@@ -426,11 +414,9 @@ TEST_F(FaceSnapFilterMethodTest, pass_through) {
   int ret = method.Init(config_path_);
 
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  auto &frame_input = input[0];
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  auto &frame_input = input;
   frame_input.resize(3);
   for (int i = 0; i < 3; ++i) {
     frame_input[i] = std::static_pointer_cast<BaseData>(\
@@ -450,14 +436,12 @@ TEST_F(FaceSnapFilterMethodTest, pass_through) {
   xstream::InputParamPtr pass_through_param(
       new FaceSnapFilterMethodParam("filter_example", "pass-through"));
   pass_through_param->is_json_format_ = false;
-  param.emplace_back(pass_through_param);
-  EXPECT_EQ(input[0].size(), static_cast<size_t>(3));
-  output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), static_cast<size_t>(1));
-  EXPECT_EQ(output[0].size(), static_cast<size_t>(4));
+  EXPECT_EQ(input.size(), static_cast<size_t>(3));
+  output = method.DoProcess(input, pass_through_param);
+  EXPECT_EQ(output.size(), static_cast<size_t>(4));
   auto output_err_code =
-      std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+      std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), static_cast<size_t>(2));
   int actual_size = 0;
   for (auto & data : output_box->datas_) {

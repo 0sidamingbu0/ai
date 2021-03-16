@@ -10,11 +10,19 @@
 
 #include <hbdk_march.h>
 #include <hbdk_type.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/types/vector.hpp>
+
+#pragma GCC diagnostic pop
+
 #include <fstream>
 #include <memory>
 #include <string>
@@ -246,6 +254,7 @@ struct Layer {
     SPOOLING_AVG_GLOBAL,
     RESCALE,
     SLUT,
+    MEAN,
     GEMM,
     ELEMENTWISE_BIT_AND,
     ELEMENTWISE_BIT_OR,
@@ -632,6 +641,9 @@ struct MaxPoolingLayer : public Layer {
     } else if (version == 2) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(kernel), CEREAL_NVP(stride), CEREAL_NVP(padding),
          CEREAL_NVP(result_right_shift), CEREAL_NVP(pad_mode));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(kernel), CEREAL_NVP(stride), CEREAL_NVP(padding),
+         CEREAL_NVP(result_right_shift), CEREAL_NVP(pad_mode), CEREAL_NVP(heatmap_mode));
     } else {
       AbortOnVersion(this, version);
     }
@@ -642,6 +654,7 @@ struct MaxPoolingLayer : public Layer {
   Shape2D padding;
   uint32_t result_right_shift = 9;  // result sum will right shift this
   enum class PadMode { CONSTANT, BOUNDARY } pad_mode = PadMode::CONSTANT;
+  bool heatmap_mode = false;
 };
 
 /**
@@ -1802,6 +1815,9 @@ struct SLutLayer : public Layer {
     // Don't forget to update the version number using HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION in the following
     if (version == 1) {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr));
+    } else if (version == 2) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(attr), CEREAL_NVP(attr.enable_symmetry),
+         CEREAL_NVP(attr.enable_rounding));
     } else {
       AbortOnVersion(this, version);
     }
@@ -1829,6 +1845,8 @@ struct SLutLayer : public Layer {
     int32_t symmetry_k = 0, symmetry_b = 0;  // k and b to post process negative input value for symmetry mode
     std::vector<int32_t> sparse_table;
     std::vector<int32_t> dense_table;
+    bool enable_symmetry;
+    bool enable_rounding;
 
     template <class Archive>
     void serialize(Archive &ar) {
@@ -2094,6 +2112,7 @@ struct OpticalPyramidLayer : public Layer {
   std::vector<std::pair<bool, bool>> pyramid_config_;
   // NOTE do not change the sequence, if you modify it, do so in optical_pyramid.hpp as well
   enum class BorderMode { BORDER_REPLICATE, BORDER_REFLECT, BORDER_REFLECT_101, BORDER_WRAP, BORDER_CONSTANT };
+  enum class InputMode { NATIVE, FOLD_W_TO_C_4 };
 
   std::vector<int32_t> scalar_outputs_;
   std::vector<int32_t> grad_outputs_;
@@ -2101,6 +2120,7 @@ struct OpticalPyramidLayer : public Layer {
   int32_t padding_pixel_;
   BorderMode border_mode_;
   std::string scalar_element_type_;
+  InputMode input_mode_;
 
   template <class Archive>
   void serialize(Archive &ar, std::int32_t const version) {
@@ -2111,6 +2131,10 @@ struct OpticalPyramidLayer : public Layer {
       ar(cereal::base_class<Layer>(this), CEREAL_NVP(pyramid_config_), CEREAL_NVP(border_mode_),
          CEREAL_NVP(pyramid_level_), CEREAL_NVP(scalar_outputs_), CEREAL_NVP(grad_outputs_), CEREAL_NVP(padding_pixel_),
          CEREAL_NVP(scalar_element_type_));
+    } else if (version == 3) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(pyramid_config_), CEREAL_NVP(border_mode_),
+         CEREAL_NVP(pyramid_level_), CEREAL_NVP(scalar_outputs_), CEREAL_NVP(grad_outputs_), CEREAL_NVP(padding_pixel_),
+         CEREAL_NVP(scalar_element_type_), CEREAL_NVP(input_mode_));
     } else {
       AbortOnVersion(this, version);
     }
@@ -2141,7 +2165,7 @@ struct PadLayer : public Layer {
     }
   }
 
-  enum class Mode { CONSTANT, EDGE };
+  enum class Mode { CONSTANT, EDGE /*same as BOUNDARY*/ };
   Mode mode = Mode::CONSTANT;
   int32_t constant_value = 0;
 
@@ -2349,6 +2373,37 @@ struct Rescale : public Layer {
   std::vector<int8_t> output_right_shift;
 };
 
+/**
+ * Mean layer
+ *
+ * input [feature]
+ * 1. feature shape is [N, H, W, C], has same scale value
+ *
+ * output [output]
+ * 1. calculate average value on specific dimension
+ * 2. the specific dimension of output shape is 1, others are same as input shape
+ *
+ */
+struct MeanLayer : public Layer {
+  using Layer::Layer;
+  MeanLayer() = default;
+  MeanLayer(std::string name, int dim, std::vector<std::shared_ptr<Tensor>> input_tensors,
+            std::vector<std::shared_ptr<Tensor>> output_tensors)
+      : Layer(std::move(name), std::move(input_tensors), std::move(output_tensors)), dim(dim) {}
+  ~MeanLayer() noexcept override = default;
+  layer_type_t GetLayerType() const override { return layer_type_t::MEAN; }
+
+  template <class Archive>
+  void serialize(Archive &ar, std::int32_t const version) {
+    if (version == 1) {
+      ar(cereal::base_class<Layer>(this), CEREAL_NVP(dim));
+    } else {
+      AbortOnVersion(this, version);
+    }
+  }
+  int dim;
+};
+
 /***
  * Support D = alpha * A * B + beta * C, which A, B, C, D all are matrix, represented as tensor, the shape are 1x1xMxN,
  * M is the row number, N is the column number.
@@ -2516,7 +2571,7 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SConvolutionLayer, 3)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::AvgPoolingLayer, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::MaxPoolingLayer, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::MaxPoolingLayer, 3)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::GlobalAvgPoolingLayer, 2)
 // NOLINTNEXTLINE
@@ -2582,7 +2637,7 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ShuffleLayer, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SQuantiInputLayer, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::OpticalPyramidLayer, 2)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::OpticalPyramidLayer, 3)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::PadLayer, 1)
 // NOLINTNEXTLINE
@@ -2600,7 +2655,9 @@ HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::ElementwiseMax, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::Rescale, 1)
 // NOLINTNEXTLINE
-HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SLutLayer, 1)
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::SLutLayer, 2)
+// NOLINTNEXTLINE
+HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::MeanLayer, 1)
 // NOLINTNEXTLINE
 HBDK_HBIR_CEREAL_REGISTER_TYPE_WITH_VERSION(hbdk::hbir::GemmLayer, 1)
 // NOLINTNEXTLINE

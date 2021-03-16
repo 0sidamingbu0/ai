@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Road Side Perception &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/common/roadside_perception/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -164,20 +169,17 @@
 <p><code class="docutils literal notranslate"><span class="pre">roadside</span> <span class="pre">perception</span> <span class="pre">SDK</span></code>将视频检测结果，映射定位到二维地图平面上。</p>
 <p>目前支持的转换类型包括：</p>
 <ul class="simple">
-<li><p>机动车</p>
-<ul>
-<li><p>车辆bbox检测框 –&gt; 车辆行驶方向，车辆行驶速度</p></li>
-<li><p>车轮关键点，车型，行驶方向 –&gt; 车辆定位中心点</p></li>
+<li>机动车<ul>
+<li>车辆bbox检测框 –&gt; 车辆行驶方向，车辆行驶速度</li>
+<li>车轮关键点，车型，行驶方向 –&gt; 车辆定位中心点</li>
 </ul>
 </li>
-<li><p>非机动车</p>
-<ul>
-<li><p>非机动车bbox检测框 –&gt; 定位中心点，行进方向，速度</p></li>
+<li>非机动车<ul>
+<li>非机动车bbox检测框 –&gt; 定位中心点，行进方向，速度</li>
 </ul>
 </li>
-<li><p>人</p>
-<ul>
-<li><p>人bbox检测框 –&gt; 定位中心点，行进方向，速度</p></li>
+<li>人<ul>
+<li>人bbox检测框 –&gt; 定位中心点，行进方向，速度</li>
 </ul>
 </li>
 </ul>
@@ -222,26 +224,23 @@
 <div class="section" id="project-struct">
 <h2>project struct<a class="headerlink" href="#project-struct" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>头文件 include/roadside_perception/*.hpp</p>
-<ul>
-<li><p>api定义 roadside_perception_api.hpp</p></li>
-<li><p>data定义 roadside_perception_data.hpp</p></li>
-<li><p>namespace定义 roadside_perception_namespace.hpp</p></li>
+<li>头文件 include/roadside_perception/*.hpp<ul>
+<li>api定义 roadside_perception_api.hpp</li>
+<li>data定义 roadside_perception_data.hpp</li>
+<li>namespace定义 roadside_perception_namespace.hpp</li>
 </ul>
 </li>
-<li><p>部件：</p>
-<ul>
-<li><p>common 通用部件（内外参数转换、配置读入和输出、frame缓存模块、定位通用函数）</p></li>
-<li><p>completer 使用卡尔曼滤波，平稳定位，计算速度</p></li>
-<li><p>locators 定位模块</p></li>
-<li><p>smoother 平滑模块</p></li>
-<li><p>speed 速度计算（已弃用）</p></li>
+<li>部件：<ul>
+<li>common 通用部件（内外参数转换、配置读入和输出、frame缓存模块、定位通用函数）</li>
+<li>completer 使用卡尔曼滤波，平稳定位，计算速度</li>
+<li>locators 定位模块</li>
+<li>smoother 平滑模块</li>
+<li>speed 速度计算（已弃用）</li>
 </ul>
 </li>
-<li><p>入口函数：</p>
-<ul>
-<li><p>roadside_perception_api.hpp 内的
-std::pair&lt;Status, RoadSideData&gt; Process(const RoadSideData&amp; data) const;</p></li>
+<li>入口函数：<ul>
+<li>roadside_perception_api.hpp 内的
+std::pair&lt;Status, RoadSideData&gt; Process(const RoadSideData&amp; data) const;</li>
 </ul>
 </li>
 </ul>
@@ -305,10 +304,10 @@ struct KeyPointsCenter {
 <h2>可配置项<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <p>路径: test/data</p>
 <ol class="simple">
-<li><p>内外参：<code class="docutils literal notranslate"><span class="pre">test_camera_calibration.json</span></code></p></li>
-<li><p>比例尺：<code class="docutils literal notranslate"><span class="pre">test_measure_scale.json</span></code></p></li>
-<li><p>配置文件：<code class="docutils literal notranslate"><span class="pre">test_config.conf</span></code></p></li>
-<li><p>先验车辆大小：<code class="docutils literal notranslate"><span class="pre">test_vehicle_size.json</span></code></p></li>
+<li>内外参：<code class="docutils literal notranslate"><span class="pre">test_camera_calibration.json</span></code></li>
+<li>比例尺：<code class="docutils literal notranslate"><span class="pre">test_measure_scale.json</span></code></li>
+<li>配置文件：<code class="docutils literal notranslate"><span class="pre">test_config.conf</span></code></li>
+<li>先验车辆大小：<code class="docutils literal notranslate"><span class="pre">test_vehicle_size.json</span></code></li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{
     &quot;[C]Description1&quot;: &quot;This is an example for configuration file, please set your values as needed. Lines starting with [C] are comments.&quot;,
@@ -393,28 +392,25 @@ struct KeyPointsCenter {
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

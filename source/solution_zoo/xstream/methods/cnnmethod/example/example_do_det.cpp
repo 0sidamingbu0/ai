@@ -17,7 +17,6 @@
 #include "CNNMethod/CNNMethod.h"
 #include "CNNMethod/util/util.h"
 #include "FasterRCNNMethod/FasterRCNNMethod.h"
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 #include "hobotxstream/method.h"
 #include "hobotxstream/method_factory.h"

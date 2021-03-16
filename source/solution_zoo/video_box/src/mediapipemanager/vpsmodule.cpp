@@ -20,15 +20,19 @@ namespace horizon {
 namespace vision {
 
 VpsModule::VpsModule()
-    : group_id_(-1), timeout_(40), frameDepth_(-1), buffer_index_(0) {}
+    : group_id_(-1),
+      chn_id_(6),
+      timeout_(40),
+      frame_depth_(-1),
+      buffer_index_(0) {}
 
 VpsModule::~VpsModule() {}
 
 int VpsModule::Init(uint32_t group_id, const PipeModuleInfo *module_info) {
   int ret = 0;
   group_id_ = group_id;
-  frameDepth_ = module_info->frame_depth;
-  buffers_.resize(frameDepth_);
+  frame_depth_ = module_info->frame_depth;
+  buffers_.resize(frame_depth_);
   VPS_GRP_ATTR_S grp_attr;
   memset(&grp_attr, 0, sizeof(VPS_GRP_ATTR_S));
   grp_attr.maxW = module_info->input_width;
@@ -36,7 +40,7 @@ int VpsModule::Init(uint32_t group_id, const PipeModuleInfo *module_info) {
   grp_attr.frameDepth = module_info->frame_depth;
   ret = HB_VPS_CreateGrp(group_id, &grp_attr);
   if (ret) {
-    LOGE << "HB_VPS_CreateGrp Failed. ret = " << ret;
+    LOGE << "HB_VPS_CreateGrp Failed. group:" << group_id << " ret = " << ret;
     return ret;
   }
   VPS_CHN_ATTR_S chn_attr;
@@ -46,9 +50,9 @@ int VpsModule::Init(uint32_t group_id, const PipeModuleInfo *module_info) {
   chn_attr.height = module_info->output_height;
   chn_attr.frameDepth = module_info->frame_depth;
   // Now only handle one chanel case
-  ret = HB_VPS_SetChnAttr(group_id, 6, &chn_attr);
+  ret = HB_VPS_SetChnAttr(group_id, chn_id_, &chn_attr);
   if (ret) {
-    LOGE << "HB_VPS_SetChnAttr Failed. ret = " << ret;
+    LOGE << "HB_VPS_SetChnAttr Failed. group:" << group_id << " ret = " << ret;
     return ret;
   }
 
@@ -74,13 +78,14 @@ int VpsModule::Init(uint32_t group_id, const PipeModuleInfo *module_info) {
   // pym_chn_attr.ds_info[6].roi_y = 0;
   // pym_chn_attr.ds_info[6].roi_width = 960;
   // pym_chn_attr.ds_info[6].roi_height = 540;
-  ret = HB_VPS_SetPymChnAttr(group_id, 6, &pym_chn_attr);
+  ret = HB_VPS_SetPymChnAttr(group_id, chn_id_, &pym_chn_attr);
   if (ret) {
-    LOGE << "HB_VPS_SetPymChnAttr Failed. ret = " << ret;
+    LOGE << "HB_VPS_SetPymChnAttr Failed. group:" << group_id
+         << " ret = " << ret;
     return ret;
   }
 
-  HB_VPS_EnableChn(group_id, 6);
+  HB_VPS_EnableChn(group_id, chn_id_);
   return ret;
 }
 
@@ -89,7 +94,7 @@ int VpsModule::Input(void *data) {
   hb_vio_buffer_t *hb_vio_buf = (hb_vio_buffer_t *)data;
   ret = HB_VPS_SendFrame(group_id_, hb_vio_buf, timeout_);
   if (ret != 0) {
-    LOGE << "HB_VPS_SendFrame Failed. ret = " << ret;
+    LOGE << "HB_VPS_SendFrame Failed. group:" << group_id_ << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -97,10 +102,11 @@ int VpsModule::Input(void *data) {
 
 int VpsModule::Output(void **data) {
   int ret = 0;
-  uint32_t index = buffer_index_ % frameDepth_;
-  ret = HB_VPS_GetChnFrame(group_id_, 6, &buffers_[index], timeout_);
+  uint32_t index = buffer_index_ % frame_depth_;
+  ret = HB_VPS_GetChnFrame(group_id_, chn_id_, &buffers_[index], timeout_);
   if (ret != 0) {
-    LOGW << "HB_VPS_GetChnFrame Failed. ret = " << ret;
+    LOGW << "HB_VPS_GetChnFrame Failed. group:" << group_id_
+         << " ret = " << ret;
     data = nullptr;
     return ret;
   }
@@ -113,9 +119,12 @@ int VpsModule::Output(void **data) {
 int VpsModule::OutputBufferFree(void *data) {
   int ret = 0;
   if (data != nullptr) {
-    ret = HB_VPS_ReleaseChnFrame(group_id_, 6, (pym_buffer_t *)data);
+    ret = HB_VPS_ReleaseChnFrame(
+        group_id_, chn_id_,
+        reinterpret_cast<pym_buffer_t *>(data));
     if (ret != 0) {
-      LOGE << "HB_VPS_ReleaseChnFrame Failed. ret = " << ret;
+      LOGE << "HB_VPS_ReleaseChnFrame Failed. group:" << group_id_
+           << " ret = " << ret;
       return ret;
     }
     return ret;
@@ -128,7 +137,7 @@ int VpsModule::Start() {
   int ret = 0;
   ret = HB_VPS_StartGrp(group_id_);
   if (ret) {
-    LOGE << "HB_VPS_StartGrp Failed. ret = " << ret;
+    LOGE << "HB_VPS_StartGrp Failed. group:" << group_id_ << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -138,12 +147,12 @@ int VpsModule::Stop() {
   int ret = 0;
   ret = HB_VPS_StopGrp(group_id_);
   if (ret) {
-    LOGE << "HB_VPS_StopGrp Failed. ret = " << ret;
+    LOGE << "HB_VPS_StopGrp Failed. group:" << group_id_ << " ret = " << ret;
     return ret;
   }
   ret = HB_VPS_DestroyGrp(group_id_);
   if (ret) {
-    LOGE << "HB_VPS_DestroyGrp Failed. ret = " << ret;
+    LOGE << "HB_VPS_DestroyGrp Failed. group:" << group_id_ << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -153,7 +162,7 @@ int VpsModule::DeInit() {
   int ret = 0;
   ret = HB_VPS_DestroyGrp(group_id_);
   if (ret) {
-    LOGE << "HB_VPS_DestroyGrp Failed. ret = " << ret;
+    LOGE << "HB_VPS_DestroyGrp Failed. group:" << group_id_ << " ret = " << ret;
     return ret;
   }
   return ret;

@@ -15,7 +15,9 @@
 #include "PredictMethod/Predictors/Predictors.h"
 #include "PredictMethod/Predictors/DetectPredictor.h"
 #include "PredictMethod/Predictors/ClassifyPredictor.h"
+#include "PredictMethod/Predictors/CropDetectPredictor.h"
 #include "hobotlog/hobotlog.hpp"
+
 
 namespace xstream {
 
@@ -27,6 +29,8 @@ class PredictorFactory {
         return new DetectPredictor();
       case PredictType::CLASSIFY:
         return new ClassifyPredictor();
+      case PredictType::CROP_DETECT :
+        return new CropDetectPredictor();
       default: {
          HOBOT_CHECK(false) << "Invalid predictor type";
          return nullptr;

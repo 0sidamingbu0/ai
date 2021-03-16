@@ -18,7 +18,6 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "websocketplugin/attribute_convert/attribute_convert.h"
-#include "xproto/msgtype/include/xproto_msgtype/protobuf/x3.pb.h"
 #include "xproto_msgtype/protobuf/x3.pb.h"
 #include "xproto_msgtype/vioplugin_data.h"
 

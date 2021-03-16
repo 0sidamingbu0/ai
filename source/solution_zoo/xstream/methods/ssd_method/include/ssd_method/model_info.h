@@ -15,7 +15,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 namespace xstream {
 

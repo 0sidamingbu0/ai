@@ -12,7 +12,6 @@
 
 #include "bpu_predict/bpu_predict.h"
 #include "./hb_vio_interface.h"
-#include "bpu_predict/bpu_io.h"
 #include "./plat_cnn.h"
 
 static void Usage() {

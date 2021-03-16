@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>XProto示例3 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/output/build_all/xproto/tutorials/stage3/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -163,9 +168,9 @@
 <div class="section" id="id1">
 <h2>超时监控说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>框架默认消息处理超时时间为1000毫秒，也可以通过环境变量<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">msg_timeout_monitor=&quot;200&quot;</span></code>设置新的超时时间，对所有plugin生效</p></li>
-<li><p>框架在RegisterPlugin接口中设置默认超时时间，plugin也可以调用SetMsgMonitorTime接口设置自己的超时时间，在注册消息后调用才能生效</p></li>
-<li><p>GetMsgMonitorTime接口用于获取plugin的超时时间</p></li>
+<li>框架默认消息处理超时时间为1000毫秒，也可以通过环境变量<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">msg_timeout_monitor=&quot;200&quot;</span></code>设置新的超时时间，对所有plugin生效</li>
+<li>框架在RegisterPlugin接口中设置默认超时时间，plugin也可以调用SetMsgMonitorTime接口设置自己的超时时间，在注册消息后调用才能生效</li>
+<li>GetMsgMonitorTime接口用于获取plugin的超时时间</li>
 </ul>
 </div>
 <div class="section" id="id2">
@@ -174,7 +179,7 @@
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define TYPE_SAMPLE_MESSAGE &quot;XPLUGIN_SAMPLE_MESSAGE&quot;    </span><span class="c1">// 消息类型</span>
 <span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">XPLUGIN_SAMPLE_MESSAGE</span><span class="p">)</span>       <span class="c1">// 注册消息</span>
 
-<span class="k">struct</span> <span class="nc">NumberProdMessage</span> <span class="o">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>              <span class="c1">// 自定义消息结构</span>
+<span class="k">struct</span> <span class="nl">NumberProdMessage</span> <span class="p">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>              <span class="c1">// 自定义消息结构</span>
   <span class="kt">float</span> <span class="n">num_</span><span class="p">;</span>
   <span class="k">explicit</span> <span class="nf">NumberProdMessage</span><span class="p">(</span><span class="kt">float</span> <span class="n">num</span><span class="p">)</span> <span class="o">:</span><span class="n">num_</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="n">TYPE_SAMPLE_MESSAGE</span><span class="p">;</span>
@@ -193,10 +198,10 @@
 <p>Xproto中插件的管理都基于<code class="docutils literal notranslate"><span class="pre">horizon::vision::xproto::XPluginAsync</span></code>，因此自定义插件需继承于XPluginAsync。本示例中，我们需要定义两个插件：NumberProducerPlugin产生浮点数，SumConsumerPlugin实现数据累加。</p>
 <p>自定义插件需要根据功能重写<code class="docutils literal notranslate"><span class="pre">XPluginAsync::Init()</span></code>, <code class="docutils literal notranslate"><span class="pre">XPluginAsync::Start()</span></code>, <code class="docutils literal notranslate"><span class="pre">XPluginAsync::Stop()</span></code>, <code class="docutils literal notranslate"><span class="pre">XPluginAsync::DeInit()</span></code>几个核心函数。此外，可以根据需要扩充插件的成员函数，如订阅消息的插件，可以扩充消息的回调函数。</p>
 <ul class="simple">
-<li><p>其中Init()做插件的初始化工作，如在Init()中订阅消息，订阅消息使用<code class="docutils literal notranslate"><span class="pre">XPluginAsync::RegisterMsg()</span></code>接口，在订阅消息的同时指定该消息的回调函数。<strong>注意：订阅消息后，务必调用基类的XPluginAsync::Init()接口，该插件才可接收到消息并处理。</strong></p></li>
-<li><p>Start()主要是开始插件的运行，比如发布消息，发布消息使用<code class="docutils literal notranslate"><span class="pre">PushMsg()</span></code>接口。</p></li>
-<li><p>Stop()主要是对插件做清理善后工作，如reset成员变量、内存释放等。</p></li>
-<li><p>DeInit()主要负责插件的重置，<strong>注意：若重写该函数，需要在函数内调用基类的<code class="docutils literal notranslate"><span class="pre">XPluginAsync::DeInit()</span></code>接口，取消已订阅消息类型。</strong></p></li>
+<li>其中Init()做插件的初始化工作，如在Init()中订阅消息，订阅消息使用<code class="docutils literal notranslate"><span class="pre">XPluginAsync::RegisterMsg()</span></code>接口，在订阅消息的同时指定该消息的回调函数。<strong>注意：订阅消息后，务必调用基类的XPluginAsync::Init()接口，该插件才可接收到消息并处理。</strong></li>
+<li>Start()主要是开始插件的运行，比如发布消息，发布消息使用<code class="docutils literal notranslate"><span class="pre">PushMsg()</span></code>接口。</li>
+<li>Stop()主要是对插件做清理善后工作，如reset成员变量、内存释放等。</li>
+<li>DeInit()主要负责插件的重置，<strong>注意：若重写该函数，需要在函数内调用基类的<code class="docutils literal notranslate"><span class="pre">XPluginAsync::DeInit()</span></code>接口，取消已订阅消息类型。</strong></li>
 </ul>
 <p>下面看下NumberProducerPlugin和SumConsumerPlugin两个插件的定义：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NumberProducerPlugin</span> <span class="o">:</span> <span class="k">public</span> <span class="n">XPluginAsync</span> <span class="p">{</span>
@@ -333,28 +338,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

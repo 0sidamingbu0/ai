@@ -39,32 +39,28 @@ void BBoxFilter::Finalize() {
 
 std::string BBoxFilter::GetVersion() const { return ""; }
 
-std::vector<std::vector<BaseDataPtr>> BBoxLocationFilter::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
+std::vector<BaseDataPtr> BBoxLocationFilter::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
   LOGD << "BBoxLocationFilter::DoProcess " << input.size() << std::endl;
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());  // batch size
+  std::vector<BaseDataPtr> output;
   // one batch
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    // one slot
-    out_batch_i.push_back(std::make_shared<BaseDataVector>());
-    auto in_imags = std::static_pointer_cast<BaseDataVector>(in_batch_i[0]);
+  {
+    output.push_back(std::make_shared<BaseDataVector>());
+    auto in_imags = std::static_pointer_cast<BaseDataVector>(input[0]);
     auto image =
         std::static_pointer_cast<xstream::GrayImage>(in_imags->datas_[0]);
     if (image->state_ == DataState::INVALID) {
       std::cout << "input slot 0 is invalid" << std::endl;
-      continue;
+      return output;
     }
     auto width = image->Width();
     auto height = image->Height();
-    auto in_rects = std::static_pointer_cast<BaseDataVector>(in_batch_i[1]);
-    auto out_rects = std::static_pointer_cast<BaseDataVector>(out_batch_i[0]);
+    auto in_rects = std::static_pointer_cast<BaseDataVector>(input[1]);
+    auto out_rects = std::static_pointer_cast<BaseDataVector>(output[0]);
     if (in_rects->state_ == DataState::INVALID) {
       std::cout << "input slot 1 is invalid" << std::endl;
-      continue;
+      return output;
     }
     LOGD << "size = " << in_rects->datas_.size()
          << ", threshold = " << location_to_border_threshold_;
@@ -90,24 +86,20 @@ std::vector<std::vector<BaseDataPtr>> BBoxLocationFilter::DoProcess(
   return output;
 }
 
-std::vector<std::vector<BaseDataPtr>> BBoxAreaFilter::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
+std::vector<BaseDataPtr> BBoxAreaFilter::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
   std::cout << "BBoxAreaFilter::DoProcess " << input.size() << std::endl;
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());  // batch size
+  std::vector<BaseDataPtr> output;
   // one batch
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    // one slot
-    out_batch_i.push_back(std::make_shared<BaseDataVector>());
+  {
+    output.push_back(std::make_shared<BaseDataVector>());
 
-    auto in_rects = std::static_pointer_cast<BaseDataVector>(in_batch_i[0]);
-    auto out_rects = std::static_pointer_cast<BaseDataVector>(out_batch_i[0]);
+    auto in_rects = std::static_pointer_cast<BaseDataVector>(input[0]);
+    auto out_rects = std::static_pointer_cast<BaseDataVector>(output[0]);
     if (in_rects->state_ == DataState::INVALID) {
       std::cout << "input slot 1 is invalid" << std::endl;
-      continue;
+      return output;
     }
     LOGD << "rect size = " << in_rects->datas_.size();
     for (auto &in_rect : in_rects->datas_) {
@@ -124,27 +116,23 @@ std::vector<std::vector<BaseDataPtr>> BBoxAreaFilter::DoProcess(
   return output;
 }
 
-std::vector<std::vector<BaseDataPtr>> BBoxShapeFilter::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
+std::vector<BaseDataPtr> BBoxShapeFilter::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
   std::cout << "BBoxShapeFilter::DoProcess " << input.size() << std::endl;
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());  // batch size
+  std::vector<BaseDataPtr> output;
   // one batch
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    // one slot
-    out_batch_i.push_back(std::make_shared<BaseDataVector>());
-    out_batch_i.push_back(std::make_shared<BaseDataVector>());
+  {
+    output.push_back(std::make_shared<BaseDataVector>());
+    output.push_back(std::make_shared<BaseDataVector>());
 
-    auto in_rects = std::static_pointer_cast<BaseDataVector>(in_batch_i[0]);
-    auto out_rects = std::static_pointer_cast<BaseDataVector>(out_batch_i[0]);
+    auto in_rects = std::static_pointer_cast<BaseDataVector>(input[0]);
+    auto out_rects = std::static_pointer_cast<BaseDataVector>(output[0]);
     auto out_classify_results =
-        std::static_pointer_cast<BaseDataVector>(out_batch_i[1]);
+        std::static_pointer_cast<BaseDataVector>(output[1]);
     if (in_rects->state_ == DataState::INVALID) {
       std::cout << "input slot 1 is invalid" << std::endl;
-      continue;
+      return output;
     }
     LOGD << "rect size = " << in_rects->datas_.size();
     for (auto &in_rect : in_rects->datas_) {

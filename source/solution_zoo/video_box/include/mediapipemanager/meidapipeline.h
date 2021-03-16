@@ -54,6 +54,10 @@ class MediaPipeLine {
     frame_drop_interval_ = frame_drop_interval;
   }
 
+  void SetVpsFrameDepth(const int frame_depth) {
+    vps_frame_depth_ = frame_depth;
+  }
+
  private:
   MediaPipeLine() = delete;
   MediaPipeLine(const MediaPipeLine &) = delete;
@@ -77,6 +81,7 @@ class MediaPipeLine {
   uint64_t last_recv_data_time_;
   bool frame_drop_ = false;
   int frame_drop_interval_ = 0;
+  uint32_t vps_frame_depth_ = 4;
 };
 
 }  // namespace vision

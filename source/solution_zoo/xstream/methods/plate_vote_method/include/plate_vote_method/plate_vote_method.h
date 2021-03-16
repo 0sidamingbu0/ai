@@ -16,7 +16,7 @@
 #include <memory>
 #include <utility>
 
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 namespace xstream {
@@ -30,16 +30,16 @@ class PlateVoteParam : public xstream::InputParam {
 
 using PlateVoteParamPtr = std::shared_ptr<PlateVoteParam>;
 
-class PlateVoteMethod : public Method {
+class PlateVoteMethod : public SimpleMethod {
  public:
-  PlateVoteMethod() : Method() {}
+  PlateVoteMethod() : SimpleMethod() {}
   virtual ~PlateVoteMethod() {}
   // return 0 for successed, -1 for failed.
   int Init(const std::string &config_file_path) override;
 
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
   void RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
                       std::vector<BaseDataPtr> &frame_output);

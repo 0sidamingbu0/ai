@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>问题场景 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/hobotsdk/doc/sync_on_feed.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -280,7 +285,7 @@ image                       先处理Forward(i1, a1)
                       <span class="kt">int</span><span class="p">,</span>                           <span class="c1">// input_slot_index</span>
                       <span class="n">spMessage</span><span class="o">&gt;&gt;</span>                    <span class="c1">// message</span>
                       <span class="n">feed_messages</span><span class="p">,</span> 
-                    <span class="n">int64</span> <span class="n">feed_id</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">);</span>
+                    <span class="n">int64</span> <span class="n">feed_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>当前的Feed方法都只支持单个数据的Feed；所以需要确保有一个接口可以代表对整个Workflow的一次调用，这次调用可以输入多个Message。同时，加入一个参数<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>作为这次feed的唯一id，作为区分不同feed的数据的依据。同时，现有的Feed接口也追加<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>作为参数，默认值-1代表可忽略的feed_id。</p>
@@ -292,7 +297,7 @@ image                       先处理Forward(i1, a1)
 <div class="section" id="workflow-setsynconfeed">
 <h2>Workflow增加接口：SetSyncOnFeed<a class="headerlink" href="#workflow-setsynconfeed" title="永久链接至标题">¶</a></h2>
 <p>增加接口：</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">DefaultWorkflow</span><span class="o">::</span><span class="n">SetSyncOnFeed</span><span class="p">(</span><span class="n">Module</span> <span class="o">*</span><span class="k">module</span><span class="p">,</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">DefaultWorkflow</span><span class="o">::</span><span class="n">SetSyncOnFeed</span><span class="p">(</span><span class="n">Module</span> <span class="o">*</span><span class="n">module</span><span class="p">,</span>
                                    <span class="kt">int</span> <span class="n">forward_index</span><span class="p">,</span>
                                    <span class="nl">std</span><span class="p">:</span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">input_slots</span><span class="p">,</span>
                                    <span class="kt">bool</span> <span class="n">order_by_feedid</span> <span class="o">=</span> <span class="nb">false</span>
@@ -302,8 +307,8 @@ image                       先处理Forward(i1, a1)
 <p>指定某个module的输入需要按照feed来同步输入数据。</p>
 <p>当针对某个module调用这个接口时，改变这个module的设置，产生两个影响：</p>
 <ul class="simple">
-<li><p>这个Module的<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>所指定的Input Slots的数据按照feed_id同步：只在feed_id相同的message之间，对Condition的Expression表达式求值，不同的feed_id各自求值；表达式过了就可以执行Forward了。如果有Input Slot不在<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>指定的范围内，那么这个Input Slot作为一个整体，跟随每一个feed_id进行表达式求值。如果<code class="docutils literal notranslate"><span class="pre">preserve_order</span></code>为true，那么就按照调用Feed时<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>的顺序，依次检查运行各个<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>的数据。</p></li>
-<li><p>这个Module的<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>所指定的Input Slots带来的feed_id传递给输出：这个Module的Forward执行过程中调用<code class="docutils literal notranslate"><span class="pre">Return</span></code>所产生的message，会带上来自<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>的message中的feed_id。如果有Input Slot不在<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>指定的范围内，那么这个Input Slot的message带来的<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>被忽略。</p></li>
+<li>这个Module的<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>所指定的Input Slots的数据按照feed_id同步：只在feed_id相同的message之间，对Condition的Expression表达式求值，不同的feed_id各自求值；表达式过了就可以执行Forward了。如果有Input Slot不在<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>指定的范围内，那么这个Input Slot作为一个整体，跟随每一个feed_id进行表达式求值。如果<code class="docutils literal notranslate"><span class="pre">preserve_order</span></code>为true，那么就按照调用Feed时<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>的顺序，依次检查运行各个<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>的数据。</li>
+<li>这个Module的<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>所指定的Input Slots带来的feed_id传递给输出：这个Module的Forward执行过程中调用<code class="docutils literal notranslate"><span class="pre">Return</span></code>所产生的message，会带上来自<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>的message中的feed_id。如果有Input Slot不在<code class="docutils literal notranslate"><span class="pre">input_slots</span></code>指定的范围内，那么这个Input Slot的message带来的<code class="docutils literal notranslate"><span class="pre">feed_id</span></code>被忽略。</li>
 </ul>
 <p>默认情况下，每个module的设置中，SyncOnFeed的input_slots为空，上述行为关闭。</p>
 </div>
@@ -314,28 +319,25 @@ image                       先处理Forward(i1, a1)
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

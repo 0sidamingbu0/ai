@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>XProto API文档 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/xproto_interface.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -165,7 +170,7 @@
 <div class="section" id="id2">
 <h3>统一消息基础类<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
 <p>消息基础类XProtoMessage：</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">XProtoMessage</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">XProtoMessage</span> <span class="p">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XProtoMessage</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 
@@ -177,7 +182,7 @@
 
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Serialize</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ConvertData</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="o">*</span><span class="nf">ConvertData</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// need call delete() to release the output</span>
     <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
   <span class="p">}</span>
@@ -188,11 +193,11 @@
 <p>描述：</p>
 <p>新Message需要继承XProtoMessage，定义自己的消息类，XProtoMessage描述了消息属性及功能函数，包括：</p>
 <ul class="simple">
-<li><p>type_: 消息类型</p></li>
-<li><p>param_: 消息附加参数信息</p></li>
-<li><p>type(): 获取消息的类型</p></li>
-<li><p>Serialize(): 新的消息类型需实现此接口，实现序列化操作，比如实现protobuf的序列化</p></li>
-<li><p>ConvertData(): 消息转换成指定的数据结构，常用于特殊需求中</p></li>
+<li>type_: 消息类型</li>
+<li>param_: 消息附加参数信息</li>
+<li>type(): 获取消息的类型</li>
+<li>Serialize(): 新的消息类型需实现此接口，实现序列化操作，比如实现protobuf的序列化</li>
+<li>ConvertData(): 消息转换成指定的数据结构，常用于特殊需求中</li>
 </ul>
 </div>
 <hr class="docutils" />
@@ -202,7 +207,7 @@
 <div class="section" id="id4">
 <h4>参数<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>MSGTYPE: 消息类型</p></li>
+<li>MSGTYPE: 消息类型</li>
 </ul>
 </div>
 <div class="section" id="id5">
@@ -219,9 +224,9 @@
 <p>实现了两个基础类XPlugin和XPluginAsync，实现自定义plugin只需要继承其中任意一个，建议选择XPluginAsync类.
 两个基础类有些差异，说明如下：</p>
 <ul class="simple">
-<li><p>XPluginAsync是XPlugin的子类,XPluginAsync内部实现了消息的异步处理机制。</p></li>
-<li><p>XPlugin提供了消息分发、获取&amp;设置msg数量上限、获取&amp;设置msg处理超时时间等接口，子类实现相应接口实现plugin功能.</p></li>
-<li><p>XPluginAsync继承自XPlugin，实现了消息分发、流量控制、消息处理超时监控等功能，子类只需关注plugin的自身功能.</p></li>
+<li>XPluginAsync是XPlugin的子类,XPluginAsync内部实现了消息的异步处理机制。</li>
+<li>XPlugin提供了消息分发、获取&amp;设置msg数量上限、获取&amp;设置msg处理超时时间等接口，子类实现相应接口实现plugin功能.</li>
+<li>XPluginAsync继承自XPlugin，实现了消息分发、流量控制、消息处理超时监控等功能，子类只需关注plugin的自身功能.</li>
 </ul>
 <div class="section" id="xplugin">
 <h3>XPlugin类定义<a class="headerlink" href="#xplugin" title="永久链接至标题">¶</a></h3>
@@ -230,13 +235,13 @@
   <span class="n">XPlugin</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XPlugin</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="c1">// 完成register msg和workflow的初始化操作</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">DeInit</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="c1">// 处理register的msg类型，如有需要，push自己的msg到总线</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">desc</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s">&quot;XPlugin&quot;</span><span class="p">;</span>
@@ -272,8 +277,8 @@
 <div class="section" id="id8">
 <h5>返回值<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>0: 成功</p></li>
-<li><p>非0: 失败</p></li>
+<li>0: 成功</li>
+<li>非0: 失败</li>
 </ul>
 </div>
 <div class="section" id="id9">
@@ -296,8 +301,8 @@
 <div class="section" id="id12">
 <h5>返回值<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>0: 成功</p></li>
-<li><p>非0: 失败</p></li>
+<li>0: 成功</li>
+<li>非0: 失败</li>
 </ul>
 </div>
 <div class="section" id="id13">
@@ -315,7 +320,7 @@
 <div class="section" id="id15">
 <h5>参数<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>XProtoMessagePtr <em>msg</em>: 总线消息.</p></li>
+<li>XProtoMessagePtr <em>msg</em>: 总线消息.</li>
 </ul>
 </div>
 <div class="section" id="id16">
@@ -337,7 +342,7 @@
 <div class="section" id="id19">
 <h5>参数<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</p></li>
+<li>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</li>
 </ul>
 </div>
 <div class="section" id="id20">
@@ -359,7 +364,7 @@
 <div class="section" id="id23">
 <h5>参数<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</p></li>
+<li>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</li>
 </ul>
 </div>
 <div class="section" id="id24">
@@ -381,8 +386,8 @@
 <div class="section" id="id27">
 <h5>参数<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>const std::string&amp; <em>type</em>: 消息类型字符串.</p></li>
-<li><p>XProtoMessageFunc <em>callback</em>: 该类型消息的回调函数.</p></li>
+<li>const std::string&amp; <em>type</em>: 消息类型字符串.</li>
+<li>XProtoMessageFunc <em>callback</em>: 该类型消息的回调函数.</li>
 </ul>
 </div>
 <div class="section" id="id28">
@@ -404,7 +409,7 @@
 <div class="section" id="id31">
 <h5>参数<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>const std::string&amp; <em>type</em>: 消息类型字符串.</p></li>
+<li>const std::string&amp; <em>type</em>: 消息类型字符串.</li>
 </ul>
 </div>
 <div class="section" id="id32">
@@ -451,22 +456,22 @@
   <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
   <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
   <span class="c1">// 获取plugin当前正在排队处理消息的数量</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgCount</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetPluginMsgCount</span><span class="p">();</span>
   <span class="c1">// plugin处理消息数量限制</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetPluginMsgLimit</span><span class="p">();</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetPluginMsgLimit</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">SetPluginMsgLimit</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_limit_count</span><span class="p">);</span>
   <span class="c1">// plugin处理msg时间预警</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetMsgMonitorTime</span><span class="p">();</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetMsgMonitorTime</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_monitor_time</span><span class="p">);</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetMsgMonitorTime</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">SetMsgMonitorTime</span><span class="p">(</span><span class="kt">int</span> <span class="n">msg_monitor_time</span><span class="p">);</span>
 
   <span class="c1">// 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制</span>
   <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
   <span class="c1">// 启动Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Start</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Start</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="c1">// 停止Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Stop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="p">}</span>
 
@@ -495,8 +500,8 @@
 <div class="section" id="id41">
 <h5>返回值<a class="headerlink" href="#id41" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>0: 成功</p></li>
-<li><p>非0: 失败</p></li>
+<li>0: 成功</li>
+<li>非0: 失败</li>
 </ul>
 </div>
 <div class="section" id="id42">
@@ -519,8 +524,8 @@
 <div class="section" id="id45">
 <h5>返回值<a class="headerlink" href="#id45" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>0: 成功</p></li>
-<li><p>非0: 失败</p></li>
+<li>0: 成功</li>
+<li>非0: 失败</li>
 </ul>
 </div>
 <div class="section" id="id46">
@@ -542,8 +547,8 @@
 <div class="section" id="id49">
 <h5>返回值<a class="headerlink" href="#id49" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>0: 成功</p></li>
-<li><p>非0: 失败</p></li>
+<li>0: 成功</li>
+<li>非0: 失败</li>
 </ul>
 </div>
 <div class="section" id="id50">
@@ -565,8 +570,8 @@
 <div class="section" id="id53">
 <h5>返回值<a class="headerlink" href="#id53" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>0: 成功</p></li>
-<li><p>非0: 失败</p></li>
+<li>0: 成功</li>
+<li>非0: 失败</li>
 </ul>
 </div>
 <div class="section" id="id54">
@@ -588,7 +593,7 @@
 <div class="section" id="id57">
 <h5>返回值<a class="headerlink" href="#id57" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p><em>int</em>: 返回plugin待处理的msg数量</p></li>
+<li><em>int</em>: 返回plugin待处理的msg数量</li>
 </ul>
 </div>
 <div class="section" id="id58">
@@ -610,7 +615,7 @@
 <div class="section" id="id61">
 <h5>返回值<a class="headerlink" href="#id61" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p><em>int</em>: 返回plugin处理msg数量上限</p></li>
+<li><em>int</em>: 返回plugin处理msg数量上限</li>
 </ul>
 </div>
 <div class="section" id="id62">
@@ -628,7 +633,7 @@
 <div class="section" id="id64">
 <h5>参数<a class="headerlink" href="#id64" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>int <em>msg_limit_count</em>: 设置plugin能处理的msg数量上限.</p></li>
+<li>int <em>msg_limit_count</em>: 设置plugin能处理的msg数量上限.</li>
 </ul>
 </div>
 <div class="section" id="id65">
@@ -654,7 +659,7 @@
 <div class="section" id="id69">
 <h5>返回值<a class="headerlink" href="#id69" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p><em>int</em>: msg处理超时时间</p></li>
+<li><em>int</em>: msg处理超时时间</li>
 </ul>
 </div>
 <div class="section" id="id70">
@@ -672,7 +677,7 @@
 <div class="section" id="id72">
 <h5>参数<a class="headerlink" href="#id72" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>int <em>msg_monitor_time</em>: msg处理超时时间</p></li>
+<li>int <em>msg_monitor_time</em>: msg处理超时时间</li>
 </ul>
 </div>
 <div class="section" id="id73">
@@ -694,7 +699,7 @@
 <div class="section" id="id76">
 <h5>参数<a class="headerlink" href="#id76" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</p></li>
+<li>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</li>
 </ul>
 </div>
 <div class="section" id="id77">
@@ -716,7 +721,7 @@
 <div class="section" id="id80">
 <h5>参数<a class="headerlink" href="#id80" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</p></li>
+<li>XProtoMessagePtr <em>msg</em>: 发布到总线的消息.</li>
 </ul>
 </div>
 <div class="section" id="id81">
@@ -738,8 +743,8 @@
 <div class="section" id="id84">
 <h5>参数<a class="headerlink" href="#id84" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>const std::string&amp; <em>type</em>: 消息类型字符串.</p></li>
-<li><p>XProtoMessageFunc <em>callback</em>: 该类型消息的回调函数.</p></li>
+<li>const std::string&amp; <em>type</em>: 消息类型字符串.</li>
+<li>XProtoMessageFunc <em>callback</em>: 该类型消息的回调函数.</li>
 </ul>
 </div>
 <div class="section" id="id85">
@@ -761,7 +766,7 @@
 <div class="section" id="id88">
 <h5>参数<a class="headerlink" href="#id88" title="永久链接至标题">¶</a></h5>
 <ul class="simple">
-<li><p>const std::string&amp; <em>type</em>: 消息类型字符串.</p></li>
+<li>const std::string&amp; <em>type</em>: 消息类型字符串.</li>
 </ul>
 </div>
 <div class="section" id="id89">
@@ -802,28 +807,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

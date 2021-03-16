@@ -23,7 +23,6 @@
 #include "CNNMethod/util/CNNMethodConfig.h"
 #include "CNNMethod/util/CNNMethodData.h"
 #include "CNNMethod/util/util.h"
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 #include "hobotlog/hobotlog.hpp"
 #include "hobotxstream/method.h"
@@ -63,15 +62,15 @@ void DumpMxnetOutput(xstream::CNNMethodRunData *run_data,
   auto &result = run_data->mxnet_output;
   auto &real_nhwc = run_data->real_nhwc;
 
-  for (size_t frame_idx = 0; frame_idx < result.size(); frame_idx++) {
-    auto &frame_rlt = result[frame_idx];
+  {
+    auto &frame_rlt = result;
     for (size_t target_idx = 0; target_idx < frame_rlt.size(); target_idx++) {
       auto &target_rlt = frame_rlt[target_idx];
       if (target_rlt.size()) {
         os << img_path;
         if (post_fn == "lmk_pose") {
           auto boxes = std::static_pointer_cast<xstream::BaseDataVector>(
-              (*(run_data->input))[frame_idx][0]);
+              (*(run_data->input))[0]);
           auto xstream_box = std::static_pointer_cast<
               xstream::XStreamData<hobot::vision::BBox>>(
               boxes->datas_[target_idx]);
@@ -251,8 +250,7 @@ int DoVerRectPyd(int argc, char **argv) {
     rois[0].push_back(y2);
 
     xstream::CNNMethodRunData run_data;
-    std::vector<std::vector<xstream::BaseDataPtr>> input;
-    input.resize(1);
+    std::vector<xstream::BaseDataPtr> input;
 
     auto py_img = std::make_shared<hobot::vision::PymImageFrame>();
     py_img->img = feed_back_info;
@@ -270,9 +268,9 @@ int DoVerRectPyd(int argc, char **argv) {
       xstream_roi->value.y2 = roi[3];
       xstream_rois->datas_.push_back(xstream_roi);
     }
-    input[0].push_back(
+    input.push_back(
         std::static_pointer_cast<xstream::BaseData>(xstream_rois));
-    input[0].push_back(
+    input.push_back(
         std::static_pointer_cast<xstream::BaseData>(xstream_data));
     run_data.input = &input;
     predictor->Do(&run_data);
@@ -310,8 +308,7 @@ int DoVerRectPyd(int argc, char **argv) {
     rois[0].push_back(y2);
 
     xstream::CNNMethodRunData run_data;
-    std::vector<std::vector<xstream::BaseDataPtr>> input;
-    input.resize(1);
+    std::vector<xstream::BaseDataPtr> input;
 
     auto xstream_data = std::make_shared<xstream::XStreamData<ImageFramePtr>>();
     xstream_data->value =
@@ -327,9 +324,9 @@ int DoVerRectPyd(int argc, char **argv) {
       xstream_roi->value.y2 = roi[3];
       xstream_rois->datas_.push_back(xstream_roi);
     }
-    input[0].push_back(
+    input.push_back(
         std::static_pointer_cast<xstream::BaseData>(xstream_rois));
-    input[0].push_back(
+    input.push_back(
         std::static_pointer_cast<xstream::BaseData>(xstream_data));
     run_data.input = &input;
     predictor->Do(&run_data);

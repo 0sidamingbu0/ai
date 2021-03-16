@@ -31,6 +31,7 @@
 #include "smartplugin_box/runtime_monitor.h"
 #include "smartplugin_box/smart_config.h"
 #include "video_box_common.h"
+#include "videoprocessor.h"
 #include "votmodule.h"
 #include "xproto/message/pluginflow/flowmsg.h"
 #include "xproto/message/pluginflow/msg_registry.h"
@@ -66,8 +67,6 @@ SmartPlugin::SmartPlugin(const std::string &smart_config_file) {
   smart_config_file_ = smart_config_file;
 
   LOGI << "smart config file:" << smart_config_file_;
-  monitor_.reset(new RuntimeMonitor());
-  video_processor_ = std::make_shared<VideoProcessor>();
 }
 
 void SmartPlugin::ParseConfig() {
@@ -108,7 +107,7 @@ void SmartPlugin::ParseConfig() {
 
   rtsp_config_file_ = config_->GetSTDStringValue("rtsp_config_file");
   display_config_file_ = config_->GetSTDStringValue("display_config_file");
-
+  run_smart_ = config_->GetBoolValue("run_smart");
   LOGI << "xstream_workflow_file:" << xstream_workflow_cfg_file_;
   LOGI << "enable_profile:" << enable_profile_
        << ", profile_log_path:" << profile_log_file_;
@@ -120,11 +119,18 @@ int SmartPlugin::Init() {
   infile >> cfg_jv;
   config_.reset(new JsonConfigWrapper(cfg_jv));
   ParseConfig();
-
+  monitor_.reset(new RuntimeMonitor());
   GetDisplayConfigFromFile(display_config_file_);
   GetRtspConfigFromFile(rtsp_config_file_);
   LOGD << "get channel_num from file is:" << channel_num_;
-
+  VideoProcessor::GetInstance().Init(channel_num_, display_mode_, smart_vo_cfg_,
+                                     encode_smart_, draw_smart_,
+                                     running_venc_1080p_, running_venc_720p_,
+                                     running_vot_, draw_real_time_video_);
+  if (!run_smart_) {
+    LOGW << "video box config to not run smart, just decode and display!!!";
+    return 0;
+  }
   // init for xstream sdk
   LOGI << "smart plugin init";
   sdk_.resize(channel_num_);
@@ -134,7 +140,7 @@ int SmartPlugin::Init() {
     sdk_[i]->SetConfig("config_file", xstream_workflow_cfg_file_);
     if (sdk_[i]->Init() != 0) {
       LOGE << "smart plugin init failed!!!";
-      return kHorizonVisionInitFail;
+      return -1;
     }
 
     sdk_[i]->SetCallback(
@@ -149,7 +155,7 @@ int SmartPlugin::Init() {
       pic_sdk_->SetConfig("config_file", xstream_workflow_cfg_pic_file_);
       if (pic_sdk_->Init() != 0) {
         LOGE << "smart plugin init failed!!!";
-        return kHorizonVisionInitFail;
+        return -1;
       }
 
       pic_sdk_->SetCallback(
@@ -161,7 +167,7 @@ int SmartPlugin::Init() {
           xstream_workflow_cfg_feature_file_);
       if (feature_sdk_->Init() != 0) {
         LOGE << "smart plugin init failed!!!";
-        return kHorizonVisionInitFail;
+        return -1;
       }
       feature_sdk_->SetCallback(
        std::bind(&SmartPlugin::OnCallbackFeature, this, std::placeholders::_1));
@@ -171,9 +177,7 @@ int SmartPlugin::Init() {
     RegisterMsg(TYPE_RECOG_MESSAGE,
         std::bind(&SmartPlugin::FeedRecog, this, std::placeholders::_1));
   }
-  video_processor_->Init(channel_num_, display_mode_, smart_vo_cfg_,
-                         encode_smart_, running_venc_1080p_, running_venc_720p_,
-                         running_vot_);
+
   return XPluginAsync::Init();
 }
 
@@ -185,7 +189,7 @@ int SmartPlugin::Feed(XProtoMessagePtr msg) {
   SmartInput *input_wrapper = new SmartInput();
   if (input_wrapper == NULL) {
     LOGE << "new smart input ptr fail, return error!";
-    return kHorizonVisionFailure;
+    return -1;
   }
   input_wrapper->frame_info = valid_frame;
   input_wrapper->context = input_wrapper;
@@ -201,7 +205,7 @@ int SmartPlugin::Feed(XProtoMessagePtr msg) {
 
   input->context_ = (const void *)((uintptr_t)channel_id);
   if (sdk_[channel_id]->AsyncPredict(input) != 0) {
-    return kHorizonVisionFailure;
+    return -1;
   }
 
   LOGD << "Feed one task to xtream workflow, channel_id " << channel_id
@@ -218,7 +222,7 @@ int SmartPlugin::FeedPic(XProtoMessagePtr msg) {
   auto valid_frame = std::static_pointer_cast<VioMessage>(msg);
   xstream::InputDataPtr input = Convertor::ConvertInput(valid_frame.get());
   if (!pic_sdk_ || (pic_sdk_->AsyncPredict(input) != 0)) {
-    return kHorizonVisionFailure;
+    return -1;
   }
   return 0;
 }
@@ -232,19 +236,25 @@ int SmartPlugin::FeedRecog(XProtoMessagePtr msg) {
 }
 
 int SmartPlugin::Start() {
+  VideoProcessor::GetInstance().Start();
+  if (!run_smart_) {
+    LOGW << "video box config to not run smart, just decode and display!!!";
+    return 0;
+  }
+
   LOGI << "SmartPlugin Start";
   root.clear();
-  video_processor_->Start();
   running_ = true;
-  smartframe_ = 0;
-  // read_thread_ = std::thread(&SmartPlugin::ComputeFpsThread, this);
   return 0;
 }
 
 int SmartPlugin::Stop() {
+  VideoProcessor::GetInstance().Stop();
+  if (!run_smart_) {
+    LOGW << "video box config to not run smart, just decode and display!!!";
+    return 0;
+  }
   running_ = false;
-  // read_thread_.join();
-  video_processor_->Stop();
   if (result_to_json) {
     remove("smart_data.json");
     Json::StreamWriterBuilder builder;
@@ -280,12 +290,18 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
     }
   }
   HOBOT_CHECK(rgb_image);
+  if (draw_real_time_video_ && draw_smart_) {
+    HorizonVisionSmartFrame *smart_frame = nullptr;
+    HorizonVisionAllocSmartFrame(&smart_frame);
+    Convertor::ConvertOutputToSmartFrame(xstream_out, smart_frame);
+    VideoProcessor::GetInstance().Input(channel_id, smart_frame);
+  }
 
-  smartframe_++;
   LOGD << "OnCallback channel id " << channel_id << " frame_id "
        << rgb_image->value->frame_id;
-  if ((running_vot_ && !smart_vo_cfg_.transition_support)
-       || running_venc_1080p_) {
+  if ((!draw_real_time_video_ && running_vot_ &&
+       !smart_vo_cfg_.transition_support) ||
+      (running_venc_1080p_ && encode_smart_)) {
     int layer =
         DisplayInfo::computePymLayer(display_mode_, channel_num_, channel_id);
     auto video_data = std::make_shared<horizon::vision::VideoData>();
@@ -324,10 +340,10 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
              uv_addr + i * width_tmp, width_tmp);
     }
     video_data->recog_cache = recog_cache_[channel_id];
-    video_processor_->Input(video_data);
+    VideoProcessor::GetInstance().Input(video_data);
   }
 
-  if (running_venc_720p_) {
+  if (running_venc_720p_ && encode_smart_) {
     int layer = DisplayInfo::computePymLayer(display_mode_, channel_num_,
                                              channel_id, true);
     auto video_data = std::make_shared<horizon::vision::VideoData>();
@@ -364,10 +380,10 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
       memcpy(video_data->buffer + (i + height_tmp) * width_tmp,
              uv_addr + i * width_tmp, width_tmp);
     }
-    video_processor_->Input(video_data, true);
+    VideoProcessor::GetInstance().Input(video_data, true);
   }
 
-  if (smart_vo_cfg_.transition_support) {
+  if (smart_vo_cfg_.transition_support && !draw_real_time_video_) {
     int layer = 0;
     auto video_data = std::make_shared<horizon::vision::VideoData>();
     uint32_t width_tmp =
@@ -390,7 +406,7 @@ void SmartPlugin::OnCallback(xstream::OutputDataPtr xstream_out) {
         ((hobot::vision::PymImageFrame *)(rgb_image->value.get()))
             ->down_scale[layer]
             .c_vaddr);
-    video_processor_->Input(video_data, false, true);
+    VideoProcessor::GetInstance().Input(video_data, false, true);
   }
 
   auto input = monitor_->PopFrame(rgb_image->value->frame_id, channel_id);
@@ -475,28 +491,12 @@ void SmartPlugin::GetDisplayConfigFromFile(const std::string &path) {
   display_mode_ = config_["vo"]["display_mode"].asInt();
   smart_vo_cfg_.transition_support =
       config_["vo"]["transition_support"].asBool();
+  draw_smart_ = config_["vo"]["draw_smart"].asBool();
+  draw_real_time_video_ = config_["vo"]["draw_real_time_video"].asBool();
 
   running_venc_1080p_ = config_["rtsp"]["stream_1080p"].asBool();
   running_venc_720p_ = config_["rtsp"]["stream_720p"].asBool();
   encode_smart_ = config_["rtsp"]["encode_smart_info"].asBool();
-}
-
-void SmartPlugin::ComputeFpsThread(void *param) {
-  SmartPlugin *inst = reinterpret_cast<SmartPlugin *>(param);
-  struct timeval start_time, finish_time;
-  double timeuse = 0;
-  double fps = 0;
-  gettimeofday(&start_time, NULL);
-
-  while (inst->running_) {
-    sleep(10);
-    gettimeofday(&finish_time, NULL);
-    timeuse = finish_time.tv_sec - start_time.tv_sec +
-              (finish_time.tv_usec - start_time.tv_usec) / 1000000.0;
-    fps = inst->smartframe_ / timeuse;
-    LOGD << "SmartPlugin use time:" << timeuse
-         << ", smartframe:" << inst->smartframe_ << ", output fps =" << fps;
-  }
 }
 
 }  // namespace smartplugin_multiplebox

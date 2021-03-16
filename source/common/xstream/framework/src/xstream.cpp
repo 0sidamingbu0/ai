@@ -78,8 +78,6 @@ int XStreamFlow::SetConfig(const std::string &key, const std::string &value) {
     profiler_->name_ = value;
   } else if (key.compare("profiler_time_interval") == 0) {
     profiler_->SetIntervalForTimeStat(std::stoi(value));
-  } else if (key.compare("profiler_fps_interval") == 0) {
-    profiler_->SetIntervalForFPSStat(std::stoi(value));
   } else if (key.compare("free_framedata") == 0) {
     if (value.compare("on") == 0) {
       scheduler_->SetFreeMemery(true);

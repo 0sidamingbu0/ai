@@ -17,14 +17,14 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "BehaviorMethod/BehaviorEvent.h"
 #include "json/json.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 namespace xstream {
 
-class BehaviorMethod : public Method {
+class BehaviorMethod : public SimpleMethod {
  public:
   BehaviorMethod() {}
   virtual ~BehaviorMethod() {}
@@ -32,9 +32,9 @@ class BehaviorMethod : public Method {
   virtual int Init(const std::string &cfg_path);
   virtual void Finalize();
 
-  virtual std::vector<std::vector<BaseDataPtr> >
-  DoProcess(const std::vector<std::vector<BaseDataPtr> > &input,
-            const std::vector<xstream::InputParamPtr> &param);
+  virtual std::vector<BaseDataPtr>
+  DoProcess(const std::vector<BaseDataPtr> &input,
+            const xstream::InputParamPtr &param);
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;
   virtual std::string GetVersion() const;

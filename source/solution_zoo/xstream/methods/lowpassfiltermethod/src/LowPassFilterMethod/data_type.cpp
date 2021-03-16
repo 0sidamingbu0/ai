@@ -20,10 +20,10 @@ int LowPassFilterParam::UpdateParameter(const JsonReaderPtr &reader) {
                               filtered_box_state_type);
     LOGD << "filtered_box_state_type: " << filtered_box_state_type;
     #endif
-    return kHorizonVisionSuccess;
+    return 0;
   } else {
     LOGE << "The reader is null";
-    return kHorizonVisionErrorParam;
+    return -1;
   }
 }
 

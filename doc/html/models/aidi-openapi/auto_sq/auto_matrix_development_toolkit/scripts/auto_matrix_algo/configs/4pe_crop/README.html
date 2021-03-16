@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>crop多任务 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../../" src="../../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../../_sources/models/aidi-openapi/auto_sq/auto_matrix_development_toolkit/scripts/auto_matrix_algo/configs/4pe_crop/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -160,17 +165,15 @@
   <div class="section" id="crop">
 <h1>crop多任务<a class="headerlink" href="#crop" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>包含4个检测分支</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_cyclist_light.py</span></code> 骑车人、红绿灯检测</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_person.py</span></code> 行人检测</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_rear.py</span></code> 车头车尾分支</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_vehicle_sign.py</span></code> 全车、标志牌检测</p></li>
+<li>包含4个检测分支<ul>
+<li><code class="docutils literal notranslate"><span class="pre">det_cyclist_light.py</span></code> 骑车人、红绿灯检测</li>
+<li><code class="docutils literal notranslate"><span class="pre">det_person.py</span></code> 行人检测</li>
+<li><code class="docutils literal notranslate"><span class="pre">det_rear.py</span></code> 车头车尾分支</li>
+<li><code class="docutils literal notranslate"><span class="pre">det_vehicle_sign.py</span></code> 全车、标志牌检测</li>
 </ul>
 </li>
-<li><p>包含1个分割分支</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">seg_lane.py</span></code> 4类车道线分割</p></li>
+<li>包含1个分割分支<ul>
+<li><code class="docutils literal notranslate"><span class="pre">seg_lane.py</span></code> 4类车道线分割</li>
 </ul>
 </li>
 </ul>
@@ -178,9 +181,8 @@
 <div class="section" id="quantization-training-2-steps-fusion-bn">
 <h1>Quantization Training, 2 steps fusion bn<a class="headerlink" href="#quantization-training-2-steps-fusion-bn" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>pipeline test</p>
-<ul>
-<li><p>用验证集跑通整个pipeline，加快debug速度</p></li>
+<li>pipeline test<ul>
+<li>用验证集跑通整个pipeline，加快debug速度</li>
 </ul>
 </li>
 </ul>
@@ -190,9 +192,8 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>local run</p>
-<ul>
-<li><p>用训练集正式训练</p></li>
+<li>local run<ul>
+<li>用训练集正式训练</li>
 </ul>
 </li>
 </ul>
@@ -204,25 +205,22 @@
 <div class="section" id="id1">
 <h1>训练简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>crop模型输入尺寸</p>
-<ul>
-<li><p>model（训练）的输入尺寸，训练集可包含多种尺寸，如下列出常见尺寸从原图到模型输入所经历的变化，样例训练集仅包含<code class="docutils literal notranslate"><span class="pre">720x1280</span></code>图片</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">720x1280</span></code>  –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1080x1920</span></code> –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1080x2280</span></code> –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></p></li>
-<li><p>如果训练集包含多种尺寸，<code class="docutils literal notranslate"><span class="pre">max_img_hw</span></code>设置为最大尺寸，作用于center crop</p></li>
+<li>crop模型输入尺寸<ul>
+<li>model（训练）的输入尺寸，训练集可包含多种尺寸，如下列出常见尺寸从原图到模型输入所经历的变化，样例训练集仅包含<code class="docutils literal notranslate"><span class="pre">720x1280</span></code>图片<ul>
+<li><code class="docutils literal notranslate"><span class="pre">720x1280</span></code>  –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1080x1920</span></code> –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1080x2280</span></code> –random/center crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></li>
+<li>如果训练集包含多种尺寸，<code class="docutils literal notranslate"><span class="pre">max_img_hw</span></code>设置为最大尺寸，作用于center crop</li>
 </ul>
 </li>
-<li><p>export_mode（预测、部署）的输入尺寸，如下尺寸选一种，例子用的是<code class="docutils literal notranslate"><span class="pre">940x1824</span></code>输入</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –根据相机参数算出消失点，给定crop尺寸–&gt; <code class="docutils literal notranslate"><span class="pre">448x1280</span></code></p></li>
+<li>export_mode（预测、部署）的输入尺寸，如下尺寸选一种，例子用的是<code class="docutils literal notranslate"><span class="pre">940x1824</span></code>输入<ul>
+<li><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –根据相机参数算出消失点，给定crop尺寸–&gt; <code class="docutils literal notranslate"><span class="pre">448x1280</span></code></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>更多解析见<code class="docutils literal notranslate"><span class="pre">configs/4pe_resize/README.md</span></code></p></li>
+<li>更多解析见<code class="docutils literal notranslate"><span class="pre">configs/4pe_resize/README.md</span></code></li>
 </ul>
 </div>
 
@@ -231,28 +229,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Miscellaneous &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/common/pybind11/docs/advanced/misc.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -239,8 +244,8 @@ could be realized as follows (important changes highlighted):</p>
 <h2>Binding sequence data types, iterators, the slicing protocol, etc.<a class="headerlink" href="#binding-sequence-data-types-iterators-the-slicing-protocol-etc" title="永久链接至标题">¶</a></h2>
 <p>Please refer to the supplemental example for details.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_sequences_and_iterators.cpp</span></code> contains a
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_sequences_and_iterators.cpp</span></code> contains a
 complete example that shows how to bind a sequence data type, including
 length queries (<code class="docutils literal notranslate"><span class="pre">__len__</span></code>), iterators (<code class="docutils literal notranslate"><span class="pre">__iter__</span></code>), the slicing
 protocol and other kinds of useful operations.</p>
@@ -267,7 +272,7 @@ whereas the <code class="docutils literal notranslate"><span class="pre">Dog</sp
 course that the variable <code class="docutils literal notranslate"><span class="pre">pet</span></code> is not available anymore though it is needed
 to indicate the inheritance relationship to the constructor of <code class="docutils literal notranslate"><span class="pre">class_&lt;Dog&gt;</span></code>.
 However, it can be acquired as follows:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="p">)</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;basic&quot;</span><span class="p">).</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;Pet&quot;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="p">)</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;basic&quot;</span><span class="p">).</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;Pet&quot;</span><span class="p">);</span>
 
 <span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Dog&quot;</span><span class="p">,</span> <span class="n">pet</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;&gt;</span><span class="p">())</span>
@@ -279,7 +284,7 @@ However, it can be acquired as follows:</p>
 type. Like the above code, however, this also requires invoking the <code class="docutils literal notranslate"><span class="pre">import</span></code>
 function once to ensure that the pybind11 binding code of the module <code class="docutils literal notranslate"><span class="pre">basic</span></code>
 has been executed:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;basic&quot;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;basic&quot;</span><span class="p">);</span>
 
 <span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Dog</span><span class="p">,</span> <span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Dog&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;&gt;</span><span class="p">())</span>
@@ -300,7 +305,7 @@ pybind11 provides a macro to do just this:</p>
 </div>
 <p>Note also that it is possible (although would rarely be required) to share arbitrary
 C++ objects between extension modules at runtime. Internal library data is shared
-between modules using capsule machinery <a class="footnote-reference brackets" href="#f6" id="id1">1</a> which can be also utilized for
+between modules using capsule machinery <a class="footnote-reference" href="#f6" id="id1">[1]</a> which can be also utilized for
 storing, modifying and accessing user-defined data. Note that an extension module
 will “see” other extensions’ data if and only if they were built with the same
 pybind11 version. Consider the following example:</p>
@@ -313,11 +318,12 @@ pybind11 version. Consider the following example:</p>
 the first one to be imported would create a <code class="docutils literal notranslate"><span class="pre">MyData</span></code> instance and associate
 a <code class="docutils literal notranslate"><span class="pre">&quot;mydata&quot;</span></code> key with a pointer to it. Extensions that are imported later
 would be then able to access the data behind the same pointer.</p>
-<dl class="footnote brackets">
-<dt class="label" id="f6"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p><a class="reference external" href="https://docs.python.org/3/extending/extending.html#using-capsules">https://docs.python.org/3/extending/extending.html#using-capsules</a></p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://docs.python.org/3/extending/extending.html#using-capsules">https://docs.python.org/3/extending/extending.html#using-capsules</a></td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="module-destructors">
 <h2>Module Destructors<a class="headerlink" href="#module-destructors" title="永久链接至标题">¶</a></h2>
@@ -360,28 +366,29 @@ avoids this issue involves weak reference with a cleanup callback:</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
+<p class="first admonition-title">注解</p>
 <p>PyPy (at least version 5.9) does not garbage collect objects when the
 interpreter exits. An alternative approach (which also works on CPython) is to use
-the <a class="reference external" href="https://docs.python.org/3/library/atexit.html#module-atexit" title="(在 Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">atexit</span></code></a> module <a class="footnote-reference brackets" href="#f7" id="id2">2</a>, for example:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">atexit</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;atexit&quot;</span><span class="p">);</span>
+the <a class="reference external" href="https://docs.python.org/3/library/atexit.html#module-atexit" title="(在 Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">atexit</span></code></a> module <a class="footnote-reference" href="#f7" id="id2">[2]</a>, for example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">atexit</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;atexit&quot;</span><span class="p">);</span>
 <span class="n">atexit</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;register&quot;</span><span class="p">)(</span><span class="n">py</span><span class="o">::</span><span class="n">cpp_function</span><span class="p">([]()</span> <span class="p">{</span>
     <span class="c1">// perform cleanup here -- this function is called with the GIL held</span>
 <span class="p">}));</span>
 </pre></div>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="f7"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p><a class="reference external" href="https://docs.python.org/3/library/atexit.html">https://docs.python.org/3/library/atexit.html</a></p>
-</dd>
-</dl>
+<table class="last docutils footnote" frame="void" id="f7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="https://docs.python.org/3/library/atexit.html">https://docs.python.org/3/library/atexit.html</a></td></tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section" id="generating-documentation-using-sphinx">
 <h2>Generating documentation using Sphinx<a class="headerlink" href="#generating-documentation-using-sphinx" title="永久链接至标题">¶</a></h2>
-<p>Sphinx <a class="footnote-reference brackets" href="#f4" id="id3">3</a> has the ability to inspect the signatures and documentation
+<p>Sphinx <a class="footnote-reference" href="#f4" id="id3">[3]</a> has the ability to inspect the signatures and documentation
 strings in pybind11-based extension modules to automatically generate beautiful
-documentation in a variety formats. The python_example repository <a class="footnote-reference brackets" href="#f5" id="id4">4</a> contains a
+documentation in a variety formats. The python_example repository <a class="footnote-reference" href="#f5" id="id4">[4]</a> contains a
 simple example repository which uses this approach.</p>
 <p>There are two potential gotchas when using this approach: first, make sure that
 the resulting strings do not contain any <kbd class="kbd docutils literal notranslate">TAB</kbd> characters, which break the
@@ -421,14 +428,18 @@ The class <code class="docutils literal notranslate"><span class="pre">options</
 <p>Note that changes to the settings affect only function bindings created during the
 lifetime of the <code class="docutils literal notranslate"><span class="pre">options</span></code> instance. When it goes out of scope at the end of the module’s init function,
 the default settings are restored to prevent unwanted side effects.</p>
-<dl class="footnote brackets">
-<dt class="label" id="f4"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
-<dd><p><a class="reference external" href="http://www.sphinx-doc.org">http://www.sphinx-doc.org</a></p>
-</dd>
-<dt class="label" id="f5"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
-<dd><p><a class="reference external" href="http://github.com/pybind/python_example">http://github.com/pybind/python_example</a></p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td><a class="reference external" href="http://www.sphinx-doc.org">http://www.sphinx-doc.org</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td><a class="reference external" href="http://github.com/pybind/python_example">http://github.com/pybind/python_example</a></td></tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -437,28 +448,25 @@ the default settings are restored to prevent unwanted side effects.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

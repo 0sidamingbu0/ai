@@ -18,12 +18,12 @@
 #include <memory>
 #include "json/json.h"
 #include "PredictMethod/Predictors/Predictors.h"
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "hobotxsdk/xstream_data.h"
 
 namespace xstream {
 
-class PredictMethod : public Method {
+class PredictMethod : public SimpleMethod {
  public:
   PredictMethod() {}
   virtual ~PredictMethod() {}
@@ -31,9 +31,9 @@ class PredictMethod : public Method {
   virtual int Init(const std::string &cfg_path);
   virtual void Finalize();
 
-  virtual std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param);
+  virtual std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param);
 
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;

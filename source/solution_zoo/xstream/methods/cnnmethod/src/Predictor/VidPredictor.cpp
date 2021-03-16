@@ -77,34 +77,25 @@ static std::vector<float> ddr_input(8 * 8 * 256, 0.0);
 void VidInputPredictor::Do(CNNMethodRunData *run_data) {
   static int count = 0;
   LOGD << "vidInputPredictor cout = " << count++;
-  int batch_size = run_data->input->size();
-  run_data->mxnet_output.resize(batch_size);
-  run_data->input_dim_size.resize(batch_size);
-  run_data->norm_rois.resize(batch_size);
   run_data->real_nhwc = model_info_.real_nhwc_;
   run_data->elem_size = model_info_.elem_size_;
   run_data->all_shift = model_info_.all_shift_;
 
   int ddr_input_size =
       1 * 8 * 8 * 256;  // 8p4c layout, 1*8*1*256 align to 1*8*8*256
-  HOBOT_CHECK(batch_size == 1);
-  HOBOT_CHECK(run_data->input_dim_size.size() == 1);
 
-  run_data->output.resize(batch_size);
-
-  for (int batch_i = 0; batch_i < batch_size; batch_i++) {  // loop frame
-    auto &batch_output = run_data->output[batch_i];
+  {  // one frame
     auto base_data_vector = std::make_shared<BaseDataVector>();
-    batch_output.push_back(base_data_vector);
-    run_data->input_dim_size[0] = 1;
-    auto &batch_i_input_data = (*(run_data->input))[batch_i];
+    run_data->output.push_back(base_data_vector);
+    run_data->input_dim_size = 1;
+    auto &batch_i_input_data = (*(run_data->input));
     std::vector<float> frame_input;
     HOBOT_CHECK(!batch_i_input_data.empty());
     auto slot0_input_ptr =
         std::static_pointer_cast<BaseDataVector>(batch_i_input_data[0]);
     if (slot0_input_ptr->datas_.empty()) {
       std::cout << "empty slot0_input_ptr" << std::endl;
-      continue;
+      return;
     }
     auto first_item = slot0_input_ptr->datas_[0];
     auto input_ptr =
@@ -135,8 +126,8 @@ void VidInputPredictor::Do(CNNMethodRunData *run_data) {
       LOGD << "RunModel Success";
       // change raw data to mxnet layout
       int layer_size = model_info_.output_layer_size_.size();
-      run_data->mxnet_output[batch_i].resize(1);
-      auto &one_tgt_mxnet = run_data->mxnet_output[batch_i][0];
+      run_data->mxnet_output.resize(1);
+      auto &one_tgt_mxnet = run_data->mxnet_output[0];
       one_tgt_mxnet.resize(layer_size);
       //      std::string socket_str[] = {"stand", "run", "jump", "squat",
       //      "walk", "attack", "defence"};

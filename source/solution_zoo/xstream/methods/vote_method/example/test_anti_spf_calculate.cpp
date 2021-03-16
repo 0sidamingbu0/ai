@@ -55,6 +55,7 @@ int TestAntiSpfCalculate(int argc, char **argv) {
   std::vector<xstream::InputParamPtr> param;
   int batch_size = 5;
   input.resize(batch_size);
+  param.resize(batch_size);
   for (int i = 0; i < batch_size - 1; ++i) {
     input[i].push_back(face_rects_ptr);
     input[i].push_back(nullptr);
@@ -87,8 +88,12 @@ int TestAntiSpfCalculate(int argc, char **argv) {
   input[batch_size - 1].push_back(disappeared_track_ids_ptr2);
   input[batch_size - 1].push_back(liveness_ptr2);
 
-  std::vector<std::vector<BaseDataPtr>> xstream_output =
-      anti_spf_calculate_method.DoProcess(input, param);
+  std::vector<std::vector<BaseDataPtr>> xstream_output;
+  for (int index = 0; index < batch_size; index++) {
+    auto one_output =
+        anti_spf_calculate_method.DoProcess(input[index], param[index]);
+    xstream_output.push_back(one_output);
+  }
   HOBOT_CHECK(static_cast<int>(xstream_output.size()) == batch_size);
   for (int i = 0; i < batch_size; ++i) {
     auto one_frame_out = xstream_output[i];

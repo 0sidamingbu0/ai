@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Customization Points &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../../../../../../../../" src="../../../../../../../../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../../../../../../../../_sources/ai_express_release/source/common/xproto/framework/third_party/x86/ubuntu/gcc_4.8.5/gtest/include/gtest/internal/custom/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -165,10 +170,10 @@
 <div class="section" id="the-following-macros-can-be-defined">
 <h3>The following macros can be defined:<a class="headerlink" href="#the-following-macros-can-be-defined" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_OS_STACK_TRACE_GETTER_</span></code> - The name of an implementation of
-<code class="docutils literal notranslate"><span class="pre">OsStackTraceGetterInterface</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_CUSTOM_TEMPDIR_FUNCTION_</span></code> - An override for <code class="docutils literal notranslate"><span class="pre">testing::TempDir()</span></code>. See
-<code class="docutils literal notranslate"><span class="pre">testing::TempDir</span></code> for semantics and signature.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_OS_STACK_TRACE_GETTER_</span></code> - The name of an implementation of
+<code class="docutils literal notranslate"><span class="pre">OsStackTraceGetterInterface</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_CUSTOM_TEMPDIR_FUNCTION_</span></code> - An override for <code class="docutils literal notranslate"><span class="pre">testing::TempDir()</span></code>. See
+<code class="docutils literal notranslate"><span class="pre">testing::TempDir</span></code> for semantics and signature.</li>
 </ul>
 </div>
 </div>
@@ -178,54 +183,54 @@
 <div class="section" id="flag-related-macros">
 <h3>Flag related macros:<a class="headerlink" href="#flag-related-macros" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_FLAG(flag_name)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_USE_OWN_FLAGFILE_FLAG_</span></code> - Define to 0 when the system provides its
-own flagfile flag parsing.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_bool_(name)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_int32_(name)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_string_(name)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_bool_(name,</span> <span class="pre">default_val,</span> <span class="pre">doc)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_int32_(name,</span> <span class="pre">default_val,</span> <span class="pre">doc)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_string_(name,</span> <span class="pre">default_val,</span> <span class="pre">doc)</span></code></p></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_FLAG(flag_name)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_USE_OWN_FLAGFILE_FLAG_</span></code> - Define to 0 when the system provides its
+own flagfile flag parsing.</li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_bool_(name)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_int32_(name)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_string_(name)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_bool_(name,</span> <span class="pre">default_val,</span> <span class="pre">doc)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_int32_(name,</span> <span class="pre">default_val,</span> <span class="pre">doc)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_string_(name,</span> <span class="pre">default_val,</span> <span class="pre">doc)</span></code></li>
 </ul>
 </div>
 <div class="section" id="logging">
 <h3>Logging:<a class="headerlink" href="#logging" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_LOG_(severity)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_CHECK_(condition)</span></code></p></li>
-<li><p>Functions <code class="docutils literal notranslate"><span class="pre">LogToStderr()</span></code> and <code class="docutils literal notranslate"><span class="pre">FlushInfoLog()</span></code> have to be provided too.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_LOG_(severity)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_CHECK_(condition)</span></code></li>
+<li>Functions <code class="docutils literal notranslate"><span class="pre">LogToStderr()</span></code> and <code class="docutils literal notranslate"><span class="pre">FlushInfoLog()</span></code> have to be provided too.</li>
 </ul>
 </div>
 <div class="section" id="threading">
 <h3>Threading:<a class="headerlink" href="#threading" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_HAS_NOTIFICATION_</span></code> - Enabled if Notification is already provided.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_HAS_MUTEX_AND_THREAD_LOCAL_</span></code> - Enabled if <code class="docutils literal notranslate"><span class="pre">Mutex</span></code> and <code class="docutils literal notranslate"><span class="pre">ThreadLocal</span></code>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_HAS_NOTIFICATION_</span></code> - Enabled if Notification is already provided.</li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_HAS_MUTEX_AND_THREAD_LOCAL_</span></code> - Enabled if <code class="docutils literal notranslate"><span class="pre">Mutex</span></code> and <code class="docutils literal notranslate"><span class="pre">ThreadLocal</span></code>
 are already provided. Must also provide <code class="docutils literal notranslate"><span class="pre">GTEST_DECLARE_STATIC_MUTEX_(mutex)</span></code>
-and <code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_STATIC_MUTEX_(mutex)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_EXCLUSIVE_LOCK_REQUIRED_(locks)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_LOCK_EXCLUDED_(locks)</span></code></p></li>
+and <code class="docutils literal notranslate"><span class="pre">GTEST_DEFINE_STATIC_MUTEX_(mutex)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_EXCLUSIVE_LOCK_REQUIRED_(locks)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_LOCK_EXCLUDED_(locks)</span></code></li>
 </ul>
 </div>
 <div class="section" id="underlying-library-support-features">
 <h3>Underlying library support features<a class="headerlink" href="#underlying-library-support-features" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_HAS_CXXABI_H_</span></code></p></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_HAS_CXXABI_H_</span></code></li>
 </ul>
 </div>
 <div class="section" id="exporting-api-symbols">
 <h3>Exporting API symbols:<a class="headerlink" href="#exporting-api-symbols" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">GTEST_API_</span></code> - Specifier for exported symbols.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">GTEST_API_</span></code> - Specifier for exported symbols.</li>
 </ul>
 </div>
 </div>
 <div class="section" id="header-gtest-printers-h">
 <h2>Header <code class="docutils literal notranslate"><span class="pre">gtest-printers.h</span></code><a class="headerlink" href="#header-gtest-printers-h" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>See documentation at <code class="docutils literal notranslate"><span class="pre">gtest/gtest-printers.h</span></code> for details on how to define a
-custom printer.</p></li>
+<li>See documentation at <code class="docutils literal notranslate"><span class="pre">gtest/gtest-printers.h</span></code> for details on how to define a
+custom printer.</li>
 </ul>
 </div>
 </div>
@@ -235,28 +240,25 @@ custom printer.</p></li>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

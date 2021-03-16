@@ -17,11 +17,11 @@
 #include "./plat_cnn.h"
 #include "CNNMethod/util/ModelInfo.h"
 #include "CNNMethod/util/util.h"
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 #include "./hb_vio_interface.h"
 #include "hobotlog/hobotlog.hpp"
 
+#if 0
 static void Usage() {
   std::cout << "./example ver_feature model_file bpu_config "
                "nv12_after_affine_list.txt out_file\n";
@@ -140,3 +140,4 @@ int DoVerFeature(int argc, char **argv) {
   delete[] nv12_data;
   return 0;
 }
+#endif

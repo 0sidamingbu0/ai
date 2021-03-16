@@ -81,15 +81,13 @@ void ThreadFun(FasterRCNNMethod *faster_rcnn, std::string model_config_file) {
       std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_pyramid->value = py_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_pyramid);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_pyramid);
 
     auto xstream_output = faster_rcnn->DoProcess(input, param);
 
-    assert(xstream_output.size() == 1);
-    auto faster_rcnn_out = xstream_output[0];
+    auto faster_rcnn_out = xstream_output;
     g_fb_vio->FreeImgInfo(pyramid_img_ptr);
     delete pyramid_img_ptr;
     std::cout << "predict success: " << frame_cnt++ << std::endl;
@@ -100,15 +98,13 @@ void ThreadFun(FasterRCNNMethod *faster_rcnn, std::string model_config_file) {
       std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_pyramid->value = py_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_pyramid);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_pyramid);
 
     auto xstream_output = faster_rcnn->DoProcess(input, param);
 
-    assert(xstream_output.size() == 1);
-    auto faster_rcnn_out = xstream_output[0];
+    auto faster_rcnn_out = xstream_output;
     g_fb_vio->FreeImgInfo(py_image_frame_ptr);
     std::cout << "predict success: " << frame_cnt++ << std::endl;
 #endif

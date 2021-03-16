@@ -207,36 +207,6 @@ typedef struct hb_BPU_ADDR_INFO_S {
   uint64_t c_vaddr;
 } BPU_ADDR_INFO_S;
 
-// for ds|us
-#define DOWN_SCALE_MAIN_MAX 6
-#define DOWN_SCALE_MAX 24
-#define UP_SCALE_MAX 6
-
-typedef struct hb_BPU_IMG_INFO_S {
-  int slot_id;        // getted slot buff
-  int frame_id;       // for x2 may be 0 - 0xFFFF or 0x7FFF
-  int64_t timestamp;  // BT from Hisi; mipi & dvp from kernel time
-  int img_format;     // now only support yuv420sp
-  int ds_pym_layer;   // get down scale layers
-  int us_pym_layer;   // get up scale layers
-  BPU_ADDR_INFO_S *down_scale[DOWN_SCALE_MAX];
-  BPU_ADDR_INFO_S *up_scale[UP_SCALE_MAX];
-  BPU_ADDR_INFO_S *down_scale_main[DOWN_SCALE_MAIN_MAX];
-  int cam_id;
-} BPU_IMG_INFO_S;
-
-typedef struct hb_BPU_PYRAMID_RESULT_S {
-  BPU_IMG_INFO_S result_info;
-} BPU_PYRAMID_RESULT_S;
-
-typedef struct hb_BPU_CAMERA_IMAGE_INFO_S {
-  int frame_id;       // for x2 may be 0 - 0xFFFF or 0x7FFF
-  int64_t timestamp;  // BT from Hisi; mipi & dvp from kernel time
-  int img_format;     // now only support yuv420sp
-  BPU_ADDR_INFO_S src_img;
-  int cam_id;
-} BPU_CAMERA_IMAGE_INFO_S;
-
 /*
  * \brief run mode with bbox, there are two ways to run model, synchronous and
  * asynchronous. When in synchronous mode, calling this interface will block the
@@ -325,6 +295,12 @@ int HB_SYS_bpuMemFree(BPU_MEMORY_S *mem);
  *        if it point to a bpu memory
  */
 int HB_SYS_getMemInfo(const void *virAddr, uint64_t *phyAddr, int *is_cachable);
+
+/*
+ * \DMA memcpy, src and dst mem must be continous
+ * \use HB_SYS_bpuMemAlloc to alloc mem, and use virAddr to copy and paste
+ * */
+int HB_BPU_dmacopy(void *dst_addr, void *src_addr, uint32_t size);
 
 /*
  * \brief cast vir addr to phy addr.
@@ -439,6 +415,29 @@ int HB_BPU_getMemoryUsage(BPU_MODEL_S *model,
                           size_t *bpu_memory_occupation,
                           size_t *cpu_peak_memory_usage,
                           size_t *cpu_memory_occupation);
+
+/*
+ * \brief: get the total byte size of node
+ */
+int HB_BPU_getAlignedTotalSize(int *size, BPU_MODEL_NODE_S *node);
+
+/*
+ * \brief: add padding to data
+ */
+int HB_BPU_addPadding(void *src,
+                      void *dst,
+                      const BPU_DATA_SHAPE_S *src_shape,
+                      const BPU_DATA_SHAPE_S *dst_shape,
+                      const BPU_DATA_TYPE_E *data_type);
+
+/*
+ * \brief: remove padding to data
+ */
+int HB_BPU_removePadding(const void *src,
+                         void *dst,
+                         const BPU_DATA_SHAPE_S *src_shape,
+                         const BPU_DATA_SHAPE_S *dst_shape,
+                         const BPU_DATA_TYPE_E *data_type);
 
 #ifdef __cplusplus
 }

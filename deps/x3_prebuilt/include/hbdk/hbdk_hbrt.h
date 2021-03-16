@@ -156,7 +156,7 @@ typedef struct {
 } hbrt_global_config_t;
 
 #define HBRT_GLOBAL_CONFIG_INITIALIZER \
-  { HBRT_MARCH_UNKNOWN, NULL, NULL, NULL, NULL, NULL, true, 64 }
+  { HBRT_MARCH_UNKNOWN, HBDK_NULLPTR, HBDK_NULLPTR, HBDK_NULLPTR, HBDK_NULLPTR, HBDK_NULLPTR, true, 64 }
 
 HBDK_PUBLIC extern hbrt_error_t hbrtSetGlobalConfig(const hbrt_global_config_t *config);
 
@@ -168,9 +168,9 @@ typedef struct {
   char reserved_fields[64];
 } hbrt_global_memory_hook_t;
 
-#define HBRT_GLOBAL_MEMORY_HOOK_INITIALIZER \
-  {                                         \
-    NULL, NULL, NULL, NULL, { 0 }           \
+#define HBRT_GLOBAL_MEMORY_HOOK_INITIALIZER                       \
+  {                                                               \
+    HBDK_NULLPTR, HBDK_NULLPTR, HBDK_NULLPTR, HBDK_NULLPTR, { 0 } \
   }
 
 HBDK_PUBLIC extern hbrt_error_t hbrtSetGlobalMemoryHook(const hbrt_global_memory_hook_t *hook);

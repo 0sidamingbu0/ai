@@ -13,6 +13,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <map>
 
 #include "hb_vio_interface.h"
 #include "hobot_vision/blocking_queue.hpp"
@@ -37,6 +38,7 @@ class VotModule {
   int Start();
   int Input(std::shared_ptr<VideoData> video_data,
             const bool transition = false);
+  int Input(const int channel, HorizonVisionSmartFrame *smart_frame);
 
   int Output(void **data);
   int OutputBufferFree(void *data);
@@ -45,6 +47,8 @@ class VotModule {
 
   void SetDisplayMode(const int display_mode) { display_mode_ = display_mode; }
   void SetChannelNum(const int channel_num) { channel_num_ = channel_num; }
+  void SetDrawSmart(const bool draw_smart) { draw_smart_ = draw_smart; }
+  void SetDrawRealTimeVideo(const bool flag) { draw_real_time_video_ = flag; }
 
  private:
   uint32_t group_id_;
@@ -53,6 +57,8 @@ class VotModule {
   uint32_t image_height_;
   uint32_t display_mode_;
   uint32_t channel_num_;
+  bool draw_smart_ = false;
+  bool draw_real_time_video_ = true;
 
   static uint64_t frame_id_;
   static std::mutex frame_id_mtx_;
@@ -102,6 +108,7 @@ class VotModule {
                     cv::Mat &bgr_mat, char *buf, int channel, bool &resize);
   void bgr_to_nv12(uint8_t *bgr, uint8_t *buf, const uint32_t width,
                    const uint32_t height);
+  void DataToBuffer(char *buf, std::shared_ptr<VideoData> video_data);
   int HandleData();
   int Transition(std::shared_ptr<VideoData> video_data);
 
@@ -114,6 +121,12 @@ class VotModule {
   uint32_t in_queue_len_max_ = 40;
   // std::mutex cache_mtx_;
   std::thread plot_task_;
+
+  std::vector<std::shared_ptr<std::thread>> plot_threads_;
+  std::mutex buffer_mutex_;
+
+  std::map<int, hobot::vision::BlockingQueue<HorizonVisionSmartFrame*>>
+      smart_frame_list_;
 };
 
 }  // namespace vision

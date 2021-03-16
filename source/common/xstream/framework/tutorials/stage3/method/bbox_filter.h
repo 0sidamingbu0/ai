@@ -13,18 +13,18 @@
 #include <atomic>
 #include <string>
 #include <vector>
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "method/filter_param.h"
 
 namespace xstream {
 
-class BBoxFilter : public Method {
+class BBoxFilter : public SimpleMethod {
  public:
   int Init(const std::string &config_file_path) override;
 
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
   void Finalize() override;
 

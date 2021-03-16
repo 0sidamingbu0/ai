@@ -14,7 +14,6 @@
 #include "yuv_utils.h"    // NOLINT
 #include "FasterRCNNMethod/dump.h"
 
-#include "bpu_predict/bpu_io.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 #include "hobotxsdk/xstream_sdk.h"

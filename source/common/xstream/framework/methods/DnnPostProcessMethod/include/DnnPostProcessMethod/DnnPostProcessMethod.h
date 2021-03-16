@@ -17,13 +17,13 @@
 #include <vector>
 #include "json/json.h"
 #include "Config.h"
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "DnnAsyncData.h"
 #include "bpu_predict/bpu_predict_extension.h"
 
 namespace xstream {
 
-class DnnPostProcessMethod : public Method {
+class DnnPostProcessMethod : public SimpleMethod {
  public:
   DnnPostProcessMethod() {}
   virtual ~DnnPostProcessMethod() {}
@@ -32,9 +32,9 @@ class DnnPostProcessMethod : public Method {
   void Finalize() override {}
 
   // 主逻辑，完全复用，派生类不需要再实现DoProcess
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
  public:
   static std::mutex init_mutex_;

@@ -150,9 +150,14 @@ int VotModule::Input(std::shared_ptr<VideoData> video_data,
 
   if (in_queue_.size() >= in_queue_len_max_) {
     in_queue_.pop();
-    LOGE << "VotModule data queue is full";
+    LOGW << "VotModule data queue is full";
   }
   in_queue_.push(video_data);
+  return 0;
+}
+
+int VotModule::Input(const int channel, HorizonVisionSmartFrame *smart_frame) {
+  smart_frame_list_[channel].push(smart_frame);
   return 0;
 }
 
@@ -164,7 +169,12 @@ int VotModule::Start() {
   if (vo_plot_cfg_.transition_support) HB_VOT_EnableChn(0, 1);
 
   running_ = true;
-  plot_task_ = std::thread(&VotModule::HandleData, this);
+  for (uint32_t i = 0; i < channel_num_; ++i) {
+    auto plot_task =
+       std::make_shared<std::thread>(&VotModule::HandleData, this);
+    plot_threads_.push_back(plot_task);
+  }
+
   start_ = true;
   return 0;
 }
@@ -172,8 +182,9 @@ int VotModule::Start() {
 int VotModule::Stop() {
   running_ = false;
   start_ = false;
-  if (plot_task_.joinable()) {
-    plot_task_.join();
+  for (uint32_t i = 0; i < channel_num_; ++i) {
+    if (plot_threads_[i]->joinable())
+      plot_threads_[i]->join();
   }
   in_queue_.clear();
 
@@ -198,6 +209,16 @@ int VotModule::Stop() {
 }
 
 int VotModule::DeInit() {
+  for (size_t i = 0; i < smart_frame_list_.size(); ++i) {
+    for (size_t j = 0; i < smart_frame_list_[i].size(); ++j) {
+      HorizonVisionSmartFrame *smart_frame = nullptr;
+      auto item = smart_frame_list_[i].try_pop(&smart_frame,
+                                               std::chrono::microseconds(1));
+      if (item) {
+        HorizonVisionFreeSmartFrame(smart_frame);
+      }
+    }
+  }
   if (buffer_) free(buffer_);
   if (buffer1_) free(buffer1_);
   return 0;
@@ -214,23 +235,43 @@ int VotModule::HandleData() {
         continue;
       }
     }
-    if (!video_data->has_plot) {
-      PlotSmartData objplot;
-      objplot.PlotData(vo_plot_cfg_, video_data);
+
+    if (draw_smart_) {
+      if (draw_real_time_video_) {
+        HorizonVisionSmartFrame *smart_frame = nullptr;
+        auto item = smart_frame_list_[video_data->channel].try_pop(
+            &smart_frame, std::chrono::microseconds(1));
+        if (item) {
+          PlotSmartData objplot;
+          objplot.PlotData(vo_plot_cfg_, video_data, smart_frame);
+          HorizonVisionFreeSmartFrame(smart_frame);
+        }
+        DataToBuffer(buffer_, video_data);
+      } else {  // run smart, not draw real time video
+        if (!video_data->has_plot && video_data->smart_frame) {
+          PlotSmartData objplot;
+          objplot.PlotData(vo_plot_cfg_, video_data, video_data->smart_frame);
+        }
+#if 0
+        auto image_data_size_ = video_data->width * video_data->height * 3;
+        uint8_t *bgr_buf =
+            new uint8_t[image_data_size_ / 2 + image_data_size_ * 2];  // NOLINT
+        cv::Mat bgr(video_data->height, video_data->width, CV_8UC3, bgr_buf);
+        cv::cvtColor(cv::Mat(video_data->height * 3 / 2, video_data->width,
+                             CV_8UC1, video_data->buffer),
+                     bgr, CV_YUV2BGR_NV12);
+        DrawLogo(&bgr, video_data->channel);
+        bool resize = false;
+        DataToBuffer(video_data->width, video_data->height, bgr, buffer_,
+                     video_data->channel, resize);
+        delete[] bgr_buf;
+#else
+        DataToBuffer(buffer_, video_data);
+#endif
+      }  // end of else draw_real_time_video_
+    } else {
+      DataToBuffer(buffer_, video_data);
     }
-
-    auto image_data_size_ = video_data->width * video_data->height * 3;
-    uint8_t *bgr_buf = new uint8_t[image_data_size_ / 2 + image_data_size_ * 2];
-    cv::Mat bgr(video_data->height, video_data->width, CV_8UC3, bgr_buf);
-    cv::cvtColor(cv::Mat(video_data->height * 3 / 2, video_data->width, CV_8UC1,
-                         video_data->buffer),
-                 bgr, CV_YUV2BGR_NV12);
-    DrawLogo(&bgr, video_data->channel);
-    bool resize = false;
-    DataToBuffer(video_data->width, video_data->height, bgr, buffer_,
-                 video_data->channel, resize);
-    delete[] bgr_buf;
-
     VOT_FRAME_INFO_S stFrame = {};
     stFrame.addr = buffer_;
     stFrame.size = 1920 * 1080 * 3 / 2;
@@ -277,6 +318,7 @@ void VotModule::DataToBuffer(const uint32_t src_width,
   }
 
   bgr_to_nv12(bgr_mat.ptr<uint8_t>(), img_i420, image_width, image_height);
+  std::lock_guard<std::mutex> lg(buffer_mutex_);
   for (uint32_t i = 0; i < image_height; ++i) {
     memcpy(buf + (i + pad_y) * 1920 + pad_x, img_i420 + i * image_width,
            image_width);
@@ -289,6 +331,28 @@ void VotModule::DataToBuffer(const uint32_t src_width,
 
   free(img_i420);
   return;
+}
+
+void VotModule::DataToBuffer(char *buf, std::shared_ptr<VideoData> video_data) {
+  int pad_x = 0;
+  int pad_y = 0;
+  uint32_t image_width = 0;
+  uint32_t image_height = 0;
+  DisplayInfo::computeXYPossition(display_mode_, channel_num_,
+                                  video_data->channel, pad_x, pad_y);
+  DisplayInfo::computeResolution(display_mode_, channel_num_,
+                                 video_data->channel, image_width,
+                                 image_height);
+  std::lock_guard<std::mutex> lg(buffer_mutex_);
+  for (uint32_t i = 0; i < image_height; ++i) {
+    memcpy(buf + (i + pad_y) * 1920 + pad_x,
+           video_data->buffer + i * image_width, image_width);
+  }
+  for (uint32_t i = 0; i < image_height / 2; ++i) {
+    memcpy(buf + (i + 1080 + pad_y / 2) * 1920 + pad_x,
+           video_data->buffer + image_width * image_height + i * image_width,
+           image_width);
+  }
 }
 
 void VotModule::padding_logo(char *data, int pad_width, int pad_height) {

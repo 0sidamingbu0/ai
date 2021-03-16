@@ -80,7 +80,8 @@ class FasterRCNNImp {
   void GetModelInfo(const std::string &model_name);
 
   void GetFrameOutput(int src_img_width, int src_img_height,
-                      std::vector<xstream::BaseDataPtr> &frame_output);
+                      std::vector<xstream::BaseDataPtr> &frame_output,
+                      BBox* body_box = nullptr);
 
   void PostProcess(FasterRCNNOutMsg &det_result);
 
@@ -137,6 +138,10 @@ class FasterRCNNImp {
                int data_length,
                BPU_DATA_TYPE_E data_type);
 
+  int RunModel(uint8_t *img_data,
+               int data_length, int image_width,
+               int image_height, BPU_DATA_TYPE_E data_type);
+
   int RunModelFromPym(void* pyramid, int pym_layer,
                       BPU_DATA_TYPE_E data_type);
 
@@ -145,15 +150,61 @@ class FasterRCNNImp {
                           int data_length,
                           BPU_DATA_TYPE_E data_type);
 
+  int PrepareInputTensor(uint8_t *img_data,
+                             int data_length,
+                             int image_width,
+                             int image_height,
+                             BPU_DATA_TYPE_E data_type);
+
   // prepare output_tensor
   void PrepareOutputTensor();
 
   // release input tensor
   void ReleaseInputTensor(std::vector<BPU_TENSOR_S> &input_tensors);
 
+
   // release output tensor
   void ReleaseOutputTensor();
   void FlushOutputTensor();
+
+  void RunSingleFrameWithinCrop(
+      const std::vector<xstream::BaseDataPtr> &frame_input,
+      std::vector<xstream::BaseDataPtr> &frame_output);
+
+  int CropPadAndResizeRoi(BBox *norm_box,
+                          uint8_t *pym_src_y_data,
+                          uint8_t *pym_src_uv_data,
+                          int pym_src_w,
+                          int pym_src_h,
+                          int pym_src_y_size,
+                          int pym_src_uv_size,
+                          int pym_src_y_stride,
+                          int pym_src_uv_stride,
+                          uint8_t **img_data,
+                          HobotXStreamImageToolsResizeInfo *resize_info);
+
+  void CalcResizeInfo(HobotXStreamImageToolsResizeInfo *resize_info);
+
+  int GetPymScaleInfo(
+      const std::shared_ptr<hobot::vision::PymImageFrame> &pyramid,
+      BBox *norm_box,
+      uint8_t *&pym_src_y_data,
+      uint8_t *&pym_src_uv_data,
+      int &pym_src_w,
+      int &pym_src_h,
+      int &pym_src_y_size,
+      int &pym_src_uv_size,
+      int &pym_src_y_stride,
+      int &pym_src_uv_stride,
+      float &scale);
+
+  int CropPadAndResizeRoi(
+      BBox *norm_box,
+      const std::shared_ptr<hobot::vision::PymImageFrame> &pyramid,
+      uint8_t **img_data,
+      HobotXStreamImageToolsResizeInfo *resize_info,
+      float *scale);
+
   std::vector<BPU_TENSOR_S> input_tensors_;
   std::vector<BPU_TENSOR_S> output_tensors_;
   bool output_tensors_alloced_ = false;
@@ -171,6 +222,10 @@ class FasterRCNNImp {
 
   int model_input_width_;
   int model_input_height_;
+
+  // img w and h before pad
+  int resize_input_width_;
+  int resize_input_height_;
 
   float kps_pos_distance_;
   int kps_feat_width_;
@@ -192,7 +247,7 @@ class FasterRCNNImp {
   int32_t plate_row_num_;
 
   // TODO(yaoyao.sun) use vector<uint32_t>
-  uint32_t kps_shift_ = 0;
+  std::vector<uint32_t> kps_shifts_;
   uint32_t kps_label_shift_ = 0;
   uint32_t kps_offset_shift_ = 0;
   uint32_t mask_shift_ = 0;
@@ -234,6 +289,8 @@ class FasterRCNNImp {
   int plate_row_element_type;
 
   xstream::InputParamPtr faster_rcnn_param_;
+
+  bool is_crop_ = false;
 };
 
 }  // namespace faster_rcnn_method

@@ -32,9 +32,9 @@ class Predictors {
   virtual int Init(const std::string &cfg);
   virtual void Finalize();
 
-  virtual std::vector<std::vector<BaseDataPtr>> Do(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) = 0;
+  virtual std::vector<BaseDataPtr> Do(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) = 0;
 
  protected:
   // prepare input tensor
@@ -69,6 +69,19 @@ class Predictors {
 
   int input_h_idx_, input_w_idx_, input_c_idx_;
   int pyramid_layer_ = 0;
+
+  enum CROPPING_RESIZE_TYPE {
+    CPU_RESIZE,
+    BPU_RESIZE
+  };
+  CROPPING_RESIZE_TYPE resize_type_;
+
+  int PrepareInputTensorData(
+      uint8_t *img_data,
+      int data_length,
+      int image_width, int image_height,
+      std::shared_ptr<std::vector<BPU_TENSOR_S>> input_tensors,
+      BPU_DATA_TYPE_E data_type);
 };
 }  // namespace xstream
 

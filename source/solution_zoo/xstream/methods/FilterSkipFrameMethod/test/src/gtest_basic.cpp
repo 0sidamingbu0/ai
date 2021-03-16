@@ -62,7 +62,7 @@ TEST(FilterSkipFrameMethodTest, SkipFrame) {
   auto ret = filter_skip_method.Init(config_file);
   EXPECT_EQ(ret, 0);
 
-  std::vector<std::vector<BaseDataPtr>> xstream_output;
+  std::vector<BaseDataPtr> xstream_output;
   std::shared_ptr<BaseDataVector> rects_ptr(new BaseDataVector());
   std::shared_ptr<XStreamData<BBox>> box(new XStreamData<BBox>());
   box->value.id = 1;
@@ -74,14 +74,12 @@ TEST(FilterSkipFrameMethodTest, SkipFrame) {
   rects_ptr->datas_.push_back(box);
 
   for (int i = 0; i < 4; ++i) {
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(rects_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(rects_ptr);
 
     xstream_output = filter_skip_method.DoProcess(input, param);
-    ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), static_cast<std::size_t>(1));
     auto out_rects = std::static_pointer_cast<BaseDataVector>(one_frame_out[0]);
     auto out_rect = out_rects->datas_[0];
@@ -116,14 +114,12 @@ TEST(FilterSkipFrameMethodTest, SkipFrame) {
     box->value.x2 = 50;
     box->value.y2 = 50;
     rects_ptr->datas_.push_back(box);
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(rects_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(rects_ptr);
 
     xstream_output = filter_skip_method.DoProcess(input, param);
-    ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), static_cast<std::size_t>(1));
     auto out_rects = std::static_pointer_cast<BaseDataVector>(one_frame_out[0]);
     auto out_rect = out_rects->datas_[0];

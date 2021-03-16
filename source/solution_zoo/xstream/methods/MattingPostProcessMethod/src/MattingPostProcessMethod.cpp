@@ -48,7 +48,6 @@ int MattingPostProcessMethod::ParseDnnResult(
       continue;
     }
     // parse valid output_tensor
-    HOBOT_CHECK(input_tensor.size() == 1);  // one input layer
     HOBOT_CHECK(output_tensor.size() == 1);  // one output layer
     static float bpu_result[256*256];
     HB_SYS_flushMemCache(&(output_tensor[0].data),
@@ -59,15 +58,10 @@ int MattingPostProcessMethod::ParseDnnResult(
     float *trimap_float = reinterpret_cast<float *>(
         input_tensor[0].data.virAddr);
     int size = 256 * 256;
-    trimap_float = trimap_float + 3 * size;
-    cv::Mat trimap_float_mat(256, 256, CV_32FC1, trimap_float);
-    cv::Mat trimap_uint_mat;
-    trimap_float_mat.convertTo(trimap_uint_mat, CV_8UC1);
-    uchar* trimap = trimap_uint_mat.data;
     for (int i = 0; i < size; i++) {
-      if (trimap[i] == 2) {
+      if (trimap_float[i] >= 170) {
         bpu_result[i] = 1;
-      } else if (trimap[i] == 0) {
+      } else if (trimap_float[i] < 85) {
         bpu_result[i] = 0;
       }
     }

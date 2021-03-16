@@ -29,18 +29,10 @@ struct DetectionParam {
   float ignore_overlap_thres;
 };
 
-class ConfigMessage : public hobot::Message {
+class ConfigMessage {
  public:
   ConfigMessage() {}
   ~ConfigMessage() {}
-
-  inline static ConfigMessage *instance() {
-    static ConfigMessage *config = nullptr;
-    if (nullptr == config) {
-      config = new ConfigMessage();
-    }
-    return config;
-  }
 
   void SetConfig(std::string config_path);
 

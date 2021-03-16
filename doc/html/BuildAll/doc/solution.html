@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>场景参考解决方案 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -177,6 +180,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -188,7 +193,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/solution.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -216,16 +221,16 @@
 <p>注意：这些参考方案当前未全部在GitHub上开源，若需要源码与参考模块，可以<a class="reference external" href="forum-bd&#64;horizon.ai">联系地平线</a>。</p>
 <p>参考方案的功能概述如下：</p>
 <ul class="simple">
-<li><p>人脸结构化参考方案： 人脸的检测、人脸姿态检测、人脸关键点、人脸跟踪、优选抓拍、人脸特征提取等结构化信息提取； 未开源；计划开源。</p></li>
-<li><p>人体结构化参考方案： 人体、人脸、人头检测，人体骨骼关键点检测，人体分割，年龄性别等结构化信息提取； 已经开源。</p></li>
-<li><p>人体行为分析参考方案： 完成摔倒检测、手势识别等人体行为； 未开源，计划开源。</p></li>
-<li><p>视频盒子参考方案： 通过RTSP协议获取多路视频图像进行多路智能分析； 未开源，计划开源。</p></li>
-<li><p>体感游戏参考方案： 通过视觉分析实时画面中人员的跳跃、跑步等动作，完成游戏内角色的动作控制； 未开源，计划开源。</p></li>
-<li><p>usb camera参考方案： X3开发板作为USB设备，插入USB宿主机。X3开发版外接MIPI sensor，完成图像编码、视觉分析，基于标准的UVC协议将视频传输给USB宿主机；基于HID或者RNDIS协议将结构化智能结果传输给USB宿主机；基于标准UAC协议将音频数据传输给USB宿主机； 未开源。</p></li>
-<li><p>apa自动泊车： XJ3开发板接入4路sensor，完成4路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框以及停车位分割结果；支持can信号的传输。当摄像头完成实车标定，且实现控车逻辑后，能够完成自动泊车功能； 未开源，计划开源。</p></li>
-<li><p>车辆结构化参考方案： 完成车辆检测、车牌检测与识别、车辆类型识别等结构化信息提取； 未开源。</p></li>
-<li><p>多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测狂、停车位检测框，支持把多路图像和检测结果在web上展示。</p></li>
-<li><p>多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。</p></li>
+<li>人脸结构化参考方案： 人脸的检测、人脸姿态检测、人脸关键点、人脸跟踪、优选抓拍、人脸特征提取等结构化信息提取； 未开源；计划开源。</li>
+<li>人体结构化参考方案： 人体、人脸、人头检测，人体骨骼关键点检测，人体分割，年龄性别等结构化信息提取； 已经开源。</li>
+<li>人体行为分析参考方案： 完成摔倒检测、手势识别等人体行为； 未开源，计划开源。</li>
+<li>视频盒子参考方案： 通过RTSP协议获取多路视频图像进行多路智能分析； 未开源，计划开源。</li>
+<li>体感游戏参考方案： 通过视觉分析实时画面中人员的跳跃、跑步等动作，完成游戏内角色的动作控制； 未开源，计划开源。</li>
+<li>usb camera参考方案： X3开发板作为USB设备，插入USB宿主机。X3开发版外接MIPI sensor，完成图像编码、视觉分析，基于标准的UVC协议将视频传输给USB宿主机；基于HID或者RNDIS协议将结构化智能结果传输给USB宿主机；基于标准UAC协议将音频数据传输给USB宿主机； 未开源。</li>
+<li>apa自动泊车： XJ3开发板接入4路sensor，完成4路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框以及停车位分割结果；支持can信号的传输。当摄像头完成实车标定，且实现控车逻辑后，能够完成自动泊车功能； 未开源，计划开源。</li>
+<li>车辆结构化参考方案： 完成车辆检测、车牌检测与识别、车辆类型识别等结构化信息提取； 未开源。</li>
+<li>多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测狂、停车位检测框，支持把多路图像和检测结果在web上展示。</li>
+<li>多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。</li>
 </ul>
 </div>
 <div class="section" id="id3">
@@ -281,11 +286,11 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/fasterrcnnmethod/README.html"><span class="doc">FasterRCNNMethod</span></a>算法方法，我们采用多任务(MultiTask)实现方式，同时挂载<strong>人脸检测</strong>，<strong>人脸5关键点</strong>，<strong>人脸姿态</strong>三个模型。它可以针对输入图片进行结构化，输出图片中每个目标的人脸框、关键点、姿态.</p></li>
-<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/motmethod/README.html"><span class="doc">MOTMethod</span></a>：采用了基于IOU策略的MOT跟踪算法，它对输入时序化的人脸框进行跟踪，输出带有trackID的人脸框和消失目标的集合。</p></li>
-<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/gradingmethod/README.html"><span class="doc">GradingMethod</span></a>：是一个人脸框打分的策略模块，它综合考虑人脸框大小、关键点置信度，遮挡以及姿态等信息，输出单个目标的人脸框图片置信分数，用于后续优选抓拍。</p></li>
-<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/snapshotmethod/README.html"><span class="doc">SnapshotMethod</span></a>：是一个抓拍的策略模块，基于MotMethod输出Tacklet以及GradingMethod输出的人脸框打分信息，在内存维持一个优选帧序列，针对一个Tracklet输出它的的抓拍图。</p></li>
-<li><p><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>算法方法，包括<strong>年龄性别</strong>，<strong>口罩检测</strong>以及<strong>人脸特征提取</strong>三种模型，可以对输入的检测框或抓拍列表，输出图片中目标的属性。</p></li>
+<li><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/fasterrcnnmethod/README.html"><span class="doc">FasterRCNNMethod</span></a>算法方法，我们采用多任务(MultiTask)实现方式，同时挂载<strong>人脸检测</strong>，<strong>人脸5关键点</strong>，<strong>人脸姿态</strong>三个模型。它可以针对输入图片进行结构化，输出图片中每个目标的人脸框、关键点、姿态.</li>
+<li><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/motmethod/README.html"><span class="doc">MOTMethod</span></a>：采用了基于IOU策略的MOT跟踪算法，它对输入时序化的人脸框进行跟踪，输出带有trackID的人脸框和消失目标的集合。</li>
+<li><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/gradingmethod/README.html"><span class="doc">GradingMethod</span></a>：是一个人脸框打分的策略模块，它综合考虑人脸框大小、关键点置信度，遮挡以及姿态等信息，输出单个目标的人脸框图片置信分数，用于后续优选抓拍。</li>
+<li><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/snapshotmethod/README.html"><span class="doc">SnapshotMethod</span></a>：是一个抓拍的策略模块，基于MotMethod输出Tacklet以及GradingMethod输出的人脸框打分信息，在内存维持一个优选帧序列，针对一个Tracklet输出它的的抓拍图。</li>
+<li><a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>算法方法，包括<strong>年龄性别</strong>，<strong>口罩检测</strong>以及<strong>人脸特征提取</strong>三种模型，可以对输入的检测框或抓拍列表，输出图片中目标的属性。</li>
 </ul>
 <p>在人脸抓拍workflow上，除了目前提供的<strong>性别/年龄属性</strong>，<strong>口罩检测</strong>等模型，还可以继续追加<strong>人脸活体</strong>、<strong>人脸质量</strong>等模型，进而丰富整个人脸结构化数据流。</p>
 <p>在人脸结构化参考方案中，我们也提供了一个人脸识别Workflow，通过在SnapshotMethod抓拍策略后，追加<a class="reference internal" href="../../xsdk/solution_zoo/xstream/methods/cnnmethod/README.html"><span class="doc">CNNMethod</span></a>来实现对抓拍人脸图的特征提取。</p>
@@ -397,9 +402,9 @@ MergeMethod： 人脸检测框、人头检测框、人体检测框，三框结�
 </table><p>参考方案中使用的XProto Plugin如下所示：</p>
 <p><img alt="人体行为分析Plugins" src="../../_images/behavior_plugins.png" /></p>
 <ul class="simple">
-<li><p>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据。</p></li>
-<li><p>SmartPlugin完成模型的预测。SmartPlugin内部实现基于XStream-Framework框架。</p></li>
-<li><p>WebsocketPlugin 将原图、感知结果通过以太网发送给web展示端。web展示端源码开放。</p></li>
+<li>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据。</li>
+<li>SmartPlugin完成模型的预测。SmartPlugin内部实现基于XStream-Framework框架。</li>
+<li>WebsocketPlugin 将原图、感知结果通过以太网发送给web展示端。web展示端源码开放。</li>
 </ul>
 <p>人体行为分析的代码在solution_zoo/body_solution中。使用的配置文件为solution_zoo/body_solution/configs/behavior_solution.json和solution_zoo/body_solution/configs/gesture_solution.json。</p>
 <p>摔倒检测和手势识别的开发教程可参考地平线AI社区上的文章：<br /><a class="reference external" href="https://developer.horizon.ai/forum/id=5efab48f38ca27ba028078dd">借助AI Express实现摔倒检测</a><br /><a class="reference external" href="https://developer.horizon.ai/forum/id=5f30f806bec8bc98cb72b288">借助AI Express实现手势识别</a></p>
@@ -572,10 +577,10 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 <p>实际测试时，保证整个人在摄像头中，通过web展时段调整远近，能识别出人体框、骨骼线即可。
 打开浏览器，输入地址即可试玩游戏（IP换成设备实际的地址）：</p>
 <ul class="simple">
-<li><p>查看摄像头画面：http://IP</p></li>
-<li><p>CrappyBird游戏：http://IP/CrappyBird</p></li>
-<li><p>PandaRun游戏： http://IP/PandaRun
-体感游戏详细的开发教程可参考开发者社区上的文章：<a class="reference external" href="https://developer.horizon.ai/forum/id=5ef05b412ab6590143c15d6a">借助AI Express快速开发AI体感游戏</a></p></li>
+<li>查看摄像头画面：http://IP</li>
+<li>CrappyBird游戏：http://IP/CrappyBird</li>
+<li>PandaRun游戏： http://IP/PandaRun
+体感游戏详细的开发教程可参考开发者社区上的文章：<a class="reference external" href="https://developer.horizon.ai/forum/id=5ef05b412ab6590143c15d6a">借助AI Express快速开发AI体感游戏</a></li>
 </ul>
 </div>
 <div class="section" id="usb-camera">
@@ -602,13 +607,13 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 <p>代码基于XProto应用开发框架，完成模块的解耦。代码中模块组件示意图如下所示：
 <img alt="框架" src="../../_images/apa-plugin.png" /></p>
 <ul class="simple">
-<li><p>VioPlugin 接入4路10635 sensor/DTS回灌图像，获取4路图像的金字塔数据。</p></li>
-<li><p>GdcPlugin对4路图像进行GDC变换，生成IPM俯视图。</p></li>
-<li><p>SmartPlugin完成模型的预测。原图与IPM俯视图是不同的算法模型。SmartPlugin内部实现基于XStream-Framework框架。</p></li>
-<li><p>CanPlugin 完成can数据双向透传。注意不同的车型，can对接部分需要预先适配。</p></li>
-<li><p>DisplayPlugin 将原图、IPM图、感知结果、以及其余需要的数据，封装到pb中，通过zmq协议，以太网通路，发送给上位机client客户端(驾驶专业客户端)展示，该展示端源码不开放</p></li>
-<li><p>WebsocketPlugin 将原图、IPM图、感知结果通过以太网发送给web客户端。web客户端源码开放。</p></li>
-<li><p>AnalysisPlugin 是一个空壳子，作用是方便客户移植已有的模型、策略至ai express框架。里面仅仅是简单地接收原图与can消息，无其他逻辑</p></li>
+<li>VioPlugin 接入4路10635 sensor/DTS回灌图像，获取4路图像的金字塔数据。</li>
+<li>GdcPlugin对4路图像进行GDC变换，生成IPM俯视图。</li>
+<li>SmartPlugin完成模型的预测。原图与IPM俯视图是不同的算法模型。SmartPlugin内部实现基于XStream-Framework框架。</li>
+<li>CanPlugin 完成can数据双向透传。注意不同的车型，can对接部分需要预先适配。</li>
+<li>DisplayPlugin 将原图、IPM图、感知结果、以及其余需要的数据，封装到pb中，通过zmq协议，以太网通路，发送给上位机client客户端(驾驶专业客户端)展示，该展示端源码不开放</li>
+<li>WebsocketPlugin 将原图、IPM图、感知结果通过以太网发送给web客户端。web客户端源码开放。</li>
+<li>AnalysisPlugin 是一个空壳子，作用是方便客户移植已有的模型、策略至ai express框架。里面仅仅是简单地接收原图与can消息，无其他逻辑</li>
 </ul>
 <p>APA运行时需要搭配专用的系统镜像，外接4路10635 sensor 或者DTS回灌，需要对车辆进行标定。</p>
 <p>AI EXPRESS版本包编译部署后，在J3上可以直接使用如下命令运行：</p>
@@ -653,17 +658,17 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 <p><img alt="车辆结构化参考方案框图" src="../../_images/vehicle_solution.png" /></p>
 <p>VIO处理图像输入。BPU使用工具链嵌入式预测库bpu-predict完成基于视觉的模型预测。模型后处理运行在J2 ARM，解析感知结果。感知结果（和图像）将被发送到web展示端或AP侧。<br />目前，车辆结构化支持的功能如下：</p>
 <ol class="simple">
-<li><p>机动车相关检测：包括车辆，车牌的检测，以及车体颜色，车类型的属性识别。</p></li>
-<li><p>非机动车和行人的检测</p></li>
-<li><p>机动车，非机动车，行人的跟踪以及框级别的融合</p></li>
+<li>机动车相关检测：包括车辆，车牌的检测，以及车体颜色，车类型的属性识别。</li>
+<li>非机动车和行人的检测</li>
+<li>机动车，非机动车，行人的跟踪以及框级别的融合</li>
 </ol>
 <p>基于该参考方案，您能够快速学习J2、系统软件、工具链以及中间件，移植您的算法与策略，缩短开发时间，缩短time-to-market。<br />车辆结构化相关的示例代码在solution_zoo/vehicle中，<strong>注意：暂未在GitHub上开放</strong>。</p>
 <p>车辆结构化参考方案基于XProto应用开发框架，完成模块的解耦。使用了如下组件：</p>
 <ul class="simple">
-<li><p>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据。</p></li>
-<li><p>SmartPlugin完成模型的预测。SmartPlugin内部实现基于XStream-Framework框架。</p></li>
-<li><p>WebsocketPlugin 将原图、感知结果通过以太网发送给web展示端。web展示端源码开放。</p></li>
-<li><p>HbipcPlugin 将感知结果/丢帧信息发送到AP侧。HbipcPlugin和WebsocketPlugin不同时使用。</p></li>
+<li>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据。</li>
+<li>SmartPlugin完成模型的预测。SmartPlugin内部实现基于XStream-Framework框架。</li>
+<li>WebsocketPlugin 将原图、感知结果通过以太网发送给web展示端。web展示端源码开放。</li>
+<li>HbipcPlugin 将感知结果/丢帧信息发送到AP侧。HbipcPlugin和WebsocketPlugin不同时使用。</li>
 </ul>
 <p>关于车辆结构化参考方案，详细参考<a class="reference internal" href="../../xsdk/solution_zoo/vehicle/README.html"><span class="doc">README</span></a>。</p>
 </div>
@@ -673,9 +678,9 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 视觉图像预测部分采用了apa的workflow作为示例
 多路camera参考方案基于XProto应用开发框架，使用了如下组件：</p>
 <ul class="simple">
-<li><p>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据，支持获取多路camera数据。</p></li>
-<li><p>MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同camera数据单独完成预测、结果处理。</p></li>
-<li><p>MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据，最多支持8路。</p></li>
+<li>VioPlugin 接入sensor/回灌图像，获取图像的金字塔数据，支持获取多路camera数据。</li>
+<li>MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同camera数据单独完成预测、结果处理。</li>
+<li>MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据，最多支持8路。</li>
 </ul>
 </div>
 <div class="section" id="ipm">
@@ -684,9 +689,9 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 图像预测部分采用了apa的workflow作为示例
 多路IPM图回灌参考方案基于XProto应用开发框架，使用了如下组件：</p>
 <ul class="simple">
-<li><p>VioPlugin 接入回灌IPM图像，获取图像的金字塔数据，支持获取多路IPM图像数据。</p></li>
-<li><p>MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同IPM图数据单独完成预测、结果处理。</p></li>
-<li><p>MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据。</p></li>
+<li>VioPlugin 接入回灌IPM图像，获取图像的金字塔数据，支持获取多路IPM图像数据。</li>
+<li>MultiSourceSmartPlugin完成各路视觉图像的预测。支持不同IPM图数据单独完成预测、结果处理。</li>
+<li>MultiSourceWebsocketPlugin 将原图、感知结果通过以太网发送给web展示端，web侧支持展示多路图像和智能数据。</li>
 </ul>
 </div>
 <div class="section" id="method">
@@ -694,8 +699,8 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
 <p>本节主要介绍参考解决方案实现过程中，实现的一些XStream框架下的算法Method和策略Method。</p>
 <p>智能业务中Method类型通常可以分为两类：</p>
 <ol class="simple">
-<li><p>算法Method：该类Method主要完成load模型、前处理并送给BPU完成预测、获取预测结果、完成结果解析等。</p></li>
-<li><p>策略Method:　该类Method无算法模型相关处理，是业务相关的策略模型，如过滤策略Method、融合策略Method、优选策略Method等。</p></li>
+<li>算法Method：该类Method主要完成load模型、前处理并送给BPU完成预测、获取预测结果、完成结果解析等。</li>
+<li>策略Method:　该类Method无算法模型相关处理，是业务相关的策略模型，如过滤策略Method、融合策略Method、优选策略Method等。</li>
 </ol>
 <p>目前XStream中将一些常见Method沉淀，其中算法Method如FasterRCNNMethod、CNNMethod，策略Method如MotMethod等。这些Method只为用户提供参考，在提供的参考样例代码中会用到其中的Method。基于XStream框架开发时，如果不想使用内置Method，可以根据自己的需求(例如，不同的模型输入预处理、不同的模型和模型输出后处理等)，参考已有的Method，独立开发自定义的Method。</p>
 <div class="section" id="fasterrcnnmethod">
@@ -1078,28 +1083,25 @@ X3多路视频分析盒子与前端图像采集设备如IPC通过网口进行连
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

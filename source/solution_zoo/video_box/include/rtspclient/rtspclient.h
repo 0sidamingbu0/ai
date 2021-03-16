@@ -88,7 +88,8 @@ class ourRTSPClient : public RTSPClient {
 ourRTSPClient *openURL(UsageEnvironment &env, char const *progName,
                        char const *rtspURL, const bool tcp_flag,
                        const int frame_max_size,
-                       const std::string &file_name, const bool save_stream);
+                       const std::string &file_name, const bool save_stream,
+                       int channel);
 void shutdownStream(RTSPClient *rtspClient, int exitCode = 1);
 
 #endif  // INCLUDE_RTSPCLIENT_SMARTPLUGIN_H_

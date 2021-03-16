@@ -39,22 +39,20 @@ InputParamPtr VehiclePlateMatchMethod::GetParameter() const {
   return nullptr;  // param;
 }
 
-std::vector<std::vector<BaseDataPtr>> VehiclePlateMatchMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
+std::vector<BaseDataPtr> VehiclePlateMatchMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
   LOGI << "VehiclePlateMatchMethod::DoProcess";
-  std::vector<std::vector<BaseDataPtr>> output;
+  std::vector<BaseDataPtr> output;
 
-  output.resize(input.size());
-
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
+  {
+    auto &in_batch_i = input;
+    auto &out_batch_i = output;
 
     // inputs order: vehicle_bbox, plate_bbox, vehicle_lmks, plate_lmks,
     // plate_type, plate_color
     auto in_vehicle_rects =
-        std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[0]);
+        std::dynamic_pointer_cast<BaseDataVector>(input[0]);
     auto in_plate_rects =
         std::dynamic_pointer_cast<BaseDataVector>(in_batch_i[1]);
     auto in_vehicle_lmk = std::make_shared<BaseDataVector>();

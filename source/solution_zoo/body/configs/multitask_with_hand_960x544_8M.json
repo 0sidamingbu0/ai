@@ -49,8 +49,7 @@
         },
         {
           "name": "mask",
-          "type": "mask",
-          "box_name": "body_box"
+          "type": "invalid"
         }
       ],
       "model_input_width": 960,
@@ -59,10 +58,10 @@
       "kps_pos_distance": 0.1,
       "kps_feat_width": 16,
       "kps_feat_height": 16,
-      "kps_points_number": 17,
+      "kps_points_number": 19,
       "kps_anchor_param": -0.46875
     },
-    "method_outs": ["body_box", "head_box", "face_box", "hand_box", "kps", "mask"],
+    "method_outs": ["body_box", "head_box", "face_box", "hand_box", "kps"],
     "bpu_config_path": "../configs/bpu_config.json",
     "model_file_path": "../../models/in_544x960_out_detection_kps_mask_rpn_rcnn30.hbm",
     "core_id": 2

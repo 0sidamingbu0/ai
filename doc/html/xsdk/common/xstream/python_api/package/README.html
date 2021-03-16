@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>XStream Python API &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/xsdk/common/xstream/python_api/package/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -849,16 +854,15 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>该函数用来将一个python定义的workflow转换成XStream框架所能识别的Json格式的配置字符串.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">workflow</span></code> : 定义workflow的python函数对象.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 该workflow的输入参数. <code class="docutils literal notranslate"><span class="pre">Variable</span></code>类型.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">workflow</span></code> : 定义workflow的python函数对象.</li>
+<li><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 该workflow的输入参数. <code class="docutils literal notranslate"><span class="pre">Variable</span></code>类型.</li>
 </ul>
 <blockquote>
-<div><p><em>Note</em>
-当一个workflow函数的参数名字与该workflow的输入数据名字相同时, <code class="docutils literal notranslate"><span class="pre">inputs</span></code>参数可以省略.</p>
-</div></blockquote>
+<div><em>Note</em>
+当一个workflow函数的参数名字与该workflow的输入数据名字相同时, <code class="docutils literal notranslate"><span class="pre">inputs</span></code>参数可以省略.</div></blockquote>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>XStream框架支持的workflow json字符串</p></li>
+<li>XStream框架支持的workflow json字符串</li>
 </ul>
 </div>
 <div class="section" id="scope-name">
@@ -867,16 +871,15 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 当有多级Scope生效时, 各级Scope的<code class="docutils literal notranslate"><span class="pre">name</span></code>会级联.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> : 当前scope的名字.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code> : 当前scope的名字.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Scope对象</p></li>
+<li>Scope对象</li>
 </ul>
 <blockquote>
-<div><p><em>Note</em>
-该函数要和Python中的<code class="docutils literal notranslate"><span class="pre">with</span></code>关键字一起使用.</p>
-</div></blockquote>
+<div><em>Note</em>
+该函数要和Python中的<code class="docutils literal notranslate"><span class="pre">with</span></code>关键字一起使用.</div></blockquote>
 </div>
 </div>
 <div class="section" id="method">
@@ -886,11 +889,11 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>创建一个Method对象</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code> : 要创建的Method类型. Method类型一旦指定后就不可修改.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">type</span></code> : 要创建的Method类型. Method类型一旦指定后就不可修改.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Method对象</p></li>
+<li>Method对象</li>
 </ul>
 </div>
 <div class="section" id="inputs-value-none">
@@ -898,12 +901,12 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>设置或返回当前Method的输入数据名字列表.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输入参数名字列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输入参数名字列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</li>
 </ul>
 </div>
 <div class="section" id="outputs-value-none">
@@ -911,12 +914,12 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>设置或返回当前Method的输出数据名字列表.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输出参数名字列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输出参数名字列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</li>
 </ul>
 </div>
 <div class="section" id="methodtype">
@@ -924,11 +927,11 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>返回当前Method的类型.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>无.</p></li>
+<li>无.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>字符串 : 当前Method类型.</p></li>
+<li>字符串 : 当前Method类型.</li>
 </ul>
 </div>
 <div class="section" id="configfile-value-none">
@@ -936,12 +939,12 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>设置或返回当前Method的配置文件路径.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置文件路径.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置文件路径.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串类型时 : 当前Method对象.</li>
 </ul>
 </div>
 <div class="section" id="config-value-none">
@@ -949,12 +952,12 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>设置或返回当前Method的配置参数.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字典类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字典类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字典类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字典类型时 : 当前Method对象.</li>
 </ul>
 </div>
 <div class="section" id="threadcount-value-none">
@@ -962,12 +965,12 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>设置或返回当前Method的最大线程个数.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的最大线程数.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的最大线程数.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数类型时 : 当前Method对象.</li>
 </ul>
 </div>
 <div class="section" id="threadlist-value-none">
@@ -975,12 +978,12 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>设置或返回当前Method的线程ID列表.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数列表类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数列表类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</li>
 </ul>
 </div>
 <div class="section" id="call-inputs-attrs">
@@ -988,23 +991,22 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>调用当前method对象, 每次调用代表着在workflow中创建一个节点. 同时在调用时支持覆盖声明Method对象时指定的预定义参数.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 当前的Method的输入.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">attrs</span></code> : keywords arguments, 用来覆盖Method预定义参数. 支持下列参数:</p>
-<ul>
-<li><p>Inputs : 输入参数名字列表</p></li>
-<li><p>Outputs : 输出参数名字列表</p></li>
-<li><p>UniqueName : 当前Node的唯一名字</p></li>
-<li><p>ConfigFile : 配置文件路径</p></li>
-<li><p>Config : 配置参数</p></li>
-<li><p>ThreadCount : 线程最大个数</p></li>
-<li><p>ThreadList : 线程ID列表</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 当前的Method的输入.</li>
+<li><code class="docutils literal notranslate"><span class="pre">attrs</span></code> : keywords arguments, 用来覆盖Method预定义参数. 支持下列参数:<ul>
+<li>Inputs : 输入参数名字列表</li>
+<li>Outputs : 输出参数名字列表</li>
+<li>UniqueName : 当前Node的唯一名字</li>
+<li>ConfigFile : 配置文件路径</li>
+<li>Config : 配置参数</li>
+<li>ThreadCount : 线程最大个数</li>
+<li>ThreadList : 线程ID列表</li>
 </ul>
 </li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</li>
 </ul>
 <blockquote>
 <div><p><em>Demo</em></p>
@@ -1027,11 +1029,11 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>实例化一个Variable类型的对象.Variable对象作为workflow的输入和输出数据类型.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dataName</span></code> : Variable的数据名称.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">dataName</span></code> : Variable的数据名称.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Variable对象</p></li>
+<li>Variable对象</li>
 </ul>
 </div>
 <div class="section" id="name">
@@ -1039,11 +1041,11 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
 <p>返回当前Variable的名字.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>无</p></li>
+<li>无</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>字符串 : 该Variable对象的名字.</p></li>
+<li>字符串 : 该Variable对象的名字.</li>
 </ul>
 </div>
 </div>
@@ -1055,28 +1057,25 @@ xstream.Serialize会判断哪些路径是冗余的,然后删除这些路径上�
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

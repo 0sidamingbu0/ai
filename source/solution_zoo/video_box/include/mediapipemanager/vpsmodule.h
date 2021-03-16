@@ -29,8 +29,9 @@ public:
 
 private:
   uint32_t group_id_;
+  uint32_t chn_id_;
   uint32_t timeout_;
-  uint32_t frameDepth_;
+  uint32_t frame_depth_;
   uint32_t buffer_index_;
   std::vector<pym_buffer_t> buffers_;
 };

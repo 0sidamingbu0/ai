@@ -20,23 +20,22 @@
 namespace xstream {
 
 struct CNNMethodRunData {
-  const std::vector<std::vector<BaseDataPtr>> *input;
-  const std::vector<xstream::InputParamPtr> *param;
+  const std::vector<BaseDataPtr> *input;
+  const xstream::InputParamPtr *param;
 
   std::vector<std::vector<uint32_t>> real_nhwc;
 
-  std::vector<std::vector<BaseDataPtr>> norm_rois;
+  std::vector<BaseDataPtr> norm_rois;
   std::vector<std::vector<uint32_t>> all_shift;
 
-  std::vector<int> input_dim_size;
+  int input_dim_size;
   std::vector<uint32_t> elem_size;
 
-  // mxnet_output_[i] : frame i
-  // mxnet_output_[i][j] : frame i, object j
-  // mxnet_output_[i][j][k]: frame i, object j, layer k
-  std::vector<std::vector<std::vector<std::vector<int8_t>>>> mxnet_output;
+  // mxnet_output_[i] : object j
+  // mxnet_output_[i][j] : object j, layer k
+  std::vector<std::vector<std::vector<int8_t>>> mxnet_output;
 
-  std::vector<std::vector<BaseDataPtr>> output;
+  std::vector<BaseDataPtr> output;
 
   // other user data
   void *context;

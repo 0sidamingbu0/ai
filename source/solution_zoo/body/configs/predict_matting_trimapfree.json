@@ -1,4 +1,6 @@
 {
     "model_file_path": "../../models/matting_trimapfree.hbm",
-    "expansion_ratio": 0.1
+    "expansion_ratio": 0,
+    "matting_low_thresh": 30,
+    "matting_high_thresh": 240
 }

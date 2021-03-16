@@ -116,7 +116,7 @@ class FeatureSequenceBuffer {
   }
 
   void Update(std::shared_ptr<BaseData> box,
-              std::shared_ptr<BaseData> kps, float timestamp) {
+              std::shared_ptr<BaseData> kps, uint64_t timestamp) {
     while (len_ > max_len_) {
       LOGD << "overflow, removing..., len: " << len_;
       timestamps_.erase(timestamps_.begin());
@@ -132,7 +132,7 @@ class FeatureSequenceBuffer {
 
   void GetClipFeatByEnd(std::shared_ptr<BaseDataVector> kpses,
                         std::shared_ptr<BaseDataVector> boxes, int num,
-                        float stride, float margin, float end) {
+                        float stride, float margin, uint64_t end) {
     kpses->datas_.clear();
     boxes->datas_.clear();
     if (len_ < 1) {
@@ -143,14 +143,17 @@ class FeatureSequenceBuffer {
     std::vector<int> clip_idxs(num, -1);
     for (int frame_idx = 0; frame_idx < num; ++frame_idx) {
       // timestamp for expected candidate
-      float curtime = end - frame_idx * stride;
+      int curtime = end - static_cast<float>(frame_idx) * stride;
       // time gap
-      float restime = 1e10;
+      uint64_t restime = 1e10;
+      uint64_t time_diff = 0;
       for (int idx = len_ - 1; idx >= 0; --idx) {
-        if (fabs(timestamps_[idx] - curtime) < restime) {
-          restime = fabs(timestamps_[idx] - curtime);
+        time_diff = static_cast<uint64_t>(
+                abs(static_cast<int>(timestamps_[idx] - curtime)));
+        if (time_diff < restime) {
+          restime = time_diff;
           if (restime < margin) {
-              clip_idxs[num - 1 - frame_idx] = idx;
+            clip_idxs[num - 1 - frame_idx] = idx;
           }
         } else {
           break;
@@ -194,7 +197,8 @@ class FeatureSequenceBuffer {
  private:
   int len_ = 0;
   int max_len_;
-  std::vector<float> timestamps_;
+  // Float data type has precision loss if the ts value is large number
+  std::vector<uint64_t> timestamps_;
   std::shared_ptr<BaseDataVector> feats_;
   std::shared_ptr<BaseDataVector> boxes_;
 };
@@ -221,7 +225,7 @@ class ActDataPreprocess : public hobot::CSingleton<ActDataPreprocess> {
   }
 
   void Update(std::shared_ptr<BaseData> box,
-              std::shared_ptr<BaseData> kps, float timestamp) {
+              std::shared_ptr<BaseData> kps, uint64_t timestamp) {
     std::unique_lock<std::mutex> lock(map_mutex_);
     auto p_box = std::static_pointer_cast<XStreamData<BBox>>(box);
     auto track_id = p_box->value.id;
@@ -300,12 +304,12 @@ class ActDataPreprocess : public hobot::CSingleton<ActDataPreprocess> {
   }
 
   void GetClipKps(std::shared_ptr<BaseDataVector> kpses,
-                  int track_id, float times_tamp,
+                  int track_id, uint64_t times_tamp,
                   xstream::LmkSeqOutputType type) {
     std::unique_lock<std::mutex> lock(map_mutex_);
     auto boxes = std::make_shared<BaseDataVector>();
     track_buffers_[track_id].GetClipFeatByEnd(
-        kpses, boxes, seq_len_, stride_, max_gap_, times_tamp);
+            kpses, boxes, seq_len_, stride_, max_gap_, times_tamp);
     if (kpses->datas_.size() < 1) {
       LOGD << "No clip kps get";
       return;

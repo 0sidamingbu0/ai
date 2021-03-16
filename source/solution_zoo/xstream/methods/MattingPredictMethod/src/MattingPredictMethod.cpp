@@ -37,7 +37,7 @@ int MattingPredictMethod::Init(const std::string &cfg_path) {
 
 int MattingPredictMethod::PrepareInputData(
       const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
+      const InputParamPtr param,
       std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
       std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
   LOGD << "MattingPredictMethod PrepareInputData";
@@ -174,7 +174,13 @@ int MattingPredictMethod::PrepareInputData(
       nv12_resize_tensor.data_shape.ndim = 4;
       nv12_resize_tensor.data_shape.d[0] = 1;
       resize_height = 256 - (h_top + h_bottom) * 224.0 / roi_height;
+      if (resize_height & (static_cast<int>(0X01) != 0)) {
+        resize_height++;
+      }
       resize_width = 256 - (w_right + w_left) * 224.0 / roi_width;
+      if (resize_width & (static_cast<int>(0X01) != 0)) {
+        resize_width++;
+      }
       nv12_resize_tensor.data_shape.d[h_idx] = resize_height;
       nv12_resize_tensor.data_shape.d[w_idx] = resize_width;
       nv12_resize_tensor.data_shape.d[c_idx] = 3;
@@ -229,49 +235,44 @@ int MattingPredictMethod::PrepareInputData(
         nullptr};
     const int input_roi_yuv_size[3] = {
         resize_height * resize_width, resize_height * resize_width / 2, 0};
-    uint8_t *rgb_data = nullptr;
-    int rgb_size = 0, rgb_first_stride = 0, rgb_second_stride = 0;
+    uint8_t *padding_data = nullptr;
+    int padding_size = 0, padding_width = 0, padding_height = 0;
+    int padding_stride1 = 0, padding_stride2 = 0;
     {
-    RUN_PROCESS_TIME_PROFILER("nv12_to_rgb");
-    ret = HobotXStreamConvertYuvImage(
+    RUN_PROCESS_TIME_PROFILER("padding_nv12");
+    int top_x = -w_left * 224.0 / roi_width;
+    int top_y = -h_top * 224.0 / roi_height;
+    if (top_x & (static_cast<int>(0X01) != 0)) {
+      top_x--;
+    }
+    if (top_y & (static_cast<int>(0X01) != 0)) {
+      top_y--;
+    }
+    int bottom_x = 255 + top_x, bottom_y = 255 + top_y;
+    ret = HobotXStreamCropYuvImageWithPaddingBlack(
         input_roi_yuv_data, input_roi_yuv_size,
-        resize_width, resize_height,
-        resize_width, resize_width,
-        IMAGE_TOOLS_RAW_YUV_NV12, IMAGE_TOOLS_RAW_RGB,
-        &rgb_data, &rgb_size, &rgb_first_stride, &rgb_second_stride);
+        resize_width, resize_height, resize_width, resize_width,
+        IMAGE_TOOLS_RAW_YUV_NV12,
+        top_x, top_y, bottom_x, bottom_y,
+        &padding_data, &padding_size, &padding_width, &padding_height,
+        &padding_stride1, &padding_stride2);
     // release nv12_resize_tensor
     HB_SYS_bpuMemFree(&nv12_resize_tensor.data);
     HB_SYS_bpuMemFree(&nv12_resize_tensor.data_ext);
     if (ret != 0) {
-      LOGE << "Convert nv12 to rgb failed, roi_index: " << roi_idx;
+      LOGE << "padding nv12 failed, roi_index: " << roi_idx;
       continue;
     }
+    // debug dump nv12
+    #if 0
+      std::fstream outfile;
+      static int index_nv12 = 0;
+      outfile.open("nv12_" + std::to_string(index_nv12++) + ".nv12",
+                   std::ios_base::out|std::ios_base::trunc|std::ios::binary);
+      outfile.write(reinterpret_cast<char*>(padding_data), padding_size);
+      outfile.close();
+    #endif
     }
-    // copy rgb_data to Mat
-    cv::Mat rgb_roi_data(resize_height, resize_width, CV_8UC3);
-    memcpy(rgb_roi_data.ptr<uint8_t>(), rgb_data, rgb_size);
-    HobotXStreamFreeImage(rgb_data);
-
-    // need padding
-    if (resize_height != 256 || resize_width != 256) {
-      cv::Mat rgb_data(256, 256, CV_8UC3, cv::Scalar(0));
-      int row = h_top * 224.0 / roi_height;
-      int col = w_left * 224.0 / roi_width;
-      rgb_roi_data.copyTo(
-          rgb_data(cv::Rect(col, row, resize_width, resize_height)));
-      rgb_roi_data = rgb_data;
-    }
-
-    // normalize
-    rgb_roi_data.convertTo(rgb_roi_data, CV_32FC3);
-    rgb_roi_data = rgb_roi_data / 255;
-
-    std::vector<cv::Mat> rgb_split;
-    cv::split(rgb_roi_data, rgb_split);  // 深复制，可release rgb_roi_data
-    rgb_roi_data.release();
-    rgb_split[0] = (rgb_split[0] - 0.485) / 0.229;
-    rgb_split[1] = (rgb_split[1] - 0.456) / 0.224;
-    rgb_split[2] = (rgb_split[2] - 0.406) / 0.225;
 
     cv::Mat ske_kps(256, 256, CV_8UC1, cv::Scalar::all(0));
     int roi_origin_x = roi->value.x1;
@@ -327,21 +328,6 @@ int MattingPredictMethod::PrepareInputData(
     cv::Mat trimap = fg_mask + unknown_mask + ske_kps;
     // cv::min(max(trimap, 0), 255, trimap);  // clip(0, 255)
     trimap.convertTo(trimap, CV_8UC1);
-
-    // (0, 255) to (0,1,2)
-    // 元素>84不变, 否则为0; 即<=84, 元素置0: trimap(0, 85-255)
-    cv::threshold(trimap, trimap, 84, 255, cv::THRESH_TOZERO);
-    cv::Mat trimap_tmp;  // trimap_tmp: (0-169, 170-255)->(0, 170-255)
-    cv::threshold(trimap, trimap_tmp, 169, 255, cv::THRESH_TOZERO);
-    cv::Mat trimap_1;    // trimap_1: (0-84, 85-169, 170-255)->(0, 255, 0)
-    cv::compare(trimap, trimap_tmp, trimap_1, cv::CMP_NE);
-    trimap_1 = trimap_1 / 255;
-    cv::Mat zero = cv::Mat::zeros(256, 256, CV_8UC1);
-    cv::Mat trimap_2;    // trimap_2: (0-169, 170-255)->(0, 255)
-    cv::compare(trimap_tmp, zero, trimap_2, cv::CMP_NE);
-    trimap_2 = trimap_2 / 255 * 2;
-    trimap = trimap_1 + trimap_2;
-
     trimap.convertTo(trimap, CV_32FC1);
 
     // 3. rgb_split(256x256x3) + trimap(256x256), NCHW
@@ -356,21 +342,29 @@ int MattingPredictMethod::PrepareInputData(
       continue;
     }
     // copy input data to input_tensors
-    HOBOT_CHECK(input_tensors[roi_idx].size() == 1) << "expected input num: 1";
+    HOBOT_CHECK(input_tensors[roi_idx].size() == 2) << "expected input num: 2";
     {
-      BPU_TENSOR_S &tensor = input_tensors[roi_idx][0];
-      int image_height = tensor.data_shape.d[input_h_idx_];  // 256
-      int image_width = tensor.data_shape.d[input_w_idx_];   // 256
-      int size = image_height * image_width;
+      // nv12 data
+      BPU_TENSOR_S &tensor1 = input_tensors[roi_idx][1];
+      HOBOT_CHECK(tensor1.data_type == BPU_TYPE_IMG_NV12_SEPARATE);
+      HOBOT_CHECK(model_input_height_ == padding_height &&
+                  model_input_width_ == padding_width);
+      uint8_t* src = padding_data;
+      // copy y data
+      memcpy(tensor1.data.virAddr, src,
+             model_input_height_ * model_input_width_);
+      // copy uv data
+      src = padding_data + model_input_height_ * model_input_width_;
+      memcpy(tensor1.data_ext.virAddr, src,
+             model_input_height_ * model_input_width_ >> 1);
+      HobotXStreamFreeImage(padding_data);
+      HB_SYS_flushMemCache(&tensor1.data, HB_SYS_MEM_CACHE_CLEAN);
+      HB_SYS_flushMemCache(&tensor1.data_ext, HB_SYS_MEM_CACHE_CLEAN);
 
-      float *dst = reinterpret_cast<float *>(tensor.data.virAddr);
-      for (size_t i = 0; i < rgb_split.size(); i++) {  // channel: rgb
-        float* src = reinterpret_cast<float *>(rgb_split[i].data);
-        memcpy(dst + i * size, src, size * sizeof(float));
-      }
-      float* src = reinterpret_cast<float *>(trimap.data);
-      memcpy(dst + 3*size, src, size * sizeof(float));
-      HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
+      // trimap data
+      BPU_TENSOR_S &tensor0 = input_tensors[roi_idx][0];
+      memcpy(tensor0.data.virAddr, trimap.data, 256*256*4);
+      HB_SYS_flushMemCache(&tensor0.data, HB_SYS_MEM_CACHE_CLEAN);
     }
   }
   return 0;

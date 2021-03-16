@@ -32,7 +32,7 @@ TEST(PLATE_VOTE_TEST, Basic) {
   std::string config_file = "./config/plate_vote.json";
   plate_vote_method.Init(config_file);
 
-  std::vector<std::vector<BaseDataPtr>> xstream_output;
+  std::vector<BaseDataPtr> xstream_output;
   std::vector<int> number1(7, 1);
   std::vector<int> number2(7, 2);
   for (int i = 0; i < 4; ++i) {
@@ -50,19 +50,17 @@ TEST(PLATE_VOTE_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(plate_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(plate_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(plate_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(plate_ptr);
 
     xstream_output = plate_vote_method.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), static_cast<std::size_t>(1));
     auto out_plate_ptr = one_frame_out[0];
     auto out_plate =
@@ -93,19 +91,17 @@ TEST(PLATE_VOTE_TEST, Basic) {
     std::shared_ptr<BaseDataVector> disappeared_track_ids_ptr(
         new BaseDataVector);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(plate_rects_ptr);
-    input[0].push_back(disappeared_track_ids_ptr);
-    input[0].push_back(plate_ptr);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(plate_rects_ptr);
+    input.push_back(disappeared_track_ids_ptr);
+    input.push_back(plate_ptr);
 
     xstream_output = plate_vote_method.DoProcess(input, param);
   }
 
   {
-    ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-    auto one_frame_out = xstream_output[0];
+    auto one_frame_out = xstream_output;
     ASSERT_EQ(one_frame_out.size(), static_cast<std::size_t>(1));
     auto out_plate_ptr = one_frame_out[0];
     auto out_plate =

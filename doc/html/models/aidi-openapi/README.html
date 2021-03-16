@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>aidi-openapi &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/models/aidi-openapi/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -163,10 +168,10 @@
 <h2>说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <p>包含四个python包</p>
 <ul class="simple">
-<li><p>aidi: 艾迪平台通用功能，包括训练、预测、评测、模型、编译等功能</p></li>
-<li><p>aidi_userauth: 艾迪平台用户与权限功能</p></li>
-<li><p>aidi_utils: 对aidi包的辅助功能</p></li>
-<li><p>aidi_notify: 艾迪平台消息通知功能，支持邮件和企业微信</p></li>
+<li>aidi: 艾迪平台通用功能，包括训练、预测、评测、模型、编译等功能</li>
+<li>aidi_userauth: 艾迪平台用户与权限功能</li>
+<li>aidi_utils: 对aidi包的辅助功能</li>
+<li>aidi_notify: 艾迪平台消息通知功能，支持邮件和企业微信</li>
 </ul>
 </div>
 <div class="section" id="id2">
@@ -194,123 +199,101 @@ pip install aidi_notify -i http://pypi.hobot.cc/hobot-local/simple --trusted-hos
 <h2>示例代码说明<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
 <p>示例代码统一在example目录</p>
 <ul class="simple">
-<li><p>训练数据打包</p></li>
-<li><p>训练数据上传</p></li>
-<li><p>评测脚本上传</p>
-<ul>
-<li><p>example/evalprofilecreate.py</p></li>
+<li>训练数据打包</li>
+<li>训练数据上传</li>
+<li>评测脚本上传<ul>
+<li>example/evalprofilecreate.py</li>
 </ul>
 </li>
-<li><p>评测参数上传</p>
-<ul>
-<li><p>example/evalparamscreate.py</p></li>
+<li>评测参数上传<ul>
+<li>example/evalparamscreate.py</li>
 </ul>
 </li>
-<li><p>创建EvalSet</p></li>
-<li><p>发起训练</p></li>
-<li><p>上传预测结果</p>
-<ul>
-<li><p>example/appendpr.py</p></li>
+<li>创建EvalSet</li>
+<li>发起训练</li>
+<li>上传预测结果<ul>
+<li>example/appendpr.py</li>
 </ul>
 </li>
-<li><p>创建实验模型目录(设置权限为public)</p>
-<ul>
-<li><p>example/modelcreate.py</p></li>
+<li>创建实验模型目录(设置权限为public)<ul>
+<li>example/modelcreate.py</li>
 </ul>
 </li>
-<li><p>创建实验模型目录(设置权限为private)</p>
-<ul>
-<li><p>example/modelcreateprivate.py</p></li>
+<li>创建实验模型目录(设置权限为private)<ul>
+<li>example/modelcreateprivate.py</li>
 </ul>
 </li>
-<li><p>保存本地实验模型</p>
-<ul>
-<li><p>example/modelappend.py</p></li>
+<li>保存本地实验模型<ul>
+<li>example/modelappend.py</li>
 </ul>
 </li>
-<li><p>从本地给实验模型增加阶段模型文件</p>
-<ul>
-<li><p>example/modelappendstage.py</p></li>
+<li>从本地给实验模型增加阶段模型文件<ul>
+<li>example/modelappendstage.py</li>
 </ul>
 </li>
-<li><p>保存HDFS实验模型</p>
-<ul>
-<li><p>example/hdfsmodelappend.py</p></li>
+<li>保存HDFS实验模型<ul>
+<li>example/hdfsmodelappend.py</li>
 </ul>
 </li>
-<li><p>从HDFS给实验模型添加阶段模型文件</p>
-<ul>
-<li><p>example/hdfsmodelappendstage.py</p></li>
+<li>从HDFS给实验模型添加阶段模型文件<ul>
+<li>example/hdfsmodelappendstage.py</li>
 </ul>
 </li>
-<li><p>保存Bucket中的实验模型</p>
-<ul>
-<li><p>example/bucketmodelappend.py</p></li>
+<li>保存Bucket中的实验模型<ul>
+<li>example/bucketmodelappend.py</li>
 </ul>
 </li>
-<li><p>实验模型发布到发版模型</p>
-<ul>
-<li><p>example/modelpublish.py</p></li>
+<li>实验模型发布到发版模型<ul>
+<li>example/modelpublish.py</li>
 </ul>
 </li>
-<li><p>下载实验模型</p>
-<ul>
-<li><p>example/modelget.py</p></li>
+<li>下载实验模型<ul>
+<li>example/modelget.py</li>
 </ul>
 </li>
-<li><p>创建发版模型目录</p>
-<ul>
-<li><p>example/pmodelcreate.py</p></li>
+<li>创建发版模型目录<ul>
+<li>example/pmodelcreate.py</li>
 </ul>
 </li>
-<li><p>创建发版模型</p>
-<ul>
-<li><p>exampe/pmodelappend.py</p></li>
+<li>创建发版模型<ul>
+<li>exampe/pmodelappend.py</li>
 </ul>
 </li>
-<li><p>发版模型增加或删除实验模型</p>
-<ul>
-<li><p>example/pmodelupdate.py</p></li>
+<li>发版模型增加或删除实验模型<ul>
+<li>example/pmodelupdate.py</li>
 </ul>
 </li>
-<li><p>下载发版模型</p>
-<ul>
-<li><p>example/pmodelget.py</p></li>
+<li>下载发版模型<ul>
+<li>example/pmodelget.py</li>
 </ul>
 </li>
-<li><p>发起编译</p>
-<ul>
-<li><p>example/compilationtaskcreate.py</p></li>
+<li>发起编译<ul>
+<li>example/compilationtaskcreate.py</li>
 </ul>
 </li>
-<li><p>下载编译结果</p>
-<ul>
-<li><p>example/compilationtaskget.py</p></li>
+<li>下载编译结果<ul>
+<li>example/compilationtaskget.py</li>
 </ul>
 </li>
-<li><p>发版模型正式发版</p>
-<ul>
-<li><p>example/compilationpublish.py</p></li>
+<li>发版模型正式发版<ul>
+<li>example/compilationpublish.py</li>
 </ul>
 </li>
-<li><p>发起回灌</p>
-<ul>
-<li><p>example/fueltaskcreate.py</p></li>
+<li>发起回灌<ul>
+<li>example/fueltaskcreate.py</li>
 </ul>
 </li>
-<li><p>发起预测</p></li>
-<li><p>发起评测</p></li>
-<li><p>查看评测报告</p></li>
-<li><p>提交和获取全流程参数</p>
-<ul>
-<li><p>example/submitpipelineparam.py</p></li>
-<li><p>example/getpipelineparam.py</p></li>
+<li>发起预测</li>
+<li>发起评测</li>
+<li>查看评测报告</li>
+<li>提交和获取全流程参数<ul>
+<li>example/submitpipelineparam.py</li>
+<li>example/getpipelineparam.py</li>
 </ul>
 </li>
-<li><p>在dagtask之间传递参数</p>
-<ul>
-<li><p>example/submitpipelineparam.py</p></li>
-<li><p>example/getpipelineparam.py</p></li>
+<li>在dagtask之间传递参数<ul>
+<li>example/submitpipelineparam.py</li>
+<li>example/getpipelineparam.py</li>
 </ul>
 </li>
 </ul>
@@ -322,28 +305,25 @@ pip install aidi_notify -i http://pypi.hobot.cc/hobot-local/simple --trusted-hos
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

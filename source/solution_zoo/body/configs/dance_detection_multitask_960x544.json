@@ -9,7 +9,6 @@
     "face_lowpassfilter_box",
     "hand_lowpassfilter_box",
     "lowpassfilter_body_kps",
-    "mask",
     "lowpassfilter_hand_lmk",
     "lowpassfilter_lmk_106pts",
     "gesture",
@@ -21,7 +20,7 @@
   ],
   "workflow": [
     {
-      "thread_count": 3,
+      "thread_list": [0, 1],
       "method_type": "FasterRCNNMethod",
       "unique_name": "multi_task",
       "timeout_duration": 2000,
@@ -30,15 +29,27 @@
       ],
       "outputs": [
         "body_box",
-        "head_box",
-        "face_box",
-        "hand_box",
-        "kps",
-        "mask"
+        "kps"
       ],
-      "method_config_file": "multitask_with_hand_960x544.json"
+      "method_config_file": "multitask_body_kps_config.json"
     },
     {
+      "thread_list": [2, 3, 4],
+      "method_type": "FasterRCNNMethod",
+      "unique_name": "crop_multi_task",
+      "inputs": [
+        "image",
+        "body_box"
+      ],
+      "outputs": [
+        "head_box",
+        "face_box",
+        "hand_box"
+      ],
+      "method_config_file": "crop_multitask_config.json"
+    },
+    {
+      "thread_list": [5],
       "method_type": "FilterMethod",
       "unique_name": "box_filter",
       "inputs": ["face_box", "head_box", "body_box", "kps", "hand_box"],
@@ -46,7 +57,7 @@
       "method_config_file": "box_filter_config.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "MOTMethod",
       "unique_name": "face_mot",
       "inputs": [
@@ -60,7 +71,7 @@
       "method_config_file": "iou2_method_param.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "MOTMethod",
       "unique_name": "head_mot",
       "inputs": [
@@ -74,7 +85,7 @@
       "method_config_file": "iou2_method_param.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "MOTMethod",
       "unique_name": "body_mot",
       "inputs": [
@@ -88,7 +99,7 @@
       "method_config_file": "iou2_method_param.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "MOTMethod",
       "unique_name": "hand_mot",
       "inputs": [
@@ -102,7 +113,7 @@
       "method_config_file": "iou2_euclid_method_param.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "MergeMethod",
       "unique_name": "merge_method",
       "inputs": [
@@ -122,7 +133,7 @@
       "method_config_file": "merge_head_body.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "LowPassFilterMethod",
       "unique_name": "lowpassfilter_method",
       "timeout_duration": 2000,
@@ -138,10 +149,10 @@
       "method_config_file": "lowpassfilter_body_config.json"
     },
     {
+      "thread_list": [0, 1],
       "method_type": "CNNMethod",
       "unique_name": "lmk_106pts",
       "timeout_duration": 2000,
-      "thread_count": 2,
       "inputs": [
         "face_final_box",
         "image"
@@ -152,10 +163,10 @@
       "method_config_file": "lmk_106pts.json"
     },
     {
+      "thread_list": [0, 1],
       "method_type": "CNNMethod",
       "unique_name": "hand_lmk",
       "timeout_duration": 2000,
-      "thread_count": 2,
       "inputs": [
         "hand_final_box",
         "image"
@@ -166,14 +177,15 @@
       "method_config_file": "hand_lmk.json"
     },
     {
+      "thread_list": [0, 1],
       "method_type": "CNNMethod",
       "unique_name": "gesture_recog",
       "timeout_duration": 2000,
-      "thread_count": 2,
       "inputs": [
         "hand_final_box",
         "hand_lmk",
-        "hand_disappeared_track_id_list"
+        "hand_disappeared_track_id_list",
+        "image"
       ],
       "outputs": [
         "gesture"
@@ -181,6 +193,7 @@
       "method_config_file": "gesture_det.json"
     },
     {
+      "thread_list": [5],
       "method_type": "VoteMethod",
       "unique_name": "gesture_voting",
       "inputs": [
@@ -194,7 +207,7 @@
       "method_config_file": "gesture_voting.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "LowPassFilterMethod",
       "unique_name": "lowpassfilter_hand_method",
       "timeout_duration": 2000,
@@ -210,7 +223,7 @@
       "method_config_file": "lowpassfilter_hand_config.json"
     },
     {
-      "thread_count": 1,
+      "thread_list": [5],
       "method_type": "LowPassFilterMethod",
       "unique_name": "lowpassfilter_face_method",
       "timeout_duration": 2000,
@@ -226,7 +239,7 @@
       "method_config_file": "lowpassfilter_hand_config.json"
     },
     {
-      "thread_count": 2,
+      "thread_list": [0, 1],
       "method_type": "CNNMethod",
       "unique_name": "age_gender",
       "timeout_duration": 2000,
@@ -241,6 +254,7 @@
       "method_config_file": "age_gender.json"
     },
     {
+      "thread_list": [5],
       "method_type": "VoteMethod",
       "unique_name": "age_voting",
       "inputs": [
@@ -254,6 +268,7 @@
       "method_config_file": "age_voting.json"
     },
     {
+      "thread_list": [5],
       "method_type": "VoteMethod",
       "unique_name": "gender_voting",
       "inputs": [

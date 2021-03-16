@@ -154,17 +154,15 @@ int TestFBFasterrcnn(int argc, char **argv) {
         std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_pyramid->value = py_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_pyramid);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_pyramid);
 
     time_count.Start();
     auto xstream_output = faster_rcnn_method.DoProcess(input, param);
     time_count.Stop();
 
-    assert(xstream_output.size() == 1);
-    auto faster_rcnn_out = xstream_output[0];
+    auto faster_rcnn_out = xstream_output;
     static int frame_cnt = 0;
     if (need_render) {
       model_name2dump_fn[model_name](&bgr_img, faster_rcnn_out, input_image);
@@ -198,17 +196,15 @@ int TestFBFasterrcnn(int argc, char **argv) {
         std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_pyramid->value = py_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_pyramid);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_pyramid);
 
     time_count.Start();
     auto xstream_output = faster_rcnn_method.DoProcess(input, param);
     time_count.Stop();
 
-    assert(xstream_output.size() == 1);
-    auto faster_rcnn_out = xstream_output[0];
+    auto faster_rcnn_out = xstream_output;
     static int frame_cnt = 0;
     if (need_render) {
       model_name2dump_fn[model_name](&bgr_img, faster_rcnn_out, input_image);

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>MOTMethod &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../_sources/ai_express_release/source/solution_zoo/xstream/methods/motmethod/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -168,9 +173,9 @@
 <p>目前aiexpress的motmethod采用基于IOU的跟踪算法，主要根据位置信息对目标进行跟踪。</p>
 <p>算法主要分3个步骤</p>
 <ol class="simple">
-<li><p>prediction 利用卡尔曼滤波器预测轨迹在当前帧的位置；</p></li>
-<li><p>match 利用预测位置和观测位置得到匹配结果；</p></li>
-<li><p>update 根据匹配结果对轨迹集合进行更新</p></li>
+<li>prediction 利用卡尔曼滤波器预测轨迹在当前帧的位置；</li>
+<li>match 利用预测位置和观测位置得到匹配结果；</li>
+<li>update 根据匹配结果对轨迹集合进行更新</li>
 </ol>
 <p>下面详细介绍这三个步骤</p>
 <div class="section" id="id2">
@@ -451,7 +456,7 @@ ignore_overlap_thres|筛选遮挡过大的box阈值,超过则不跟踪|0.9</p>
 <p>因为IOU和IOU2基于的算法原理相同，这里以IOU2为例，介绍MOT策略的实现</p>
 <div class="section" id="id18">
 <h3>重要数据结构<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
-<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Target</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Target</span>
 <span class="p">{</span>
   <span class="n">Target</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="n">Target</span><span class="p">(</span><span class="k">const</span> <span class="n">sp_BBox</span> <span class="o">&amp;</span><span class="n">body_bbox</span><span class="p">,</span>
@@ -468,20 +473,20 @@ ignore_overlap_thres|筛选遮挡过大的box阈值,超过则不跟踪|0.9</p>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">overlap_with_others</span> <span class="o">=</span> <span class="n">overlap_with_others</span><span class="p">;</span>
   <span class="p">}</span>
  
-  <span class="kt">int</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">img_height</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">img_width</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">img_height</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="n">sp_BBox</span> <span class="n">body_bbox</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">body_width</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">body_height</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="kt">bool</span> <span class="n">det_valid</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
-  <span class="kt">double</span> <span class="n">dist_with_others</span> <span class="o">=</span> <span class="mf">-1.</span><span class="p">;</span>
-  <span class="kt">float</span> <span class="n">overlap_with_others</span> <span class="o">=</span> <span class="mf">-1.f</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">dist_with_others</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="p">;</span>
+  <span class="kt">float</span> <span class="n">overlap_with_others</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.f</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
 <p>Target为目标检测框，其中body_bbox保存检测框的位置信息。</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TrackLet</span> <span class="p">{</span>
  <span class="k">public</span><span class="o">:</span>
-  <span class="k">enum</span> <span class="nc">TrackLetState</span> <span class="p">{</span>
+  <span class="k">enum</span> <span class="n">TrackLetState</span> <span class="p">{</span>
    <span class="n">Tentative</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
    <span class="n">Confirmed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
    <span class="n">Invisible</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
@@ -495,7 +500,7 @@ ignore_overlap_thres|筛选遮挡过大的box阈值,超过则不跟踪|0.9</p>
  
   <span class="o">~</span><span class="n">TrackLet</span><span class="p">();</span>
  
-  <span class="kt">int</span> <span class="n">track_id</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">track_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="n">sp_Target</span> <span class="n">target</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">time_t</span><span class="p">,</span> <span class="n">sp_Target</span><span class="o">&gt;</span> <span class="n">target_map</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">frame_id_list</span><span class="p">;</span>
@@ -522,9 +527,9 @@ ignore_overlap_thres|筛选遮挡过大的box阈值,超过则不跟踪|0.9</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tracker</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="n">Tracker</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">curr_time_stamp</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">begin_time_stamp</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">last_output_time_stamp</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">curr_time_stamp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">begin_time_stamp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">last_output_time_stamp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">};</span>
   <span class="k">explicit</span> <span class="nf">Tracker</span><span class="p">(</span><span class="kt">time_t</span> <span class="n">time_stamp</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">curr_time_stamp</span> <span class="o">=</span> <span class="n">time_stamp</span><span class="p">;</span>
@@ -547,7 +552,7 @@ ignore_overlap_thres|筛选遮挡过大的box阈值,超过则不跟踪|0.9</p>
                 <span class="k">const</span> <span class="kt">int</span> <span class="o">&amp;</span><span class="n">img_height</span><span class="p">);</span>
  
   <span class="kt">void</span> <span class="nf">BuildTargetList</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sp_BBox</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">detected_boxes</span><span class="p">);</span>
-  <span class="kr">inline</span> <span class="kt">void</span> <span class="n">OutputBox</span><span class="p">(</span><span class="k">const</span> <span class="n">BBox_s</span> <span class="o">&amp;</span><span class="n">box</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">OutputBox</span><span class="p">(</span><span class="k">const</span> <span class="n">BBox_s</span> <span class="o">&amp;</span><span class="n">box</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">box</span><span class="p">.</span><span class="n">x1</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">box</span><span class="p">.</span><span class="n">y1</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">box</span><span class="p">.</span><span class="n">x2</span> <span class="o">&lt;&lt;</span>
     <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">box</span><span class="p">.</span><span class="n">y2</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
   <span class="p">}</span>
@@ -556,7 +561,7 @@ ignore_overlap_thres|筛选遮挡过大的box阈值,超过则不跟踪|0.9</p>
           <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">matches</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">unmatches_tracks</span><span class="p">,</span>
           <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">unmatches_targets</span><span class="p">);</span>
   <span class="kt">void</span> <span class="nf">Track</span><span class="p">();</span>
-  <span class="k">static</span> <span class="kt">void</span> <span class="n">CheckInput</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sp_BBox</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">body_bbox_list</span><span class="p">,</span>
+  <span class="k">static</span> <span class="kt">void</span> <span class="nf">CheckInput</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sp_BBox</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">body_bbox_list</span><span class="p">,</span>
                          <span class="k">const</span> <span class="kt">time_t</span> <span class="o">&amp;</span><span class="n">time_stamp</span><span class="p">,</span>
                          <span class="k">const</span> <span class="kt">int</span> <span class="n">img_width</span><span class="p">,</span>
                          <span class="k">const</span> <span class="kt">int</span> <span class="n">img_height</span><span class="p">){</span>
@@ -655,28 +660,25 @@ R &lt;&lt; 6, 0, 0, 0,
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

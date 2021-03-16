@@ -28,8 +28,6 @@
 #include "smartplugin_box/traffic_info.h"
 #include "votmodule.h"
 #include "xproto_msgtype/smartplugin_data.h"
-#include "vencmodule.h"
-#include "videoprocessor.h"
 
 namespace horizon {
 namespace vision {
@@ -138,7 +136,7 @@ class SmartPlugin : public XPluginAsync {
   std::string profile_log_file_;
   bool result_to_json{false};
   Json::Value root;
-  std::shared_ptr<VideoProcessor> video_processor_;
+
   bool running_venc_1080p_ = false;
   bool running_venc_720p_ = false;
   bool running_vot_ = true;
@@ -149,15 +147,13 @@ class SmartPlugin : public XPluginAsync {
   int display_mode_ = 0;
 
   smart_vo_cfg_t smart_vo_cfg_;
-
-  //for test fps
-  static void ComputeFpsThread(void *param);
-  uint64_t smartframe_ = 0;
-  std::thread read_thread_;
   bool running_;
   std::unordered_map<uint64_t, std::unordered_map<uint64_t,
       std::shared_ptr<RecogResult_t>>> recog_cache_;
   std::mutex cache_mtx_;
+  bool run_smart_ = true;
+  bool draw_smart_ = true;
+  bool draw_real_time_video_ = true;
 };
 
 }  // namespace smartplugin_multiplebox

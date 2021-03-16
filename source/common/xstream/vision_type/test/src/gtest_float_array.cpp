@@ -11,27 +11,27 @@
 TEST(HorizonVisionFloatArray, alloc_free) {
   HorizonVisionFloatArray *data;
   auto ret = HorizonVisionAllocFloatArray(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 2;
   data->values = static_cast<float *>(std::calloc(2, sizeof(float)));
   data->values[0] = 0.3;
   data->values[1] = 0.5;
   ret = HorizonVisionFreeFloatArray(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionFloatArray, alloc_free_empty_data) {
   HorizonVisionFloatArray *data;
   auto ret = HorizonVisionAllocFloatArray(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeFloatArray(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionFloatArray, copy) {
   HorizonVisionFloatArray *data;
   auto ret = HorizonVisionAllocFloatArray(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 2;
   data->values = static_cast<float *>(std::calloc(2, sizeof(float)));
   data->values[0] = 0.3;
@@ -39,42 +39,42 @@ TEST(HorizonVisionFloatArray, copy) {
 
   HorizonVisionFloatArray *cp_data;
   ret = HorizonVisionAllocFloatArray(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopyFloatArray(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking
   ret = HorizonVisionFreeFloatArray(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->num, 2u);
   EXPECT_EQ(cp_data->values[0], 0.3f);
   EXPECT_EQ(cp_data->values[1], 0.5f);
   ret = HorizonVisionFreeFloatArray(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionFloatArray, copy_empty_data) {
   HorizonVisionFloatArray *data;
   auto ret = HorizonVisionAllocFloatArray(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionFloatArray *cp_data;
   ret = HorizonVisionAllocFloatArray(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopyFloatArray(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   ret = HorizonVisionFreeFloatArray(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeFloatArray(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionFloatArray, dup) {
   HorizonVisionFloatArray *data;
   auto ret = HorizonVisionAllocFloatArray(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 2;
   data->values = static_cast<float *>(std::calloc(2, sizeof(float)));
   data->values[0] = 0.3;
@@ -82,30 +82,30 @@ TEST(HorizonVisionFloatArray, dup) {
 
   HorizonVisionFloatArray *cp_data;
   ret = HorizonVisionDupFloatArray(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking
   ret = HorizonVisionFreeFloatArray(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->num, 2u);
   EXPECT_EQ(cp_data->values[0], 0.3f);
   EXPECT_EQ(cp_data->values[1], 0.5f);
   ret = HorizonVisionFreeFloatArray(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionFloatArray, dup_empty_data) {
   HorizonVisionFloatArray *data;
   auto ret = HorizonVisionAllocFloatArray(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionFloatArray *cp_data;
   ret = HorizonVisionDupFloatArray(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   ret = HorizonVisionFreeFloatArray(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeFloatArray(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }

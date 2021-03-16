@@ -11,6 +11,7 @@ set(SOURCE_FILES
         src/PredictMethod.cc
         src/PredictConst.cc
         src/Predictors/DetectPredictor.cc
+        src/Predictors/CropDetectPredictor.cc
         src/Predictors/ClassifyPredictor.cc
         src/Predictors/Predictors.cc
 )

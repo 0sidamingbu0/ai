@@ -11,9 +11,8 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
-
+#if 0
 int DoPyramid(int argc, char **argv) {
   const char *vio_config = "./config/hb_vio.json";
   std::string camera_cfg_file(argv[1]);
@@ -42,3 +41,4 @@ int DoPyramid(int argc, char **argv) {
   BPU_releasePyramid(pyr_handle);
   return 0;
 }
+#endif

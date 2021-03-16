@@ -22,17 +22,20 @@ namespace horizon {
 namespace vision {
 class VideoProcessor {
  public:
-  VideoProcessor();
+  static VideoProcessor& GetInstance();
   ~VideoProcessor();
 
  public:
   int Init(const int channel_num, const int display_mode,
            const smart_vo_cfg_t& smart_vo_cfg, const bool encode_smart = false,
-           const bool encode_1080p = false, const bool encode_720p = false,
-           const bool display = true);
+           const bool draw_smart = true, const bool encode_1080p = false,
+           const bool encode_720p = false, const bool display = true,
+           const bool draw_real_time_video = true);
   int Start();
   int Input(std::shared_ptr<VideoData> video_data,
             const bool encode_720P = false, const bool transition = false);
+
+  int Input(const int channel, HorizonVisionSmartFrame* smart_frame);
   int Stop();
   int DeInit();
 
@@ -41,6 +44,10 @@ class VideoProcessor {
   int HandleData_720P();
 
  private:
+  VideoProcessor();
+
+ private:
+  static VideoProcessor* instance_;
   bool start_ = false;
   bool init_ = false;
   bool running_ = false;
@@ -50,6 +57,7 @@ class VideoProcessor {
   bool encode_smart_ = false;
   bool display_ = true;
   bool encode_720p_ = false;
+  bool draw_smart_ = true;
   std::shared_ptr<VotModule> vot_module_;
 
   std::shared_ptr<VencModule> venc_module_1080p_;

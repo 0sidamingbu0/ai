@@ -81,6 +81,8 @@ int MultitaskPostProcessMethod::Init(const std::string &cfg_path) {
   face_pose_number_ = net_info->GetIntValue("3d_pose_number", 3);
   face_pv_thr_ = net_info->GetFloatValue("face_pv_thr", 0.0);
 
+  bbox_threshold_ = net_info->GetFloatValue("bbox_threshold", 0.0);
+
   method_outs_ = config_.GetSTDStringArray("method_outs");
 
   need_prepare_output_info_ = true;
@@ -134,6 +136,10 @@ void MultitaskPostProcessMethod::ParseResults(DnnAsyncData &dnn_result,
                                               OutMsg &det_results) {
   auto &output_tensors = dnn_result.output_tensors[0];
 
+  if (dnn_result.output_tensors.empty()) {
+    LOGD << "failed to run model in predict method";
+    return;
+  }
   // flush cache
   for (int i = 0; i < dnn_result.dnn_model->bpu_model.output_num; ++i) {
     if (HB_SYS_isMemCachable(&(output_tensors[i].data))) {
@@ -614,6 +620,12 @@ void MultitaskPostProcessMethod::Convert2FrameworkData(
     xstream_det_result[boxes.first]->name_ = "rcnn_" + boxes.first;
     for (uint i = 0; i < boxes.second.size(); ++i) {
       const auto &box = boxes.second[i];
+      if (box.score < bbox_threshold_) {
+        LOGD << "current bbox's score: " << box.score
+             << " is smaller than threshold: " << bbox_threshold_;
+        invalid_idx.emplace(i);
+        continue;
+      }
       if (boxes.first == "face_box") {
         if (box.score < face_pv_thr_) {
           invalid_idx.emplace(i);
@@ -624,7 +636,7 @@ void MultitaskPostProcessMethod::Convert2FrameworkData(
       xstream_box->value = std::move(box);
       xstream_det_result[boxes.first]->datas_.push_back(xstream_box);
       LOGD << boxes.first << ": " << box.x1 << ", " << box.y1 << ", " << box.x2
-           << ", " << box.y2;
+           << ", " << box.y2 << ", " << box.score;
     }
   }
 

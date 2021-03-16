@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Eigen &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/common/pybind11/docs/advanced/cast/eigen.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -213,8 +218,8 @@ Eigen’s difference default storage order for data; see the below section on
 <a class="reference internal" href="#storage-orders"><span class="std std-ref">Storage orders</span></a> for details on how to bind code that won’t run into such
 limitations.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Passing by reference is not supported for sparse types.</p>
+<p class="first admonition-title">注解</p>
+<p class="last">Passing by reference is not supported for sparse types.</p>
 </div>
 </div>
 <div class="section" id="returning-values-to-python">
@@ -274,8 +279,8 @@ array does.</p>
 readonly-status of the returned value, marking the numpy array as non-writeable
 if the reference or map was itself read-only.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Sparse types are always copied when returned.</p>
+<p class="first admonition-title">注解</p>
+<p class="last">Sparse types are always copied when returned.</p>
 </div>
 </div>
 <div class="section" id="storage-orders">
@@ -357,7 +362,7 @@ copying to take place:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// The method and function to be bound:</span>
 <span class="k">class</span> <span class="nc">MyClass</span> <span class="p">{</span>
     <span class="c1">// ...</span>
-    <span class="kt">double</span> <span class="nf">some_method</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Ref</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">matrix</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+    <span class="kt">double</span> <span class="n">some_method</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Ref</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">matrix</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
 <span class="p">};</span>
 <span class="kt">float</span> <span class="nf">some_function</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Ref</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">MatrixXf</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">big</span><span class="p">,</span>
                     <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Ref</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">MatrixXf</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">small</span><span class="p">)</span> <span class="p">{</span>
@@ -416,8 +421,8 @@ instances that are a vector only at run-time (e.g. <code class="docutils literal
 numpy.  If this isn’t want you want, you can use <code class="docutils literal notranslate"><span class="pre">array.reshape(...)</span></code> to get
 a view of the same data in the desired dimensions.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_eigen.cpp</span></code> contains a complete example that
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_eigen.cpp</span></code> contains a complete example that
 shows how to pass Eigen sparse and dense data types in more detail.</p>
 </div>
 </div>
@@ -428,28 +433,25 @@ shows how to pass Eigen sparse and dense data types in more detail.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

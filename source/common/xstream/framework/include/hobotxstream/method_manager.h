@@ -58,6 +58,7 @@ class MethodManager {
 
   int ProcessAsyncTask(const std::vector<std::vector<BaseDataPtr>> &inputs,
                        const std::vector<InputParamPtr> &params,
+                       uint64_t sequence_id,
                        ResultCallback methodCallback, size_t source_id);
 
   std::string MethodType() const { return method_type_; }
@@ -93,6 +94,7 @@ class MethodManager {
 
   void Process(const std::vector<std::vector<BaseDataPtr>> &inputs,
                const std::vector<InputParamPtr> &params,
+               uint64_t sequence_id,
                ResultCallback methodCallback, uint32_t source_id,
                void *context);
 

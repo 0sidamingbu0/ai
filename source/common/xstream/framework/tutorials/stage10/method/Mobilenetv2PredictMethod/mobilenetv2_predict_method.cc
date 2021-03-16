@@ -33,7 +33,7 @@ int Mobilenetv2PredictMethod::Init(const std::string &cfg_path) {
 
 int Mobilenetv2PredictMethod::PrepareInputData(
       const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
+      const InputParamPtr param,
       std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
       std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
   LOGD << "Mobilenetv2PredictMethod PrepareInputData";

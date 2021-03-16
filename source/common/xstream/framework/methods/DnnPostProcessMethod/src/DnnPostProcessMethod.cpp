@@ -64,37 +64,32 @@ void DnnPostProcessMethod::FreeTensor(std::vector<BPU_TENSOR_S> &tensors) {
   }
 }
 
-std::vector<std::vector<BaseDataPtr>> DnnPostProcessMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> DnnPostProcessMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   LOGD << "DnnPostProcessMethod DoProcess";
-  HOBOT_CHECK(!input.empty());
+  HOBOT_CHECK(input.size() == 1) << "only support DnnAsyncData";
   RUN_PROCESS_TIME_PROFILER("DnnPostProcessMethod_DoProcess");
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-  for (size_t i = 0; i < input.size(); i++) {
-    const std::vector<BaseDataPtr> &frame_input = input[i];
-    std::vector<BaseDataPtr> &frame_output = output[i];
-
+  std::vector<BaseDataPtr> output;
+  {
     // DnnPostProcessMethod的输入只有一个，输入数据就是DnnAsyncData
-    HOBOT_CHECK(frame_input.size() == 1)  << "only support DnnAsyncData";
-    auto dnn_async_data =
-        std::static_pointer_cast<DnnAsyncData>(frame_input[0]);
+    auto dnn_async_data = std::static_pointer_cast<DnnAsyncData>(input[0]);
 
     // 调用HB_BPU_waitModelDone接口，等待bpu异步任务完成
     if (!dnn_async_data->dnn_is_sync) {
       for (size_t i = 0; i < dnn_async_data->task_handle.size(); ++i) {
         BPU_TASK_HANDLE &task_handle = dnn_async_data->task_handle[i];
         if (task_handle == nullptr) continue;
-        HB_BPU_waitModelDone(&task_handle);
-        HB_BPU_releaseTask(&task_handle);
+        if (!HB_BPU_waitModelDone(&task_handle)) {
+          HB_BPU_releaseTask(&task_handle);
+        }
       }
     }
 
     // 调用派生类的接口，完成模型后处理，将结果转换成Method的输出格式
     {
       RUN_PROCESS_TIME_PROFILER("ParseDnnResult");
-      int ret = ParseDnnResult(*dnn_async_data, frame_output);
+      int ret = ParseDnnResult(*dnn_async_data, output);
       if (ret != 0) {
         LOGE << "ParseDnnResult failed";
       }

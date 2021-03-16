@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>About this project &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/intro.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -184,58 +189,58 @@ to dramatically simpler binding code in many common situations.</p>
 <h2>Core features<a class="headerlink" href="#core-features" title="永久链接至标题">¶</a></h2>
 <p>The following core C++ features can be mapped to Python</p>
 <ul class="simple">
-<li><p>Functions accepting and returning custom data structures per value, reference, or pointer</p></li>
-<li><p>Instance methods and static methods</p></li>
-<li><p>Overloaded functions</p></li>
-<li><p>Instance attributes and static attributes</p></li>
-<li><p>Arbitrary exception types</p></li>
-<li><p>Enumerations</p></li>
-<li><p>Callbacks</p></li>
-<li><p>Iterators and ranges</p></li>
-<li><p>Custom operators</p></li>
-<li><p>Single and multiple inheritance</p></li>
-<li><p>STL data structures</p></li>
-<li><p>Smart pointers with reference counting like <code class="docutils literal notranslate"><span class="pre">std::shared_ptr</span></code></p></li>
-<li><p>Internal references with correct reference counting</p></li>
-<li><p>C++ classes with virtual (and pure virtual) methods can be extended in Python</p></li>
+<li>Functions accepting and returning custom data structures per value, reference, or pointer</li>
+<li>Instance methods and static methods</li>
+<li>Overloaded functions</li>
+<li>Instance attributes and static attributes</li>
+<li>Arbitrary exception types</li>
+<li>Enumerations</li>
+<li>Callbacks</li>
+<li>Iterators and ranges</li>
+<li>Custom operators</li>
+<li>Single and multiple inheritance</li>
+<li>STL data structures</li>
+<li>Smart pointers with reference counting like <code class="docutils literal notranslate"><span class="pre">std::shared_ptr</span></code></li>
+<li>Internal references with correct reference counting</li>
+<li>C++ classes with virtual (and pure virtual) methods can be extended in Python</li>
 </ul>
 </div>
 <div class="section" id="goodies">
 <h2>Goodies<a class="headerlink" href="#goodies" title="永久链接至标题">¶</a></h2>
 <p>In addition to the core functionality, pybind11 provides some extra goodies:</p>
 <ul class="simple">
-<li><p>Python 2.7, 3.x, and PyPy (PyPy2.7 &gt;= 5.7) are supported with an
-implementation-agnostic interface.</p></li>
-<li><p>It is possible to bind C++11 lambda functions with captured variables. The
-lambda capture data is stored inside the resulting Python function object.</p></li>
-<li><p>pybind11 uses C++11 move constructors and move assignment operators whenever
-possible to efficiently transfer custom data types.</p></li>
-<li><p>It’s easy to expose the internal storage of custom data types through
+<li>Python 2.7, 3.x, and PyPy (PyPy2.7 &gt;= 5.7) are supported with an
+implementation-agnostic interface.</li>
+<li>It is possible to bind C++11 lambda functions with captured variables. The
+lambda capture data is stored inside the resulting Python function object.</li>
+<li>pybind11 uses C++11 move constructors and move assignment operators whenever
+possible to efficiently transfer custom data types.</li>
+<li>It’s easy to expose the internal storage of custom data types through
 Pythons’ buffer protocols. This is handy e.g. for fast conversion between
-C++ matrix classes like Eigen and NumPy without expensive copy operations.</p></li>
-<li><p>pybind11 can automatically vectorize functions so that they are transparently
-applied to all entries of one or more NumPy array arguments.</p></li>
-<li><p>Python’s slice-based access and assignment operations can be supported with
-just a few lines of code.</p></li>
-<li><p>Everything is contained in just a few header files; there is no need to link
-against any additional libraries.</p></li>
-<li><p>Binaries are generally smaller by a factor of at least 2 compared to
+C++ matrix classes like Eigen and NumPy without expensive copy operations.</li>
+<li>pybind11 can automatically vectorize functions so that they are transparently
+applied to all entries of one or more NumPy array arguments.</li>
+<li>Python’s slice-based access and assignment operations can be supported with
+just a few lines of code.</li>
+<li>Everything is contained in just a few header files; there is no need to link
+against any additional libraries.</li>
+<li>Binaries are generally smaller by a factor of at least 2 compared to
 equivalent bindings generated by Boost.Python. A recent pybind11 conversion
 of <a class="reference external" href="http://graylab.jhu.edu/RosettaCon2016/PyRosetta-4.pdf">PyRosetta</a>, an enormous Boost.Python binding project, reported a binary
-size reduction of <strong>5.4x</strong> and compile time reduction by <strong>5.8x</strong>.</p></li>
-<li><p>Function signatures are precomputed at compile time (using <code class="docutils literal notranslate"><span class="pre">constexpr</span></code>),
-leading to smaller binaries.</p></li>
-<li><p>With little extra effort, C++ types can be pickled and unpickled similar to
-regular Python objects.</p></li>
+size reduction of <strong>5.4x</strong> and compile time reduction by <strong>5.8x</strong>.</li>
+<li>Function signatures are precomputed at compile time (using <code class="docutils literal notranslate"><span class="pre">constexpr</span></code>),
+leading to smaller binaries.</li>
+<li>With little extra effort, C++ types can be pickled and unpickled similar to
+regular Python objects.</li>
 </ul>
 </div>
 <div class="section" id="supported-compilers">
 <h2>Supported compilers<a class="headerlink" href="#supported-compilers" title="永久链接至标题">¶</a></h2>
 <ol class="arabic simple">
-<li><p>Clang/LLVM (any non-ancient version with C++11 support)</p></li>
-<li><p>GCC 4.8 or newer</p></li>
-<li><p>Microsoft Visual Studio 2015 or newer</p></li>
-<li><p>Intel C++ compiler v17 or newer (v16 with pybind11 v2.0 and v15 with pybind11 v2.0 and a <a class="reference external" href="https://github.com/pybind/pybind11/issues/276">workaround</a> )</p></li>
+<li>Clang/LLVM (any non-ancient version with C++11 support)</li>
+<li>GCC 4.8 or newer</li>
+<li>Microsoft Visual Studio 2015 or newer</li>
+<li>Intel C++ compiler v17 or newer (v16 with pybind11 v2.0 and v15 with pybind11 v2.0 and a <a class="reference external" href="https://github.com/pybind/pybind11/issues/276">workaround</a> )</li>
 </ol>
 </div>
 </div>
@@ -245,28 +250,25 @@ regular Python objects.</p></li>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -39,8 +39,8 @@ int RectInputPredictMethod::Init(const std::string &cfg_path) {
                                 ? config_["norm_method"].asString()
                                 : "norm_by_nothing";
   auto norm_iter = g_norm_method_map.find(norm_method);
-  HOBOT_CHECK(norm_iter != g_norm_method_map.end())
-      << "unknown norm method: " << norm_method;
+  HOBOT_CHECK(norm_iter != g_norm_method_map.end()) << "unknown norm method: "
+                                                    << norm_method;
   norm_params_.norm_method = norm_iter->second;
   norm_params_.expand_scale = config_["expand_scale"].isDouble()
                                   ? config_["expand_scale"].asFloat()
@@ -70,8 +70,7 @@ int RectInputPredictMethod::Init(const std::string &cfg_path) {
 }
 
 int RectInputPredictMethod::PrepareInputData(
-    const std::vector<BaseDataPtr> &input,
-    const std::vector<InputParamPtr> param,
+    const std::vector<BaseDataPtr> &input, const InputParamPtr param,
     hobot::vision::PymImageFrame &pyramid, std::vector<BPU_BBOX> &input_bbox,
     std::vector<int> &valid_box, std::vector<BPU_TENSOR_S> &output_tensors) {
   LOGD << "RectInputPredictMethod PrepareInputData";
@@ -94,22 +93,21 @@ int RectInputPredictMethod::PrepareInputData(
     auto p_roi = std::static_pointer_cast<XStreamData<BBox>>(roi);
     auto p_normed_roi = std::make_shared<XStreamData<BBox>>();
     if (p_roi->state_ != xstream::DataState::VALID ||
-        norm_params_.norm_method ==
-            NormMethod::BPU_MODEL_NORM_BY_NOTHING) {
+        norm_params_.norm_method == NormMethod::BPU_MODEL_NORM_BY_NOTHING) {
       p_normed_roi->value = p_roi->value;
     } else {
       BBox *normed_box = &(p_normed_roi->value);
-      NormalizeRoi(&p_roi->value, normed_box, norm_params_,
-                   pyramid.Width(), pyramid.Height(), filter_method_);
+      NormalizeRoi(&p_roi->value, normed_box, norm_params_, pyramid.Width(),
+                   pyramid.Height(), filter_method_);
       LOGD << "norm roi norm_type:"
            << static_cast<int>(norm_params_.norm_method)
            << " expand_scale:" << norm_params_.expand_scale
            << " aspect_ratio:" << norm_params_.aspect_ratio
-           << "  from:" << p_roi->value.x1 << ", " << p_roi->value.y1
-           << ", " << p_roi->value.x2 << ", " << p_roi->value.y2
-           << "  to:" << p_normed_roi->value.x1
-           << ", " << p_normed_roi->value.y1
-           << ", " << p_normed_roi->value.x2 << ", " << p_normed_roi->value.y2;
+           << "  from:" << p_roi->value.x1 << ", " << p_roi->value.y1 << ", "
+           << p_roi->value.x2 << ", " << p_roi->value.y2
+           << "  to:" << p_normed_roi->value.x1 << ", "
+           << p_normed_roi->value.y1 << ", " << p_normed_roi->value.x2 << ", "
+           << p_normed_roi->value.y2;
     }
 
     if (p_roi->state_ != xstream::DataState::VALID || idx >= handle_num) {

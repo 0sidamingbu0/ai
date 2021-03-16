@@ -17,7 +17,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_parse_utils.h"
 #include "bpu_predict/bpu_parse_utils_extension.h"
 #include "bpu_predict/bpu_predict.h"
@@ -27,8 +26,6 @@
 #include "horizon/vision_type/vision_type.hpp"
 #include "json/json.h"
 #include "opencv2/imgproc.hpp"
-// #include "hobotxsdk/xstream_data.h"
-// #include "hobotlog/hobotlog.hpp"
 #include "FasterRCNNMethod/FasterRCNNMethod.h"
 #include "FasterRCNNMethod/config.h"
 #include "FasterRCNNMethod/faster_rcnn_imp.h"
@@ -117,6 +114,9 @@ void FasterRCNNImp::ParseConfig(const std::string &config_file) {
   model_input_height_ = net_info->GetIntValue("model_input_height", 540);
   pyramid_layer_ = net_info->GetIntValue("pyramid_layer", 4);
 
+  resize_input_width_ = model_input_width_;
+  resize_input_height_ = model_input_height_;
+
   kps_pos_distance_ = net_info->GetFloatValue("kps_pos_distance", 0.1);
   kps_feat_width_ = net_info->GetIntValue("kps_feat_width", 16);
   kps_feat_height_ = net_info->GetIntValue("kps_feat_height", 16);
@@ -143,6 +143,8 @@ void FasterRCNNImp::ParseConfig(const std::string &config_file) {
     LOGD << method_out;
   }
 
+  is_crop_ = config_->GetBoolValue("is_crop", false);
+
   std::string parent_path = GetParentPath(config_file);
   bpu_config_path_ =
       parent_path + config_->GetSTDStringValue("bpu_config_path");
@@ -160,6 +162,9 @@ void FasterRCNNImp::GetModelInfo(const std::string &model_name) {
     auto out_type = branch_info.type;
     // get shifts
     const uint8_t *shift_value = bpu_model_->outputs[i].shifts;
+    LOGD << "out_type:" << static_cast<int>(out_type)
+         << " shift_len:" << bpu_model_->outputs[i].shift_len;
+
     // dim of per shape = 4
     int aligned_shape_dim = bpu_model_->outputs[i].aligned_shape.ndim;
     HOBOT_CHECK(aligned_shape_dim == 4)
@@ -173,7 +178,9 @@ void FasterRCNNImp::GetModelInfo(const std::string &model_name) {
         break;
       case FasterRCNNBranchOutType::KPS:
         // TODO(yaoyao.sun) pack into a function
-        kps_shift_ = shift_value[0];
+        for (int idx = 0; idx < bpu_model_->outputs[i].shift_len; idx++) {
+               kps_shifts_.push_back(shift_value[idx]);
+        }
         aligned_kps_dim = aligned_dim;
         break;
       case FasterRCNNBranchOutType::KPS_LABEL:
@@ -260,12 +267,18 @@ int FasterRCNNImp::Init(const std::string &config_file) {
   return 0;
 }
 
-void FasterRCNNImp::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
-                                   std::vector<BaseDataPtr> &frame_output) {
-  // only one input slot -> PyramidImage or CVImage
-  HOBOT_CHECK(frame_input.size() == 1);
-  const auto frame_img_ = frame_input[0];
 
+void FasterRCNNImp::RunSingleFrameWithinCrop(
+    const std::vector<BaseDataPtr> &frame_input,
+    std::vector<BaseDataPtr> &frame_output) {
+  HOBOT_CHECK(frame_input.size() == 2)
+  << "please insure that frame_input[0] is the image frame, "
+  << "frame_input[1] is the vector of body boxes";
+
+  RUN_PROCESS_TIME_PROFILER("FasterRCNN RunSingleFrameWithinCrop");
+  RUN_FPS_PROFILER("FasterRCNN RunSingleFrameWithinCrop");
+
+  const auto frame_img_ = frame_input[0];
   for (size_t out_index = 0; out_index < method_outs_.size(); ++out_index) {
     frame_output.push_back(std::make_shared<xstream::BaseDataVector>());
   }
@@ -273,77 +286,158 @@ void FasterRCNNImp::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
   auto xstream_img =
       std::static_pointer_cast<XStreamData<ImageFramePtr>>(frame_img_);
 
+  auto xstream_rois = std::static_pointer_cast<BaseDataVector>(frame_input[1]);
+  size_t rois_num = xstream_rois->datas_.size();
+
   std::string img_type = xstream_img->value->type;
   LOGD << "image type: " << img_type << std::endl;
 
-  int ret = 0;
+  for (size_t roi_idx = 0; roi_idx < rois_num; roi_idx++) {
+    HobotXStreamImageToolsResizeInfo resize_info;
+    int src_img_height = 0, src_img_width = 0;
+    int padding_right = 0, padding_bottom = 0;
+    float scale = 0;
 
-  int src_img_width = 0;
-  int src_img_height = 0;
-  int target_pym_layer_width = 0;
-  int target_pym_layer_height = 0;
+    // 1. prepare data for croping
+    std::shared_ptr<XStreamData<hobot::vision::BBox>> p_roi;
+    p_roi = std::static_pointer_cast<XStreamData<hobot::vision::BBox>>(
+        xstream_rois->datas_[roi_idx]);
+    hobot::vision::BBox *norm_box = &(p_roi->value);
 
-  {
-    RUN_PROCESS_TIME_PROFILER("FasterRCNN RunModelFromPyramid");
-    RUN_FPS_PROFILER("FasterRCNN RunModelFromPyramid");
+    if (p_roi->state_ != xstream::DataState::VALID) {
+      LOGI << "BBox is not valid";
+      continue;
+    }
 
     if (img_type == kPyramidImage) {
       auto pyramid_image =
           std::static_pointer_cast<PymImageFrame>(xstream_img->value);
+      uint8_t *nv12_data;
+      // 2. crop and resize Roi
+      CropPadAndResizeRoi(norm_box, pyramid_image,
+          &nv12_data, &resize_info, &scale);
+      padding_right =
+          resize_info.padding_right_ / resize_info.width_ratio_;
+      padding_right &= ~1;
+      padding_bottom =
+          resize_info.padding_bottom_ / resize_info.height_ratio_;
+      padding_bottom &= ~1;
 
-  #ifdef X2
-      src_img_height = pyramid_image->img.src_img.height;
-      src_img_width = pyramid_image->img.src_img.width;
-      target_pym_layer_height =
-        pyramid_image->img.down_scale[pyramid_layer_].height;
-      target_pym_layer_width =
-        pyramid_image->img.down_scale[pyramid_layer_].width;
-  #endif
+      src_img_height = resize_info.src_height_ + padding_bottom;
+      src_img_width = resize_info.src_width_ + padding_right;
 
-  #ifdef X3
-      src_img_height = pyramid_image->down_scale[0].height;
+      int img_len = src_img_width * src_img_height * 3 / 2;
+      RunModel(nv12_data, img_len, src_img_width,
+               src_img_height, BPU_TYPE_IMG_NV12_SEPARATE);
+      HobotXStreamFreeImage(nv12_data);
+    } else if (img_type == kCVImageFrame) {
+      // TODO(zhy)
+    } else {
+      HOBOT_CHECK(0) << "Do not support such img_type: " << img_type;
+    }
+    {
+      RUN_PROCESS_TIME_PROFILER("FasterRCNN SinglePerson PostProcess");
+      RUN_FPS_PROFILER("FasterRCNN SinglePerson PostProcess");
+
+      // Post process
+      FlushOutputTensor();
+      GetFrameOutput(src_img_width * scale, src_img_height * scale,
+                     frame_output, norm_box);
+    }
+  }
+}
+
+void FasterRCNNImp::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
+                                   std::vector<BaseDataPtr> &frame_output) {
+  if (is_crop_) {
+    RunSingleFrameWithinCrop(frame_input, frame_output);
+  } else {
+    // only one input slot -> PyramidImage or CVImage
+    HOBOT_CHECK(frame_input.size() == 1);
+    const auto frame_img_ = frame_input[0];
+
+    for (size_t out_index = 0; out_index < method_outs_.size(); ++out_index) {
+      frame_output.push_back(std::make_shared<xstream::BaseDataVector>());
+    }
+
+    auto xstream_img =
+        std::static_pointer_cast<XStreamData<ImageFramePtr>>(frame_img_);
+
+    std::string img_type = xstream_img->value->type;
+    LOGD << "image type: " << img_type << std::endl;
+
+    int ret = 0;
+
+    int src_img_width = 0;
+    int src_img_height = 0;
+    int target_pym_layer_width = 0;
+    int target_pym_layer_height = 0;
+
+    {
+      RUN_PROCESS_TIME_PROFILER("FasterRCNN RunModelFromPyramid");
+      RUN_FPS_PROFILER("FasterRCNN RunModelFromPyramid");
+
+      if (img_type == kPyramidImage) {
+        auto pyramid_image =
+            std::static_pointer_cast<PymImageFrame>(xstream_img->value);
+
+#ifdef X2
+        src_img_height = pyramid_image->img.src_img.height;
+        src_img_width = pyramid_image->img.src_img.width;
+        target_pym_layer_height =
+            pyramid_image->img.down_scale[pyramid_layer_].height;
+        target_pym_layer_width =
+            pyramid_image->img.down_scale[pyramid_layer_].width;
+#endif
+
+#ifdef X3
+        src_img_height = pyramid_image->down_scale[0].height;
       src_img_width = pyramid_image->down_scale[0].width;
       target_pym_layer_height =
         pyramid_image->down_scale[pyramid_layer_].height;
       target_pym_layer_width =
         pyramid_image->down_scale[pyramid_layer_].width;
-  #endif
+#endif
 
-      LOGD << "img_height: " << pyramid_image->Height()
-           << ", img_width: " << pyramid_image->Width()
-           << ", img_y length: " << pyramid_image->DataSize()
-           << ", img_uv length: " << pyramid_image->DataUVSize();
+        resize_input_width_ = target_pym_layer_width;
+        resize_input_height_ = target_pym_layer_height;
 
-      if (model_input_width_ != target_pym_layer_width ||
-          model_input_height_ != target_pym_layer_height) {
-        // get pym level 4 (960*540), then pad to 960*544
-        {
-          RUN_PROCESS_TIME_PROFILER("FasterRCNN PaddingImage");
-          uint8_t *pOutputImg = nullptr;
-          int output_img_size = 0;
-          int output_img_width = 0;
-          int output_img_height = 0;
-          int first_stride = 0;
-          int second_stride = 0;
+        LOGD << "img_height: " << pyramid_image->Height()
+             << ", img_width: " << pyramid_image->Width()
+             << ", img_y length: " << pyramid_image->DataSize()
+             << ", img_uv length: " << pyramid_image->DataUVSize();
+
+        if (model_input_width_ != target_pym_layer_width ||
+            model_input_height_ != target_pym_layer_height) {
+          // get pym level 4 (960*540), then pad to 960*544
+          {
+            RUN_PROCESS_TIME_PROFILER("FasterRCNN PaddingImage");
+            uint8_t *pOutputImg = nullptr;
+            int output_img_size = 0;
+            int output_img_width = 0;
+            int output_img_height = 0;
+            int first_stride = 0;
+            int second_stride = 0;
 #ifdef X2
-          auto input_img = pyramid_image->img.down_scale[pyramid_layer_];
-          int y_size = input_img.height * input_img.step;
-          int uv_size = y_size >> 1;
-          const uint8_t *input_nv12_data[3] =
-            {reinterpret_cast<uint8_t *>(input_img.y_vaddr),
-             reinterpret_cast<uint8_t *>(input_img.c_vaddr), nullptr};
-          const int input_nv12_size[3] = {y_size, uv_size, 0};
-          ret = HobotXStreamCropYuvImageWithPaddingBlack(
-            input_nv12_data, input_nv12_size, input_img.width, input_img.height,
-            input_img.step, input_img.step, IMAGE_TOOLS_RAW_YUV_NV12,
-            0, 0, model_input_width_ - 1, model_input_height_ - 1,
-            &pOutputImg, &output_img_size,
-            &output_img_width, &output_img_height,
-            &first_stride, &second_stride);
+            auto input_img = pyramid_image->img.down_scale[pyramid_layer_];
+            int y_size = input_img.height * input_img.step;
+            int uv_size = y_size >> 1;
+            const uint8_t *input_nv12_data[3] =
+                {reinterpret_cast<uint8_t *>(input_img.y_vaddr),
+                 reinterpret_cast<uint8_t *>(input_img.c_vaddr), nullptr};
+            const int input_nv12_size[3] = {y_size, uv_size, 0};
+            ret = HobotXStreamCropYuvImageWithPaddingBlack(
+                input_nv12_data, input_nv12_size,
+                input_img.width, input_img.height,
+                input_img.step, input_img.step, IMAGE_TOOLS_RAW_YUV_NV12,
+                0, 0, model_input_width_ - 1, model_input_height_ - 1,
+                &pOutputImg, &output_img_size,
+                &output_img_width, &output_img_height,
+                &first_stride, &second_stride);
 #endif
 
 #ifdef X3
-          auto input_img = pyramid_image->down_scale[pyramid_layer_];
+            auto input_img = pyramid_image->down_scale[pyramid_layer_];
           int y_size = input_img.height * input_img.stride;
           int uv_size = y_size >> 1;
           const uint8_t *input_nv12_data[3] =
@@ -358,94 +452,102 @@ void FasterRCNNImp::RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
             &output_img_width, &output_img_height,
             &first_stride, &second_stride);
 #endif
-          if (ret < 0) {
-            LOGE << "fail to crop image";
-            free(pOutputImg);
-            return;
-          }
-          HOBOT_CHECK(output_img_width == model_input_width_)
+            if (ret < 0) {
+              LOGE << "fail to crop image";
+              free(pOutputImg);
+              return;
+            }
+            HOBOT_CHECK(output_img_width == model_input_width_)
             << "cropped image width "<< output_img_width
             << " not equals to model input width " << model_input_width_;
-          HOBOT_CHECK(output_img_height == model_input_height_)
+            HOBOT_CHECK(output_img_height == model_input_height_)
             << "cropped image height " << output_img_height
             << " not equals to model input height " << model_input_height_;
-          int img_len = model_input_width_ * model_input_height_ * 3 / 2;
+            int img_len = model_input_width_ * model_input_height_ * 3 / 2;
+            LOGD << "Begin call RunModel";
+            ret = RunModel(pOutputImg, img_len, BPU_TYPE_IMG_NV12_SEPARATE);
+            if (ret != 0) {
+              LOGE << "Run model failed: " << HB_BPU_getErrorName(ret);
+              HobotXStreamFreeImage(pOutputImg);
+              return;
+            }
+            HobotXStreamFreeImage(pOutputImg);
+          }
+        } else {
           LOGD << "Begin call RunModel";
-          ret = RunModel(pOutputImg, img_len, BPU_TYPE_IMG_NV12_SEPARATE);
+          ret = RunModelFromPym(pyramid_image.get(), pyramid_layer_,
+                                BPU_TYPE_IMG_NV12_SEPARATE);
           if (ret != 0) {
             LOGE << "Run model failed: " << HB_BPU_getErrorName(ret);
-            HobotXStreamFreeImage(pOutputImg);
+            // ReleaseOutputTensor();
             return;
           }
-          HobotXStreamFreeImage(pOutputImg);
         }
-      } else {
+      } else if (img_type == kCVImageFrame) {
+        auto cv_image =
+            std::static_pointer_cast<CVImageFrame>(xstream_img->value);
+
+        HOBOT_CHECK(cv_image->pixel_format ==
+            HorizonVisionPixelFormat::kHorizonVisionPixelFormatRawBGR);
+
+        src_img_height = cv_image->Height();
+        src_img_width = cv_image->Width();
+        LOGD << "image height: " << src_img_height
+             << "width: " << src_img_width;
+
+        auto img_mat = cv_image->img;
+        cv::Mat resized_mat = img_mat;
+        if (src_img_height != model_input_height_ &&
+            src_img_width != model_input_width_) {
+          LOGD << "need resize.";
+          cv::resize(img_mat, resized_mat,
+                     cv::Size(model_input_width_, model_input_height_));
+        }
+
+        resize_input_width_ = model_input_width_;
+        resize_input_height_ = model_input_height_;
+
+        cv::Mat img_nv12;
+        uint8_t *bgr_data = resized_mat.ptr<uint8_t>();
+        bgr_to_nv12(bgr_data, model_input_height_, model_input_width_,
+            img_nv12);
+        uint8_t *nv12_data = img_nv12.ptr<uint8_t>();
+
+        int img_len = model_input_width_ * model_input_height_ * 3 / 2;
+        LOGD << "nv12 img_len: " << img_len;
+
         LOGD << "Begin call RunModel";
-        ret = RunModelFromPym(pyramid_image.get(), pyramid_layer_,
-                        BPU_TYPE_IMG_NV12_SEPARATE);
+        ret = RunModel(nv12_data, img_len, BPU_TYPE_IMG_NV12_SEPARATE);
         if (ret != 0) {
           LOGE << "Run model failed: " << HB_BPU_getErrorName(ret);
           // ReleaseOutputTensor();
           return;
         }
+      } else {
+        HOBOT_CHECK(0) << "Not support this input type: " << img_type;
       }
-    } else if (img_type == kCVImageFrame) {
-      auto cv_image =
-          std::static_pointer_cast<CVImageFrame>(xstream_img->value);
-
-      HOBOT_CHECK(cv_image->pixel_format ==
-                  HorizonVisionPixelFormat::kHorizonVisionPixelFormatRawBGR);
-
-      src_img_height = cv_image->Height();
-      src_img_width = cv_image->Width();
-      LOGD << "image height: " << src_img_height << "width: " << src_img_width;
-
-      auto img_mat = cv_image->img;
-      cv::Mat resized_mat = img_mat;
-      if (src_img_height != model_input_height_ &&
-          src_img_width != model_input_width_) {
-        LOGD << "need resize.";
-        cv::resize(img_mat, resized_mat,
-                   cv::Size(model_input_width_, model_input_height_));
-      }
-
-      cv::Mat img_nv12;
-      uint8_t *bgr_data = resized_mat.ptr<uint8_t>();
-      bgr_to_nv12(bgr_data, model_input_height_, model_input_width_, img_nv12);
-      uint8_t *nv12_data = img_nv12.ptr<uint8_t>();
-
-      int img_len = model_input_width_ * model_input_height_ * 3 / 2;
-      LOGD << "nv12 img_len: " << img_len;
-
-      LOGD << "Begin call RunModel";
-      ret = RunModel(nv12_data, img_len, BPU_TYPE_IMG_NV12_SEPARATE);
-      if (ret != 0) {
-        LOGE << "Run model failed: " << HB_BPU_getErrorName(ret);
-        // ReleaseOutputTensor();
-        return;
-      }
-    } else {
-      HOBOT_CHECK(0) << "Not support this input type: " << img_type;
     }
+
+    RUN_PROCESS_TIME_PROFILER("FasterRCNN PostProcess");
+    RUN_FPS_PROFILER("FasterRCNN PostProcess");
+
+    // Post process
+    FlushOutputTensor();
+    GetFrameOutput(src_img_width, src_img_height, frame_output);
+
+    // release output tensor
+    // ReleaseOutputTensor();
   }
-
-  RUN_PROCESS_TIME_PROFILER("FasterRCNN PostProcess");
-  RUN_FPS_PROFILER("FasterRCNN PostProcess");
-
-  // Post process
-  FlushOutputTensor();
-  GetFrameOutput(src_img_width, src_img_height, frame_output);
-
-  // release output tensor
-  // ReleaseOutputTensor();
 }
 
 void FasterRCNNImp::GetFrameOutput(int src_img_width, int src_img_height,
-                                   std::vector<BaseDataPtr> &frame_output) {
+                                   std::vector<BaseDataPtr> &frame_output,
+                                   BBox *bbox) {
   FasterRCNNOutMsg det_result;
   PostProcess(det_result);
   CoordinateTransform(det_result, src_img_width, src_img_height,
-                      model_input_width_, model_input_height_);
+                      resize_input_width_, resize_input_height_,
+                      bbox);
   for (auto &boxes : det_result.boxes) {
     LOGD << boxes.first << ", num: " << boxes.second.size();
     for (auto &box : boxes.second) {
@@ -587,9 +689,20 @@ void FasterRCNNImp::GetFrameOutput(int src_img_width, int src_img_height,
     }
   }
 
+//  for (size_t out_index = 0; out_index < method_outs_.size(); ++out_index) {
+//    if (xstream_det_result[method_outs_[out_index]]) {
+//      frame_output[out_index] = xstream_det_result[method_outs_[out_index]];
+//    }
+//  }
+
   for (size_t out_index = 0; out_index < method_outs_.size(); ++out_index) {
     if (xstream_det_result[method_outs_[out_index]]) {
-      frame_output[out_index] = xstream_det_result[method_outs_[out_index]];
+      auto frame_out_slot = std::static_pointer_cast<
+          xstream::BaseDataVector>(frame_output[out_index]);
+      auto det_result_slot = xstream_det_result[method_outs_[out_index]];
+      frame_out_slot->datas_.insert(frame_out_slot->datas_.end(),
+                                    det_result_slot->datas_.begin(),
+                                    det_result_slot->datas_.end());
     }
   }
 }
@@ -781,18 +894,20 @@ void FasterRCNNImp::GetKps(std::vector<Landmarks> &kpss,
       }
 
       float max_score =
-          GetFloatByInt(max_score_before_shift, kps_shift_);
+          GetFloatByInt(max_score_before_shift, kps_shifts_[kps_id]);
 
       // get delta
       mxnet_out_for_one_point =
           mxnet_out_for_one_point_begin + max_h * h_stride + max_w * w_stride;
       const auto x_delta =
           mxnet_out_for_one_point[2 * kps_id + kps_points_number_];
-      float fp_delta_x = GetFloatByInt(x_delta, kps_shift_) * pos_distance;
+      const auto x_shift = kps_shifts_[2 * kps_id + kps_points_number_];
+      float fp_delta_x = GetFloatByInt(x_delta, x_shift) * pos_distance;
 
       const auto y_delta =
           mxnet_out_for_one_point[2 * kps_id + kps_points_number_ + 1];
-      float fp_delta_y = GetFloatByInt(y_delta, kps_shift_) * pos_distance;
+      const auto y_shift = kps_shifts_[2 * kps_id + kps_points_number_ + 1];
+      float fp_delta_y = GetFloatByInt(y_delta, y_shift) * pos_distance;
 
       Point point;
       point.x =
@@ -1002,10 +1117,12 @@ void FasterRCNNImp::GetLMKS(
           lmk_feature_begin + max_h * h_stride + max_w * w_stride;
       const auto x_delta =
           mxnet_out_for_one_point[2 * lmk_id + lmk_points_number_];
-      float fp_delta_x = GetFloatByInt(x_delta, kps_shift_) * pos_distance;
+      const auto x_shift = kps_shifts_[2 * lmk_id + lmk_points_number_];
+      float fp_delta_x = GetFloatByInt(x_delta, x_shift) * pos_distance;
       const auto y_delta =
           mxnet_out_for_one_point[2 * lmk_id + lmk_points_number_ + 1];
-      float fp_delta_y = GetFloatByInt(y_delta, kps_shift_) * pos_distance;
+      const auto y_shift = kps_shifts_[2 * lmk_id + lmk_points_number_ + 1];
+      float fp_delta_y = GetFloatByInt(y_delta, y_shift) * pos_distance;
 
       Point point;
       point.x =
@@ -1230,6 +1347,55 @@ void FasterRCNNImp::GetPlateRow(
   }
 }
 
+int FasterRCNNImp::RunModel(
+    uint8_t *img_data, int data_length,
+    int image_width, int image_height,
+    BPU_DATA_TYPE_E data_type) {
+  {
+    RUN_PROCESS_TIME_PROFILER("Run FasterRCNNImp PrepareInputTensor");
+    RUN_FPS_PROFILER("Run FasterRCNNImp PrepareInputTensor");
+    // 1. prepare input
+    PrepareInputTensor(img_data, data_length,
+                       image_width, image_height, data_type);
+  }
+
+  // 2. prepare output tensor
+  PrepareOutputTensor();
+
+  // 3. run
+  BPU_RUN_CTRL_S run_ctrl_s;
+  run_ctrl_s.core_id = core_id_;
+  run_ctrl_s.resize_type = 1;
+  BPU_TASK_HANDLE task_handle;
+  int ret = 0;
+  {
+    RUN_PROCESS_TIME_PROFILER("Run FasterRCNNImp HB_BPU_runModel");
+    RUN_FPS_PROFILER("Run FasterRCNNImp HB_BPU_runModel");
+    ret = HB_BPU_runModel(bpu_model_,
+                              input_tensors_.data(),
+                              bpu_model_->input_num,
+                              output_tensors_.data(),
+                              bpu_model_->output_num,
+                              &run_ctrl_s,
+                              true,
+                              &task_handle);
+  }
+
+  if (ret != 0) {
+    LOGE << "bpu run model failed, " << HB_BPU_getErrorName(ret);
+    // release input
+    ReleaseInputTensor(input_tensors_);
+    return ret;
+  }
+  {
+    RUN_PROCESS_TIME_PROFILER("Run FasterRCNNImp HB_BPU_waitModelDone");
+    RUN_FPS_PROFILER("Run FasterRCNNImp HB_BPU_waitModelDone");
+  }
+  // 4. release input
+  ReleaseInputTensor(input_tensors_);
+  return 0;
+}
+
 int FasterRCNNImp::RunModel(uint8_t *img_data,
                             int data_length,
                             BPU_DATA_TYPE_E data_type) {
@@ -1249,22 +1415,17 @@ int FasterRCNNImp::RunModel(uint8_t *img_data,
                             output_tensors_.data(),
                             bpu_model_->output_num,
                             &run_ctrl_s,
-                            false,
+                            true,
                             &task_handle);
 
   if (ret != 0) {
     LOGE << "bpu run model failed, " << HB_BPU_getErrorName(ret);
     // release input
     ReleaseInputTensor(input_tensors_);
-    // release task_handle
-    HB_BPU_releaseTask(&task_handle);
     return ret;
   }
-  HB_BPU_waitModelDone(&task_handle);
   // 4. release input
   ReleaseInputTensor(input_tensors_);
-  // 5. release BPU_TASK_HANDLE
-  HB_BPU_releaseTask(&task_handle);
   return 0;
 }
 
@@ -1382,23 +1543,18 @@ int FasterRCNNImp::RunModelFromPym(void* pyramid,
                             output_tensors_.data(),
                             bpu_model_->output_num,
                             &run_ctrl_s,
-                            false,
+                            true,
                             &task_handle);
   if (ret != 0) {
     LOGE << "bpu run model failed, " << HB_BPU_getErrorName(ret);
 #ifdef X2
     ReleaseInputTensor(input_tensors_);
 #endif
-    // release task_handle
-    HB_BPU_releaseTask(&task_handle);
     return ret;
   }
-  HB_BPU_waitModelDone(&task_handle);
 #ifdef X2
     ReleaseInputTensor(input_tensors_);
 #endif
-  // 5. release BPU_TASK_HANDLE
-  HB_BPU_releaseTask(&task_handle);
   return 0;
 }
 
@@ -1481,6 +1637,83 @@ void FasterRCNNImp::PrepareInputTensor(uint8_t *img_data,
     }
   }
 }
+
+int FasterRCNNImp::PrepareInputTensor(
+    uint8_t *img_data, int data_length,
+    int image_width, int image_height,
+    BPU_DATA_TYPE_E data_type) {
+  input_tensors_.resize(bpu_model_->input_num);
+  for (int i = 0; i < bpu_model_->input_num; i++) {
+    BPU_TENSOR_S &tensor = input_tensors_.at(i);
+    BPU_MODEL_NODE_S &node = bpu_model_->inputs[i];
+    tensor.data_type = data_type;
+    tensor.data_shape.layout = node.shape.layout;
+    tensor.aligned_shape.layout = node.shape.layout;
+
+    LOGD << "node data_type: " << node.data_type;
+
+    int h_idx, w_idx, c_idx;
+    HB_BPU_getHWCIndex(tensor.data_type,
+                       &tensor.data_shape.layout,
+                       &h_idx, &w_idx, &c_idx);
+
+    tensor.data_shape.ndim = 4;
+    tensor.data_shape.d[0] = 1;
+    tensor.data_shape.d[h_idx] = image_height;
+    tensor.data_shape.d[w_idx] = image_width;
+    tensor.data_shape.d[c_idx] = node.shape.d[c_idx];
+    tensor.aligned_shape.ndim = 4;
+    tensor.aligned_shape.d[0] = 1;
+    tensor.aligned_shape.d[h_idx] = image_height;
+    tensor.aligned_shape.d[w_idx] = (image_width + 15) & ~15;
+    tensor.aligned_shape.d[c_idx] = node.aligned_shape.d[c_idx];
+    LOGD << "input_tensor.data_shape.d[0]: " << tensor.data_shape.d[0] << ", "
+         << "input_tensor.data_shape.d[1]: " << tensor.data_shape.d[1] << ", "
+         << "input_tensor.data_shape.d[2]: " << tensor.data_shape.d[2] << ", "
+         << "input_tensor.data_shape.d[3]: " << tensor.data_shape.d[3] << ", "
+         << "input_tensor.data_shape.layout: " << tensor.data_shape.layout;
+
+    int image_channel = tensor.data_shape.d[c_idx];
+    int stride = tensor.aligned_shape.d[w_idx];
+    LOGD << "image_height: " << image_height << ", "
+         << "image_width: " << image_width << ", "
+         << "image channel: " << image_channel << ", "
+         << "stride: " << stride;
+
+    switch (data_type) {
+      case BPU_TYPE_IMG_NV12_SEPARATE: {
+        int y_length = image_height * stride;
+        int uv_length = image_height * stride / 2;
+        HB_SYS_bpuMemAlloc("in_data0", y_length, true, &tensor.data);
+        HB_SYS_bpuMemAlloc("in_data1", uv_length, true, &tensor.data_ext);
+        // Copy y data to data0
+        uint8_t *y = reinterpret_cast<uint8_t *>(tensor.data.virAddr);
+        for (int h = 0; h < image_height; ++h) {
+          auto *raw = y + h * stride;
+          memcpy(raw, img_data, image_width);
+          img_data += image_width;
+        }
+        HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
+
+        // Copy uv data to data_ext
+        uint8_t *uv = reinterpret_cast<uint8_t *>(tensor.data_ext.virAddr);
+        int uv_height = image_height / 2;
+        for (int i = 0; i < uv_height; ++i) {
+          auto *raw = uv + i * stride;
+          memcpy(raw, img_data, image_width);
+          img_data += image_width;
+        }
+        HB_SYS_flushMemCache(&tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
+        break;
+      }
+      default:
+        HOBOT_CHECK(0) << "unsupport data_type: " << data_type;
+        break;
+    }
+  }
+  return 0;
+}
+
 void FasterRCNNImp::FlushOutputTensor() {
   if (!output_tensors_alloced_) {
     return;
@@ -1564,6 +1797,206 @@ void FasterRCNNImp::Finalize() {
     // release model
     HB_BPU_releaseModel(bpu_model_);
   }
+}
+
+int FasterRCNNImp::CropPadAndResizeRoi(
+    hobot::vision::BBox *norm_box,
+    uint8_t *pym_src_y_data, uint8_t *pym_src_uv_data,
+    int pym_src_w, int pym_src_h,
+    int pym_src_y_size, int pym_src_uv_size,
+    int pym_src_y_stride, int pym_src_uv_stride,
+    uint8_t **img_data, HobotXStreamImageToolsResizeInfo *resize_info) {
+
+  uint8_t *pym_dst_data = nullptr;
+  int pym_dst_size, pym_dst_w, pym_dst_h, pym_dst_y_stride, pym_dst_uv_stride;
+  const uint8_t *input_yuv_data[3] = {pym_src_y_data,
+                                      pym_src_uv_data,
+                                      nullptr};
+  const int input_yuv_size[3] = {pym_src_y_size, pym_src_uv_size, 0};
+
+  int ret = 0;
+  {
+    RUN_PROCESS_TIME_PROFILER("Run FasterRCNNImp CropYUVImage");
+    RUN_FPS_PROFILER("Run FasterRCNNImp CropYUVImage");
+
+    if (norm_box->x2 > pym_src_w) {
+      LOGD << "norm_box:" << *norm_box;
+      LOGD << "pym_src_w:" << pym_src_w << "  pym_src_h:" << pym_src_h;
+      norm_box->x2 = pym_src_w;
+    }
+    if (norm_box->y2 > pym_src_h) {
+      LOGD << "norm_box:" << *norm_box;
+      LOGD << "pym_src_w:" << pym_src_w << "  pym_src_h:" << pym_src_h;
+      norm_box->y2 = pym_src_h;
+    }
+
+    ret = HobotXStreamCropYUVImage(
+        input_yuv_data, input_yuv_size, pym_src_w, pym_src_h, pym_src_y_stride,
+        pym_src_uv_stride, IMAGE_TOOLS_RAW_YUV_NV12, norm_box->x1, norm_box->y1,
+        norm_box->x2 - 1, norm_box->y2 - 1, &pym_dst_data, &pym_dst_size,
+        &pym_dst_w, &pym_dst_h, &pym_dst_y_stride, &pym_dst_uv_stride);
+    HOBOT_CHECK(ret == 0)
+    << "crop img failed"
+    << ", pym_src_y_size:" << pym_src_y_size << ", pym_src_w:" << pym_src_w
+    << ", pym_src_h:" << pym_src_h << ", pym_src_y_stride:" << pym_src_y_stride
+    << ", pym_src_uv_stride:" << pym_src_uv_stride;
+  }
+  pym_src_y_data = pym_dst_data;
+  pym_src_y_size = pym_dst_size;
+  pym_src_uv_data = nullptr;
+  pym_src_uv_size = 0;
+  pym_src_w = pym_dst_w;
+  pym_src_h = pym_dst_h;
+  pym_src_y_stride = pym_dst_y_stride;
+  pym_src_uv_stride = pym_dst_uv_stride;
+
+  RUN_PROCESS_TIME_PROFILER("Run FasterRCNNImp PadYUVImage");
+  RUN_FPS_PROFILER("Run FasterRCNNImp PadYUVImage");
+  resize_info->src_height_ = pym_dst_h;
+  resize_info->src_width_ = pym_dst_w;
+  CalcResizeInfo(resize_info);
+  const uint8_t padding_value[3] = {0, 128, 128};
+
+  int padding_right =
+      resize_info->padding_right_ / resize_info->width_ratio_;
+  padding_right &= ~1;
+  int padding_bottom =
+      resize_info->padding_bottom_ / resize_info->height_ratio_;
+  padding_bottom &= ~1;
+
+  ret = HobotXStreamPadImage(
+      pym_src_y_data, pym_src_y_size,
+      pym_src_w, pym_src_h,
+      pym_src_y_stride, pym_src_uv_stride,
+      IMAGE_TOOLS_RAW_YUV_NV12,
+      0, padding_right, 0, padding_bottom,
+      padding_value,
+      &pym_dst_data, &pym_dst_size,
+      &pym_dst_w, &pym_dst_h,
+      &pym_dst_y_stride, &pym_dst_uv_stride);
+
+
+//  static uint32_t id = 0;
+//  std::string output_file_path = std::to_string(id++) + ".yuv";
+//  std::ofstream outfile(output_file_path, std::ios::out | std::ios::binary);
+//  outfile.write(reinterpret_cast<const char *>(pym_dst_data), pym_dst_size);
+//  outfile.close();
+
+  //  free the crop image
+  HobotXStreamFreeImage(pym_src_y_data);
+  HOBOT_CHECK(ret == 0)
+  << "resize img failed, ret: " << ret
+  << ", pym_src_y_size:" << pym_src_y_size << ", pym_src_w:" << pym_src_w
+  << ", pym_src_h:" << pym_src_h << ", pym_src_y_stride:" << pym_src_y_stride
+  << ", pym_src_uv_stride:" << pym_src_uv_stride;
+
+  *img_data = pym_dst_data;
+  return 0;
+}
+
+void FasterRCNNImp::CalcResizeInfo(
+    HobotXStreamImageToolsResizeInfo *resize_info) {
+  resize_info->dst_width_ = model_input_width_;
+  resize_info->dst_height_ = model_input_height_;
+  float width_ratio = static_cast<float>(model_input_width_)
+      / resize_info->src_width_;
+  float height_ratio = static_cast<float>(model_input_height_)
+      / resize_info->src_height_;
+
+  // fix_aspect_ratio
+  float ratio = width_ratio;
+  if (ratio > height_ratio) {
+    ratio = height_ratio;
+  }
+  resize_info->padding_right_ = model_input_width_ / ratio
+      - resize_info->src_width_;
+  resize_info->padding_bottom_ = model_input_height_ / ratio
+      - resize_info->src_height_;
+  resize_info->width_ratio_ = 1;
+  resize_info->height_ratio_ = 1;
+}
+
+int FasterRCNNImp::GetPymScaleInfo(
+    const std::shared_ptr<hobot::vision::PymImageFrame>& pyramid,
+    hobot::vision::BBox *norm_box,
+    uint8_t* &pym_src_y_data, uint8_t* &pym_src_uv_data,
+    int &pym_src_w, int &pym_src_h,
+    int &pym_src_y_size, int &pym_src_uv_size,
+    int &pym_src_y_stride, int &pym_src_uv_stride, float &scale) {
+  auto box_width = norm_box->Width();
+  auto box_height = norm_box->Height();
+  auto min_cost_scale = 1, minareadiff = INT_MAX;
+  int target_area = model_input_width_ * model_input_height_;
+  int box_area =  box_height * box_width;
+  for (int i = min_cost_scale; i <= 3; i++) {
+    int areadiff = std::abs(box_area - target_area);
+    if (minareadiff > areadiff) {
+      minareadiff = areadiff;
+      min_cost_scale = i;
+    }
+    box_area >>= 2;
+  }
+  int pyramid_scale = 1 << (min_cost_scale - 1);
+  pyramid_scale = (pyramid_scale == 1 ? 0 : pyramid_scale) * 2;
+  assert(pyramid_scale >= 0 && pyramid_scale < DOWN_SCALE_MAX);
+#ifdef X2
+  auto &pyramid_down_scale = pyramid->img.down_scale[pyramid_scale];
+  pym_src_y_stride = pyramid_down_scale.step;
+  pym_src_uv_stride = pyramid_down_scale.step;
+  #endif
+
+#ifdef X3
+  auto &pyramid_down_scale = pyramid->down_scale[pyramid_scale];
+  pym_src_y_stride = pyramid_down_scale.stride;
+  pym_src_uv_stride = pyramid_down_scale.stride;
+  #endif
+
+  pym_src_y_data = reinterpret_cast<uint8_t *>(
+      pyramid_down_scale.y_vaddr);
+  pym_src_uv_data = reinterpret_cast<uint8_t *>(
+      pyramid_down_scale.c_vaddr);
+
+  pym_src_w = pyramid_down_scale.width;
+  pym_src_h = pyramid_down_scale.height;
+
+  pym_src_y_size = pym_src_y_stride * pym_src_h;
+  pym_src_uv_size = pym_src_uv_stride * pym_src_h / 2;
+
+  scale = 1 << (min_cost_scale - 1);
+  return 0;
+}
+
+int FasterRCNNImp::CropPadAndResizeRoi(
+    hobot::vision::BBox *norm_box,
+    const std::shared_ptr<hobot::vision::PymImageFrame>& pyramid,
+    uint8_t **img_data, HobotXStreamImageToolsResizeInfo *resize_info,
+    float *scale) {
+  int ret;
+  uint8_t *pym_src_y_data , *pym_src_uv_data;
+  int pym_src_w, pym_src_h;
+  int pym_src_y_size, pym_src_uv_size;
+
+  int pym_src_y_stride, pym_src_uv_stride;
+
+  GetPymScaleInfo(
+      pyramid, norm_box,
+      pym_src_y_data, pym_src_uv_data,
+      pym_src_w, pym_src_h,
+      pym_src_y_size, pym_src_uv_size,
+      pym_src_y_stride, pym_src_uv_stride, *scale);
+
+  auto scale_box = *norm_box;
+  scale_box.x1 /= *scale, scale_box.x2 /= *scale;
+  scale_box.y1 /= *scale, scale_box.y2 /= *scale;
+
+  ret = CropPadAndResizeRoi(
+      &scale_box,
+      pym_src_y_data, pym_src_uv_data,
+      pym_src_w, pym_src_h,
+      pym_src_y_size, pym_src_uv_size,
+      pym_src_y_stride, pym_src_uv_stride,
+      img_data, resize_info);
+  return ret;
 }
 
 }  // namespace faster_rcnn_method

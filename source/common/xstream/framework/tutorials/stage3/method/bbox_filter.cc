@@ -70,39 +70,34 @@ InputParamPtr BBoxFilter::GetParameter() const {
   return param;
 }
 
-std::vector<std::vector<BaseDataPtr>> BBoxFilter::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> output;
+std::vector<BaseDataPtr> BBoxFilter::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
+  std::vector<BaseDataPtr> output;
   output.resize(input.size());
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    out_batch_i.resize(in_batch_i.size());
-    for (size_t j = 0; j < in_batch_i.size(); ++j) {
-      auto in_rects = std::static_pointer_cast<BaseDataVector>(in_batch_i[j]);
-      assert("BaseDataVector" == in_rects->type_);
-      auto out_rects = std::make_shared<BaseDataVector>();
-      out_batch_i[j] = std::static_pointer_cast<BaseData>(out_rects);
-      for (auto &in_rect : in_rects->datas_) {
-        auto bbox = std::static_pointer_cast<xstream::BBox>(in_rect);
-        // BBoxFilter_A and BBoxFilter_B using the same input
-        // copy input data in case one method affects the other
-        auto out_rect = BaseDataPtr(new xstream::BBox(bbox->x1, bbox->y1,
-                                                      bbox->x2, bbox->y2));
-        out_rect->type_ = bbox->type_;
-        // skip filtered data
-        if (in_rect->state_ == DataState::FILTERED) {
-          out_rects->datas_.push_back(out_rect);
-          continue;
-        }
-        assert("BBox" == out_rect->type_);
-        if (bbox->Width() * bbox->Height() > area_threshold_) {
-          out_rects->datas_.push_back(out_rect);
-        } else {
-          out_rect->state_ = DataState::FILTERED;
-          out_rects->datas_.push_back(out_rect);
-        }
+  for (size_t j = 0; j < input.size(); ++j) {
+    auto in_rects = std::static_pointer_cast<BaseDataVector>(input[j]);
+    assert("BaseDataVector" == in_rects->type_);
+    auto out_rects = std::make_shared<BaseDataVector>();
+    output[j] = std::static_pointer_cast<BaseData>(out_rects);
+    for (auto &in_rect : in_rects->datas_) {
+      auto bbox = std::static_pointer_cast<xstream::BBox>(in_rect);
+      // BBoxFilter_A and BBoxFilter_B using the same input
+      // copy input data in case one method affects the other
+      auto out_rect = BaseDataPtr(
+          new xstream::BBox(bbox->x1, bbox->y1, bbox->x2, bbox->y2));
+      out_rect->type_ = bbox->type_;
+      // skip filtered data
+      if (in_rect->state_ == DataState::FILTERED) {
+        out_rects->datas_.push_back(out_rect);
+        continue;
+      }
+      assert("BBox" == out_rect->type_);
+      if (bbox->Width() * bbox->Height() > area_threshold_) {
+        out_rects->datas_.push_back(out_rect);
+      } else {
+        out_rect->state_ = DataState::FILTERED;
+        out_rects->datas_.push_back(out_rect);
       }
     }
   }

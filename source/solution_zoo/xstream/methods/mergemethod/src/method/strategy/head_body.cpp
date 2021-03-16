@@ -19,7 +19,7 @@ namespace xstream {
 int HeadBodyParam::UpdateParameter(const JsonReaderPtr &reader) {
   LOGD << "HeadBodyParam update config: " << this;
   auto ret = MergeParam::UpdateParameter(reader);
-  if (ret != kHorizonVisionSuccess) {
+  if (ret != 0) {
     return ret;
   } else {
     SET_SNAPSHOT_METHOD_PARAM(reader->GetRawJson(), Bool, use_kps);
@@ -35,7 +35,7 @@ int HeadBodyParam::UpdateParameter(const JsonReaderPtr &reader) {
     LOGD << "conflict_threshold: " << conflict_threshold;
     LOGD << "valid_kps_score_thresh: " << valid_kps_score_thresh;
     LOGD << "head_extend_ratio: " << head_extend_ratio;
-    return kHorizonVisionSuccess;
+    return 0;
   }
 }
 
@@ -61,7 +61,7 @@ std::vector<BaseDataPtr> HeadBodyStrategy::ProcessFrame(
           content.c_str(), content.c_str() + content.size(), &out_jv, &error);
       auto reader = std::make_shared<JsonReader>(out_jv);
       ret = UpdateParameter(reader);
-      HOBOT_CHECK(ret == kHorizonVisionSuccess) << "param error";
+      HOBOT_CHECK(ret == 0) << "param error";
       RunSingleFrame(in, &out);
     }
   } else {
@@ -85,7 +85,7 @@ std::shared_ptr<HeadBodyParam> HeadBodyStrategy::GetConfig() {
 
 int HeadBodyStrategy::Init(std::shared_ptr<MergeParam> config) {
   merge_config_param_ = config;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 void HeadBodyStrategy::PassThroughSingleFrame(

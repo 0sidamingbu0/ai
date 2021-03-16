@@ -20,16 +20,14 @@
 namespace xstream {
 
 void FaceIdPostPredictor::Do(CNNMethodRunData *run_data) {
-  int batch_size = run_data->input_dim_size.size();
-  run_data->output.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    auto &input_data = (*(run_data->input))[batch_idx];
+  {
+    auto &input_data = (*(run_data->input));
     auto snaps = std::static_pointer_cast<BaseDataVector>(input_data[0]);
     auto person_num = snaps->datas_.size();
-    uint total_snap = run_data->input_dim_size[batch_idx];
-    auto &mxnet_output = run_data->mxnet_output[batch_idx];
+    uint total_snap = run_data->input_dim_size;
+    auto &mxnet_output = run_data->mxnet_output;
 
-    std::vector<BaseDataPtr> &batch_output = run_data->output[batch_idx];
+    std::vector<BaseDataPtr> &batch_output = run_data->output;
     batch_output.resize(output_slot_size_);
     for (int i = 0; i < output_slot_size_; i++) {
       auto base_data_vector = std::make_shared<BaseDataVector>();

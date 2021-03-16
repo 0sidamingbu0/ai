@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Python types &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/common/pybind11/docs/advanced/pycpp/object.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -191,11 +196,11 @@ library or available in the current Python environment (<code class="docutils li
 with these in C++.</p>
 <p>This example obtains a reference to the Python <code class="docutils literal notranslate"><span class="pre">Decimal</span></code> class.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Equivalent to &quot;from decimal import Decimal&quot;</span>
-<span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">Decimal</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;decimal&quot;</span><span class="p">).</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;Decimal&quot;</span><span class="p">);</span>
+<span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">Decimal</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;decimal&quot;</span><span class="p">).</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;Decimal&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Try to import scipy</span>
-<span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">scipy</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;scipy&quot;</span><span class="p">);</span>
+<span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">scipy</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;scipy&quot;</span><span class="p">);</span>
 <span class="k">return</span> <span class="n">scipy</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;__version__&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -209,7 +214,7 @@ via <code class="docutils literal notranslate"><span class="pre">operator()</spa
 </pre></div>
 </div>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Use Python to make our directories</span>
-<span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">os</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;os&quot;</span><span class="p">);</span>
+<span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">os</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;os&quot;</span><span class="p">);</span>
 <span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">makedirs</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;makedirs&quot;</span><span class="p">);</span>
 <span class="n">makedirs</span><span class="p">(</span><span class="s">&quot;/tmp/path/to/somewhere&quot;</span><span class="p">);</span>
 </pre></div>
@@ -284,8 +289,8 @@ other arguments:</p>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_pytypes.cpp</span></code> contains a complete
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_pytypes.cpp</span></code> contains a complete
 example that demonstrates passing native Python types in more detail. The
 file <code class="file docutils literal notranslate"><span class="pre">tests/test_callbacks.cpp</span></code> presents a few examples of calling
 Python functions from C++, including keywords arguments and unpacking.</p>
@@ -298,28 +303,25 @@ Python functions from C++, including keywords arguments and unpacking.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

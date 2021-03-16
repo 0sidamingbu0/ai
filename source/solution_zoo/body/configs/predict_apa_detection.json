@@ -1,0 +1,5 @@
+{
+    "predict_type": "cropdetect",
+    "model_file_path": "../../models/cropDetection.hbm",
+    "resize_type" : "bpu"
+}

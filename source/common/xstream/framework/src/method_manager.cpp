@@ -60,14 +60,24 @@ void MethodManager::Init(const Config &config,
     // TODO(SONGSHAN) :判断同一列表的thread_idx唯一
     for (uint i = 0; i < thread_list.size(); i++) {
       uint32_t thread_idx = thread_list[i].asUInt();
-      threads_.push_back(engine->CreateThread(thread_idx));
+      threads_.push_back(engine->CreateThread(
+          thread_idx,
+          "sdk_" + std::to_string(engine->id_) +
+          "_thread_" + std::to_string(thread_idx)));
     }
   } else {
     // no "thread_list", create auto-produce thread
     for (size_t i = 0; i < thread_count; i++) {
-      threads_.push_back(engine->CreateAutoThread());
+      threads_.push_back(engine->CreateAutoThread(
+          "sdk_" + std::to_string(engine->id_) + "_" +
+          unique_name_ + "_thread_" + std::to_string(i)));
     }
   }
+  // update profiler thread_id2idx_
+  for (auto thread : threads_) {
+    Profiler::thread_id2name_[thread->GetThreadId()] = thread->GetThreadName();
+  }
+
   // 根据配置计算method实例总数
   int32_t method_instance_count = 1;
   if (methodinfo.is_src_ctx_dept) {
@@ -252,11 +262,14 @@ bool MethodManager::IsNeedReorder() {
 
 int MethodManager::ProcessAsyncTask(
     const std::vector<std::vector<BaseDataPtr>> &inputs,
-    const std::vector<InputParamPtr> &params, ResultCallback methodCallback,
+    const std::vector<InputParamPtr> &params,
+    uint64_t sequence_id,
+    ResultCallback methodCallback,
     size_t source_id) {
   uint32_t method_key = GenMethodKey(inputs, params, source_id);
   // 创建线程池可以处理的函数对象
-  auto task = std::bind(&MethodManager::Process, this, inputs, params,
+  auto task = std::bind(&MethodManager::Process, this,
+                        inputs, params, sequence_id,
                         methodCallback, method_key, std::placeholders::_1);
   // 把task丢到method线程池队列
   thread_pool_->PostAsyncTask(task, &source_id);
@@ -297,6 +310,7 @@ uint32_t MethodManager::GenMethodKey(
 // 需要线程池支持指定thread停止，并且停止时执行一段传进来的代码
 void MethodManager::Process(const std::vector<std::vector<BaseDataPtr>> &inputs,
                             const std::vector<InputParamPtr> &params,
+                            uint64_t sequence_id,
                             ResultCallback method_callback, uint32_t method_key,
                             void *context) {
   auto c = static_cast<MethodManagerContext *>(context);
@@ -308,7 +322,7 @@ void MethodManager::Process(const std::vector<std::vector<BaseDataPtr>> &inputs,
 
   switch (c->state_) {
     case MethodManagerContextState::INITIALIZED: {
-      RUN_TIME_PROFILER_WITH_PROFILER(profiler_, unique_name_)
+      RUN_TIME_PROFILER_WITH_PROFILER(profiler_, unique_name_, sequence_id)
       std::vector<std::vector<BaseDataPtr>> res;
       ReadLockGuard guard(&lock_);
       res = method->DoProcess(inputs, params);

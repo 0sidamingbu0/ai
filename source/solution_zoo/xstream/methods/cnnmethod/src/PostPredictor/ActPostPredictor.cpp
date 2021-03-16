@@ -72,8 +72,11 @@ int32_t ActPostPredictor::Init(std::shared_ptr<CNNMethodConfig> config) {
         group = group.substr(sub_delimiter + 1, group.length() - sub_delimiter);
         sub_delimiter = group.find(",");
       }
-      int index = std::stoi(group);
-      vec.push_back(index);
+      // [] without number is placeholder
+      if (!group.empty()) {
+        int index = std::stoi(group);
+        vec.push_back(index);
+      }
       merge_groups_.push_back(vec);
       delimiter = groups_str_.find(";");
       vec.clear();
@@ -87,8 +90,10 @@ int32_t ActPostPredictor::Init(std::shared_ptr<CNNMethodConfig> config) {
         group = group.substr(sub_delimiter + 1, group.length() - sub_delimiter);
         sub_delimiter = group.find(",");
       }
-      int index = std::stoi(group);
-      vec.push_back(index);
+      if (!group.empty()) {
+        int index = std::stoi(group);
+        vec.push_back(index);
+      }
       merge_groups_.push_back(vec);
       vec.clear();
     }
@@ -134,18 +139,15 @@ int32_t ActPostPredictor::Init(std::shared_ptr<CNNMethodConfig> config) {
 }
 
 void ActPostPredictor::Do(CNNMethodRunData *run_data) {
-  int batch_size = run_data->input_dim_size.size();
-  run_data->output.resize(batch_size);
-
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    int dim_size = run_data->input_dim_size[batch_idx];
-    auto &input_data = (*(run_data->input))[batch_idx];
+  {
+    int dim_size = run_data->input_dim_size;
+    auto &input_data = (*(run_data->input));
     auto rois = std::static_pointer_cast<BaseDataVector>(input_data[0]);
     auto disappeared_track_ids =
         std::static_pointer_cast<BaseDataVector>(input_data[2]);
     auto timestamp = static_cast<float *>(run_data->context);
-    auto &mxnet_output = run_data->mxnet_output[batch_idx];
-    std::vector<BaseDataPtr> &batch_output = run_data->output[batch_idx];
+    auto &mxnet_output = run_data->mxnet_output;
+    std::vector<BaseDataPtr> &batch_output = run_data->output;
     batch_output.resize(output_slot_size_);
     for (int i = 0; i < output_slot_size_; i++) {
       auto base_data_vector = std::make_shared<BaseDataVector>();

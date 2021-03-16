@@ -63,7 +63,7 @@ int APAFullimgMultitaskPredictMethod::GetSrcImageSize(
 
 int APAFullimgMultitaskPredictMethod::PrepareInputData(
       const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
+      const InputParamPtr param,
       std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
       std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
   LOGD << "APAFullimgMultitaskPredictMethod PrepareInputData";

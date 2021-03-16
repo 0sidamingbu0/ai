@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>标志牌分类 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../../" src="../../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../../_sources/models/aidi-openapi/auto_sq/auto_matrix_development_toolkit/scripts/auto_matrix_algo/configs/2pe_traffic_sign_cls/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -160,17 +165,17 @@
   <div class="section" id="id1">
 <h1>标志牌分类<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <ol class="simple">
-<li><p>标志牌独立分支</p></li>
+<li>标志牌独立分支</li>
 </ol>
 <ul class="simple">
-<li><p>首先用大图进行检测，检测框作为分类模型输入，输入roi大小: 64x64</p></li>
-<li><p>输出55类分类结果</p></li>
+<li>首先用大图进行检测，检测框作为分类模型输入，输入roi大小: 64x64</li>
+<li>输出55类分类结果</li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h1>训练<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
 <ol class="simple">
-<li><p>pipeline test</p></li>
+<li>pipeline test</li>
 </ol>
 <p>用于检查环境，快速debug等</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash tools/quanti_training_2step_fusion_bn.sh <span class="se">\</span>
@@ -179,7 +184,7 @@
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>训练</p></li>
+<li>训练</li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash tools/quanti_training_2step_fusion_bn.sh <span class="se">\</span>
     --config configs/2pe_traffic_sign_cls/multitask.py <span class="se">\</span>
@@ -192,28 +197,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

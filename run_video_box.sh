@@ -59,6 +59,7 @@ solution_cfg_func() {
   cp -rf body_solution/configs/multitask_config_${resolution}M.json  body_solution/configs/multitask_config.json
   cp -rf body_solution/configs/multitask_with_hand_${resolution}M.json  body_solution/configs/multitask_with_hand.json
   cp -rf body_solution/configs/multitask_with_hand_960x544_${resolution}M.json  body_solution/configs/multitask_with_hand_960x544.json
+  cp -rf body_solution/configs/multitask_body_kps_config_${resolution}M.json  body_solution/configs/multitask_body_kps_config.json
   cp -rf body_solution/configs/segmentation_multitask_${resolution}M.json  body_solution/configs/segmentation_multitask.json
   cp -rf face_solution/configs/filter_config_${resolution}M.json face_solution/configs/filter_config.json
   cp -rf face_solution/configs/face_pose_lmk_${resolution}M.json face_solution/configs/face_pose_lmk.json
@@ -224,6 +225,7 @@ choose_x3_viotype_func() {
 
 choose_solution_func() {
   log_level="w" #(d/i/w/e)
+  sleep 3
   ./video_box/video_box ./video_box/configs/video_box_config.json ./video_box/configs/visualplugin_video_box.json ./video_box/configs/ware_config.json -${log_level} normal
 }
 

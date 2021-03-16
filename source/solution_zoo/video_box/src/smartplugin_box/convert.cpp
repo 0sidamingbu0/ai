@@ -43,14 +43,14 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
 #ifdef X2
       auto xstream_img = ImageFrameConversion(input->image_[image_index]);
       xstream_input_data = xstream::BaseDataPtr(xstream_img);
-      LOGI << "Input Frame ID = " << xstream_img->value->frame_id
+      LOGD << "Input Frame ID = " << xstream_img->value->frame_id
            << ", Timestamp = " << xstream_img->value->time_stamp;
 #endif
 
 #ifdef X3
       std::shared_ptr<hobot::vision::PymImageFrame> pym_img =
           input->image_[image_index];
-      LOGI << "vio message, frame_id = " << pym_img->frame_id;
+      LOGD << "vio message, frame_id = " << pym_img->frame_id;
       for (uint32_t i = 0; i < DOWN_SCALE_MAX; ++i) {
         LOGD << "vio message, pym_level_" << i
              << ", width=" << pym_img->down_scale[i].width
@@ -62,7 +62,7 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
       xstream_img->type_ = "ImageFrame";
       xstream_img->value =
           std::static_pointer_cast<hobot::vision::ImageFrame>(pym_img);
-      LOGI << "Input Frame ID = " << xstream_img->value->frame_id
+      LOGD << "Input Frame ID = " << xstream_img->value->frame_id
            << ", Timestamp = " << xstream_img->value->time_stamp;
       xstream_input_data = xstream::BaseDataPtr(xstream_img);
 #endif
@@ -80,7 +80,7 @@ xstream::InputDataPtr Convertor::ConvertInput(const VioMessage *input) {
     } else {
       xstream_input_data->name_ = "nir_image";
     }
-    LOGI << "input name:" << xstream_input_data->name_;
+    LOGD << "input name:" << xstream_input_data->name_;
     inputdata->datas_.emplace_back(xstream_input_data);
   }
 
@@ -200,7 +200,7 @@ Convertor::ParseXstreamOutputToVehicleInfo(
                       xstream::XStreamData<hobot::vision::BBox>>(
                       xstream_plate_boxes->datas_[plate_box_idx]);
               if (xstream_plate_box->value.id == track_id) {
-                LOGI << "find plate box " << track_id;
+                LOGD << "find plate box " << track_id;
                 vision::xproto::smartplugin::Plate &plate_info =
                         vehicle_info.plate_info;
                 plate_info.box.x1 = xstream_plate_box->value.x1;
@@ -629,7 +629,7 @@ void ParseBodySmartData(HorizonVisionSmartData *targets,
   int current_valid_idx = 0;
   for (size_t i = 0; i < body_boxs->datas_.size(); ++i) {
     if (!IsValidBaseData(body_boxs->datas_[i])) {
-      LOGI << "Has not body rects";
+      LOGD << "Has not body rects";
       continue;
     }
     HorizonVisionBodySmartData *body_data = nullptr;
@@ -833,7 +833,7 @@ HorizonVisionSmartFrame *Convertor::ConvertOutputToSmartFrame(
                                 ? face_disappeared_track_id_list->datas_.size()
                                 : 0;
   auto total_targets = face_target + body_target + disappeared_target;
-  LOGI << "Total target num = " << face_target << " + " << body_target << "+"
+  LOGD << "Total target num = " << face_target << " + " << body_target << "+"
        << disappeared_target;
   HorizonVisionSmartData *targets = nullptr;
   if (total_targets > 0) {
@@ -1105,7 +1105,7 @@ void ConvertCaptureInfo(SnapshotInfoXStreamBaseDataPtr one_capture,
 #endif
   feature_info.track_id_ = one_capture->track_id;
   if (one_feature) {
-    LOGI << "Convert Feature";
+    LOGD << "Convert Feature";
     feature_info.float_arrays_.emplace_back(
        CreateVisionFeature(one_feature));
 
@@ -1118,9 +1118,9 @@ void ConvertFaceCapture(const xstream::BaseDataVector *face_capture,
                         FeatureFrameMessage &feature_contents) {
   if (face_capture && face_feature) {
     auto capture_num = face_capture->datas_.size();
-    LOGI << "Capture target num is " << capture_num;
+    LOGD << "Capture target num is " << capture_num;
     auto feature_num = face_feature->datas_.size();
-    LOGI << "feature target num is " << feature_num;
+    LOGD << "feature target num is " << feature_num;
 
     HOBOT_CHECK(feature_num == capture_num)
         << "face feature target size = " << face_feature->datas_.size()
@@ -1164,7 +1164,7 @@ void ConvertFaceCapture(const xstream::BaseDataVector *face_capture,
       }
     }
   } else {
-    LOGI << "no capture or feature result";
+    LOGD << "no capture or feature result";
   }
   LOGD << "Convert Feature done";
 }

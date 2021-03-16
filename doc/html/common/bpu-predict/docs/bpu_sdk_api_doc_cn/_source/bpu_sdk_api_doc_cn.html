@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>1. BPU SDK API 文档 v1.25 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,18 +135,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
       <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li><span class="section-number">1. </span>BPU SDK API 文档 v1.25</li>
+      <li>1. BPU SDK API 文档 v1.25</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/common/bpu-predict/docs/bpu_sdk_api_doc_cn/_source/bpu_sdk_api_doc_cn.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -158,10 +163,10 @@
            <div itemprop="articleBody">
             
   <div class="section" id="bpu-sdk-api-v1-25">
-<h1><span class="section-number">1. </span>BPU SDK API 文档 v1.25<a class="headerlink" href="#bpu-sdk-api-v1-25" title="永久链接至标题">¶</a></h1>
+<h1>1. BPU SDK API 文档 v1.25<a class="headerlink" href="#bpu-sdk-api-v1-25" title="永久链接至标题">¶</a></h1>
 <p>[TOC]</p>
 <div class="section" id="id1">
-<h2><span class="section-number">1.1. </span>修订记录<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<h2>1.1. 修订记录<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -239,7 +244,7 @@
 <tr>
 <td align="left">2020-09-23</td>
 <td>1.23</td>
-<td>完善<code>resize</code>接口编译器限制说明</td>
+<td>1. 完善<code>resize</code>接口编译器限制说明</td>
 </tr>
 <tr>
 <td align="left">2020-11-09</td>
@@ -251,14 +256,29 @@
 <td>1.25</td>
 <td>1. 删除pym resize功能<br />2. 补充layout和padding说明</td>
 </tr>
+<tr>
+<td align="left">2020-01-08</td>
+<td>1.26</td>
+<td>1. 增加HB_BPU_loadModelPackage接口<br />2. 增加HB_BPU_loadModelPackageFromFile接口<br />3. 增加HB_BPU_releaseModelPackage接口</td>
+</tr>
+<tr>
+<td align="left">2020-01-28</td>
+<td>1.27</td>
+<td>1. 增加HB_BPU_getAlignedTotalSize接口<br />2. 增加HB_BPU_addPadding接口<br />3. 增加HB_BPU_removePadding接口</td>
+</tr>
+<tr>
+<td align="left">2021-01-21</td>
+<td>1.28</td>
+<td>1. 增加<code>HB_BPU_dmacopy</code>接口</td>
+</tr>
 </tbody>
 </table></div>
 <div class="section" id="id2">
-<h2><span class="section-number">1.2. </span>1.系统软件接口介绍<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<h2>1.2. 1.系统软件接口介绍<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>本节内容描述系统软件提供的各API接口。</p>
 <div class="section" id="id3">
-<h3><span class="section-number">1.2.1. </span>1.1 数据结构体定义<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_MEMORY_S</span> <span class="p">{</span>
+<h3>1.2.1. 1.1 数据结构体定义<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_MEMORY_S</span> <span class="p">{</span>
   <span class="kt">uint64_t</span> <span class="n">phyAddr</span><span class="p">;</span>
   <span class="kt">void</span> <span class="o">*</span><span class="n">virAddr</span><span class="p">;</span>
   <span class="kt">size_t</span> <span class="n">memSize</span><span class="p">;</span>
@@ -268,9 +288,9 @@
 <p><code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code>结构体用于定义bpu的内存。</p>
 </div>
 <div class="section" id="api">
-<h3><span class="section-number">1.2.2. </span>1.2 内存函数API<a class="headerlink" href="#api" title="永久链接至标题">¶</a></h3>
+<h3>1.2.2. 1.2 内存函数API<a class="headerlink" href="#api" title="永久链接至标题">¶</a></h3>
 <div class="section" id="hb-sys-bpumemalloc">
-<h4><span class="section-number">1.2.2.1. </span>1.2.1 HB_SYS_bpuMemAlloc<a class="headerlink" href="#hb-sys-bpumemalloc" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.1. 1.2.1 HB_SYS_bpuMemAlloc<a class="headerlink" href="#hb-sys-bpumemalloc" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_bpuMemAlloc</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span>
                        <span class="kt">size_t</span> <span class="n">alloc_mem_size</span><span class="p">,</span>
                        <span class="kt">bool</span> <span class="n">cachable</span><span class="p">,</span>
@@ -281,21 +301,21 @@
 <p>在Bernoulli芯片的架构中，BPU和CPU共享同一个memory空间。这里单独提供一个BPU内存的结构是因为BPU需要使用物理空间连续的一块内存，因此需要用专门的函数申请。该函数返回申请到的memory地址（包括物理地址和虚拟地址），其中虚拟地址可以被直接读写，在后续执行BPU操作时也是传入虚拟地址。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>：指定申请内存的name，这样可以被用来标识这块内存，后续分析内存状态的时候可以用到。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">alloc_mem_size</span></code>：表示期望申请的内存大小。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cachable</span></code>：表示该内存是否带cache标记。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code>：指定申请内存的name，这样可以被用来标识这块内存，后续分析内存状态的时候可以用到。</li>
+<li><code class="docutils literal notranslate"><span class="pre">alloc_mem_size</span></code>：表示期望申请的内存大小。</li>
+<li><code class="docutils literal notranslate"><span class="pre">cachable</span></code>：表示该内存是否带cache标记。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code>：<code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code>类型的结构体指针。该结构体由调用者传入，函数内部会填充具体内容，包括：申请内存的物理地址、虚拟地址、以及memory size。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">mem</span></code>：<code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code>类型的结构体指针。该结构体由调用者传入，函数内部会填充具体内容，包括：申请内存的物理地址、虚拟地址、以及memory size。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码</p></li>
+<li>返回int类型的错误码</li>
 </ol>
 </div>
 <div class="section" id="hb-sys-flushmemcache">
-<h4><span class="section-number">1.2.2.2. </span>1.2.2 HB_SYS_flushMemCache<a class="headerlink" href="#hb-sys-flushmemcache" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.2. 1.2.2 HB_SYS_flushMemCache<a class="headerlink" href="#hb-sys-flushmemcache" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define HB_SYS_MEM_CACHE_INVALIDATE (1)    </span><span class="c1">// flush memory to CPU</span>
 <span class="cp">#define HB_SYS_MEM_CACHE_CLEAN (2)         </span><span class="c1">// flush CPU to memory</span>
 <span class="kt">int</span> <span class="nf">HB_SYS_flushMemCache</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">mem</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flag</span><span class="p">);</span>
@@ -306,23 +326,23 @@
 <p><img alt="memory_architecture" src="../../../../../_images/memory_architecture.png" /></p>
 <p>Bernoulli的内存架构如上图所示。CPU与主存之间存在的cache会缓存数据。而BPU与主存之间没有cache。在flush接口中提供了两种方式，分别对应不同的使用场景。</p>
 <ol class="simple">
-<li><p>对于CPU写memory的场景，由于数据会缓存到cache中，导致memory中的数据是旧，这样BPU执行模型的时候取的数据就是错的。因此需要把cache中的数据flush到memory中，这时候就需要使用<code class="docutils literal notranslate"><span class="pre">HB_SYS_BPU_MEM_CACHE_CLEAN</span></code>参数。</p></li>
-<li><p>对于CPU曾经读取过memory的数据的场景，数据有可能会被缓存到cache中。这时如果BPU写了memory，那么CPU在读取数据时仍然从cache中读，这样就会导致CPU读到错误的数据。这时候就需要把cache中读取得数据清理掉，需要使用<code class="docutils literal notranslate"><span class="pre">HB_SYS_BPU_MEM_CACHE_INVALIDATE</span></code>参数。</p></li>
+<li>对于CPU写memory的场景，由于数据会缓存到cache中，导致memory中的数据是旧，这样BPU执行模型的时候取的数据就是错的。因此需要把cache中的数据flush到memory中，这时候就需要使用<code class="docutils literal notranslate"><span class="pre">HB_SYS_BPU_MEM_CACHE_CLEAN</span></code>参数。</li>
+<li>对于CPU曾经读取过memory的数据的场景，数据有可能会被缓存到cache中。这时如果BPU写了memory，那么CPU在读取数据时仍然从cache中读，这样就会导致CPU读到错误的数据。这时候就需要把cache中读取得数据清理掉，需要使用<code class="docutils literal notranslate"><span class="pre">HB_SYS_BPU_MEM_CACHE_INVALIDATE</span></code>参数。</li>
 </ol>
 <p><strong>TIPS：</strong></p>
-<p>对于输出内存设置cachable，通过flush来获取最新的数据。之所以设置输出为cachable，是因为CPU可能会多次访问模型的结果，这样能够利用cache缓存，提高访问速度。</p>
+<p>模型的输入输出内存设置为 <code class="docutils literal notranslate"><span class="pre">cachable</span></code>，可以有效利用cache缓存，提高访问速度。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code>：是由memAlloc接口申请的BPU内存结构体指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">flag</span></code>：表示flush操作的方向。具体请见上文中的<strong>描述</strong>部分。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">mem</span></code>：是由 <code class="docutils literal notranslate"><span class="pre">memAlloc</span></code> 接口申请的BPU内存结构体指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">flag</span></code>：表示flush操作的方向。具体请见上文中的<strong>描述</strong>部分。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。</p></li>
+<li>返回int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-sys-ismemcachable">
-<h4><span class="section-number">1.2.2.3. </span>1.2.3 HB_SYS_isMemCachable<a class="headerlink" href="#hb-sys-ismemcachable" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.3. 1.2.3 HB_SYS_isMemCachable<a class="headerlink" href="#hb-sys-ismemcachable" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_isMemCachable</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">mem</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -330,15 +350,15 @@
 <p>检查bpu memory是否是cachable的。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code>：由<code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code>接口申请的BPU内存结构体指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">mem</span></code>：由<code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code>接口申请的BPU内存结构体指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回1表示cachable内存，0表示非cachable内存。</p></li>
+<li>返回1表示cachable内存，0表示非cachable内存。</li>
 </ol>
 </div>
 <div class="section" id="hb-sys-bpumemfree">
-<h4><span class="section-number">1.2.2.4. </span>1.2.4 HB_SYS_bpuMemFree<a class="headerlink" href="#hb-sys-bpumemfree" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.4. 1.2.4 HB_SYS_bpuMemFree<a class="headerlink" href="#hb-sys-bpumemfree" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_bpuMemFree</span><span class="p">(</span><span class="n">BPU_MEMORY</span> <span class="o">*</span><span class="n">mem</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -346,15 +366,15 @@
 <p>释放BPU memory。传入<code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code>结构体指针，内部会修改该结构，把各个字段设置成非法字段。防止后面再次使用该结构体。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code>：由<code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code>接口申请的BPU内存结构体指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">mem</span></code>：由<code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code>接口申请的BPU内存结构体指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。</p></li>
+<li>返回int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-sys-getmeminfo">
-<h4><span class="section-number">1.2.2.5. </span>1.2.5 HB_SYS_getMemInfo<a class="headerlink" href="#hb-sys-getmeminfo" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.5. 1.2.5 HB_SYS_getMemInfo<a class="headerlink" href="#hb-sys-getmeminfo" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_getMemInfo</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">virAddr</span><span class="p">,</span> <span class="kt">uint64_t</span> <span class="o">*</span><span class="n">phyAddr</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">is_cachable</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -362,17 +382,17 @@
 <p>这个接口的功能是检查传入的指针指向的是否是BPU内存，如果是BPU内存，则返回对应的物理地址。如果不是BPU内存，则返回失败。当返回失败时，<code class="docutils literal notranslate"><span class="pre">phyAddr</span></code>和<code class="docutils literal notranslate"><span class="pre">is_cachable</span></code>的内容是未定义的。</p>
 <p><strong>参数：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">virAddr</span></code>：需要进行转换的虚拟地址指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">phyAddr</span></code>：返回对应的物理地址。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_cachable</span></code>：返回内存是否为cachable。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">virAddr</span></code>：需要进行转换的虚拟地址指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">phyAddr</span></code>：返回对应的物理地址。</li>
+<li><code class="docutils literal notranslate"><span class="pre">is_cachable</span></code>：返回内存是否为cachable。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</p></li>
+<li>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</li>
 </ol>
 </div>
 <div class="section" id="hb-sys-viraddralloc">
-<h4><span class="section-number">1.2.2.6. </span>1.2.6 HB_SYS_virAddrAlloc<a class="headerlink" href="#hb-sys-viraddralloc" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.6. 1.2.6 HB_SYS_virAddrAlloc<a class="headerlink" href="#hb-sys-viraddralloc" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_virAddrAlloc</span><span class="p">(</span><span class="kt">void</span> <span class="o">**</span><span class="n">virAddr</span><span class="p">,</span><span class="k">const</span> <span class="kt">uint64_t</span> <span class="o">*</span><span class="n">phyAddr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">alloc_mem_size</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -380,18 +400,18 @@
 <p>这个接口的功能是将传入的内存物理地址，转换为虚拟地址。</p>
 <p><strong>参数：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">virAddr</span></code>：返回虚拟地址指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">phyAddr</span></code>：需要进行转换的的物理地址的指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">alloc_mem_size</span></code>：内存大小。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">virAddr</span></code>：返回虚拟地址指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">phyAddr</span></code>：需要进行转换的的物理地址的指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">alloc_mem_size</span></code>：内存大小。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</p></li>
+<li>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</li>
 </ol>
 <p><strong>注意：转换完成的虚拟地址在使用完成后要进行释放。</strong></p>
 </div>
 <div class="section" id="hb-sys-viraddrfree">
-<h4><span class="section-number">1.2.2.7. </span>1.2.7 HB_SYS_virAddrFree<a class="headerlink" href="#hb-sys-viraddrfree" title="永久链接至标题">¶</a></h4>
+<h4>1.2.2.7. 1.2.7 HB_SYS_virAddrFree<a class="headerlink" href="#hb-sys-viraddrfree" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_SYS_virAddrFree</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">virAddr</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -399,19 +419,43 @@
 <p>这个接口的功能是释放虚拟地址对应的内存。</p>
 <p><strong>参数：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">virAddr</span></code>：虚拟地址。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">virAddr</span></code>：虚拟地址。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</p></li>
+<li>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-dmacopy">
+<h4>1.2.2.8. 1.2.8 HB_BPU_dmacopy<a class="headerlink" href="#hb-bpu-dmacopy" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_dmacopy</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">dst_addr</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">src_addr</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>描述：</strong></p>
+<p>这个接口的功能是使用DMA功能完成内存拷贝。</p>
+<p><strong>参数：</strong></p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">dst_addr</span></code>：拷贝的目标地址，输入虚拟地址指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">src_addr</span></code>：拷贝的源地址，输入虚拟地址指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">size</span></code>：拷贝内存大小, size &lt; 240M。</li>
+</ol>
+<p><strong>说明：</strong></p>
+<ol class="simple">
+<li>返回int类型的错误码。成功为<code class="docutils literal notranslate"><span class="pre">BPU_OK</span></code>，其他返回值都是失败。</li>
+<li><code class="docutils literal notranslate"><span class="pre">src_addr和dst_addr</span></code>需要通过<code class="docutils literal notranslate"><span class="pre">HB_SYS_bpuMemAlloc</span></code>分配出一片连续的物理内存，将<code class="docutils literal notranslate"><span class="pre">BPU_MEMORY_S</span></code>中的<code class="docutils literal notranslate"><span class="pre">virAddr</span></code>指针作为参数传入。</li>
+<li>DMA内存拷贝功能目前只支持XJ3开发板，XJ2没有该功能。</li>
+<li>系统首次启用DMA拷贝会有额外的拷贝耗时，启动耗时大约在50us左右。</li>
+<li>对于非cache内存，内存大小在4k以上时，DMA拷贝的速度为CPU速度2倍，拷贝的内存大小在4K以下，两种拷贝速度相近。</li>
+<li>对于cache内存，CPU的拷贝速度较快，为DMA拷贝的5倍。</li>
+<li>拷贝方案推荐：a. CPU资源充足的情况下，推荐分配cache内存，使用CPU拷贝；b. CPU资源不充足时，推荐使用DMA拷贝。</li>
 </ol>
 </div>
 </div>
 </div>
 <div class="section" id="bpu-predict-api">
-<h2><span class="section-number">1.3. </span>2.BPU predict API<a class="headerlink" href="#bpu-predict-api" title="永久链接至标题">¶</a></h2>
+<h2>1.3. 2.BPU predict API<a class="headerlink" href="#bpu-predict-api" title="永久链接至标题">¶</a></h2>
 <div class="section" id="id4">
-<h3><span class="section-number">1.3.1. </span>2.1 数据结构体的定义<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<h3>1.3.1. 2.1 数据结构体的定义<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_OP_TYPE_E</span> <span class="p">{</span>
   <span class="n">BPU_OP_TYPE_CONV</span><span class="p">,</span>
   <span class="n">BPU_OP_TYPE_UNKNOWN</span><span class="p">,</span>
@@ -426,7 +470,7 @@
 </pre></div>
 </div>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BPU_MODEL_MAX_SHAPE_DIM (8)</span>
-<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_DATA_SHAPE_S</span> <span class="p">{</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_DATA_SHAPE_S</span> <span class="p">{</span>
   <span class="n">BPU_LAYOUT_E</span> <span class="n">layout</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">ndim</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">BPU_MODEL_MAX_SHAPE_DIM</span><span class="p">];</span>
@@ -452,7 +496,7 @@
 <span class="p">}</span> <span class="n">BPU_DATA_TYPE_E</span><span class="p">;</span>
 </pre></div>
 </div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RUN_CTRL_S</span> <span class="p">{</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_RUN_CTRL_S</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">core_id</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">resize_type</span><span class="p">;</span>  <span class="c1">// 1: resize input data if input shape is not same with</span>
                     <span class="c1">// model input shape; other value: no resize</span>
@@ -460,8 +504,8 @@
 </pre></div>
 </div>
 <div class="section" id="bpu-model-node-s">
-<h4><span class="section-number">1.3.1.1. </span>2.1.1 BPU_MODEL_NODE_S<a class="headerlink" href="#bpu-model-node-s" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_MODEL_NODE_S</span> <span class="p">{</span>
+<h4>1.3.1.1. 2.1.1 BPU_MODEL_NODE_S<a class="headerlink" href="#bpu-model-node-s" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_MODEL_NODE_S</span> <span class="p">{</span>
   <span class="n">BPU_OP_TYPE_E</span> <span class="n">op_type</span><span class="p">;</span>  <span class="c1">// only used for output node</span>
   <span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">;</span>
   <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">shape</span><span class="p">;</span>
@@ -475,26 +519,26 @@
 <p><strong>描述：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_MODEL_NODE_S</span></code>结构体描述了模型输入/输出节点的信息。包括：</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code>：节点的op类型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：表示模型要求的输入/输出数据类型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>：表示模型输入/输出的shape，这个<code class="docutils literal notranslate"><span class="pre">shape</span></code>指的是模型训练时候的shape。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>：模型在BPU上运行时，需要以一定的方式对齐到8或者16字节，因此就有了这个对齐shape，表示模型运行所需要的输入/输出shape。这个通常是在普通shape的基础上加padding得到。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>：模型的name字符串。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shifts</span></code>和<code class="docutils literal notranslate"><span class="pre">shift_len</span></code>：当模型的输出为convolution，且输出数据是int8或者int32时，而实际训练时候模型的结果是float32，因此就需要把int8/int32转换成float32。这里的shift值就是用于转换成float32的。<code class="docutils literal notranslate"><span class="pre">shift_len</span></code>跟convolution的filter大小一致。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">op_type</span></code>：节点的op类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：表示模型要求的输入/输出数据类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">shape</span></code>：表示模型输入/输出的shape，这个<code class="docutils literal notranslate"><span class="pre">shape</span></code>指的是模型训练时候的shape。</li>
+<li><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>：模型在BPU上运行时，需要以一定的方式对齐到8或者16字节，因此就有了这个对齐shape，表示模型运行所需要的输入/输出shape。这个通常是在普通shape的基础上加padding得到。</li>
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code>：模型的name字符串。</li>
+<li><code class="docutils literal notranslate"><span class="pre">shifts</span></code>和<code class="docutils literal notranslate"><span class="pre">shift_len</span></code>：当模型的输出为convolution，且输出数据是int8或者int32时，而实际训练时候模型的结果是float32，因此就需要把int8/int32转换成float32。这里的shift值就是用于转换成float32的。<code class="docutils literal notranslate"><span class="pre">shift_len</span></code>跟convolution的filter大小一致。</li>
 </ol>
 <p>转换公式为：<strong>f_result[c] = out_i[c] / (1 &lt;&lt; shift[c])</strong>.</p>
 <p>其中：</p>
 <ol class="simple">
-<li><p>c为0～num_filter，也就是输出channel数。</p></li>
-<li><p>f_result为float值。</p></li>
-<li><p>out_i为输出的int8或者int32值。</p></li>
-<li><p>shift为对应的移位值。</p></li>
+<li>c为0～num_filter，也就是输出channel数。</li>
+<li>f_result为float值。</li>
+<li>out_i为输出的int8或者int32值。</li>
+<li>shift为对应的移位值。</li>
 </ol>
 </div>
 <div class="section" id="bpu-model-s">
-<h4><span class="section-number">1.3.1.2. </span>2.1.2 BPU_MODEL_S<a class="headerlink" href="#bpu-model-s" title="永久链接至标题">¶</a></h4>
+<h4>1.3.1.2. 2.1.2 BPU_MODEL_S<a class="headerlink" href="#bpu-model-s" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BPU_MODEL_MAX_NODE_NUM (16)</span>
-<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_MODEL_S</span> <span class="p">{</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_MODEL_S</span> <span class="p">{</span>
   <span class="kt">void</span> <span class="o">*</span><span class="n">handle</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">input_num</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">output_num</span><span class="p">;</span>
@@ -506,15 +550,15 @@
 <p><strong>说明：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_MODEL_S</span></code>表示一个模型的信息。其中：</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>：用来表示模型在内部使用的对象指针。该内部对象中存储了模型的所有信息。在<code class="docutils literal notranslate"><span class="pre">HB_BPU_loadModel</span></code>接口中设置该值，在<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code>接口中重置为NULL。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">inputs</span></code>：表示模型的输入节点信息。在节点结构体中包含了描述节点所需要的信息。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">outputs</span></code>：同<code class="docutils literal notranslate"><span class="pre">inputs</span></code>结构。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">input_num</span></code>和<code class="docutils literal notranslate"><span class="pre">output_num</span></code>：分别表示模型输入输出的节点个数。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">handle</span></code>：用来表示模型在内部使用的对象指针。该内部对象中存储了模型的所有信息。在<code class="docutils literal notranslate"><span class="pre">HB_BPU_loadModel</span></code>接口中设置该值，在<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code>接口中重置为NULL。</li>
+<li><code class="docutils literal notranslate"><span class="pre">inputs</span></code>：表示模型的输入节点信息。在节点结构体中包含了描述节点所需要的信息。</li>
+<li><code class="docutils literal notranslate"><span class="pre">outputs</span></code>：同<code class="docutils literal notranslate"><span class="pre">inputs</span></code>结构。</li>
+<li><code class="docutils literal notranslate"><span class="pre">input_num</span></code>和<code class="docutils literal notranslate"><span class="pre">output_num</span></code>：分别表示模型输入输出的节点个数。</li>
 </ol>
 </div>
 <div class="section" id="bpu-tensor-s">
-<h4><span class="section-number">1.3.1.3. </span>2.1.3 BPU_TENSOR_S<a class="headerlink" href="#bpu-tensor-s" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_TENSOR_S</span> <span class="p">{</span>
+<h4>1.3.1.3. 2.1.3 BPU_TENSOR_S<a class="headerlink" href="#bpu-tensor-s" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_TENSOR_S</span> <span class="p">{</span>
   <span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">;</span>
   <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">data_shape</span><span class="p">;</span>
   <span class="n">BPU_DATA_SHAPE_S</span> <span class="n">aligned_shape</span><span class="p">;</span>
@@ -526,23 +570,23 @@
 <p><strong>说明：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_TENSOR_S</span></code>结构体主要用来描述各种数据的结构，可以用于图像，也可以用于特征（例如语音特征，其他模型输出的图像特征等）。其中：</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：表示该tensor的数据类型和布局（针对图像）。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data_shape</span></code>：描述了数据的大小和layout。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>：描述了数据padding之后的大小。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code>：主要用来存储具体的数据地址。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data_ext</span></code>作为<code class="docutils literal notranslate"><span class="pre">data</span></code>字段的补充，用来存储额外数据的地址。用在NV12的Y和UV分离的场景（数据类型为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_NV12_SEPARATE</span></code>），在Y和UV分离的场景下，<code class="docutils literal notranslate"><span class="pre">data</span></code>存储Y的数据，<code class="docutils literal notranslate"><span class="pre">data_ext</span></code>存储UV的数据。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：表示该tensor的数据类型和布局（针对图像）。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data_shape</span></code>：描述了数据的大小和layout。</li>
+<li><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>：描述了数据padding之后的大小。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data</span></code>：主要用来存储具体的数据地址。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data_ext</span></code>作为<code class="docutils literal notranslate"><span class="pre">data</span></code>字段的补充，用来存储额外数据的地址。用在NV12的Y和UV分离的场景（数据类型为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_NV12_SEPARATE</span></code>），在Y和UV分离的场景下，<code class="docutils literal notranslate"><span class="pre">data</span></code>存储Y的数据，<code class="docutils literal notranslate"><span class="pre">data_ext</span></code>存储UV的数据。</li>
 </ol>
 </div>
 <div class="section" id="layout">
-<h4><span class="section-number">1.3.1.4. </span>2.1.4 数据类型和Layout说明<a class="headerlink" href="#layout" title="永久链接至标题">¶</a></h4>
+<h4>1.3.1.4. 2.1.4 数据类型和Layout说明<a class="headerlink" href="#layout" title="永久链接至标题">¶</a></h4>
 <p>​由于使用一个<code class="docutils literal notranslate"><span class="pre">BPU_TENSOR_S</span></code>结构体表示所有的数据，因此在各种不同的场景下，<code class="docutils literal notranslate"><span class="pre">data_type</span></code>、<code class="docutils literal notranslate"><span class="pre">layout</span></code>以及<code class="docutils literal notranslate"><span class="pre">shape</span></code>都有不同的组合方式，这里对典型场景的使用方式做以下说明。</p>
 <div class="section" id="id5">
-<h5><span class="section-number">1.3.1.4.1. </span>2.1.4.1 layout说明<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h5>
+<h5>1.3.1.4.1. 2.1.4.1 layout说明<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h5>
 <p>​<code class="docutils literal notranslate"><span class="pre">layout</span></code>分为NHWC和NCHW，N代表数量，C代表channel，H代表高度，W代表宽度。NCHW其实代表的是[W H C N]，第一个元素是000，第二个元素是沿着w方向的，即001，这样下去002 003，再接着呢就是沿着H方向，即004 005 006 007…这样到019后，沿C方向，轮到了020，之后021 022 …一直到319，然后再沿N方向。NHWC的话以此类推，代表的是[C W H N]，第一个元素是000，第二个沿C方向，即020，040, 060..一直到300，之后沿W方向，001 021 041 061…301..到了303后，沿H方向，即004 024 .304.最后到了319，变成N方向，320,340….下图中所示a就是指四个维度。</p>
 <p><img alt="data_layout" src="../../../../../_images/data_layout.png" /></p>
 </div>
 <div class="section" id="id6">
-<h5><span class="section-number">1.3.1.4.2. </span>2.1.4.2 图像数据类型<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h5>
+<h5>1.3.1.4.2. 2.1.4.2 图像数据类型<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h5>
 <p>​所有的图像数据类型都以<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_</span></code>开头，目前支持的类型包括：单Y、YUV_NV12、YUV444、BGR、RGB、BGRP和RGBP。所有的图像的数据类型都是uint8类型，这也是符合图像数据定义的类型。由于shape的定义是按照多维tensor来设计的，因此在图像上需要特别说明：</p>
 <table border="1" class="docutils">
 <thead>
@@ -605,31 +649,31 @@
 </tbody>
 </table><p><strong>其中：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>和<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>的<code class="docutils literal notranslate"><span class="pre">layout</span></code>都是按4维NHWC或者NCHW来描述。</p></li>
-<li><p>Y/NV12/BGRP/RGBP都是按NCHW排布。</p></li>
-<li><p>YUV444/BGR/RGB都是按NHWC排布。</p></li>
-<li><p>Y的C=1，NV12的C=3。其他图像格式的C都是3。</p></li>
-<li><p>n表示图像的帧数，当n &gt; 1时，表示batch模式。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_NV12_SEPARATE</span></code>，表示Y和UV分量不连续，用于Y和UV分离的场景。</p></li>
-<li><p>Y/NV12/NV12_SEPARATE要求Y和UV的<code class="docutils literal notranslate"><span class="pre">w_stride</span></code>都是16的倍数。</p></li>
-<li><p>在访问数据的时候，通常不会使用<code class="docutils literal notranslate"><span class="pre">h_stride</span></code>，但是要求<code class="docutils literal notranslate"><span class="pre">h_stride</span></code>大于等于h。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code>的<code class="docutils literal notranslate"><span class="pre">memSize</span></code>要大于等于h_stride * w_stride，防止读取错误内存。</p></li>
-<li><p>对于各种图像格式在内存布局，参考如下图示（备注：下面的图像布局格式是一种示意，不代表SDK支持batch模式，目前BPU SDK不支持batch模式。）：</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">shape</span></code>和<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>的<code class="docutils literal notranslate"><span class="pre">layout</span></code>都是按4维NHWC或者NCHW来描述。</li>
+<li>Y/NV12/BGRP/RGBP都是按NCHW排布。</li>
+<li>YUV444/BGR/RGB都是按NHWC排布。</li>
+<li>Y的C=1，NV12的C=3。其他图像格式的C都是3。</li>
+<li>n表示图像的帧数，当n &gt; 1时，表示batch模式。</li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_NV12_SEPARATE</span></code>，表示Y和UV分量不连续，用于Y和UV分离的场景。</li>
+<li>Y/NV12/NV12_SEPARATE要求Y和UV的<code class="docutils literal notranslate"><span class="pre">w_stride</span></code>都是16的倍数。</li>
+<li>在访问数据的时候，通常不会使用<code class="docutils literal notranslate"><span class="pre">h_stride</span></code>，但是要求<code class="docutils literal notranslate"><span class="pre">h_stride</span></code>大于等于h。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data</span></code>的<code class="docutils literal notranslate"><span class="pre">memSize</span></code>要大于等于h_stride * w_stride，防止读取错误内存。</li>
+<li>对于各种图像格式在内存布局，参考如下图示（备注：下面的图像布局格式是一种示意，不代表SDK支持batch模式，目前BPU SDK不支持batch模式。）：</li>
 </ol>
 <p><img alt="image_format" src="../../../../../_images/image_format.png" /></p>
 </div>
 <div class="section" id="feature">
-<h5><span class="section-number">1.3.1.4.3. </span>2.1.4.3 Feature数据类型<a class="headerlink" href="#feature" title="永久链接至标题">¶</a></h5>
+<h5>1.3.1.4.3. 2.1.4.3 Feature数据类型<a class="headerlink" href="#feature" title="永久链接至标题">¶</a></h5>
 <p>Feature类型数据使用<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_</span></code>为前缀进行描述，支持int8、uint8、int32、uint32和float32类型的数据。Feature类型数据：</p>
 <ol class="simple">
-<li><p>存储在<code class="docutils literal notranslate"><span class="pre">data</span></code>字段中。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>表示feature的维度、<code class="docutils literal notranslate"><span class="pre">layout</span></code>。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>表示feature的对齐维度，要求<code class="docutils literal notranslate"><span class="pre">data</span></code>的<code class="docutils literal notranslate"><span class="pre">memSize</span></code>等于<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>对应的大小。</p></li>
+<li>存储在<code class="docutils literal notranslate"><span class="pre">data</span></code>字段中。</li>
+<li><code class="docutils literal notranslate"><span class="pre">shape</span></code>表示feature的维度、<code class="docutils literal notranslate"><span class="pre">layout</span></code>。</li>
+<li><code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>表示feature的对齐维度，要求<code class="docutils literal notranslate"><span class="pre">data</span></code>的<code class="docutils literal notranslate"><span class="pre">memSize</span></code>等于<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>对应的大小。</li>
 </ol>
 </div>
 </div>
 <div class="section" id="bpu-model-package-s">
-<h4><span class="section-number">1.3.1.5. </span>2.1.5 BPU_MODEL_PACKAGE_S<a class="headerlink" href="#bpu-model-package-s" title="永久链接至标题">¶</a></h4>
+<h4>1.3.1.5. 2.1.5 BPU_MODEL_PACKAGE_S<a class="headerlink" href="#bpu-model-package-s" title="永久链接至标题">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define MAX_MODEL_PACK_NUMBER 64</span>
 <span class="n">typedef</span> <span class="n">struct</span> <span class="n">hb_BPU_MODEL_PACKAGE_S</span> <span class="p">{</span>
   <span class="nb">int</span> <span class="n">model_num</span><span class="p">;</span>
@@ -641,36 +685,38 @@
 <p><strong>说明：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_MODEL_PACKAGE_S</span></code>表示一个模型包（多个模型打包成一个文件）的信息。其中：</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_num</span></code>：用来表示模型包内含有多少个模型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model_name_list</span></code>：用来表示模型包内的模型名称。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model_list</span></code>：用来表示模型包内的每个模型的模型信息。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_num</span></code>：用来表示模型包内含有多少个模型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">model_name_list</span></code>：用来表示模型包内的模型名称。</li>
+<li><code class="docutils literal notranslate"><span class="pre">model_list</span></code>：用来表示模型包内的每个模型的模型信息。</li>
 </ol>
 </div>
 </div>
 <div class="section" id="bpu">
-<h3><span class="section-number">1.3.2. </span>2.2 BPU对齐规则<a class="headerlink" href="#bpu" title="永久链接至标题">¶</a></h3>
+<h3>1.3.2. 2.2 BPU对齐规则<a class="headerlink" href="#bpu" title="永久链接至标题">¶</a></h3>
 <p>这部分介绍使用BPU的对齐限制规则，包括起始地址要求，数据对齐要求。主要有三个方面组成：</p>
 <ol>
-<li><p>模型输入要求： BPU不限制模型输入大小或者奇偶。既像yolo这种416x416的输入可以支持，对于像squeezeNet这种227x227的输入也可以支持。对于NV12输入比较特别，要求HW都是偶数，是为了满足UV是Y的一半的要求。</p></li>
-<li><p>stride要求： BPU有stride要求。通常可以在<code class="docutils literal notranslate"><span class="pre">BPU_NODE_S</span></code>中根据<code class="docutils literal notranslate"><span class="pre">shape</span></code>和<code class="docutils literal notranslate"><span class="pre">aligned-shape</span></code>来确定。<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>就是stride对齐的要求。对于NV12或Y输入的有些特别，要求W的stride是16的倍数。padding不关心具体值，可以是0或者非0。</p>
+<li><p class="first">模型输入要求： BPU不限制模型输入大小或者奇偶。既像yolo这种416x416的输入可以支持，对于像squeezeNet这种227x227的输入也可以支持。对于NV12输入比较特别，要求HW都是偶数，是为了满足UV是Y的一半的要求。</p>
+</li>
+<li><p class="first">stride要求： BPU有stride要求。通常可以在<code class="docutils literal notranslate"><span class="pre">BPU_NODE_S</span></code>中根据<code class="docutils literal notranslate"><span class="pre">shape</span></code>和<code class="docutils literal notranslate"><span class="pre">aligned-shape</span></code>来确定。<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>就是stride对齐的要求。对于NV12或Y输入的有些特别，要求W的stride是16的倍数。padding不关心具体值，可以是0或者非0。</p>
 <p><img alt="alignment_rule_1" src="../../../../../_images/alignment_rule_1.png" /></p>
 <p>如上图所示，绿色的部分是原始图片，黄色的部分是padding的部分，假如图片的原始宽度为<code class="docutils literal notranslate"><span class="pre">org_w</span></code>，原始高度为<code class="docutils literal notranslate"><span class="pre">org_h</span></code>，那么根据输入W是16的倍数，H是2的倍数，需要对<code class="docutils literal notranslate"><span class="pre">org_w</span></code>和<code class="docutils literal notranslate"><span class="pre">org_h</span></code>做padding，使得填充后的图片的w是16的倍数，h是2的倍数。</p>
 </li>
-<li><p>起始地址要求：所有传入BPU的内存，都要求16字节对齐。</p></li>
+<li><p class="first">起始地址要求：所有传入BPU的内存，都要求16字节对齐。</p>
+</li>
 </ol>
 <p>例如：对于227x227输入的squeezeNet，模型按照227x227训练：</p>
 <ol class="simple">
-<li><p>如果模型输入是NV12的，则要求W的stride为240（达到16的倍数），同时H为228（扩大到偶数）。即NV12的输入应该是228x240，比227多出来的部分是padding数据，不影响最终结果。即BPU计算时还是按照227x227来计算。这里NV12直接送入BPU，所以有要求。</p></li>
-<li><p>如果是BGR/RGB/BGRP/RGBP/YUV444的输入，在<code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code>和<code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>接口内部，会在ARM CPU上做对应的padding转换，跟NV12一样，带<code class="docutils literal notranslate"><span class="pre">w_stride</span></code>进来。</p></li>
+<li>如果模型输入是NV12的，则要求W的stride为240（达到16的倍数），同时H为228（扩大到偶数）。即NV12的输入应该是228x240，比227多出来的部分是padding数据，不影响最终结果。即BPU计算时还是按照227x227来计算。这里NV12直接送入BPU，所以有要求。</li>
+<li>如果是BGR/RGB/BGRP/RGBP/YUV444的输入，在<code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code>和<code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>接口内部，会在ARM CPU上做对应的padding转换，跟NV12一样，带<code class="docutils literal notranslate"><span class="pre">w_stride</span></code>进来。</li>
 </ol>
 <p>其他feature输入，按照模型node的信息中的<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>来处理。假如从接口中获取的模型的输入的<code class="docutils literal notranslate"><span class="pre">valid_shape</span></code>为1x10x10x3，<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>为1x16x16x4，那么需要按照<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>进行填充，如下图：</p>
 <p><img alt="alignment_rule_2" src="../../../../../_images/alignment_rule_2.png" /></p>
 <p>原始feature数据的<code class="docutils literal notranslate"><span class="pre">valid_h</span></code>、<code class="docutils literal notranslate"><span class="pre">valid_w</span></code>、<code class="docutils literal notranslate"><span class="pre">valid_c</span></code>如上图黄色部分所示，需要根据<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>中的w、h、c分别进行填充。</p>
 </div>
 <div class="section" id="id7">
-<h3><span class="section-number">1.3.3. </span>2.3 API说明<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<h3>1.3.3. 2.3 API说明<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
 <div class="section" id="hb-bpu-loadmodel">
-<h4><span class="section-number">1.3.3.1. </span>2.3.1 HB_BPU_loadModel<a class="headerlink" href="#hb-bpu-loadmodel" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.1. 2.3.1 HB_BPU_loadModel<a class="headerlink" href="#hb-bpu-loadmodel" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModel</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">model_data</span><span class="p">,</span> <span class="kt">int</span> <span class="n">model_size</span><span class="p">,</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -678,20 +724,20 @@
 <p>加载一个BPU模型，并得到表示该模型的结构体对象。<code class="docutils literal notranslate"><span class="pre">BPU_MODEL_S</span></code>结构体由外部传入，该函数直接往结构体中填入模型信息。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_data</span></code>：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，<code class="docutils literal notranslate"><span class="pre">model_data</span></code>的内存可以被释放。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model_size</span></code>：模型data的内存大小。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_data</span></code>：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，<code class="docutils literal notranslate"><span class="pre">model_data</span></code>的内存可以被释放。</li>
+<li><code class="docutils literal notranslate"><span class="pre">model_size</span></code>：模型data的内存大小。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</p></li>
+<li>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-releasemodel">
-<h4><span class="section-number">1.3.3.2. </span>2.3.2 HB_BPU_releaseModel<a class="headerlink" href="#hb-bpu-releasemodel" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.2. 2.3.2 HB_BPU_releaseModel<a class="headerlink" href="#hb-bpu-releasemodel" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_releaseModel</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -699,31 +745,31 @@
 <p>释放已经加载的BPU模型。内部会修改model结构体的内容。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：表示model的结构体对象指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：表示model的结构体对象指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的返回值。0表示执行成功，其他值表示失败。</p></li>
+<li>返回int类型的返回值。0表示执行成功，其他值表示失败。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-geterrorname">
-<h4><span class="section-number">1.3.3.3. </span>2.3.3 HB_BPU_getErrorName<a class="headerlink" href="#hb-bpu-geterrorname" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">HB_BPU_getErrorName</span><span class="p">(</span><span class="kt">int</span> <span class="n">error_code</span><span class="p">);</span>
+<h4>1.3.3.3. 2.3.3 HB_BPU_getErrorName<a class="headerlink" href="#hb-bpu-geterrorname" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">HB_BPU_getErrorName</span><span class="p">(</span><span class="kt">int</span> <span class="n">error_code</span><span class="p">);</span>
 </pre></div>
 </div>
 <p><strong>描述：</strong></p>
 <p>把error code转换成可读的字符串，便于问题追查。该函数线程安全，可以在任何地方使用。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">error_code</span></code>：来自其他BPU API的返回值。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">error_code</span></code>：来自其他BPU API的返回值。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>常量的字符串指针。</p></li>
+<li>常量的字符串指针。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-setglobalconfig">
-<h4><span class="section-number">1.3.3.4. </span>2.3.4 HB_BPU_setGlobalConfig<a class="headerlink" href="#hb-bpu-setglobalconfig" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.4. 2.3.4 HB_BPU_setGlobalConfig<a class="headerlink" href="#hb-bpu-setglobalconfig" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_GLOBAL_CONFIG_E</span> <span class="p">{</span>
   <span class="n">BPU_GLOBAL_CONFIG_MAX_TASK_NUM</span><span class="p">,</span>
   <span class="n">BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE</span><span class="p">,</span>  <span class="c1">// This config is discarded.</span>
@@ -740,27 +786,25 @@
 <p><strong>描述：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_E</span></code>枚举了<code class="docutils literal notranslate"><span class="pre">bpu_predict</span></code>可以设置的全局控制参数。</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_MAX_TASK_NUM</span></code>：设置能够同时运行的task个数上限，默认值为32，即可以同时提交32个执行模型的任务。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE</span></code>：设置内部维护的mem pool大小，默认值为128，即最多在mem pool中存储128个buffer。可以通过修改这个值来控制<code class="docutils literal notranslate"><span class="pre">bpu_predict</span></code>的内存占用。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_DEBUG</span></code>：设置是否进入debug模式，可选输入为<code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">debug</span> <span class="pre">warn</span> <span class="pre">error</span></code>：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">debug</span></code>表示打开DEBUG,  ERROR，WARNING，INFO日志</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>表示打开ERROR，WARNING，INFO日志</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">warn</span></code>表示打开ERROR和WARNING级别日志</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">error</span></code>表示打开ERROR级别日志。日志级别也可以用环境变量<code class="docutils literal notranslate"><span class="pre">HB_BPU_DEBUG_LOG=</span></code>来设置。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_MAX_TASK_NUM</span></code>：设置能够同时运行的task个数上限，默认值为32，即可以同时提交32个执行模型的任务。</li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_MAX_MEM_POOL_SIZE</span></code>：设置内部维护的mem pool大小，默认值为128，即最多在mem pool中存储128个buffer。可以通过修改这个值来控制<code class="docutils literal notranslate"><span class="pre">bpu_predict</span></code>的内存占用。</li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_DEBUG</span></code>：设置是否进入debug模式，可选输入为<code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">debug</span> <span class="pre">warn</span> <span class="pre">error</span></code>：<ul>
+<li><code class="docutils literal notranslate"><span class="pre">debug</span></code>表示打开DEBUG,  ERROR，WARNING，INFO日志</li>
+<li><code class="docutils literal notranslate"><span class="pre">info</span></code>表示打开ERROR，WARNING，INFO日志</li>
+<li><code class="docutils literal notranslate"><span class="pre">warn</span></code>表示打开ERROR和WARNING级别日志</li>
+<li><code class="docutils literal notranslate"><span class="pre">error</span></code>表示打开ERROR级别日志。日志级别也可以用环境变量<code class="docutils literal notranslate"><span class="pre">HB_BPU_DEBUG_LOG=</span></code>来设置。</li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONV_MAPPING_FILE</span></code>：编译debug模型时输出的卷积节点mapping文件路径。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONV_DUMP_PATH</span></code>：将bpu段中包含的conv节点的输出dump到的目录路径</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE</span></code>：取值为<code class="docutils literal notranslate"><span class="pre">TRUE</span></code>或者<code class="docutils literal notranslate"><span class="pre">true</span></code>时，统计<code class="docutils literal notranslate"><span class="pre">LoadModel</span></code>接口的内存使用情况。要配合<code class="docutils literal notranslate"><span class="pre">HB_BPU_setGlobalConfig</span></code>接口使用。<strong>注意：统计内存功能打开的情况下，性能会有损失，因此在生产环境中不要打开这个统计功能。</strong></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_ENGINE_TYPE</span></code>：设置SDK内用于模型推理的engine类型，取值如下：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">native</span></code>表示 native engine类型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">group</span></code>表示 group engine类型，是默认值。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONV_MAPPING_FILE</span></code>：编译debug模型时输出的卷积节点mapping文件路径。</li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONV_DUMP_PATH</span></code>：将bpu段中包含的conv节点的输出dump到的目录路径</li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE</span></code>：取值为<code class="docutils literal notranslate"><span class="pre">TRUE</span></code>或者<code class="docutils literal notranslate"><span class="pre">true</span></code>时，统计<code class="docutils literal notranslate"><span class="pre">LoadModel</span></code>接口的内存使用情况。要配合<code class="docutils literal notranslate"><span class="pre">HB_BPU_setGlobalConfig</span></code>接口使用。<strong>注意：统计内存功能打开的情况下，性能会有损失，因此在生产环境中不要打开这个统计功能。</strong></li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_ENGINE_TYPE</span></code>：设置SDK内用于模型推理的engine类型，取值如下：<ul>
+<li><code class="docutils literal notranslate"><span class="pre">native</span></code>表示 native engine类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">group</span></code>表示 group engine类型，是默认值。</li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CUSTOM_OP_LIB_PATH</span></code>：custom op的lib path。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES</span></code>：基于性能考量，SDK内部对于bpu内存会使用缓存机制，该配置项属于缓存的释放策略配置。假定配置为N，表示某块缓存超过N次不被使用，就会被释放；如果N小于等于0，表示不使用缓存机制。默认配置为64。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CUSTOM_OP_LIB_PATH</span></code>：custom op的lib path。</li>
+<li><code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES</span></code>：基于性能考量，SDK内部对于bpu内存会使用缓存机制，该配置项属于缓存的释放策略配置。假定配置为N，表示某块缓存超过N次不被使用，就会被释放；如果N小于等于0，表示不使用缓存机制。默认配置为64。</li>
 </ol>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setGlobalConfig</span><span class="p">(</span><span class="n">BPU_GLOBAL_CONFIG_E</span> <span class="n">config_key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">config_value</span><span class="p">);</span>
 </pre></div>
@@ -769,19 +813,19 @@
 <p>该函数用于设置<code class="docutils literal notranslate"><span class="pre">bpu_predict</span></code>的全局控制信息，此接口须在加载模型之前调用才能生效。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">config_key</span></code>：表示需要设置的config枚举类型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">config_value</span></code>：字符串类型的value。具体value可配的值可以在枚举值定义找到。设置值以字符串方式传入。例如设置<code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_DEBUG</span></code>，需要传入<code class="docutils literal notranslate"><span class="pre">0</span></code>或者<code class="docutils literal notranslate"><span class="pre">1</span></code>。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">config_key</span></code>：表示需要设置的config枚举类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">config_value</span></code>：字符串类型的value。具体value可配的值可以在枚举值定义找到。设置值以字符串方式传入。例如设置<code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_DEBUG</span></code>，需要传入<code class="docutils literal notranslate"><span class="pre">0</span></code>或者<code class="docutils literal notranslate"><span class="pre">1</span></code>。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型错误码。</p></li>
+<li>int类型错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-runmodel">
-<h4><span class="section-number">1.3.3.5. </span>2.3.5 HB_BPU_runModel<a class="headerlink" href="#hb-bpu-runmodel" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.5. 2.3.5 HB_BPU_runModel<a class="headerlink" href="#hb-bpu-runmodel" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">void</span><span class="o">*</span> <span class="n">BPU_TASK_HANDLE</span><span class="p">;</span>  <span class="c1">// 用于表示异步执行的task handle</span>
 
-<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RUN_CTRL_S</span> <span class="p">{</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_RUN_CTRL_S</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">core_id</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">resize_type</span><span class="p">;</span>  <span class="c1">// 1: resize input data if input shape is not same with</span>
                     <span class="c1">// model input shape; other value: no resize</span>
@@ -799,30 +843,30 @@
 <p>对输入数据执行一次模型。分成同步方式和异步方式。当处于同步方式时，调用该接口会阻塞当前线程，直到模型运行完成；当处于异步方式时，调用该接口会立即返回，之后可以通过<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>等待模型结束。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型的结构体对象指针，表示运行该模型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">input_data</span></code>：表示输入数据tensor。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">input_num</span></code>：表示输入数据的个数，需要跟模型的输入个数匹配。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：表示输出数据tensor。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：表示输出数据的个数，要跟模型输出个数一致。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_ctrl</span></code>：表示这次运行的控制信息，例如指定<code class="docutils literal notranslate"><span class="pre">core_id</span></code>，是否对input做resize处理。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_sync</span></code>：表示这次执行是否用同步模式，<code class="docutils literal notranslate"><span class="pre">true</span></code>为同步模式，<code class="docutils literal notranslate"><span class="pre">false</span></code>为异步模式</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型的结构体对象指针，表示运行该模型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">input_data</span></code>：表示输入数据tensor。</li>
+<li><code class="docutils literal notranslate"><span class="pre">input_num</span></code>：表示输入数据的个数，需要跟模型的输入个数匹配。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：表示输出数据tensor。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：表示输出数据的个数，要跟模型输出个数一致。</li>
+<li><code class="docutils literal notranslate"><span class="pre">run_ctrl</span></code>：表示这次运行的控制信息，例如指定<code class="docutils literal notranslate"><span class="pre">core_id</span></code>，是否对input做resize处理。</li>
+<li><code class="docutils literal notranslate"><span class="pre">is_sync</span></code>：表示这次执行是否用同步模式，<code class="docutils literal notranslate"><span class="pre">true</span></code>为同步模式，<code class="docutils literal notranslate"><span class="pre">false</span></code>为异步模式</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p>如果是异步接口，则会返回<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>。这个handle可以用在后续<code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code>接口上等待模型执行完成。</p></li>
+<li>如果是异步接口，则会返回<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>。这个handle可以用在后续<code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code>接口上等待模型执行完成。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>注：</strong></p>
 <ol class="simple">
-<li><p><strong>关于</strong><code class="docutils literal notranslate"><span class="pre">core_id</span></code>。<code class="docutils literal notranslate"><span class="pre">core_id</span></code><strong>的取值范围是[0, max_core_num]，</strong><code class="docutils literal notranslate"><span class="pre">max_core_num</span></code><strong>是BPU的总核数，在x2/j2/x3/j3上</strong><code class="docutils literal notranslate"><span class="pre">max_core_num</span></code><strong>为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置</strong><code class="docutils literal notranslate"><span class="pre">core_id</span></code>为<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>。</p></li>
-<li><p><strong>异步模式下，</strong><code class="docutils literal notranslate"><span class="pre">core_id</span></code><strong>不生效。由系统内部根据负载情况自动分配BPU核。</strong></p></li>
+<li><strong>关于</strong><code class="docutils literal notranslate"><span class="pre">core_id</span></code>。<code class="docutils literal notranslate"><span class="pre">core_id</span></code><strong>的取值范围是[0, max_core_num]，</strong><code class="docutils literal notranslate"><span class="pre">max_core_num</span></code><strong>是BPU的总核数，在x2/j2/x3/j3上</strong><code class="docutils literal notranslate"><span class="pre">max_core_num</span></code><strong>为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置</strong><code class="docutils literal notranslate"><span class="pre">core_id</span></code>为<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>。</li>
+<li><strong>异步模式下，</strong><code class="docutils literal notranslate"><span class="pre">core_id</span></code><strong>不生效。由系统内部根据负载情况自动分配BPU核。</strong></li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-waitmodeldone">
-<h4><span class="section-number">1.3.3.6. </span>2.3.6 HB_BPU_waitModelDone<a class="headerlink" href="#hb-bpu-waitmodeldone" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.6. 2.3.6 HB_BPU_waitModelDone<a class="headerlink" href="#hb-bpu-waitmodeldone" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_waitModelDone</span><span class="p">(</span><span class="n">BPU_TASK_HANDLE</span> <span class="o">*</span><span class="n">task_handle</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -830,15 +874,15 @@
 <p>等待模型执行完成，用于异步执行场景。调用该函数会卡住当前线程，直到模型执行完成。如果在调用该函数的时候模型已经执行完成，则函数直接返回。该函数返回之后，表示<code class="docutils literal notranslate"><span class="pre">output_data</span></code>中已经存入了模型执行的结果，并且结果可读。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">task_handle</span></code>：表示模型一次执行的handle。这个handle由<code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code>接口返回。不能用于其他用途。异步场景下该函数返回之后，需要调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseTask</span></code>来释放<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">task_handle</span></code>：表示模型一次执行的handle。这个handle由<code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code>接口返回。不能用于其他用途。异步场景下该函数返回之后，需要调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseTask</span></code>来释放<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-releasetask">
-<h4><span class="section-number">1.3.3.7. </span>2.3.7 HB_BPU_releaseTask<a class="headerlink" href="#hb-bpu-releasetask" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.7. 2.3.7 HB_BPU_releaseTask<a class="headerlink" href="#hb-bpu-releasetask" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_releaseTask</span><span class="p">(</span><span class="n">BPU_TASK_HANDLE</span> <span class="o">*</span><span class="n">task_handle</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -846,21 +890,21 @@
 <p>释放task handle，用于异步接口场景，需要在<code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code>之后调用。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">task_handle</span></code>：表示模型一次执行的handle，由<code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code>接口返回。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">task_handle</span></code>：表示模型一次执行的handle，由<code class="docutils literal notranslate"><span class="pre">HB_BPU_runModel</span></code>接口返回。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-resize">
-<h4><span class="section-number">1.3.3.8. </span>2.3.8 HB_BPU_resize<a class="headerlink" href="#hb-bpu-resize" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.8. 2.3.8 HB_BPU_resize<a class="headerlink" href="#hb-bpu-resize" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">enum</span> <span class="n">hb_BPU_RESIZE_TYPE_E</span> <span class="p">{</span>
   <span class="n">BPU_RESIZE_TYPE_BILINEAR</span><span class="p">;</span>
 <span class="p">}</span> <span class="n">BPU_RESIZE_TYPE_E</span><span class="p">;</span>
 </pre></div>
 </div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RESIZE_CTRL_S</span> <span class="p">{</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_RESIZE_CTRL_S</span> <span class="p">{</span>
   <span class="n">BPU_RESIZE_TYPE_E</span> <span class="n">resize_type</span><span class="p">;</span>
   <span class="n">BPU_DATA_TYPE_E</span> <span class="n">output_type</span><span class="p">;</span>
   <span class="n">Int</span> <span class="n">core_id</span><span class="p">;</span>
@@ -874,27 +918,26 @@
 <p>将输入的tensor data做resize，转成dest tensor指定的大小，并存储到dest的tensor data中。函数内部不会申请dest空间，需要由外部申请。具体格式参考[图像数据类型](##### 2.1.4.2 图像数据类型)一节。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code>：表示输入data的数据描述，当输入数据格式为nv12和nv12_separate时，要求输入数据w和16对齐，h和2对齐;当输入为其他格式时，要求w和h和2对齐。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>：表示resize使用的控制参数：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">resize_type</span></code>：表示使用的resize类型。目前只支持双线性插值。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code>: 表示期望输出数据类型。具体说明见下文中的<strong>输出类型说明</strong>。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">core_id</span></code>：表示resize跑在哪个bpu核心上，指定0或1表示resize运行在bpu0核或者1核，其他值表示交由bpu_predict来调度运行在哪个核心。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>：表示输入data的数据描述，当输入数据格式为nv12和nv12_separate时，要求输入数据w和16对齐，h和2对齐;当输入为其他格式时，要求w和h和2对齐。</li>
+<li><code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>：表示resize使用的控制参数：<ul>
+<li><code class="docutils literal notranslate"><span class="pre">resize_type</span></code>：表示使用的resize类型。目前只支持双线性插值。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_type</span></code>: 表示期望输出数据类型。具体说明见下文中的<strong>输出类型说明</strong>。</li>
+<li><code class="docutils literal notranslate"><span class="pre">core_id</span></code>：表示resize跑在哪个bpu核心上，指定0或1表示resize运行在bpu0核或者1核，其他值表示交由bpu_predict来调度运行在哪个核心。</li>
 </ul>
 </li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dest</span></code>：表示输出data的数据描述，根据<code class="docutils literal notranslate"><span class="pre">dest</span></code>中设置的height和width执行对应缩放。如果输出为nv12或者nv12_separate时，输出w和h必须和2对齐。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">dest</span></code>：表示输出data的数据描述，根据<code class="docutils literal notranslate"><span class="pre">dest</span></code>中设置的height和width执行对应缩放。如果输出为nv12或者nv12_separate时，输出w和h必须和2对齐。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>输出类型说明：</strong></p>
 <ol class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>参数中的<code class="docutils literal notranslate"><span class="pre">output_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code>的时候，输出数据为可以直接送入BPU的数据，满足BPU的对齐要求，并且数据类型为int8。需要使用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getImageAlignedShape</span></code>接口得到的对齐大小来申请output tensor的内存。</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>参数中的<code class="docutils literal notranslate"><span class="pre">output_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_U</span></code>8时，输出数据为正常的图像，且图像格式跟输入数据一致。output tensor的大小满足output tensor中设置的<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>要求。</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>参数中的<code class="docutils literal notranslate"><span class="pre">output_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code>的时候，输出数据为可以直接送入BPU的数据，满足BPU的对齐要求，并且数据类型为int8。需要使用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getImageAlignedShape</span></code>接口得到的对齐大小来申请output tensor的内存。</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>参数中的<code class="docutils literal notranslate"><span class="pre">output_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_U</span></code>8时，输出数据为正常的图像，且图像格式跟输入数据一致。output tensor的大小满足output tensor中设置的<code class="docutils literal notranslate"><span class="pre">aligned_shape</span></code>要求。</li>
 </ol>
 <p>这里可以列出一个支持的转换方式矩阵：</p>
 <table border="1" class="docutils">
@@ -984,15 +1027,15 @@
 </tbody>
 </table><p><strong>注：</strong></p>
 <ol class="simple">
-<li><p>标示为“支持”的是当前支持的转换方式。</p></li>
-<li><p>标示为“暂未实现”的是当前芯片架构可以支持，但是还没有实现的。</p></li>
-<li><p>标示为“不支持”的是在当前芯片架构下无法实现的。</p></li>
-<li><p>缩放倍数最大支持256倍，即[1/256,256]，计算公式为(src-1)/(dst-1)。尺寸要求HxW &lt;= 4094x4080，即缩放图的H最大为4094，W最大为4080。</p></li>
+<li>标示为“支持”的是当前支持的转换方式。</li>
+<li>标示为“暂未实现”的是当前芯片架构可以支持，但是还没有实现的。</li>
+<li>标示为“不支持”的是在当前芯片架构下无法实现的。</li>
+<li>缩放倍数最大支持256倍，即[1/256,256]，计算公式为(src-1)/(dst-1)。尺寸要求HxW &lt;= 4094x4080，即缩放图的H最大为4094，W最大为4080。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-cropandresize">
-<h4><span class="section-number">1.3.3.9. </span>2.3.9 HB_BPU_cropAndResize<a class="headerlink" href="#hb-bpu-cropandresize" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_ROI_S</span> <span class="p">{</span>
+<h4>1.3.3.9. 2.3.9 HB_BPU_cropAndResize<a class="headerlink" href="#hb-bpu-cropandresize" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_ROI_S</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">x1</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">y1</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">x2</span><span class="p">;</span>
@@ -1010,29 +1053,28 @@
 <p>对输入tensor data按照roi区域crop出来再做resize，并存储到dest的tensor data中。函数内部不会申请dest空间，需要由外部申请，并且设置dest的shape[0]为目标height和shape[1]为目标width。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code>：表示输入data的数据描述，根据结构体中的类型做对应的缩放。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">input_roi</span></code>：表示需要做resize的roi区域，其中保存左上角和右下角两个顶点的坐标。例如400x200的图片，从左上角crop出200x200的图片，roi中x1应该为0，y1为0，x2为199，y2为199，即crop出的图片width等于x2-x1+1,height等于y2-y1+1。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>：表示resize使用的控制参数：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">resize_type</span></code>：表示使用的插值类型。目前只支持双线性插值。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code>: 表示期望输出数据类型。具体说明上文中的<strong>输出类型说明</strong>。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>：表示输入data的数据描述，根据结构体中的类型做对应的缩放。</li>
+<li><code class="docutils literal notranslate"><span class="pre">input_roi</span></code>：表示需要做resize的roi区域，其中保存左上角和右下角两个顶点的坐标。例如400x200的图片，从左上角crop出200x200的图片，roi中x1应该为0，y1为0，x2为199，y2为199，即crop出的图片width等于x2-x1+1,height等于y2-y1+1。</li>
+<li><code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>：表示resize使用的控制参数：<ul>
+<li><code class="docutils literal notranslate"><span class="pre">resize_type</span></code>：表示使用的插值类型。目前只支持双线性插值。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_type</span></code>: 表示期望输出数据类型。具体说明上文中的<strong>输出类型说明</strong>。</li>
 </ul>
 </li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dest</span></code>：表示输出data的数据描述。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">dest</span></code>：表示输出data的数据描述。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>注：</strong></p>
 <p><strong>1. <code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code>与<code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>的区别是前者对图像的roi做resize而后者则是全图reszie，<code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code>的可支持转换及注意事项与<code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>一致。</strong></p>
 <p><strong>2. crop之前的原图大小要求HxW &lt;= 4094x4080。</strong></p>
 </div>
 <div class="section" id="hb-bpu-getimagealignedshape">
-<h4><span class="section-number">1.3.3.10. </span>2.3.10 HB_BPU_getImageAlignedShape<a class="headerlink" href="#hb-bpu-getimagealignedshape" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.10. 2.3.10 HB_BPU_getImageAlignedShape<a class="headerlink" href="#hb-bpu-getimagealignedshape" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getImageAlignedShape</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span> 
                                <span class="kt">int</span> <span class="o">*</span><span class="n">aligned_size</span><span class="p">);</span>
 </pre></div>
@@ -1041,19 +1083,19 @@
 <p>由输入的shape计算出对齐后的尺寸大小。这个接口可与<code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code>和<code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>配合，用来获取resize结果需要申请的mem大小。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>：表示输入的尺寸描述。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">shape</span></code>：表示输入的尺寸描述。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">aligned_size</span></code>：表示输入shape对齐后的mem大小。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">aligned_size</span></code>：表示输入shape对齐后的mem大小。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-getresizeresultwithoutpadding">
-<h4><span class="section-number">1.3.3.11. </span>2.3.11 HB_BPU_getResizeResultWithoutPadding<a class="headerlink" href="#hb-bpu-getresizeresultwithoutpadding" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.11. 2.3.11 HB_BPU_getResizeResultWithoutPadding<a class="headerlink" href="#hb-bpu-getresizeresultwithoutpadding" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getResizeResultWithoutPadding</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MEMORY_S</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span>
                                          <span class="k">const</span> <span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">,</span>
                                          <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span>
@@ -1064,22 +1106,22 @@
 <p>如果<code class="docutils literal notranslate"><span class="pre">HB_BPU_resize</span></code>或者<code class="docutils literal notranslate"><span class="pre">HB_BPU_cropAndResize</span></code>接口中的<code class="docutils literal notranslate"><span class="pre">ctrl_param</span></code>参数中的<code class="docutils literal notranslate"><span class="pre">output_type</span></code>设置为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code>类型，测试返回的dest data可以用来直接跑模型。但是不能直接转成图片查看。因为内部做了padding处理。所以当需要得到resize的图片结果时，需要调用此接口获取实际resize结果。函数内部不会申请dest空间，需要由外部申请，dest空间大小为实际图像大小。例如对RGB图片是h * w * 3。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code>：表示resize得到的结果。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：表示resize得到的图像类型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>：表示resize结果的尺寸描述。与<code class="docutils literal notranslate"><span class="pre">data_type</span></code>配合。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dest_size</span></code>：表示dest内存大小，用于检查dest内存是否够用，防止写越界。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>：表示resize得到的结果。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：表示resize得到的图像类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">shape</span></code>：表示resize结果的尺寸描述。与<code class="docutils literal notranslate"><span class="pre">data_type</span></code>配合。</li>
+<li><code class="docutils literal notranslate"><span class="pre">dest_size</span></code>：表示dest内存大小，用于检查dest内存是否够用，防止写越界。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dest</span></code>：表示输出的数据地址，由外部申请，内存大小为HxWxC，目前支持的image类型中除了<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_Y</span></code>的C为1，其余均为3。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">dest</span></code>：表示输出的数据地址，由外部申请，内存大小为HxWxC，目前支持的image类型中除了<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_Y</span></code>的C为1，其余均为3。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-setmodelprior">
-<h4><span class="section-number">1.3.3.12. </span>2.3.12 HB_BPU_setModelPrior<a class="headerlink" href="#hb-bpu-setmodelprior" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.12. 2.3.12 HB_BPU_setModelPrior<a class="headerlink" href="#hb-bpu-setmodelprior" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setModelPrior</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1087,7 +1129,7 @@
 <p>用于设置模型为高优先级模型，可以抢占其他模型。当在单个核上同时跑两个模型时，正常情况下两个模型会抢占同一个核，此时他们的执行时间会相互影响，导致延迟比单独跑单个模型要大。如果设置其中一个模型为高优先级，那么他就可以执行抢占操作，从而降低自己的延迟，此时的延迟应该和单独跑单个模型基本一致。而另外一个模型由于被抢占，被抢占的那一帧的执行时间会显著变长。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型的结构体对象指针，表示运行该模型。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型的结构体对象指针，表示运行该模型。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <p>​1. 返回int类型的错误码。</p>
@@ -1097,7 +1139,7 @@
 <p><strong>3. 如果低优先级模型被抢占后，导致运行的时间大于10s，系统会直接判断该模型运行失败。</strong></p>
 </div>
 <div class="section" id="hb-bpu-gethwcindex">
-<h4><span class="section-number">1.3.3.13. </span>2.3.13 HB_BPU_getHWCIndex<a class="headerlink" href="#hb-bpu-gethwcindex" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.13. 2.3.13 HB_BPU_getHWCIndex<a class="headerlink" href="#hb-bpu-gethwcindex" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getHWCIndex</span><span class="p">(</span><span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">,</span>
                        <span class="k">const</span> <span class="n">BPU_LAYOUT_E</span> <span class="o">*</span><span class="n">layout</span><span class="p">,</span>
                        <span class="kt">int</span> <span class="o">*</span><span class="n">h_idx</span><span class="p">,</span>
@@ -1109,22 +1151,22 @@
 <p>辅助接口，提供遍历功能。根据<code class="docutils literal notranslate"><span class="pre">data_type</span></code>和<code class="docutils literal notranslate"><span class="pre">layout</span></code>，返回height/width/ channel在维度数组（<code class="docutils literal notranslate"><span class="pre">BPU_DATA_SHAPE_S.d</span></code>）中的位置索引。当<code class="docutils literal notranslate"><span class="pre">data_type</span></code>参数为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_XXX</span></code>时，<code class="docutils literal notranslate"><span class="pre">layout</span></code>为无效参数，可传进去<code class="docutils literal notranslate"><span class="pre">NULL</span></code>。当<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_XXX</span></code>时，必须传正确的<code class="docutils literal notranslate"><span class="pre">layout</span></code>参数。举例来说：如果<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_YUV_NV12</span></code>，由于<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_YUV_NV12</span></code>对应的<code class="docutils literal notranslate"><span class="pre">layout</span></code>为NCHW，因此返回的<code class="docutils literal notranslate"><span class="pre">h_idx=2</span></code>，<code class="docutils literal notranslate"><span class="pre">w_idx=3</span></code>，<code class="docutils literal notranslate"><span class="pre">c_idx=1</span></code>；如果<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_S8</span></code>，该type是feature类型的，本身没有<code class="docutils literal notranslate"><span class="pre">layout</span></code>信息，因此必须传进去正确的<code class="docutils literal notranslate"><span class="pre">layout</span></code>参数，根据模型的要求，假定<code class="docutils literal notranslate"><span class="pre">layout</span></code>参数为<code class="docutils literal notranslate"><span class="pre">BPU_LAYOUT_NHWC</span></code>，则该接口返回的<code class="docutils literal notranslate"><span class="pre">h_idx=1</span></code>，<code class="docutils literal notranslate"><span class="pre">w_idx=2</span></code>，<code class="docutils literal notranslate"><span class="pre">c_idx=3</span></code>。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：模型input的数据类型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">layout</span></code>：模型input的layout，<strong>注意：当<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为图片（<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_XXX</span></code>），layout为无效参数，可为NULL；当<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为feature（<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_XXX</span></code>），layout为必须的参数。</strong></p></li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：模型input的数据类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">layout</span></code>：模型input的layout，<strong>注意：当<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为图片（<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_IMG_XXX</span></code>），layout为无效参数，可为NULL；当<code class="docutils literal notranslate"><span class="pre">data_type</span></code>为feature（<code class="docutils literal notranslate"><span class="pre">BPU_TYPE_TENSOR_XXX</span></code>），layout为必须的参数。</strong></li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">h_idx</span></code>：height的位置索引。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">w_idx</span></code>：width的位置索引。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">c_idx</span></code>：channel的位置索引。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">h_idx</span></code>：height的位置索引。</li>
+<li><code class="docutils literal notranslate"><span class="pre">w_idx</span></code>：width的位置索引。</li>
+<li><code class="docutils literal notranslate"><span class="pre">c_idx</span></code>：channel的位置索引。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-gethw">
-<h4><span class="section-number">1.3.3.14. </span>2.3.14 HB_BPU_getHW<a class="headerlink" href="#hb-bpu-gethw" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.14. 2.3.14 HB_BPU_getHW<a class="headerlink" href="#hb-bpu-gethw" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getHW</span><span class="p">(</span><span class="n">BPU_DATA_TYPE_E</span> <span class="n">data_type</span><span class="p">,</span>
                  <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span>
                  <span class="kt">int</span> <span class="o">*</span><span class="n">height</span><span class="p">,</span>
@@ -1135,21 +1177,21 @@
 <p>根据模型的shape获取模型输入的height和width。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：模型input的数据类型，必须的参数。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>：对应的维度结构体，必须的参数。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：模型input的数据类型，必须的参数。</li>
+<li><code class="docutils literal notranslate"><span class="pre">shape</span></code>：对应的维度结构体，必须的参数。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code>：<code class="docutils literal notranslate"><span class="pre">shape</span></code>中维度数组中height大小。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code>：<code class="docutils literal notranslate"><span class="pre">shape</span></code>中维度数组中width大小。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">height</span></code>：<code class="docutils literal notranslate"><span class="pre">shape</span></code>中维度数组中height大小。</li>
+<li><code class="docutils literal notranslate"><span class="pre">width</span></code>：<code class="docutils literal notranslate"><span class="pre">shape</span></code>中维度数组中width大小。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-getmemoryusage">
-<h4><span class="section-number">1.3.3.15. </span>2.3.15 HB_BPU_getMemoryUsage<a class="headerlink" href="#hb-bpu-getmemoryusage" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.15. 2.3.15 HB_BPU_getMemoryUsage<a class="headerlink" href="#hb-bpu-getmemoryusage" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getMemoryUsage</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
                           <span class="kt">size_t</span> <span class="o">*</span><span class="n">bpu_peak_memory_usage</span><span class="p">,</span>
                           <span class="kt">size_t</span> <span class="o">*</span><span class="n">bpu_memory_occupation</span><span class="p">,</span>
@@ -1161,22 +1203,22 @@
 <p>辅助接口，提供模型加载的内存统计功能。在成功调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_loadModel</span></code>接口之后，传入模型结构体指针，调用该接口，可获取该模型加载的峰值内存和常驻内存。<strong>注意：要使用该接口统计内存的话，必须将全局配置<code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE</span></code>设置为“<code class="docutils literal notranslate"><span class="pre">TRUE</span></code>，即在加载模型前调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_setGlobalConfig</span></code>(<code class="docutils literal notranslate"><span class="pre">BPU_GLOBAL_CONFIG_ACCOUNT_MEMORY_USAGE,</span> <span class="pre">TRUE</span></code>)。</strong></p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：表示model的结构体对象指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：表示model的结构体对象指针。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bpu_peak_memory_usage</span></code>：模型加载过程中的峰值bpu内存，以byte为单位的统计数据。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bpu_memory_occupation</span></code>：模型加载成功后的的常驻bpu内存（直到<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code>被调用才被释放），以byte为单位的统计数据。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cpu_peak_memory_usage</span></code>：模型加载过程中的峰值cpu内存，以byte为单位的统计数据。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cpu_memory_occupation</span></code>：模型加载成功后的的常驻cpu内存（直到<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code>被调用才被释放），以byte为单位的统计数据。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">bpu_peak_memory_usage</span></code>：模型加载过程中的峰值bpu内存，以byte为单位的统计数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">bpu_memory_occupation</span></code>：模型加载成功后的的常驻bpu内存（直到<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code>被调用才被释放），以byte为单位的统计数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">cpu_peak_memory_usage</span></code>：模型加载过程中的峰值cpu内存，以byte为单位的统计数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">cpu_memory_occupation</span></code>：模型加载成功后的的常驻cpu内存（直到<code class="docutils literal notranslate"><span class="pre">HB_BPU_releaseModel</span></code>被调用才被释放），以byte为单位的统计数据。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-loadmodelfromfile">
-<h4><span class="section-number">1.3.3.16. </span>2.3.16 HB_BPU_loadModelFromFile<a class="headerlink" href="#hb-bpu-loadmodelfromfile" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.16. 2.3.16 HB_BPU_loadModelFromFile<a class="headerlink" href="#hb-bpu-loadmodelfromfile" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModelFromFile</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">model_file_name</span><span class="p">,</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1184,20 +1226,20 @@
 <p>从模型文件加载一个BPU模型，并得到表示该模型的结构体对象。<code class="docutils literal notranslate"><span class="pre">BPU_MODEL_S</span></code>结构体由外部传入，该函数直接往结构体中填入模型信息。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_file_name</span></code>：模型文件的路径名。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_file_name</span></code>：模型文件的路径名。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：代表当前加载模型信息的结构体指针。目前是一个模型存储在一个文件中，所以当前返回的handle就代表了这个模型。不支持多个模型打包在一起。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</p></li>
+<li>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-getversion">
-<h4><span class="section-number">1.3.3.17. </span>2.3.17 HB_BPU_getVersion<a class="headerlink" href="#hb-bpu-getversion" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">HB_BPU_getVersion</span><span class="p">();</span>
+<h4>1.3.3.17. 2.3.17 HB_BPU_getVersion<a class="headerlink" href="#hb-bpu-getversion" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">HB_BPU_getVersion</span><span class="p">();</span>
 </pre></div>
 </div>
 <p><strong>描述：</strong></p>
@@ -1210,7 +1252,7 @@
 <p>BPU SDK的版本号信息字符串。</p>
 </div>
 <div class="section" id="hb-bpu-runmodelwithbbox">
-<h4><span class="section-number">1.3.3.18. </span>2.3.18 HB_BPU_runModelWithBbox<a class="headerlink" href="#hb-bpu-runmodelwithbbox" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.18. 2.3.18 HB_BPU_runModelWithBbox<a class="headerlink" href="#hb-bpu-runmodelwithbbox" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>typedef struct hb_BPU_BBOX {
   float x1;       # box左上角x轴坐标
   float y1;       # box左上角y轴坐标
@@ -1239,34 +1281,34 @@
 <p>对输入数据执行模型。其中输入数据是图片的多个缩放层和多个BBox的综合（Bbox的坐标是基于down_scales[0]的，down_scale[0]代表原图），针对每个Bbox，接口内部会根据BBox选择合适的图片缩放层，然后在被选的缩放层上进行crop和resize，以便匹配模型的input shape，然后resize的结果作为模型输入去执行模型。执行方式分成同步方式和异步方式。当处于同步方式时，调用该接口会阻塞当前线程，直到模型运行完成；当处于异步方式时，调用该接口会立即返回，之后可以通过<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>等待模型结束。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型的结构体对象指针，表示运行该模型，目前只支持 <code class="docutils literal notranslate"><span class="pre">input</span></code> 为resizer的模型。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">down_scales</span></code>：图片的多个缩放层，仅指向下缩放，目前该参数的实际来源为io中金字塔相关接口返回的金字塔数据down scale层，<code class="docutils literal notranslate"><span class="pre">BPU_ADDR_INFO_S</span></code>结构体的具体描述参见 <code class="docutils literal notranslate"><span class="pre">2.4.3</span> <span class="pre">BPU_convertCameraInfo</span></code> 章节。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">down_scale_layers</span></code>: <code class="docutils literal notranslate"><span class="pre">down_scales</span></code> 数组中有效缩放层的个数。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code>：bbox的数组指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>：bbox的个数。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：表示输出数据tensor。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：表示输出数据的个数，要跟模型输出个数一致。这两个参数要特别注意，<code class="docutils literal notranslate"><span class="pre">output_num</span></code>就是模型本身的输出个数，<code class="docutils literal notranslate"><span class="pre">output_data</span></code>则是模型每个输出的n <code class="docutils literal notranslate"><span class="pre">bbox_num</span></code> 个tensor的连续内存，举例来说：
-假设resizer模型有两个输出：A和B，有20个检测框作为输入，则n <code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>=20，<code class="docutils literal notranslate"><span class="pre">output_num</span></code>=2， <code class="docutils literal notranslate"><span class="pre">output_data</span></code>[0]=20个A tensor的内存， output_data[1]=20个B tensor的内存。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_ctrl</span></code>：表示这次运行的控制信息，例如<code class="docutils literal notranslate"><span class="pre">core_id</span></code>，是否当resizer硬件不能支持时使用内部RoiResize功能。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_sync</span></code>：表示这次执行是否用同步模式，<code class="docutils literal notranslate"><span class="pre">true</span></code>为同步模式，<code class="docutils literal notranslate"><span class="pre">false</span></code>为异步模式。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型的结构体对象指针，表示运行该模型，目前只支持 <code class="docutils literal notranslate"><span class="pre">input</span></code> 为resizer的模型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">down_scales</span></code>：图片的多个缩放层，仅指向下缩放，目前该参数的实际来源为io中金字塔相关接口返回的金字塔数据down scale层，<code class="docutils literal notranslate"><span class="pre">BPU_ADDR_INFO_S</span></code>结构体的具体描述参见 <code class="docutils literal notranslate"><span class="pre">2.4.3</span> <span class="pre">BPU_convertCameraInfo</span></code> 章节。</li>
+<li><code class="docutils literal notranslate"><span class="pre">down_scale_layers</span></code>: <code class="docutils literal notranslate"><span class="pre">down_scales</span></code> 数组中有效缩放层的个数。</li>
+<li><code class="docutils literal notranslate"><span class="pre">bbox</span></code>：bbox的数组指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>：bbox的个数。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：表示输出数据tensor。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：表示输出数据的个数，要跟模型输出个数一致。这两个参数要特别注意，<code class="docutils literal notranslate"><span class="pre">output_num</span></code>就是模型本身的输出个数，<code class="docutils literal notranslate"><span class="pre">output_data</span></code>则是模型每个输出的nBBox个tensor的连续内存，举例来说：
+假设resizer模型有两个输出：A和B，有20个检测框作为输入，则nBBox=20，output_num=2， output_data[0]=20个A tensor的内存， output_data[1]=20个B tensor的内存。</li>
+<li><code class="docutils literal notranslate"><span class="pre">run_ctrl</span></code>：表示这次运行的控制信息，例如<code class="docutils literal notranslate"><span class="pre">core_id</span></code>，是否当resizer硬件不能支持时使用内部RoiResize功能。</li>
+<li><code class="docutils literal notranslate"><span class="pre">is_sync</span></code>：表示这次执行是否用同步模式，<code class="docutils literal notranslate"><span class="pre">true</span></code>为同步模式，<code class="docutils literal notranslate"><span class="pre">false</span></code>为异步模式。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">resizable_cnt</span></code>：实际能够resize的bbox个数，调用方可以根据这个输出值，决定有多少个实际的output。</p></li>
-<li><p>如果是异步接口，则会返回<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>。这个handle可以用在后续<code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code>接口上等待模型执行完成。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">resizable_cnt</span></code>：实际能够resize的bbox个数，调用方可以根据这个输出值，决定有多少个实际的output。</li>
+<li>如果是异步接口，则会返回<code class="docutils literal notranslate"><span class="pre">task_handle</span></code>。这个handle可以用在后续<code class="docutils literal notranslate"><span class="pre">HB_BPU_waitModelDone</span></code>接口上等待模型执行完成。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>注：</strong></p>
 <ol class="simple">
-<li><p>关于<code class="docutils literal notranslate"><span class="pre">core_id</span></code>。<code class="docutils literal notranslate"><span class="pre">core_id</span></code>的取值范围是[0, max_core_num]，<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>是BPU的总核数，在x2/j2/x3/j3上<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置<code class="docutils literal notranslate"><span class="pre">core_id</span></code>为<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>。</p></li>
-<li><p>异步模式下，<code class="docutils literal notranslate"><span class="pre">core_id</span></code>不生效。由系统内部根据负载情况自动分配BPU核。</p></li>
+<li>关于<code class="docutils literal notranslate"><span class="pre">core_id</span></code>。<code class="docutils literal notranslate"><span class="pre">core_id</span></code>的取值范围是[0, max_core_num]，<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>是BPU的总核数，在x2/j2/x3/j3上<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>为2。当需要运行双核的模型，即双核跑一帧数据时，需要设置<code class="docutils literal notranslate"><span class="pre">core_id</span></code>为<code class="docutils literal notranslate"><span class="pre">max_core_num</span></code>。</li>
+<li>异步模式下，<code class="docutils literal notranslate"><span class="pre">core_id</span></code>不生效。由系统内部根据负载情况自动分配BPU核。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-creategroup">
-<h4><span class="section-number">1.3.3.19. </span>2.3.19 HB_BPU_createGroup<a class="headerlink" href="#hb-bpu-creategroup" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.19. 2.3.19 HB_BPU_createGroup<a class="headerlink" href="#hb-bpu-creategroup" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_createGroup</span><span class="p">();</span>
 </pre></div>
 </div>
@@ -1278,11 +1320,11 @@
 <p>无。</p>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>创建的bpu group id。</p></li>
+<li>创建的bpu group id。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-setmodelgroup">
-<h4><span class="section-number">1.3.3.20. </span>2.3.20 HB_BPU_setModelGroup<a class="headerlink" href="#hb-bpu-setmodelgroup" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.20. 2.3.20 HB_BPU_setModelGroup<a class="headerlink" href="#hb-bpu-setmodelgroup" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setModelGroup</span><span class="p">(</span><span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span> <span class="kt">int</span> <span class="n">group_id</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1290,18 +1332,18 @@
 <p>将模型归属到group中。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">group_id</span></code>：group id。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体。</li>
+<li><code class="docutils literal notranslate"><span class="pre">group_id</span></code>：group id。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <p>无。</p>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-setgroupproportion">
-<h4><span class="section-number">1.3.3.21. </span>2.3.21 HB_BPU_setGroupProportion<a class="headerlink" href="#hb-bpu-setgroupproportion" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.21. 2.3.21 HB_BPU_setGroupProportion<a class="headerlink" href="#hb-bpu-setgroupproportion" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_setGroupProportion</span><span class="p">(</span><span class="kt">int</span> <span class="n">group_id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">proportion</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1309,20 +1351,20 @@
 <p>设置某个group的bpu资源使用限制。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">group_id</span></code>：group id。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">proportion</span></code>：资源限制量，取值范围在[0,100]。接口内部会按照proportion/100计算资源使用百分比。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">group_id</span></code>：group id。</li>
+<li><code class="docutils literal notranslate"><span class="pre">proportion</span></code>：资源限制量，取值范围在[0,100]。接口内部会按照proportion/100计算资源使用百分比。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <p>无。</p>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>注：</strong></p>
 <p>​该接口只会限制bpu资源使用率不会超过取值百分比，但对于个别模型来讲，bpu资源使用率并不一定会随着<code class="docutils literal notranslate"><span class="pre">proportion</span></code>增加而线性增长，因为bpu使用率还受制于其他方面：cpu负载、io负载、模型是否包含cpu算子等。</p>
 </div>
 <div class="section" id="hb-bpu-deletegroup">
-<h4><span class="section-number">1.3.3.22. </span>2.3.22 HB_BPU_deleteGroup<a class="headerlink" href="#hb-bpu-deletegroup" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.22. 2.3.22 HB_BPU_deleteGroup<a class="headerlink" href="#hb-bpu-deletegroup" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_deleteGroup</span><span class="p">(</span><span class="kt">int</span> <span class="n">group_id</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1330,19 +1372,19 @@
 <p>删除某个group。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">group_id</span></code>：group id。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">group_id</span></code>：group id。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p>无。</p></li>
+<li>无。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-parsedetthreshresult">
-<h4><span class="section-number">1.3.3.23. </span>2.3.23 HB_BPU_parseDetThreshResult<a class="headerlink" href="#hb-bpu-parsedetthreshresult" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.23. 2.3.23 HB_BPU_parseDetThreshResult<a class="headerlink" href="#hb-bpu-parsedetthreshresult" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseDetThreshResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
                                 <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
                                 <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
@@ -1356,24 +1398,24 @@
 <p>特殊检测模型（定点训练工具训练出的fasterrcnn或者maskrccn）的后处理接口，解析出Bbox。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：output tensor的个数。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">class_names</span></code>： 类别的classes数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">class_num</span></code>：类别的classes数组的个数。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：output tensor的个数。</li>
+<li><code class="docutils literal notranslate"><span class="pre">class_names</span></code>： 类别的classes数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">class_num</span></code>：类别的classes数组的个数。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code>：解析得到的bbox数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>：数组的个数。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">bbox</span></code>：解析得到的bbox数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>：数组的个数。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-parsechannelmaxresult">
-<h4><span class="section-number">1.3.3.24. </span>2.3.24 HB_BPU_parseChannelMaxResult<a class="headerlink" href="#hb-bpu-parsechannelmaxresult" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.24. 2.3.24 HB_BPU_parseChannelMaxResult<a class="headerlink" href="#hb-bpu-parsechannelmaxresult" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseChannelMaxResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
                                  <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
                                  <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
@@ -1385,22 +1427,22 @@
 <p>特殊分类模型的后处理接口，解析出分类结果。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：output tensor数组的大小。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">result_num</span></code>：解析结果的个数，必须小于等于<code class="docutils literal notranslate"><span class="pre">output_num</span></code>。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：output tensor数组的大小。</li>
+<li><code class="docutils literal notranslate"><span class="pre">result_num</span></code>：解析结果的个数，必须小于等于<code class="docutils literal notranslate"><span class="pre">output_num</span></code>。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">result</span></code>：解析得到的数组。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">result</span></code>：解析得到的数组。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-parsedppresult">
-<h4><span class="section-number">1.3.3.25. </span>2.3.25 HB_BPU_parseDPPResult<a class="headerlink" href="#hb-bpu-parsedppresult" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.25. 2.3.25 HB_BPU_parseDPPResult<a class="headerlink" href="#hb-bpu-parsedppresult" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_parseDPPResult</span><span class="p">(</span><span class="k">const</span> <span class="n">BPU_MODEL_S</span> <span class="o">*</span><span class="n">model</span><span class="p">,</span>
                           <span class="k">const</span> <span class="n">BPU_TENSOR_S</span> <span class="n">output_data</span><span class="p">[],</span>
                           <span class="kt">int</span> <span class="n">output_num</span><span class="p">,</span>
@@ -1412,23 +1454,23 @@
 <p>特殊检测模型的后处理接口。解析出检测框Bbox。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：output tensor数组的大小 。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_num</span></code>：output tensor数组的大小 。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bbox</span></code>：解析出的bbox数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>：bbox数组的大小。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">bbox</span></code>：解析出的bbox数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">bbox_num</span></code>：bbox数组的大小。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-parserppresult">
-<h4><span class="section-number">1.3.3.26. </span>2.3.26 HB_BPU_parseRPPResult<a class="headerlink" href="#hb-bpu-parserppresult" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_BBOX_F32</span> <span class="p">{</span>
+<h4>1.3.3.26. 2.3.26 HB_BPU_parseRPPResult<a class="headerlink" href="#hb-bpu-parserppresult" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_BBOX_F32</span> <span class="p">{</span>
   <span class="kt">float</span> <span class="n">left</span><span class="p">;</span>
   <span class="kt">float</span> <span class="n">top</span><span class="p">;</span>
   <span class="kt">float</span> <span class="n">right</span><span class="p">;</span>
@@ -1436,7 +1478,7 @@
   <span class="kt">float</span> <span class="n">score</span><span class="p">;</span>
   <span class="kt">float</span> <span class="n">class_label</span><span class="p">;</span>
 <span class="p">}</span> <span class="n">BPU_BBOX_F32</span><span class="p">;</span>
-<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_BBOX_INT16</span> <span class="p">{</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_BBOX_INT16</span> <span class="p">{</span>
   <span class="kt">int16_t</span> <span class="n">left</span><span class="p">;</span>
   <span class="kt">int16_t</span> <span class="n">top</span><span class="p">;</span>
   <span class="kt">int16_t</span> <span class="n">right</span><span class="p">;</span>
@@ -1445,7 +1487,7 @@
   <span class="kt">uint8_t</span> <span class="n">class_label</span><span class="p">;</span>
   <span class="kt">int16_t</span> <span class="n">padding</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
 <span class="p">}</span> <span class="n">BPU_BBOX_INT16</span><span class="p">;</span>
-<span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_RPP_BBOX</span> <span class="p">{</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_RPP_BBOX</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">bbox_num</span><span class="p">;</span>
   <span class="k">enum</span> <span class="p">{</span> <span class="n">bbox_type_int16</span><span class="p">,</span> <span class="n">bbox_type_f32</span> <span class="p">}</span> <span class="n">result_type</span><span class="p">;</span>
   <span class="n">BPU_BBOX_INT16</span> <span class="o">*</span><span class="n">bbox_ptr_int16</span><span class="p">;</span>
@@ -1463,21 +1505,21 @@
 <p>特殊检测模型的某个输出的后处理接口。解析出检测框Bbox。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_index</span></code>：output tensor数组中的元素索引。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>：模型结构体指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_data</span></code>：模型执行后的output tensor数组。</li>
+<li><code class="docutils literal notranslate"><span class="pre">output_index</span></code>：output tensor数组中的元素索引。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">rpp_bbox</span></code>：解析出的bbox。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">rpp_bbox</span></code>：解析出的bbox。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-loadmodelpackage">
-<h4><span class="section-number">1.3.3.27. </span>2.3.27 HB_BPU_loadModelPackage<a class="headerlink" href="#hb-bpu-loadmodelpackage" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.27. 2.3.27 HB_BPU_loadModelPackage<a class="headerlink" href="#hb-bpu-loadmodelpackage" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModelPackage</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">model_data</span><span class="p">,</span>
                             <span class="kt">int</span> <span class="n">model_size</span><span class="p">,</span>
                             <span class="n">BPU_MODEL_PACKAGE_S</span> <span class="o">*</span><span class="n">model_pack_s</span><span class="p">);</span>
@@ -1487,20 +1529,20 @@
 <p>加载BPU模型包，并得到表示该模型包结构体对象。<code class="docutils literal notranslate"><span class="pre">BPU_MODEL_PACKAGE_S</span></code>结构体由外部传入，该函数直接往结构体中填入模型包内各个模型信息。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_data</span></code>：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，<code class="docutils literal notranslate"><span class="pre">model_data</span></code>的内存可以被释放。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model_size</span></code>：模型data的内存大小。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_data</span></code>：是指向存储模型data的内存地址，可以是普通的内存，不必申请成BPU内存；模型加载成功之后，<code class="docutils literal notranslate"><span class="pre">model_data</span></code>的内存可以被释放。</li>
+<li><code class="docutils literal notranslate"><span class="pre">model_size</span></code>：模型data的内存大小。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_pack_s</span></code>：代表当前加载模型包信息的结构体指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_pack_s</span></code>：代表当前加载模型包信息的结构体指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</p></li>
+<li>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-loadmodelpackagefromfile">
-<h4><span class="section-number">1.3.3.28. </span>2.3.28 HB_BPU_loadModelPackageFromFile<a class="headerlink" href="#hb-bpu-loadmodelpackagefromfile" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.28. 2.3.28 HB_BPU_loadModelPackageFromFile<a class="headerlink" href="#hb-bpu-loadmodelpackagefromfile" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_loadModelPackageFromFile</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">file_path</span><span class="p">,</span>
                                     <span class="n">BPU_MODEL_PACKAGE_S</span> <span class="o">*</span><span class="n">model_pack_s</span><span class="p">);</span>
 </pre></div>
@@ -1509,19 +1551,19 @@
 <p>加载BPU模型包，并得到表示该模型包结构体对象。<code class="docutils literal notranslate"><span class="pre">BPU_MODEL_PACKAGE_S</span></code>结构体由外部传入，该函数直接往结构体中填入模型包内各个模型信息。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">file_path</span></code>：模型包的文件路径。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">file_path</span></code>：模型包的文件路径。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_pack_s</span></code>：代表当前加载模型包信息的结构体指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_pack_s</span></code>：代表当前加载模型包信息的结构体指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</p></li>
+<li>int类型的返回值。0表示执行成功，其他值表示失败，具体原因可以通过返回的error code，调用<code class="docutils literal notranslate"><span class="pre">HB_BPU_getErrorName(err)</span></code>得到返回值的字符串描述。</li>
 </ol>
 </div>
 <div class="section" id="hb-bpu-releasemodelpackage">
-<h4><span class="section-number">1.3.3.29. </span>2.3.29 HB_BPU_releaseModelPackage<a class="headerlink" href="#hb-bpu-releasemodelpackage" title="永久链接至标题">¶</a></h4>
+<h4>1.3.3.29. 2.3.29 HB_BPU_releaseModelPackage<a class="headerlink" href="#hb-bpu-releasemodelpackage" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_releaseModelPackage</span><span class="p">(</span><span class="n">BPU_MODEL_PACKAGE_S</span> <span class="o">*</span><span class="n">model_package_s</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1529,19 +1571,82 @@
 <p>释放已经加载的BPU模型包。内部会修改 <code class="docutils literal notranslate"><span class="pre">model_package_s</span></code> 结构体的内容。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">model_package_s</span></code>：表示模型包的结构体对象指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model_package_s</span></code>：表示模型包的结构体对象指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的返回值。0表示执行成功，其他值表示失败。</p></li>
+<li>返回int类型的返回值。0表示执行成功，其他值表示失败。</li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-getalignedtotalsize">
+<h4>1.3.3.30. 2.3.30 HB_BPU_getAlignedTotalSize<a class="headerlink" href="#hb-bpu-getalignedtotalsize" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_getAlignedTotalSize</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">BPU_MODEL_NODE_S</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>描述：</strong></p>
+<p>根据传入node的信息，计算所需要申请的内存大小。</p>
+<p><strong>输入：</strong></p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">size</span></code>：表示需要申请的内存大小的指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">node</span></code>：表示node信息，该node可以通过加载模型的相关接口获取到。</li>
+</ol>
+<p><strong>返回：</strong></p>
+<ol class="simple">
+<li>返回int类型的返回值。0表示执行成功，其他值表示失败。</li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-addpadding">
+<h4>1.3.3.31. 2.3.31 HB_BPU_addPadding<a class="headerlink" href="#hb-bpu-addpadding" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_addPadding</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">dst</span><span class="p">,</span>
+                      <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">src_shape</span><span class="p">,</span>
+                      <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">dst_shape</span><span class="p">,</span>
+                      <span class="k">const</span> <span class="n">BPU_DATA_TYPE_E</span> <span class="o">*</span><span class="n">data_type</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>描述：</strong></p>
+<p>根据传入的 <code class="docutils literal notranslate"><span class="pre">src_shape</span></code> 和<code class="docutils literal notranslate"><span class="pre">dst_shape</span></code> 以及数据类型 <code class="docutils literal notranslate"><span class="pre">data_type</span></code>，对数据进行padding操作。</p>
+<p><strong>输入：</strong></p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>：需要进行padding操作的原始数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">dst</span></code>：进行padding操作后的数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">src_shape</span></code>：需要进行padding操作的原始数据的shape。</li>
+<li><code class="docutils literal notranslate"><span class="pre">dst_shape</span></code>：进行padding后的目标数据的shape。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：需要进行padding操作的数据类型，当前支持的类型有BPU_TYPE_IMG_Y、BPU_TYPE_IMG_YUV_NV12、BPU_TYPE_IMG_NV12_SEPARATE、BPU_TYPE_TENSOR_U8、BPU_TYPE_TENSOR_S8、BPU_TYPE_TENSOR_F32、BPU_TYPE_TENSOR_S32、BPU_TYPE_TENSOR_U32、BPU_TYPE_TENSOR_S64。</li>
+</ol>
+<p><strong>返回：</strong></p>
+<ol class="simple">
+<li>返回int类型的返回值。0表示执行成功，其他值表示失败。</li>
+</ol>
+</div>
+<div class="section" id="hb-bpu-removepadding">
+<h4>1.3.3.32. 2.3.32 HB_BPU_removePadding<a class="headerlink" href="#hb-bpu-removepadding" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">HB_BPU_removePadding</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">dst</span><span class="p">,</span>
+                         <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">src_shape</span><span class="p">,</span>
+                         <span class="k">const</span> <span class="n">BPU_DATA_SHAPE_S</span> <span class="o">*</span><span class="n">dst_shape</span><span class="p">,</span>
+                         <span class="k">const</span> <span class="n">BPU_DATA_TYPE_E</span> <span class="o">*</span><span class="n">data_type</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>描述：</strong></p>
+<p>根据传入的 <code class="docutils literal notranslate"><span class="pre">src_shape</span></code> 和 <code class="docutils literal notranslate"><span class="pre">dst_shape</span></code> 以及数据类型 <code class="docutils literal notranslate"><span class="pre">data_type</span></code>，对数据进行去padding操作。</p>
+<p><strong>输入：</strong></p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>：需要去除padding的原始数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">dst</span></code>：去除padding后的数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">src_shape</span></code>：需要去除padding的原始数据的shape。</li>
+<li><code class="docutils literal notranslate"><span class="pre">dst_shape</span></code>：去除padding后的目标数据的shape。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data_type</span></code>：需要进行padding操作的数据类型，当前支持的类型有BPU_TYPE_TENSOR_U8、BPU_TYPE_TENSOR_S8、BPU_TYPE_TENSOR_F32、BPU_TYPE_TENSOR_S32、BPU_TYPE_TENSOR_U32、BPU_TYPE_TENSOR_S64，即去除padding操作只支持tensor类型。</li>
+</ol>
+<p><strong>返回：</strong></p>
+<ol class="simple">
+<li>返回int类型的返回值。0表示执行成功，其他值表示失败。</li>
 </ol>
 </div>
 </div>
 <div class="section" id="io">
-<h3><span class="section-number">1.3.4. </span>2.4 IO接口说明<a class="headerlink" href="#io" title="永久链接至标题">¶</a></h3>
+<h3>1.3.4. 2.4 IO接口说明<a class="headerlink" href="#io" title="永久链接至标题">¶</a></h3>
 <p>这里介绍的IO接口是工具链封装的接口，为了更加简单方便地使用IO的功能。如果需要使用更加灵活的IO功能，建议采用系统软件包提供的接口。</p>
 <div class="section" id="bpu-createcamerahandle">
-<h4><span class="section-number">1.3.4.1. </span>2.4.1 BPU_createCameraHandle<a class="headerlink" href="#bpu-createcamerahandle" title="永久链接至标题">¶</a></h4>
+<h4>1.3.4.1. 2.4.1 BPU_createCameraHandle<a class="headerlink" href="#bpu-createcamerahandle" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">BPUCameraHandle</span><span class="p">;</span>
 
 <span class="kt">int</span> <span class="nf">BPU_createCameraHandle</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">vio_config_file_name</span><span class="p">,</span>
@@ -1556,23 +1661,23 @@
 <p><strong>注意：对于一个camera，不能重复创建多个camera对象。</strong></p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">vio_config_file_name</span></code>：表示vio配置文件名。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">camera_config_file_name</span></code>：表示camera配置文件名。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code>：表示camera配置文件中camera类型对应的<code class="docutils literal notranslate"><span class="pre">config</span></code>字段的index。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>：表示camera配置文件中camera类型对应的<code class="docutils literal notranslate"><span class="pre">config</span></code>字段中的port id。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">vio_config_file_name</span></code>：表示vio配置文件名。</li>
+<li><code class="docutils literal notranslate"><span class="pre">camera_config_file_name</span></code>：表示camera配置文件名。</li>
+<li><code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code>：表示camera配置文件中camera类型对应的<code class="docutils literal notranslate"><span class="pre">config</span></code>字段的index。</li>
+<li><code class="docutils literal notranslate"><span class="pre">port</span></code>：表示camera配置文件中camera类型对应的<code class="docutils literal notranslate"><span class="pre">config</span></code>字段中的port id。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示创建好的camera handle，可用于后续获取camera图像。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示创建好的camera handle，可用于后续获取camera图像。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。</p></li>
+<li>返回int类型的错误码。</li>
 </ol>
 <p><strong>注： <code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code>和<code class="docutils literal notranslate"><span class="pre">port</span></code>均为camera配置文件的参数，一般板子可支持多种类型的camera，因此需要找到对应的camera所在的字段，配置文件为json格式，通过<code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code>和port id可找到对应的camera配置参数。在我们提供的示例中，可以找到配置文件的示例。通常在只有单路摄像头的场景，<code class="docutils literal notranslate"><span class="pre">cam_cfg_index</span></code>和<code class="docutils literal notranslate"><span class="pre">port</span></code>都是填0。</strong></p>
 </div>
 <div class="section" id="bpu-getcameraimagedata">
-<h4><span class="section-number">1.3.4.2. </span>2.4.2 BPU_getCameraImageData<a class="headerlink" href="#bpu-getcameraimagedata" title="永久链接至标题">¶</a></h4>
+<h4>1.3.4.2. 2.4.2 BPU_getCameraImageData<a class="headerlink" href="#bpu-getcameraimagedata" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_getCameraImageData</span><span class="p">(</span><span class="n">BPUCameraHandle</span> <span class="o">*</span><span class="n">handle</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="o">*</span><span class="n">info</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1580,20 +1685,20 @@
 <p>获取当前的camera图像数据。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示创建好的camera handle。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示创建好的camera handle。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>：表示获取当前的camera图像。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">info</span></code>：表示获取当前的camera图像。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。</p></li>
+<li>返回int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="bpu-convertcamerainfo">
-<h4><span class="section-number">1.3.4.3. </span>2.4.3 BPU_convertCameraInfo<a class="headerlink" href="#bpu-convertcamerainfo" title="永久链接至标题">¶</a></h4>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_ADDR_INFO_S</span> <span class="p">{</span>
+<h4>1.3.4.3. 2.4.3 BPU_convertCameraInfo<a class="headerlink" href="#bpu-convertcamerainfo" title="永久链接至标题">¶</a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_ADDR_INFO_S</span> <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">width</span><span class="p">;</span>
   <span class="kt">uint16_t</span> <span class="n">height</span><span class="p">;</span>
   <span class="kt">uint16_t</span> <span class="n">step</span><span class="p">;</span>
@@ -1607,16 +1712,16 @@
 <p><strong>描述：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_ADDR_INFO_S</span></code>表示camera输入的图像描述，camera图像的格式为yuv nv12。</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code>：表示图像的宽。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code>： 表示图像的高。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">step</span></code>： 表示图像在行方向上的步进。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">y_paddr</span></code>：表示y数据的起始物理地址。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">c_paddr</span></code>：表示uv数据的起始物理地址。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">y_vaddr</span></code>：表示y数据的起始虚拟地址。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">c_vaddr</span></code>：表示uv数据的起始虚拟地址。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">width</span></code>：表示图像的宽。</li>
+<li><code class="docutils literal notranslate"><span class="pre">height</span></code>： 表示图像的高。</li>
+<li><code class="docutils literal notranslate"><span class="pre">step</span></code>： 表示图像在行方向上的步进。</li>
+<li><code class="docutils literal notranslate"><span class="pre">y_paddr</span></code>：表示y数据的起始物理地址。</li>
+<li><code class="docutils literal notranslate"><span class="pre">c_paddr</span></code>：表示uv数据的起始物理地址。</li>
+<li><code class="docutils literal notranslate"><span class="pre">y_vaddr</span></code>：表示y数据的起始虚拟地址。</li>
+<li><code class="docutils literal notranslate"><span class="pre">c_vaddr</span></code>：表示uv数据的起始虚拟地址。</li>
 </ol>
 <p><strong>注意：y和uv的物理地址均不可被外部访问，只能送入bpu参与计算，而如果希望查看camera图像的话，可以访问只读的虚拟地址。</strong></p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">hb_BPU_CAMERA_IMAGE_INFO_S</span> <span class="p">{</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">hb_BPU_CAMERA_IMAGE_INFO_S</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">frame_id</span><span class="p">;</span>
   <span class="kt">int64_t</span> <span class="n">timestamp</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">img_format</span><span class="p">;</span>
@@ -1628,11 +1733,11 @@
 <p><strong>描述：</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>表示对camera输入的图像相关信息描述。</p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">frame_id</span></code>：表示当前图像的帧号。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">timestamp</span></code>：表示当前的时间戳。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">img_format</span></code>：表示图像的格式，目前仅支持yuv nv12。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">src_img</span></code>：表示图像的数据描述。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cam_id</span></code>：表示camera id。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">frame_id</span></code>：表示当前图像的帧号。</li>
+<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code>：表示当前的时间戳。</li>
+<li><code class="docutils literal notranslate"><span class="pre">img_format</span></code>：表示图像的格式，目前仅支持yuv nv12。</li>
+<li><code class="docutils literal notranslate"><span class="pre">src_img</span></code>：表示图像的数据描述。</li>
+<li><code class="docutils literal notranslate"><span class="pre">cam_id</span></code>：表示camera id。</li>
 </ol>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_convertCameraInfo</span><span class="p">(</span><span class="n">BPU_CAMERA_IMAGE_INFO_S</span> <span class="o">*</span><span class="n">cam_info</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="n">buffer</span><span class="p">);</span>
 </pre></div>
@@ -1641,20 +1746,20 @@
 <p><code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>包括了大量的输出信息，为了方便客户使用，调用这个接口将camera buffer转换为<code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>结构体，从而暴露出一些简单的信息，包含帧号、时间戳以及图像相关的数据。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code>：表示获得的当前图像信息。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">buffer</span></code>：表示获得的当前图像信息。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cam_info</span></code>：表示转换后得到的结构体。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">cam_info</span></code>：表示转换后得到的结构体。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>注意：<code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>结构体与<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>共享同一块camera信息内存，请不要在使用<code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>的时候释放<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>。</strong></p>
 </div>
 <div class="section" id="bpu-releasecamerabuffer">
-<h4><span class="section-number">1.3.4.4. </span>2.4.4 BPU_releaseCameraBuffer<a class="headerlink" href="#bpu-releasecamerabuffer" title="永久链接至标题">¶</a></h4>
+<h4>1.3.4.4. 2.4.4 BPU_releaseCameraBuffer<a class="headerlink" href="#bpu-releasecamerabuffer" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_releaseCameraBuffer</span><span class="p">(</span><span class="n">BPUCameraHandle</span> <span class="n">handle</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="n">buffer</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1662,16 +1767,16 @@
 <p>释放camera图像数据。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示camera handle。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code>：表示当前图像信息。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示camera handle。</li>
+<li><code class="docutils literal notranslate"><span class="pre">buffer</span></code>：表示当前图像信息。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="bpu-releasecamerahandle">
-<h4><span class="section-number">1.3.4.5. </span>2.4.5 BPU_releaseCameraHandle<a class="headerlink" href="#bpu-releasecamerahandle" title="永久链接至标题">¶</a></h4>
+<h4>1.3.4.5. 2.4.5 BPU_releaseCameraHandle<a class="headerlink" href="#bpu-releasecamerahandle" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_releaseCameraHandle</span><span class="p">(</span><span class="n">BPUCameraHandle</span> <span class="n">handle</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1679,15 +1784,15 @@
 <p>释放camera handle。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示创建好的camera handle。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">handle</span></code>：表示创建好的camera handle。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 </div>
 <div class="section" id="bpu-getrelatedcamerabufferfrompyramidbuffer">
-<h4><span class="section-number">1.3.4.6. </span>2.4.6 BPU_getRelatedCameraBufferFromPyramidBuffer<a class="headerlink" href="#bpu-getrelatedcamerabufferfrompyramidbuffer" title="永久链接至标题">¶</a></h4>
+<h4>1.3.4.6. 2.4.6 BPU_getRelatedCameraBufferFromPyramidBuffer<a class="headerlink" href="#bpu-getrelatedcamerabufferfrompyramidbuffer" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_getRelatedCameraBufferFromPyramidBuffer</span><span class="p">(</span><span class="n">BPUPyramidBuffer</span> <span class="n">pyr_buffer</span><span class="p">,</span><span class="n">BPUCameraBuffer</span> <span class="o">*</span><span class="n">info</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1695,20 +1800,20 @@
 <p>从<code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code>，构建关联的<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>结构体。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code>：<code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code>类型的入参，可通过<code class="docutils literal notranslate"><span class="pre">BPU_getPyramidResult</span></code>等金字塔相关接口获取。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code>：<code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code>类型的入参，可通过<code class="docutils literal notranslate"><span class="pre">BPU_getPyramidResult</span></code>等金字塔相关接口获取。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>：基于<code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code>构建得到的<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>指针。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">info</span></code>：基于<code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code>构建得到的<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>指针。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>int类型的错误码。</p></li>
+<li>int类型的错误码。</li>
 </ol>
 <p><strong>注意：调用该接口后，后续如果使用<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span> <span class="pre">*info</span></code>，不可以提前释放<code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span> <span class="pre">pyr_buffer</span></code>，因为<code class="docutils literal notranslate"><span class="pre">info</span></code>和<code class="docutils literal notranslate"><span class="pre">pyr_buffer</span></code>内部共用了金字塔相关数据资源，必须等到用完<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span></code>后，调用对应释放接口来释放BPUPyramidBuffer即可，<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span></code>不需要释放，释放<code class="docutils literal notranslate"><span class="pre">BPUPyramidBuffer</span></code>时就会将关联的<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffe</span></code>给同时释放。</strong></p>
 </div>
 <div class="section" id="bpu-getcamerainfofromcamerabuffe">
-<h4><span class="section-number">1.3.4.7. </span>2.4.7 BPU_getCameraInfoFromCameraBuffe<a class="headerlink" href="#bpu-getcamerainfofromcamerabuffe" title="永久链接至标题">¶</a></h4>
+<h4>1.3.4.7. 2.4.7 BPU_getCameraInfoFromCameraBuffe<a class="headerlink" href="#bpu-getcamerainfofromcamerabuffe" title="永久链接至标题">¶</a></h4>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">BPU_getCameraInfoFromCameraBuffer</span><span class="p">(</span><span class="n">BPUCameraBuffer</span> <span class="n">buffer</span><span class="p">,</span>
                                       <span class="kt">int</span> <span class="n">level</span><span class="p">,</span>
                                       <span class="kt">int</span> <span class="n">height</span><span class="p">,</span>
@@ -1721,19 +1826,19 @@
 <p>从<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>根据search condition获取对应的金字塔层的信息<code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>。search condition包括<code class="docutils literal notranslate"><span class="pre">level</span></code>或者<code class="docutils literal notranslate"><span class="pre">（height，width）</span></code>。</p>
 <p><strong>输入：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code>：<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>类型的入参，可通过<code class="docutils literal notranslate"><span class="pre">BPU_getCameraImageData</span></code>接口获取的摄像头金字塔数据。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">level</span></code>：哪一层作为search condition，当<code class="docutils literal notranslate"><span class="pre">level</span></code>大于等于0时，接口会以<code class="docutils literal notranslate"><span class="pre">level</span></code>为条件去搜索金字塔，会忽略<code class="docutils literal notranslate"><span class="pre">height</span></code>和<code class="docutils literal notranslate"><span class="pre">width</span></code>参数。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code>：高度</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code>：宽度，<code class="docutils literal notranslate"><span class="pre">（height，width）</span></code>作为search condition，获取对应的金字塔层的信息。注意：接口会优先使用<code class="docutils literal notranslate"><span class="pre">level</span></code>作为search condition，如果要使用<code class="docutils literal notranslate"><span class="pre">（height，width）</span></code>作为search condition，<code class="docutils literal notranslate"><span class="pre">level</span></code>入参必须为负数。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">buffer</span></code>：<code class="docutils literal notranslate"><span class="pre">BPUCameraBuffer</span></code>类型的入参，可通过<code class="docutils literal notranslate"><span class="pre">BPU_getCameraImageData</span></code>接口获取的摄像头金字塔数据。</li>
+<li><code class="docutils literal notranslate"><span class="pre">level</span></code>：哪一层作为search condition，当<code class="docutils literal notranslate"><span class="pre">level</span></code>大于等于0时，接口会以<code class="docutils literal notranslate"><span class="pre">level</span></code>为条件去搜索金字塔，会忽略<code class="docutils literal notranslate"><span class="pre">height</span></code>和<code class="docutils literal notranslate"><span class="pre">width</span></code>参数。</li>
+<li><code class="docutils literal notranslate"><span class="pre">height</span></code>：高度</li>
+<li><code class="docutils literal notranslate"><span class="pre">width</span></code>：宽度，<code class="docutils literal notranslate"><span class="pre">（height，width）</span></code>作为search condition，获取对应的金字塔层的信息。注意：接口会优先使用<code class="docutils literal notranslate"><span class="pre">level</span></code>作为search condition，如果要使用<code class="docutils literal notranslate"><span class="pre">（height，width）</span></code>作为search condition，<code class="docutils literal notranslate"><span class="pre">level</span></code>入参必须为负数。</li>
 </ol>
 <p><strong>输出：</strong></p>
 <ol class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cam_info</span></code>：根据search condition得到的<code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>结构体指针</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">matched_level</span></code>：根据search condition得到匹配的<code class="docutils literal notranslate"><span class="pre">level</span></code>。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">cam_info</span></code>：根据search condition得到的<code class="docutils literal notranslate"><span class="pre">BPU_CAMERA_IMAGE_INFO_S</span></code>结构体指针</li>
+<li><code class="docutils literal notranslate"><span class="pre">matched_level</span></code>：根据search condition得到匹配的<code class="docutils literal notranslate"><span class="pre">level</span></code>。</li>
 </ol>
 <p><strong>返回：</strong></p>
 <ol class="simple">
-<li><p>返回int类型的错误码。</p></li>
+<li>返回int类型的错误码。</li>
 </ol>
 </div>
 </div>
@@ -1745,28 +1850,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -67,25 +67,19 @@ int MOTMethod::Init(const std::string& config_file_path) {
   return XSTREAM_MOT_OK;
 }
 
-std::vector<std::vector<BaseDataPtr>> MOTMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>>& input,
-    const std::vector<InputParamPtr>& param) {
+std::vector<BaseDataPtr> MOTMethod::DoProcess(
+    const std::vector<BaseDataPtr>& input,
+    const InputParamPtr& param) {
 
   LOGI << "MOTMethod::DoProcess" << std::endl;
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
+  std::vector<BaseDataPtr> output;
 
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    auto &param_batch_i = param[i];
-    if (param_batch_i && param_batch_i->Format() == "pass-through") {
-      LOGI << "pass-through";
-      PassThrough(in_batch_i, out_batch_i);
-    } else {
-      LOGI << "mot";
-      mot_->Track(in_batch_i, out_batch_i);
-    }
+  if (param && param->Format() == "pass-through") {
+    LOGI << "pass-through";
+    PassThrough(input, output);
+  } else {
+    LOGI << "mot";
+    mot_->Track(input, output);
   }
   return output;
 }

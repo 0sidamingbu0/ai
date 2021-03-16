@@ -18,7 +18,7 @@
 #include <utility>
 #include <list>
 #include <algorithm>
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 namespace xstream {
@@ -165,7 +165,7 @@ struct FaceSnapFilterParam;
 typedef std::shared_ptr<FaceSnapFilterParam> FaceSnapFilterParamPtr;
 typedef std::shared_ptr<BaseDataVector> BaseDataVectorPtr;
 
-class FaceSnapFilterMethod : public Method {
+class FaceSnapFilterMethod : public SimpleMethod {
  public:
   int Init(const std::string &config_file_path) override;
 
@@ -176,9 +176,9 @@ class FaceSnapFilterMethod : public Method {
    * output[0]: [face_box, pose, landmark, quality, age, gender]
    *       optional params: quality, age, gender same as inputs
    * */
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
   void Finalize() override;
 

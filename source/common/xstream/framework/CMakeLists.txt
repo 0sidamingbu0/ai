@@ -122,6 +122,7 @@ set(SOURCE_FILES
 	src/xstream_data.cpp
 	src/xstream_config.cpp
 	src/method.cpp
+	src/simple_method.cpp
 )
 if(C_INTERFACE)
 	set(SOURCE_FILES ${SOURCE_FILES} src/xstream_capi.cpp src/xstream_capi_type.cpp src/xstream_c_api.cpp)
@@ -212,6 +213,7 @@ install(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/json_key.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/method_factory.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/method.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/simple_method.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/profiler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/hobotxstream/xstream_config.h
   DESTINATION ${MY_OUTPUT_ROOT}/include/hobotxstream

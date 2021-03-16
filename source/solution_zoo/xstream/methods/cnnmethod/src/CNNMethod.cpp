@@ -57,11 +57,19 @@ int32_t CNNMethod::Init(const std::string &cfg_path) {
   return 0;
 }
 
+MethodInfo CNNMethod::GetMethodInfo() {
+  MethodInfo method_info = Method::GetMethodInfo();
+  if (predictor_) {
+    method_info.is_need_reorder = predictor_->IsNeedReorder();
+  }
+  return method_info;
+}
+
 void CNNMethod::Finalize() {}
 
-std::vector<std::vector<BaseDataPtr>> CNNMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> CNNMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   HOBOT_CHECK(input.size() > 0);
   CNNMethodRunData run_data;
   run_data.input = &input;

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>resize多任务 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../../" src="../../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../../_sources/models/aidi-openapi/auto_sq/auto_matrix_development_toolkit/scripts/auto_matrix_algo/configs/4pe_resize/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -160,18 +165,16 @@
   <div class="section" id="resize">
 <h1>resize多任务<a class="headerlink" href="#resize" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>包含4个检测分支</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_cyclist_light.py</span></code> 骑车人、红绿灯检测</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_person.py</span></code> 行人检测</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_rear.py</span></code> 车头车尾分支</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">det_vehicle_sign.py</span></code> 全车、标志牌检测</p></li>
+<li>包含4个检测分支<ul>
+<li><code class="docutils literal notranslate"><span class="pre">det_cyclist_light.py</span></code> 骑车人、红绿灯检测</li>
+<li><code class="docutils literal notranslate"><span class="pre">det_person.py</span></code> 行人检测</li>
+<li><code class="docutils literal notranslate"><span class="pre">det_rear.py</span></code> 车头车尾分支</li>
+<li><code class="docutils literal notranslate"><span class="pre">det_vehicle_sign.py</span></code> 全车、标志牌检测</li>
 </ul>
 </li>
-<li><p>包含2个分割分支</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">seg_default.py</span></code> 12类语义分割</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">seg_lane.py</span></code> 4类车道线分割</p></li>
+<li>包含2个分割分支<ul>
+<li><code class="docutils literal notranslate"><span class="pre">seg_default.py</span></code> 12类语义分割</li>
+<li><code class="docutils literal notranslate"><span class="pre">seg_lane.py</span></code> 4类车道线分割</li>
 </ul>
 </li>
 </ul>
@@ -179,9 +182,8 @@
 <div class="section" id="quantization-training-2-steps-fusion-bn">
 <h1>Quantization Training, 2 steps fusion bn<a class="headerlink" href="#quantization-training-2-steps-fusion-bn" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>pipeline test</p>
-<ul>
-<li><p>用验证集跑通整个pipeline，加快debug速度</p></li>
+<li>pipeline test<ul>
+<li>用验证集跑通整个pipeline，加快debug速度</li>
 </ul>
 </li>
 </ul>
@@ -191,9 +193,8 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>local run</p>
-<ul>
-<li><p>用训练集正式训练</p></li>
+<li>local run<ul>
+<li>用训练集正式训练</li>
 </ul>
 </li>
 </ul>
@@ -205,87 +206,74 @@
 <div class="section" id="id1">
 <h1>训练简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>量化训练</p>
-<ul>
-<li><p>训练共step 0, 1, 2, 3四步，对应<code class="docutils literal notranslate"><span class="pre">multitask.py</span> <span class="pre">solver</span></code>的index，包含1、2两步吸收BN训练（吸收后op减少，计算量降低）</p></li>
-<li><p>step 0是with bn training</p></li>
-<li><p>step 1吸收了shared backbone的BN层</p></li>
-<li><p>step 2吸收了各个单任务的head的BN层</p></li>
-<li><p>step 3将step 2模型转换为芯片支持的<code class="docutils literal notranslate"><span class="pre">kIntInference</span></code>模型，不做训练，模型输出与step 2相等</p></li>
+<li>量化训练<ul>
+<li>训练共step 0, 1, 2, 3四步，对应<code class="docutils literal notranslate"><span class="pre">multitask.py</span> <span class="pre">solver</span></code>的index，包含1、2两步吸收BN训练（吸收后op减少，计算量降低）</li>
+<li>step 0是with bn training</li>
+<li>step 1吸收了shared backbone的BN层</li>
+<li>step 2吸收了各个单任务的head的BN层</li>
+<li>step 3将step 2模型转换为芯片支持的<code class="docutils literal notranslate"><span class="pre">kIntInference</span></code>模型，不做训练，模型输出与step 2相等</li>
 </ul>
 </li>
-<li><p>多任务训练</p>
-<ul>
-<li><p>多任务同名参数共享，实现节省算力：每个单任务都有自己的symbol，我们通过<code class="docutils literal notranslate"><span class="pre">get_unshared_and_shared_params()</span></code>
-将各单任务的同名params进行共享</p></li>
+<li>多任务训练<ul>
+<li>多任务同名参数共享，实现节省算力：每个单任务都有自己的symbol，我们通过<code class="docutils literal notranslate"><span class="pre">get_unshared_and_shared_params()</span></code>
+将各单任务的同名params进行共享</li>
 </ul>
 </li>
-<li><p>config结构</p>
-<ul>
-<li><p>所有单任务通用的配置放在<code class="docutils literal notranslate"><span class="pre">utils.py</span></code></p></li>
-<li><p>单任务特有的配置放在各自的py文件</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">solver,</span> <span class="pre">env,</span> <span class="pre">fusion_bn_patterns</span></code>等训练配置放在<code class="docutils literal notranslate"><span class="pre">multitask.py</span></code></p></li>
+<li>config结构<ul>
+<li>所有单任务通用的配置放在<code class="docutils literal notranslate"><span class="pre">utils.py</span></code></li>
+<li>单任务特有的配置放在各自的py文件</li>
+<li><code class="docutils literal notranslate"><span class="pre">solver,</span> <span class="pre">env,</span> <span class="pre">fusion_bn_patterns</span></code>等训练配置放在<code class="docutils literal notranslate"><span class="pre">multitask.py</span></code></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>和<code class="docutils literal notranslate"><span class="pre">export_model</span></code>的区别</p>
-<ul>
-<li><p>model只用于训练，export_model用于GPU预测、hbdk编译后在芯片上运行</p></li>
-<li><p>model包含backbone, head, loss（不能用于预测）等，export_model包含backbone, head，不含loss</p></li>
-<li><p>step 3的export_model包含<code class="docutils literal notranslate"><span class="pre">DetectionPostProcessing_X2</span></code>、<code class="docutils literal notranslate"><span class="pre">channel_argmax</span></code>等在芯片上部署所需的post processing op，
-其余的model、export_model都不含这些op</p></li>
-<li><p>model的checkpoint：<code class="docutils literal notranslate"><span class="pre">with-bn-init.params,</span> <span class="pre">with-bn-0001.params,</span> <span class="pre">with-bn-last-0000.params</span> <span class="pre">...</span></code></p>
-<ul>
-<li><p>init是训练开始时的checkpoint，0001是训练中，last是训练结束</p></li>
-<li><p>目前model的checkpoint不包含symbol.json</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">model</span></code>和<code class="docutils literal notranslate"><span class="pre">export_model</span></code>的区别<ul>
+<li>model只用于训练，export_model用于GPU预测、hbdk编译后在芯片上运行</li>
+<li>model包含backbone, head, loss（不能用于预测）等，export_model包含backbone, head，不含loss</li>
+<li>step 3的export_model包含<code class="docutils literal notranslate"><span class="pre">DetectionPostProcessing_X2</span></code>、<code class="docutils literal notranslate"><span class="pre">channel_argmax</span></code>等在芯片上部署所需的post processing op，
+其余的model、export_model都不含这些op</li>
+<li>model的checkpoint：<code class="docutils literal notranslate"><span class="pre">with-bn-init.params,</span> <span class="pre">with-bn-0001.params,</span> <span class="pre">with-bn-last-0000.params</span> <span class="pre">...</span></code><ul>
+<li>init是训练开始时的checkpoint，0001是训练中，last是训练结束</li>
+<li>目前model的checkpoint不包含symbol.json</li>
 </ul>
 </li>
-<li><p>export_model的checkpoint：<code class="docutils literal notranslate"><span class="pre">with-bn-export-last-0000.params,</span> <span class="pre">with-bn-export-last-symbol.json</span> <span class="pre">...</span></code></p></li>
+<li>export_model的checkpoint：<code class="docutils literal notranslate"><span class="pre">with-bn-export-last-0000.params,</span> <span class="pre">with-bn-export-last-symbol.json</span> <span class="pre">...</span></code></li>
 </ul>
 </li>
-<li><p>用于GPU预测的模型</p>
-<ul>
-<li><p>step 2的最后一个checkpoint<code class="docutils literal notranslate"><span class="pre">fusion-bn-c2-export-last-0000.params,</span> <span class="pre">fusion-bn-c2-export-last-symbol.json</span></code></p></li>
+<li>用于GPU预测的模型<ul>
+<li>step 2的最后一个checkpoint<code class="docutils literal notranslate"><span class="pre">fusion-bn-c2-export-last-0000.params,</span> <span class="pre">fusion-bn-c2-export-last-symbol.json</span></code></li>
 </ul>
 </li>
-<li><p>用于hbdk编译，然后在芯片上部署的模型</p>
-<ul>
-<li><p>step 3的最后一个checkpoint<code class="docutils literal notranslate"><span class="pre">int-inference-export-last-0000.params,</span> <span class="pre">int-inference-export-last-symbol.json</span></code></p></li>
+<li>用于hbdk编译，然后在芯片上部署的模型<ul>
+<li>step 3的最后一个checkpoint<code class="docutils literal notranslate"><span class="pre">int-inference-export-last-0000.params,</span> <span class="pre">int-inference-export-last-symbol.json</span></code></li>
 </ul>
 </li>
-<li><p>crop和resize模型的区别有三点</p>
-<ol class="simple">
-<li><p>模型输入尺寸，以训练阶段为例</p>
-<ul>
-<li><p>crop：  <code class="docutils literal notranslate"><span class="pre">720x1280原图</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></p></li>
-<li><p>resize：<code class="docutils literal notranslate"><span class="pre">720x1280原图</span></code> –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></p></li>
-<li><p>crop关注远处小目标，resize关注近处大目标，crop + resize方案比将原图直接输入模型的方案的计算量更小</p></li>
+<li>crop和resize模型的区别有三点<ol>
+<li>模型输入尺寸，以训练阶段为例<ul>
+<li>crop：  <code class="docutils literal notranslate"><span class="pre">720x1280原图</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">448x1216</span></code></li>
+<li>resize：<code class="docutils literal notranslate"><span class="pre">720x1280原图</span></code> –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></li>
+<li>crop关注远处小目标，resize关注近处大目标，crop + resize方案比将原图直接输入模型的方案的计算量更小</li>
 </ul>
 </li>
-<li><p>模型容量大小</p>
-<ul>
-<li><p>crop用的是<code class="docutils literal notranslate"><span class="pre">vargnet_v2_g8g4_0_5x</span></code>，resize用的是<code class="docutils literal notranslate"><span class="pre">vargnet_v2_g8g8_0_5x</span></code>，upscale_group_base分别是4、8</p></li>
-<li><p>export_model的输入尺寸，crop比resize大，当前算力条件下，crop只支持upscale_group_base 4，可根据算力调整</p></li>
+<li>模型容量大小<ul>
+<li>crop用的是<code class="docutils literal notranslate"><span class="pre">vargnet_v2_g8g4_0_5x</span></code>，resize用的是<code class="docutils literal notranslate"><span class="pre">vargnet_v2_g8g8_0_5x</span></code>，upscale_group_base分别是4、8</li>
+<li>export_model的输入尺寸，crop比resize大，当前算力条件下，crop只支持upscale_group_base 4，可根据算力调整</li>
 </ul>
 </li>
-<li><p>resize比crop多了语义分割任务<code class="docutils literal notranslate"><span class="pre">seg_default.py</span></code></p></li>
+<li>resize比crop多了语义分割任务<code class="docutils literal notranslate"><span class="pre">seg_default.py</span></code></li>
 </ol>
 </li>
-<li><p>resize模型输入尺寸</p>
-<ul>
-<li><p>设置<code class="docutils literal notranslate"><span class="pre">resize_hw</span> <span class="pre">=</span> <span class="pre">[540,</span> <span class="pre">1140],</span> <span class="pre">resize_type</span> <span class="pre">=</span> <span class="pre">'min_max_pairs'</span></code>，实现等比例resize</p></li>
-<li><p>model（训练）的输入尺寸，训练集可包含多种尺寸，如下列出常见尺寸从原图到模型输入所经历的变化</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">720x1280</span></code>  –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code>  –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x1048</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1080x1920</span></code> –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code>  –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1080x2280</span></code> –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x1140</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></p></li>
+<li>resize模型输入尺寸<ul>
+<li>设置<code class="docutils literal notranslate"><span class="pre">resize_hw</span> <span class="pre">=</span> <span class="pre">[540,</span> <span class="pre">1140],</span> <span class="pre">resize_type</span> <span class="pre">=</span> <span class="pre">'min_max_pairs'</span></code>，实现等比例resize</li>
+<li>model（训练）的输入尺寸，训练集可包含多种尺寸，如下列出常见尺寸从原图到模型输入所经历的变化<ul>
+<li><code class="docutils literal notranslate"><span class="pre">720x1280</span></code>  –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code>  –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x1048</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1080x1920</span></code> –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code>  –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1080x2280</span></code> –等比例resize-&gt; <code class="docutils literal notranslate"><span class="pre">540x1140</span></code> –random crop-&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></li>
 </ul>
 </li>
-<li><p>export_mode（预测、部署）的输入尺寸，如下尺寸选一种，例子用的是<code class="docutils literal notranslate"><span class="pre">940x1824</span></code>输入</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –pyramid resize 1/2–&gt; <code class="docutils literal notranslate"><span class="pre">470x912</span></code> –去掉上方22像素–&gt; <code class="docutils literal notranslate"><span class="pre">448x912</span></code> –右边padding 48像素–&gt; <code class="docutils literal notranslate"><span class="pre">448x960</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1080x1920</span></code> –pyramid resize 1/2–&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code> –去掉上方28像素–&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1080x2280</span></code> –pyramid resize 1/2–&gt; <code class="docutils literal notranslate"><span class="pre">540x1140</span></code> –去掉上方28像素–&gt; <code class="docutils literal notranslate"><span class="pre">512x1140</span></code></p></li>
+<li>export_mode（预测、部署）的输入尺寸，如下尺寸选一种，例子用的是<code class="docutils literal notranslate"><span class="pre">940x1824</span></code>输入<ul>
+<li><code class="docutils literal notranslate"><span class="pre">940x1824</span></code>  –pyramid resize 1/2–&gt; <code class="docutils literal notranslate"><span class="pre">470x912</span></code> –去掉上方22像素–&gt; <code class="docutils literal notranslate"><span class="pre">448x912</span></code> –右边padding 48像素–&gt; <code class="docutils literal notranslate"><span class="pre">448x960</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1080x1920</span></code> –pyramid resize 1/2–&gt; <code class="docutils literal notranslate"><span class="pre">540x960</span></code> –去掉上方28像素–&gt; <code class="docutils literal notranslate"><span class="pre">512x960</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1080x2280</span></code> –pyramid resize 1/2–&gt; <code class="docutils literal notranslate"><span class="pre">540x1140</span></code> –去掉上方28像素–&gt; <code class="docutils literal notranslate"><span class="pre">512x1140</span></code></li>
 </ul>
 </li>
 </ul>
@@ -295,14 +283,13 @@
 <div class="section" id="id2">
 <h1>其它<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
 <ul class="simple">
-<li><p>把多任务改成分割、车道线分割单任务</p>
-<ul>
-<li><p>需要把<code class="docutils literal notranslate"><span class="pre">multitask.py</span></code>里的<code class="docutils literal notranslate"><span class="pre">int_inference_export_input_shape</span></code>的<code class="docutils literal notranslate"><span class="pre">im_hw</span></code>删掉，
-检测才需要它，不删会报input layout错误</p></li>
+<li>把多任务改成分割、车道线分割单任务<ul>
+<li>需要把<code class="docutils literal notranslate"><span class="pre">multitask.py</span></code>里的<code class="docutils literal notranslate"><span class="pre">int_inference_export_input_shape</span></code>的<code class="docutils literal notranslate"><span class="pre">im_hw</span></code>删掉，
+检测才需要它，不删会报input layout错误</li>
 </ul>
 </li>
-<li><p>适当增大<code class="docutils literal notranslate"><span class="pre">load_threads,</span> <span class="pre">threads,</span> <span class="pre">shuffle_chunck_size</span></code>可以加快io速度，进而加快训练速度</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">utils.py</span> <span class="pre">default_ctx</span></code>设置了默认的GPU卡数，可通过<code class="docutils literal notranslate"><span class="pre">train.py</span> <span class="pre">--ctx</span> <span class="pre">0,1</span></code>动态调整GPU卡数</p></li>
+<li>适当增大<code class="docutils literal notranslate"><span class="pre">load_threads,</span> <span class="pre">threads,</span> <span class="pre">shuffle_chunck_size</span></code>可以加快io速度，进而加快训练速度</li>
+<li><code class="docutils literal notranslate"><span class="pre">utils.py</span> <span class="pre">default_ctx</span></code>设置了默认的GPU卡数，可通过<code class="docutils literal notranslate"><span class="pre">train.py</span> <span class="pre">--ctx</span> <span class="pre">0,1</span></code>动态调整GPU卡数</li>
 </ul>
 </div>
 
@@ -311,28 +298,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

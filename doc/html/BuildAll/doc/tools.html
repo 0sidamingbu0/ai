@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>工具集 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -158,6 +161,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -169,7 +174,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/tools.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -196,16 +201,16 @@
 <p><img alt="框架" src="../../_images/xstream_framework_datashow.png" /></p>
 <p><strong>3. 可视化后的workflow</strong>：</p>
 <ul class="simple">
-<li><p>某个node的inputs得不到feed，图中体现为：绿色填充，标签中带有字段：(No-Feed)</p></li>
-<li><p>全局inputs和全局outputs重名，图中体现为：红色双箭头边相连，边带有字段：same-global-inputs-outputs</p></li>
-<li><p>某些node间的outputs重名，图中体现为：浅蓝色双箭头边相连，边带有字段：same-node-outputs</p></li>
+<li>某个node的inputs得不到feed，图中体现为：绿色填充，标签中带有字段：(No-Feed)</li>
+<li>全局inputs和全局outputs重名，图中体现为：红色双箭头边相连，边带有字段：same-global-inputs-outputs</li>
+<li>某些node间的outputs重名，图中体现为：浅蓝色双箭头边相连，边带有字段：same-node-outputs</li>
 </ul>
 </div>
 <div class="section" id="profiler">
 <h2>性能Profiler工具<a class="headerlink" href="#profiler" title="永久链接至标题">¶</a></h2>
 <p>XStream内部提供了性能统计的工具，用户可以通过XStream的对外接口SetConfig打开或关闭该功能，默认该功能关闭。</p>
 <ul class="simple">
-<li><p>配置profiler功能</p></li>
+<li>配置profiler功能</li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">SetConfig(const</span> <span class="pre">std::string</span> <span class="pre">&amp;key,</span> <span class="pre">const</span> <span class="pre">std::string</span> <span class="pre">&amp;value)</span></code></p>
 <p>key为”profiler”, value为”on”, 表示打开性能统计功能。”off”表示关闭, 默认为关闭。</p>
@@ -220,7 +225,7 @@
 </div>
 <p>Method内的统计数据默认输出至文件”PROFILER_METHOD.txt”, 用户若需要更改，可通过访问性能统计的全局单例设置智能策略内的统计数据：<code class="docutils literal notranslate"><span class="pre">Profiler::Get()-&gt;SetOutputFile(&quot;xx.txt&quot;)</span></code></p>
 <ul class="simple">
-<li><p>性能统计数据类型</p></li>
+<li>性能统计数据类型</li>
 </ul>
 <p>目前XStream内支持的性能统计数据包括处理时长（Time）和帧率（FPS）两种。其中函数处理时长的默认统计最小间隔是3000微秒（即3毫秒），若函数处理时间低于3毫秒，则不计入统计范围；帧率的默认统计最小间隔是200毫秒，若统计周期小于200毫秒，则不计入统计。</p>
 <p>为了支持不同业务场景的处理耗时不同，目前支持用户对统计粒度的修改。</p>
@@ -231,7 +236,7 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>性能统计数据可视化</p></li>
+<li>性能统计数据可视化</li>
 </ul>
 <p>用户打开性能统计后，若统计结果输出到文件”profiler.txt”，可以通过访问<code class="docutils literal notranslate"><span class="pre">chrome://tracing/</span></code>，通过页面的<code class="docutils literal notranslate"><span class="pre">Load</span></code>按钮将文件加载，即可看到统计数据可视化界面。以下图为例，页面上的横坐标表示”时间”；前几行(标志是字母)的纵坐标表示对应Method处理的帧率；后几行(标志是数字)的纵坐标表示不同线程”thread_id”，同时页面左下角提供了缩放、拖动等工具以便用户查看数据细节。</p>
 <p><img alt="统计数据可视化" src="../../_images/profiler.png" /></p>
@@ -295,117 +300,116 @@
 <p>创建一个Method对象</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code> : 要创建的Method类型. Method类型一旦指定后就不可修改.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">type</span></code> : 要创建的Method类型. Method类型一旦指定后就不可修改.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Method对象</p></li>
+<li>Method对象</li>
 </ul>
 <hr class="docutils" />
 <p><em>inputs(</em><code class="docutils literal notranslate"><span class="pre">value</span></code><em>=<code class="docutils literal notranslate"><span class="pre">None</span></code>)</em></p>
 <p>设置或返回当前Method的输入数据名字列表.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输入参数名字列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输入参数名字列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</li>
 </ul>
 <hr class="docutils" />
 <p><em>outputs(</em><code class="docutils literal notranslate"><span class="pre">value</span></code><em>=<code class="docutils literal notranslate"><span class="pre">None</span></code>)</em></p>
 <p>设置或返回当前Method的输出数据名字列表.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串列表类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输出参数名字列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的输出参数名字列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串列表时 : 当前Method对象.</li>
 </ul>
 <hr class="docutils" />
 <p><em>method_type()</em></p>
 <p>返回当前Method的类型.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>无.</p></li>
+<li>无.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>字符串 : 当前Method类型.</p></li>
+<li>字符串 : 当前Method类型.</li>
 </ul>
 <hr class="docutils" />
 <p><em>config_file(</em><code class="docutils literal notranslate"><span class="pre">value</span></code><em>=<code class="docutils literal notranslate"><span class="pre">None</span></code>)</em></p>
 <p>设置或返回当前Method的配置文件路径.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字符串类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置文件路径.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置文件路径.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字符串类型时 : 当前Method对象.</li>
 </ul>
 <hr class="docutils" />
 <p><em>config(</em><code class="docutils literal notranslate"><span class="pre">value</span></code><em>=<code class="docutils literal notranslate"><span class="pre">None</span></code>)</em></p>
 <p>设置或返回当前Method的配置参数.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字典类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 字典类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字典类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的配置.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为字典类型时 : 当前Method对象.</li>
 </ul>
 <hr class="docutils" />
 <p><em>thread_count(</em><code class="docutils literal notranslate"><span class="pre">value</span></code><em>=<code class="docutils literal notranslate"><span class="pre">None</span></code>)</em></p>
 <p>设置或返回当前Method的最大线程个数.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的最大线程数.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的最大线程数.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数类型时 : 当前Method对象.</li>
 </ul>
 <hr class="docutils" />
 <p><em>thread_list(</em><code class="docutils literal notranslate"><span class="pre">value</span></code><em>=<code class="docutils literal notranslate"><span class="pre">None</span></code>)</em></p>
 <p>设置或返回当前Method的线程ID列表.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数列表类型或者None.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code> : 整数列表类型或者None.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</li>
 </ul>
 <hr class="docutils" />
 <p><em>__call__(</em><code class="docutils literal notranslate"><span class="pre">*inputs</span></code><em>,</em><code class="docutils literal notranslate"><span class="pre">**attrs</span></code><em>)</em></p>
 <p>调用当前method对象, 每次调用代表着在workflow中创建一个节点. 同时在调用时支持覆盖声明Method对象时指定的预定义参数.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 当前的Method的输入.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">attrs</span></code> : keywords arguments, 用来覆盖Method预定义参数. 支持下列参数:</p>
-<ul>
-<li><p>Inputs : 输入参数名字列表</p></li>
-<li><p>Outputs : 输出参数名字列表</p></li>
-<li><p>UniqueName : 当前Node的唯一名字</p></li>
-<li><p>ConfigFile : 配置文件路径</p></li>
-<li><p>Config : 配置参数</p></li>
-<li><p>ThreadCount : 线程最大个数</p></li>
-<li><p>ThreadList : 线程ID列表</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 当前的Method的输入.</li>
+<li><code class="docutils literal notranslate"><span class="pre">attrs</span></code> : keywords arguments, 用来覆盖Method预定义参数. 支持下列参数:<ul>
+<li>Inputs : 输入参数名字列表</li>
+<li>Outputs : 输出参数名字列表</li>
+<li>UniqueName : 当前Node的唯一名字</li>
+<li>ConfigFile : 配置文件路径</li>
+<li>Config : 配置参数</li>
+<li>ThreadCount : 线程最大个数</li>
+<li>ThreadList : 线程ID列表</li>
 </ul>
 </li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</p></li>
-<li><p>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</p></li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为<code class="docutils literal notranslate"><span class="pre">None</span></code>时 : 当前Method的线程ID列表.</li>
+<li>当<code class="docutils literal notranslate"><span class="pre">value</span></code>为整数列表类型时 : 当前Method对象.</li>
 </ul>
 <blockquote>
 <div><p><em>Demo</em></p>
@@ -426,22 +430,22 @@
 <p>实例化一个Variable类型的对象.Variable对象作为workflow的输入和输出数据类型.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dataName</span></code> : Variable的数据名称.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">dataName</span></code> : Variable的数据名称.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Variable对象</p></li>
+<li>Variable对象</li>
 </ul>
 <hr class="docutils" />
 <p><em>name()</em></p>
 <p>返回当前Variable的名字.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>无</p></li>
+<li>无</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>字符串 : 该Variable对象的名字.</p></li>
+<li>字符串 : 该Variable对象的名字.</li>
 </ul>
 </div>
 <hr class="docutils" />
@@ -451,56 +455,54 @@
 实例化一个Session对象。</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>workflow：定义Workflow的python函数对象。</p></li>
-<li><p>inputs：可选参数。该workflow的输入参数。Variable类型。</p></li>
-<li><p>method_factory：可选参数。定义Workflow中使用到的Method的实现。</p></li>
+<li>workflow：定义Workflow的python函数对象。</li>
+<li>inputs：可选参数。该workflow的输入参数。Variable类型。</li>
+<li>method_factory：可选参数。定义Workflow中使用到的Method的实现。</li>
 </ul>
 <blockquote>
-<div><p><em>Note</em>
-参数用法参考Serialize函数。</p>
-</div></blockquote>
+<div><em>Note</em>
+参数用法参考Serialize函数。</div></blockquote>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Session对象。</p></li>
+<li>Session对象。</li>
 </ul>
 <hr class="docutils" />
 <p><em>callback(</em><code class="docutils literal notranslate"><span class="pre">cb</span></code><em>, <em><code class="docutils literal notranslate"><span class="pre">node_name</span></code></em>=””)</em>
 设置Workflow的回调函数。</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>cb：python函数，参数和Node或者Workflow的输出参数对应。作为workflow回调的参数列表中会追加forward的opaque参数传入。参考forward方法参数。</p></li>
-<li><p>node_name：节点的unique name。留空代表设置workflow的最终输出。</p></li>
+<li>cb：python函数，参数和Node或者Workflow的输出参数对应。作为workflow回调的参数列表中会追加forward的opaque参数传入。参考forward方法参数。</li>
+<li>node_name：节点的unique name。留空代表设置workflow的最终输出。</li>
 </ul>
 <blockquote>
-<div><p><em>Note</em>
-workflow的输出回调函数的参数将会在后面追加一个opaque，而node的</p>
-</div></blockquote>
+<div><em>Note</em>
+workflow的输出回调函数的参数将会在后面追加一个opaque，而node的</div></blockquote>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>整数：0 成功，非零 失败</p></li>
+<li>整数：0 成功，非零 失败</li>
 </ul>
 <hr class="docutils" />
 <p><em>forward(</em><code class="docutils literal notranslate"><span class="pre">**datas</span></code><em>, <em><code class="docutils literal notranslate"><span class="pre">opaqua</span></code></em>=None)</em>
 执行异步predic。</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>datas：输入到workflow的数据。keywords 形式的参数。</p></li>
-<li><p>opaque：这次输入绑定的上下文信息。会在workflow的最终输出的回调函数中，作为最后一个参数传入。任意类型，XStream内部不会访问。参考callback方法定义。</p></li>
+<li>datas：输入到workflow的数据。keywords 形式的参数。</li>
+<li>opaque：这次输入绑定的上下文信息。会在workflow的最终输出的回调函数中，作为最后一个参数传入。任意类型，XStream内部不会访问。参考callback方法定义。</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>整数 0成功，非零失败</p></li>
+<li>整数 0成功，非零失败</li>
 </ul>
 <hr class="docutils" />
 <p><em>close()</em>
 关闭Session，释放相关资源。</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>无</p></li>
+<li>无</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>无</p></li>
+<li>无</li>
 </ul>
 </div>
 <hr class="docutils" />
@@ -510,16 +512,15 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>该函数用来将一个python定义的workflow转换成XStream框架所能识别的Json格式的配置字符串.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">workflow</span></code> : 定义workflow的python函数对象.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 该workflow的输入参数. <code class="docutils literal notranslate"><span class="pre">Variable</span></code>类型.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">workflow</span></code> : 定义workflow的python函数对象.</li>
+<li><code class="docutils literal notranslate"><span class="pre">inputs</span></code> : 该workflow的输入参数. <code class="docutils literal notranslate"><span class="pre">Variable</span></code>类型.</li>
 </ul>
 <blockquote>
-<div><p><em>Note</em>
-当一个workflow函数的参数名字与该workflow的输入数据名字相同时, <code class="docutils literal notranslate"><span class="pre">inputs</span></code>参数可以省略.</p>
-</div></blockquote>
+<div><em>Note</em>
+当一个workflow函数的参数名字与该workflow的输入数据名字相同时, <code class="docutils literal notranslate"><span class="pre">inputs</span></code>参数可以省略.</div></blockquote>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>XStream框架支持的workflow json字符串</p></li>
+<li>XStream框架支持的workflow json字符串</li>
 </ul>
 <hr class="docutils" />
 <p><em>scope(</em><code class="docutils literal notranslate"><span class="pre">name</span></code><em>)</em></p>
@@ -527,26 +528,25 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 当有多级Scope生效时, 各级Scope的<code class="docutils literal notranslate"><span class="pre">name</span></code>会级联.</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> : 当前scope的名字.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code> : 当前scope的名字.</li>
 </ul>
 <p><strong>返回值</strong></p>
 <ul class="simple">
-<li><p>Scope对象</p></li>
+<li>Scope对象</li>
 </ul>
 <blockquote>
-<div><p><em>Note</em>
-该函数要和Python中的<code class="docutils literal notranslate"><span class="pre">with</span></code>关键字一起使用.</p>
-</div></blockquote>
+<div><em>Note</em>
+该函数要和Python中的<code class="docutils literal notranslate"><span class="pre">with</span></code>关键字一起使用.</div></blockquote>
 </div>
 </div>
 <div class="section" id="workflow">
 <h4>构建Workflow<a class="headerlink" href="#workflow" title="永久链接至标题">¶</a></h4>
 <p>XStream中Workflow是通过Json配置文件来描述的。当一个Workflow变得复杂时，Json配置文件会变得冗长，增加维护的困难性。体现在如下几个方面：</p>
 <ul class="simple">
-<li><p>串联各个节点的输入和输出名字需要手动填写，容易出错或者造成命名冲突。</p></li>
-<li><p>各个节点的顺序关系要保证，对于不熟悉的开发者来说，需要花时间去梳理Node的逻辑关系之后才能添加新的Node。</p></li>
-<li><p>无法快速的发现并去除冗余路径上面的节点。</p></li>
-<li><p>图可能出现环路。</p></li>
+<li>串联各个节点的输入和输出名字需要手动填写，容易出错或者造成命名冲突。</li>
+<li>各个节点的顺序关系要保证，对于不熟悉的开发者来说，需要花时间去梳理Node的逻辑关系之后才能添加新的Node。</li>
+<li>无法快速的发现并去除冗余路径上面的节点。</li>
+<li>图可能出现环路。</li>
 </ul>
 <p>实践中发现，构建Workflow的过程其实和编程类似。Json在这个地方就是起到了编程语言的作用。与其发明一种新的语言，就不如使用Python语言来实现快速构建Workflow，并解决上面的问题。</p>
 <p>Workflow在Xstream Python API中是以函数的形式存在的。函数的参数就是Workflow的输入，返回值是这个Workflow的输出。各个Node之间的组织关系就是Python中对Node的调用。通过这种方式可以快速的描述Node之间的组织关系。</p>
@@ -606,11 +606,11 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>创建VioPlugin实例</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>platform: 程序运行的平台，目前支持”x3dev”</p></li>
-<li><p>sensor: 使用的sensor，目前支持”default”(X2平台自带的sensor)，”imx327”</p></li>
-<li><p>vio_type: vio类型，仅在X3平台下使用。目前支持”single_cam”</p></li>
-<li><p>data_source: 回灌模式下使用的数据源，目前支持”cache”, “jpg”, “nv12”</p></li>
-<li><p>**kwargs: 其他参数，留用</p></li>
+<li>platform: 程序运行的平台，目前支持”x3dev”</li>
+<li>sensor: 使用的sensor，目前支持”default”(X2平台自带的sensor)，”imx327”</li>
+<li>vio_type: vio类型，仅在X3平台下使用。目前支持”single_cam”</li>
+<li>data_source: 回灌模式下使用的数据源，目前支持”cache”, “jpg”, “nv12”</li>
+<li>**kwargs: 其他参数，留用</li>
 </ul>
 <p><strong>返回值</strong></p>
 <p>VioPlugin实例</p>
@@ -619,7 +619,7 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>启动VioPlugin</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>sync_mode: 是否设置VioPlugin为同步模式</p></li>
+<li>sync_mode: 是否设置VioPlugin为同步模式</li>
 </ul>
 <p><strong>返回值</strong></p>
 <p>0：成功，&lt;0：错误码</p>
@@ -642,8 +642,8 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>绑定VioPlugin需要使用的消息并指定回调函数</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>msg_type：消息类型</p></li>
-<li><p>msg_cb: 消息对应的回调函数</p></li>
+<li>msg_type：消息类型</li>
+<li>msg_cb: 消息对应的回调函数</li>
 </ul>
 <p><strong>返回值</strong></p>
 <p>无</p>
@@ -669,10 +669,10 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>创建SmartPlugin实例</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>workflow: 表示workflow的函数</p></li>
-<li><p>callback：workflow回调函数</p></li>
-<li><p>serialize: 智能数据序列化函数，目前暂不支持使用</p></li>
-<li><p>push_result: 是否向XProto-Framework总线推数据，目前暂不支持推数据</p></li>
+<li>workflow: 表示workflow的函数</li>
+<li>callback：workflow回调函数</li>
+<li>serialize: 智能数据序列化函数，目前暂不支持使用</li>
+<li>push_result: 是否向XProto-Framework总线推数据，目前暂不支持推数据</li>
 </ul>
 <p><strong>返回值</strong></p>
 <p>SmartPlugin实例</p>
@@ -695,8 +695,8 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>绑定SmartPlugin需要使用的消息和回调函数</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>msg_type: 消息类型</p></li>
-<li><p>msg_cb: 消息对应的回调函数</p></li>
+<li>msg_type: 消息类型</li>
+<li>msg_cb: 消息对应的回调函数</li>
 </ul>
 <p><strong>返回值</strong></p>
 <p>无</p>
@@ -705,7 +705,7 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
 <p>同步模式下接收输入并做推理</p>
 <p><strong>参数</strong></p>
 <ul class="simple">
-<li><p>inputs: 输入数据，字典格式。key：输入数据名，value：输入数据</p></li>
+<li>inputs: 输入数据，字典格式。key：输入数据名，value：输入数据</li>
 </ul>
 <p><strong>返回值</strong></p>
 <p>无</p>
@@ -774,28 +774,25 @@ workflow的输出回调函数的参数将会在后面追加一个opaque，而nod
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

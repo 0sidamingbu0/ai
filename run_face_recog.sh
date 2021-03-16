@@ -207,6 +207,7 @@ choose_solution_func() {
   log_level="w" #(d/i/w/e)
   choose_x3_viotype_func
   echo "vio_cfg_file: $vio_cfg_file"
+  sleep 3
   ./face_solution/face_solution $vio_cfg_file ./face_solution/configs/face_recog_solution.json ./configs/visualplugin_face.json -${log_level} normal
 }
 

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Classes &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/common/pybind11/docs/advanced/classes.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -298,27 +303,27 @@ things will fall apart due to differences between Python’s MRO and C++’s
 mechanisms.</p>
 <p>Please take a look at the <a class="reference internal" href="misc.html#macro-notes"><span class="std std-ref">General notes regarding convenience macros</span></a> before using this feature.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
+<p class="first admonition-title">注解</p>
 <p>When the overridden type returns a reference or pointer to a type that
 pybind11 converts from Python (for example, numeric values, std::string,
 and other built-in value-converting types), there are some limitations to
 be aware of:</p>
-<ul class="simple">
-<li><p>because in these cases there is no C++ variable to reference (the value
+<ul class="last simple">
+<li>because in these cases there is no C++ variable to reference (the value
 is stored in the referenced Python variable), pybind11 provides one in
 the PYBIND11_OVERLOAD macros (when needed) with static storage duration.
 Note that this means that invoking the overloaded method on <em>any</em>
 instance will change the referenced value stored in <em>all</em> instances of
-that type.</p></li>
-<li><p>Attempts to modify a non-const reference will not have the desired
+that type.</li>
+<li>Attempts to modify a non-const reference will not have the desired
 effect: it will change only the static cache variable, but this change
 will not propagate to underlying Python instance, and the change will be
-replaced the next time the overload is invoked.</p></li>
+replaced the next time the overload is invoked.</li>
 </ul>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_virtual_functions.cpp</span></code> contains a complete
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_virtual_functions.cpp</span></code> contains a complete
 example that demonstrates how to override virtual functions using pybind11
 in more detail.</p>
 </div>
@@ -368,8 +373,8 @@ override the <code class="docutils literal notranslate"><span class="pre">name()
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Note the trailing commas in the <code class="docutils literal notranslate"><span class="pre">PYBIND11_OVERLOAD</span></code> calls to <code class="docutils literal notranslate"><span class="pre">name()</span></code>
+<p class="first admonition-title">注解</p>
+<p class="last">Note the trailing commas in the <code class="docutils literal notranslate"><span class="pre">PYBIND11_OVERLOAD</span></code> calls to <code class="docutils literal notranslate"><span class="pre">name()</span></code>
 and <code class="docutils literal notranslate"><span class="pre">bark()</span></code>. These are needed to portably implement a trampoline for a
 function that does not take any arguments. For functions that take
 a nonzero number of arguments, the trailing comma must be omitted.</p>
@@ -429,8 +434,8 @@ can now create a python class that inherits from <code class="docutils literal n
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>See the file <code class="file docutils literal notranslate"><span class="pre">tests/test_virtual_functions.cpp</span></code> for complete examples
+<p class="first admonition-title">参见</p>
+<p class="last">See the file <code class="file docutils literal notranslate"><span class="pre">tests/test_virtual_functions.cpp</span></code> for complete examples
 using both the duplication and templated trampoline approaches.</p>
 </div>
 </div>
@@ -458,8 +463,8 @@ declared using <code class="docutils literal notranslate"><span class="pre">py::
 <code class="docutils literal notranslate"><span class="pre">py::init&lt;Args,</span> <span class="pre">...&gt;()</span></code>.  This forces construction via the trampoline class,
 ensuring member initialization and (eventual) destruction.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>See the file <code class="file docutils literal notranslate"><span class="pre">tests/test_virtual_functions.cpp</span></code> for complete examples
+<p class="first admonition-title">参见</p>
+<p class="last">See the file <code class="file docutils literal notranslate"><span class="pre">tests/test_virtual_functions.cpp</span></code> for complete examples
 showing both normal and forced trampoline instantiation.</p>
 </div>
 </div>
@@ -511,7 +516,7 @@ class like this:</p>
     <span class="n">Example</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// private constructor</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="c1">// Factory function:</span>
-    <span class="k">static</span> <span class="n">Example</span> <span class="n">create</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nf">Example</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="p">}</span>
+    <span class="k">static</span> <span class="n">Example</span> <span class="n">create</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Example</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Example</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Example&quot;</span><span class="p">)</span>
@@ -530,7 +535,7 @@ instance by raw pointer or by the holder (e.g. <code class="docutils literal not
     <span class="n">Example</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// private constructor</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="c1">// Factory function - returned by value:</span>
-    <span class="k">static</span> <span class="n">Example</span> <span class="n">create</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nf">Example</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="p">}</span>
+    <span class="k">static</span> <span class="n">Example</span> <span class="n">create</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Example</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="p">}</span>
 
     <span class="c1">// These constructors are publicly callable:</span>
     <span class="n">Example</span><span class="p">(</span><span class="kt">double</span><span class="p">);</span>
@@ -596,7 +601,7 @@ an alias:</p>
 <p><code class="docutils literal notranslate"><span class="pre">pybind11::init&lt;&gt;</span></code> internally uses C++11 brace initialization to call the
 constructor of the target class. This means that it can be used to bind
 <em>implicit</em> constructors as well:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Aggregate</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Aggregate</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b</span><span class="p">;</span>
 <span class="p">};</span>
@@ -606,8 +611,8 @@ constructor of the target class. This means that it can be used to bind
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Note that brace initialization preferentially invokes constructor overloads
+<p class="first admonition-title">注解</p>
+<p class="last">Note that brace initialization preferentially invokes constructor overloads
 taking a <code class="docutils literal notranslate"><span class="pre">std::initializer_list</span></code>. In the rare event that this causes an
 issue, you can work around it by using <code class="docutils literal notranslate"><span class="pre">py::init(...)</span></code> with a lambda
 function that constructs the new object as desired.</p>
@@ -667,10 +672,10 @@ Python side:</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
+<p class="first admonition-title">注解</p>
 <p>Implicit conversions from <code class="docutils literal notranslate"><span class="pre">A</span></code> to <code class="docutils literal notranslate"><span class="pre">B</span></code> only work when <code class="docutils literal notranslate"><span class="pre">B</span></code> is a custom
 data type that is exposed to Python via pybind11.</p>
-<p>To prevent runaway recursion, implicit conversions are non-reentrant: an
+<p class="last">To prevent runaway recursion, implicit conversions are non-reentrant: an
 implicit conversion invoked as part of another implicit conversion of the
 same type (i.e. from <code class="docutils literal notranslate"><span class="pre">A</span></code> to <code class="docutils literal notranslate"><span class="pre">B</span></code>) will fail.</p>
 </div>
@@ -686,7 +691,7 @@ instance. This parameter will often not be needed by the C++ side, and the
 following example illustrates how to instantiate a lambda getter function
 that ignores it:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
-    <span class="p">.</span><span class="n">def_property_readonly_static</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="cm">/* self */</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nf">Foo</span><span class="p">();</span> <span class="p">});</span>
+    <span class="p">.</span><span class="n">def_property_readonly_static</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="cm">/* self */</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Foo</span><span class="p">();</span> <span class="p">});</span>
 </pre></div>
 </div>
 </div>
@@ -699,13 +704,13 @@ in C++.</p>
 <span class="k">public</span><span class="o">:</span>
     <span class="n">Vector2</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">)</span> <span class="o">:</span> <span class="n">x</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-    <span class="n">Vector2</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">Vector2</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="nf">Vector2</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">);</span> <span class="p">}</span>
-    <span class="n">Vector2</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">float</span> <span class="n">value</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="nf">Vector2</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">value</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+    <span class="n">Vector2</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">Vector2</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Vector2</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">);</span> <span class="p">}</span>
+    <span class="n">Vector2</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">float</span> <span class="n">value</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Vector2</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">value</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">value</span><span class="p">);</span> <span class="p">}</span>
     <span class="n">Vector2</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span> <span class="n">Vector2</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span><span class="p">;</span> <span class="n">y</span> <span class="o">+=</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
     <span class="n">Vector2</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="kt">float</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="n">x</span> <span class="o">*=</span> <span class="n">v</span><span class="p">;</span> <span class="n">y</span> <span class="o">*=</span> <span class="n">v</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
 
     <span class="k">friend</span> <span class="n">Vector2</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">float</span> <span class="n">f</span><span class="p">,</span> <span class="k">const</span> <span class="n">Vector2</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nf">Vector2</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">Vector2</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toString</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
@@ -749,13 +754,13 @@ flag marker is needed to inform pybind11 that this is an operator, which
 returns <code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> when invoked with incompatible arguments rather than
 throwing a type error.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>To use the more convenient <code class="docutils literal notranslate"><span class="pre">py::self</span></code> notation, the additional
+<p class="first admonition-title">注解</p>
+<p class="last">To use the more convenient <code class="docutils literal notranslate"><span class="pre">py::self</span></code> notation, the additional
 header file <code class="file docutils literal notranslate"><span class="pre">pybind11/operators.h</span></code> must be included.</p>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_operator_overloading.cpp</span></code> contains a
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_operator_overloading.cpp</span></code> contains a
 complete example that demonstrates how to work with overloaded operators in
 more detail.</p>
 </div>
@@ -780,7 +785,7 @@ provided. Suppose the class in question has the following signature:</p>
 </pre></div>
 </div>
 <p>Pickling support in Python is enabled by defining the <code class="docutils literal notranslate"><span class="pre">__setstate__</span></code> and
-<code class="docutils literal notranslate"><span class="pre">__getstate__</span></code> methods <a class="footnote-reference brackets" href="#f3" id="id4">1</a>. For pybind11 classes, use <code class="docutils literal notranslate"><span class="pre">py::pickle()</span></code>
+<code class="docutils literal notranslate"><span class="pre">__getstate__</span></code> methods <a class="footnote-reference" href="#f3" id="id4">[1]</a>. For pybind11 classes, use <code class="docutils literal notranslate"><span class="pre">py::pickle()</span></code>
 to bind these two functions:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Pickleable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pickleable&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">())</span>
@@ -829,16 +834,17 @@ failure to follow these instructions will cause important pybind11 memory
 allocation routines to be skipped during unpickling, which will likely lead to
 memory corruption and/or segmentation faults.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_pickling.cpp</span></code> contains a complete example
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_pickling.cpp</span></code> contains a complete example
 that demonstrates how to pickle and unpickle types using pybind11 in more
 detail.</p>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="f3"><span class="brackets"><a class="fn-backref" href="#id4">1</a></span></dt>
-<dd><p><a class="reference external" href="http://docs.python.org/3/library/pickle.html#pickling-class-instances">http://docs.python.org/3/library/pickle.html#pickling-class-instances</a></p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[1]</a></td><td><a class="reference external" href="http://docs.python.org/3/library/pickle.html#pickling-class-instances">http://docs.python.org/3/library/pickle.html#pickling-class-instances</a></td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="multiple-inheritance">
 <h2>Multiple Inheritance<a class="headerlink" href="#multiple-inheritance" title="永久链接至标题">¶</a></h2>
@@ -901,22 +907,22 @@ because of conflicting definitions on the external type:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// dogs.cpp</span>
 
 <span class="c1">// Binding for external library class:</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">::</span><span class="n">name</span><span class="p">);</span>
 
 <span class="c1">// Binding for local extension class:</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">Dog</span><span class="p">,</span> <span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Dog&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">Dog</span><span class="p">,</span> <span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Dog&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">());</span>
 </pre></div>
 </div>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// cats.cpp, in a completely separate project from the above dogs.cpp.</span>
 
 <span class="c1">// Binding for external library class:</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;get_name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">::</span><span class="n">name</span><span class="p">);</span>
 
 <span class="c1">// Binding for local extending class:</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">Cat</span><span class="p">,</span> <span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Cat&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">Cat</span><span class="p">,</span> <span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Cat&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">());</span>
 </pre></div>
 </div>
@@ -931,12 +937,12 @@ because of conflicting definitions on the external type:</p>
 localized to the module by passing the <code class="docutils literal notranslate"><span class="pre">py::module_local()</span></code> attribute into
 the <code class="docutils literal notranslate"><span class="pre">py::class_</span></code> constructor:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Pet binding in dogs.cpp:</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">,</span> <span class="n">py</span><span class="o">::</span><span class="n">module_local</span><span class="p">())</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">,</span> <span class="n">py</span><span class="o">::</span><span class="n">module_local</span><span class="p">())</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">::</span><span class="n">name</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Pet binding in cats.cpp:</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">,</span> <span class="n">py</span><span class="o">::</span><span class="n">module_local</span><span class="p">())</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">,</span> <span class="n">py</span><span class="o">::</span><span class="n">module_local</span><span class="p">())</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;get_name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pets</span><span class="o">::</span><span class="n">Pet</span><span class="o">::</span><span class="n">name</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -974,14 +980,14 @@ module-local definition, all C++ instances will be cast to the associated bound
 Python type.  In other modules any such values are converted to the global
 Python type created elsewhere.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>STL bindings (as provided via the optional <code class="file docutils literal notranslate"><span class="pre">pybind11/stl_bind.h</span></code>
+<p class="first admonition-title">注解</p>
+<p class="last">STL bindings (as provided via the optional <code class="file docutils literal notranslate"><span class="pre">pybind11/stl_bind.h</span></code>
 header) apply <code class="docutils literal notranslate"><span class="pre">py::module_local</span></code> by default when the bound type might
 conflict with other modules; see <a class="reference internal" href="cast/stl.html#stl-bind"><span class="std std-ref">Binding STL containers</span></a> for details.</p>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>The localization of the bound types is actually tied to the shared object
+<p class="first admonition-title">注解</p>
+<p class="last">The localization of the bound types is actually tied to the shared object
 or binary generated by the compiler/linker.  For typical modules created
 with <code class="docutils literal notranslate"><span class="pre">PYBIND11_MODULE()</span></code>, this distinction is not significant.  It is
 possible, however, when <a class="reference internal" href="embedding.html#embedding"><span class="std std-ref">Embedding the interpreter</span></a> to embed multiple modules in the
@@ -989,8 +995,8 @@ same binary (see <a class="reference internal" href="embedding.html#embedding-mo
 localization will apply across all embedded modules within the same binary.</p>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_local_bindings.cpp</span></code> contains additional examples
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_local_bindings.cpp</span></code> contains additional examples
 that demonstrate how <code class="docutils literal notranslate"><span class="pre">py::module_local()</span></code> works.</p>
 </div>
 </div>
@@ -1054,8 +1060,8 @@ described trampoline:</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>MSVC 2015 has a compiler bug (fixed in version 2017) which
+<p class="first admonition-title">注解</p>
+<p class="last">MSVC 2015 has a compiler bug (fixed in version 2017) which
 requires a more explicit function binding in the form of
 <code class="docutils literal notranslate"><span class="pre">.def(&quot;foo&quot;,</span> <span class="pre">static_cast&lt;int</span> <span class="pre">(A::*)()</span> <span class="pre">const&gt;(&amp;Publicist::foo));</span></code>
 where <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">(A::*)()</span> <span class="pre">const</span></code> is the type of <code class="docutils literal notranslate"><span class="pre">A::foo</span></code>.</p>
@@ -1070,24 +1076,24 @@ wrapping a Dog, if Pet has virtual methods and pybind11 knows about
 Dog and this Pet is in fact a Dog. Sometimes, you might want to
 provide this automatic downcasting behavior when creating bindings for
 a class hierarchy that does not use standard C++ polymorphism, such as
-LLVM <a class="footnote-reference brackets" href="#f4" id="id5">2</a>. As long as there’s some way to determine at runtime
+LLVM <a class="footnote-reference" href="#f4" id="id5">[2]</a>. As long as there’s some way to determine at runtime
 whether a downcast is safe, you can proceed by specializing the
 <code class="docutils literal notranslate"><span class="pre">pybind11::polymorphic_type_hook</span></code> template:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">PetKind</span> <span class="p">{</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">Zebra</span> <span class="p">};</span>
-<span class="k">struct</span> <span class="nc">Pet</span> <span class="p">{</span>   <span class="c1">// Not polymorphic: has no virtual methods</span>
+<span class="k">struct</span> <span class="n">Pet</span> <span class="p">{</span>   <span class="c1">// Not polymorphic: has no virtual methods</span>
     <span class="k">const</span> <span class="n">PetKind</span> <span class="n">kind</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">protected</span><span class="o">:</span>
     <span class="n">Pet</span><span class="p">(</span><span class="n">PetKind</span> <span class="n">_kind</span><span class="p">)</span> <span class="o">:</span> <span class="n">kind</span><span class="p">(</span><span class="n">_kind</span><span class="p">)</span> <span class="p">{}</span>
 <span class="p">};</span>
-<span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Pet</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">Dog</span> <span class="p">:</span> <span class="n">Pet</span> <span class="p">{</span>
     <span class="n">Dog</span><span class="p">()</span> <span class="o">:</span> <span class="n">Pet</span><span class="p">(</span><span class="n">PetKind</span><span class="o">::</span><span class="n">Dog</span><span class="p">)</span> <span class="p">{}</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">sound</span> <span class="o">=</span> <span class="s">&quot;woof!&quot;</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">bark</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">sound</span><span class="p">;</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">namespace</span> <span class="n">pybind11</span> <span class="p">{</span>
-    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">polymorphic_type_hook</span><span class="o">&lt;</span><span class="n">Pet</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">polymorphic_type_hook</span><span class="o">&lt;</span><span class="n">Pet</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">static</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">get</span><span class="p">(</span><span class="k">const</span> <span class="n">Pet</span> <span class="o">*</span><span class="n">src</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">type_info</span><span class="o">*&amp;</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// note that src may be nullptr</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">src</span> <span class="o">&amp;&amp;</span> <span class="n">src</span><span class="o">-&gt;</span><span class="n">kind</span> <span class="o">==</span> <span class="n">PetKind</span><span class="o">::</span><span class="n">Dog</span><span class="p">)</span> <span class="p">{</span>
@@ -1121,14 +1127,15 @@ fine, but in the general case, you must cast <code class="docutils literal notra
 appropriate derived-class pointer (e.g. using
 <code class="docutils literal notranslate"><span class="pre">static_cast&lt;Derived&gt;(src)</span></code>) before allowing it to be returned as a
 <code class="docutils literal notranslate"><span class="pre">void*</span></code>.</p>
-<dl class="footnote brackets">
-<dt class="label" id="f4"><span class="brackets"><a class="fn-backref" href="#id5">2</a></span></dt>
-<dd><p><a class="reference external" href="https://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html">https://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html</a></p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td><a class="reference external" href="https://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html">https://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html</a></td></tr>
+</tbody>
+</table>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>pybind11’s standard support for downcasting objects whose types
+<p class="first admonition-title">注解</p>
+<p class="last">pybind11’s standard support for downcasting objects whose types
 have virtual methods is implemented using
 <code class="docutils literal notranslate"><span class="pre">polymorphic_type_hook</span></code> too, using the standard C++ ability to
 determine the most-derived type of a polymorphic object using
@@ -1136,8 +1143,8 @@ determine the most-derived type of a polymorphic object using
 (even if you don’t know what it is) using <code class="docutils literal notranslate"><span class="pre">dynamic_cast&lt;void*&gt;</span></code>.</p>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_tagbased_polymorphic.cpp</span></code> contains a
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_tagbased_polymorphic.cpp</span></code> contains a
 more complete example, including a demonstration of how to provide
 automatic downcasting for an entire class hierarchy without
 writing one get() function for each class.</p>
@@ -1150,28 +1157,25 @@ writing one get() function for each class.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

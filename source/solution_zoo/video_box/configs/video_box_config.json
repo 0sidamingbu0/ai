@@ -15,5 +15,6 @@
   "plot_fps": false,
   "rtsp_config_file": "./video_box/configs/rtsp.json",
   "display_config_file": "./video_box/configs/display.json",
-  "drop_frame_config_file": "./video_box/configs/drop_frames.json"
+  "drop_frame_config_file": "./video_box/configs/drop_frames.json",
+  "run_smart": true
 }

@@ -20,10 +20,10 @@ int MergeParam::UpdateParameter(const JsonReaderPtr &reader) {
     SET_SNAPSHOT_METHOD_PARAM(reader_->GetRawJson(), Int,
                               filtered_box_state_type);
     LOGD << "filtered_box_state_type: " << filtered_box_state_type;
-    return kHorizonVisionSuccess;
+    return 0;
   } else {
     LOGE << "The reader is null";
-    return kHorizonVisionErrorParam;
+    return -1;
   }
 }
 

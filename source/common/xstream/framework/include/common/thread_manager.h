@@ -46,12 +46,18 @@ namespace xstream {
 class ThreadManager {
  public:
   static ThreadManager *Instance() { return new ThreadManager(); }
-  ThreadManager() = default;
+  static uint instance_num_;
+  uint id_;
+  ThreadManager() {
+    id_ = instance_num_;
+    instance_num_++;
+  }
+
   ~ThreadManager();
 
-  XThreadRawPtr CreateThread(uint32_t thread_idx);
+  XThreadRawPtr CreateThread(uint32_t thread_idx, std::string name = "");
 
-  XThreadRawPtr CreateAutoThread() {
+  XThreadRawPtr CreateAutoThread(std::string thread_name = "") {
     std::lock_guard<std::mutex> lck(thread_mutex_);
     uint32_t thread_idx =
         XSTREAM_AUTO_PRODUCE_THREAD_IDX_BASE + auto_thread_cnt_;
@@ -59,6 +65,7 @@ class ThreadManager {
     HOBOT_CHECK(threads_.find(thread_idx) == threads_.end())
         << "Anyone set auto-produce thread idx:" << thread_idx;
     threads_[thread_idx] = new XThread(thread_idx);
+    threads_[thread_idx]->SetThreadName(thread_name);
     return threads_[thread_idx];
   }
 

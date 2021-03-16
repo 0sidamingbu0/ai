@@ -84,7 +84,7 @@ class JsonReader {
     std::ifstream ifs(path_);
     if (!ifs.is_open()) {
       LOGE << "Open config file " << path_ << " fail!!!";
-      return kHorizonVisionErrorParam;
+      return -1;
     }
     LOGD << "Path: " << path_;
     std::stringstream ss;
@@ -100,12 +100,12 @@ class JsonReader {
       bool ret = reader->parse(
           content.c_str(), content.c_str() + content.size(), &root_, &error);
       if (ret) {
-        return kHorizonVisionSuccess;
+        return 0;
       } else {
-        return kHorizonVisionErrorParam;
+        return -1;
       }
     } catch (std::exception &e) {
-      return kHorizonVisionErrorParam;
+      return -1;
     }
   }
 

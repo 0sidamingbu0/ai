@@ -16,17 +16,6 @@
 extern "C" {
 #endif  // __cplusplus
 
-int BPU_runModelForIDXConsistency(BPUHandle handle,
-                                  const char *model_name,
-                                  BPUPyramidBuffer input,
-                                  BPUBBox *bbox,
-                                  int nBox,
-                                  int *resizable_cnt,
-                                  BPU_Buffer_Handle output[],
-                                  int nOutput,
-                                  BPUModelHandle *model_handle,
-                                  bool do_normalize);
-
 int BPU_getHBMhandleFromBPUhandle(BPUHandle handle, uint64_t *hbm_handle);
 
 struct BPUCNNBuffer;

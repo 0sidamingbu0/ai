@@ -13,15 +13,15 @@
 TEST(HorizonVisionSmartFrame, alloc_free) {
   HorizonVisionSmartFrame *data;
   auto ret = HorizonVisionAllocSmartFrame(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSmartFrame(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSmartFrame, copy) {
   HorizonVisionSmartFrame *data;
   auto ret = HorizonVisionAllocSmartFrame(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   data->frame_id = 10;
   data->time_stamp = 23600000;
@@ -32,7 +32,7 @@ TEST(HorizonVisionSmartFrame, copy) {
   for (uint32_t i = 0; i < data->image_num; i++) {
     HorizonVisionImageFrame *image_frame = nullptr;
     ret = HorizonVisionAllocImageFrame(&image_frame);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     image_frame->time_stamp = 23600000;
     image_frame->frame_id = 10;
     image_frame->channel_id = i;
@@ -48,18 +48,18 @@ TEST(HorizonVisionSmartFrame, copy) {
 
   data->smart_data_list_num = 2;
   ret = HorizonVisionAllocSmartData(&data->smart_data_list, 2);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   for (uint32_t i = 0; i < data->smart_data_list_num; i++) {
     auto &smart_data = data->smart_data_list[i];
     smart_data.track_id = 5;
     ret = HorizonVisionAllocBodySmartData(&smart_data.body);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     smart_data.body->body_rect.x1 = 1;
     smart_data.body->body_rect.y1 = 1;
     smart_data.body->body_rect.x2 = 2;
     smart_data.body->body_rect.y2 = 2;
     ret = HorizonVisionAllocFaceSmartData(&smart_data.face);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     smart_data.face->face_rect.x1 = 3;
     smart_data.face->face_rect.y1 = 3;
     smart_data.face->face_rect.x2 = 4;
@@ -68,11 +68,11 @@ TEST(HorizonVisionSmartFrame, copy) {
 
   HorizonVisionSmartFrame *cp_data;
   ret = HorizonVisionAllocSmartFrame(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySmartFrame(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSmartFrame(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->frame_id, 10u);
   EXPECT_EQ(cp_data->time_stamp, 23600000u);
@@ -107,52 +107,52 @@ TEST(HorizonVisionSmartFrame, copy) {
   }
 
   ret = HorizonVisionFreeSmartFrame(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSmartFrame, copy_empty_data) {
   HorizonVisionSmartFrame *data;
   auto ret = HorizonVisionAllocSmartFrame(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   data->frame_id = 10;
   data->time_stamp = 23600000;
   data->image_num = 0;
   data->smart_data_list_num = 0;
   ret = HorizonVisionAllocSmartData(&data->smart_data_list, 0);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionSmartFrame *cp_data;
   ret = HorizonVisionAllocSmartFrame(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySmartFrame(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSmartFrame(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->frame_id, 10u);
   EXPECT_EQ(cp_data->time_stamp, 23600000u);
   EXPECT_EQ(cp_data->image_num, 0u);
   EXPECT_EQ(cp_data->smart_data_list_num, 0u);
   ret = HorizonVisionFreeSmartFrame(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSmartFrame, dup) {
   HorizonVisionSmartFrame *data;
   auto ret = HorizonVisionAllocSmartFrame(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   data->frame_id = 10;
   data->time_stamp = 23600000;
   data->image_num = 2;
   ret = HorizonVisionAllocImageFrames(&data->image_frame, data->image_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   for (uint32_t i = 0; i < data->image_num; i++) {
     HorizonVisionImageFrame *image_frame = nullptr;
     ret = HorizonVisionAllocImageFrame(&image_frame);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     image_frame->time_stamp = 23600000;
     image_frame->frame_id = 10;
     image_frame->channel_id = i;
@@ -168,18 +168,18 @@ TEST(HorizonVisionSmartFrame, dup) {
 
   data->smart_data_list_num = 2;
   ret = HorizonVisionAllocSmartData(&data->smart_data_list, 2);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   for (uint32_t i = 0; i < data->smart_data_list_num; i++) {
     auto &smart_data = data->smart_data_list[i];
     smart_data.track_id = 5;
     ret = HorizonVisionAllocBodySmartData(&smart_data.body);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     smart_data.body->body_rect.x1 = 1;
     smart_data.body->body_rect.y1 = 1;
     smart_data.body->body_rect.x2 = 2;
     smart_data.body->body_rect.y2 = 2;
     ret = HorizonVisionAllocFaceSmartData(&smart_data.face);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     smart_data.face->face_rect.x1 = 3;
     smart_data.face->face_rect.y1 = 3;
     smart_data.face->face_rect.x2 = 4;
@@ -188,9 +188,9 @@ TEST(HorizonVisionSmartFrame, dup) {
   // test duplicate smart frame
   HorizonVisionSmartFrame *dup_data;
   ret = HorizonVisionDupSmartFrame(data, &dup_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSmartFrame(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(dup_data->frame_id, 10u);
   EXPECT_EQ(dup_data->time_stamp, 23600000u);
@@ -226,31 +226,31 @@ TEST(HorizonVisionSmartFrame, dup) {
   // test duplicate without data
   HorizonVisionSmartFrame *dup_data2;
   ret = HorizonVisionDupSmartFrameWithoutData(dup_data, &dup_data2);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSmartFrameWithoutData(dup_data2);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   ret = HorizonVisionFreeSmartFrame(dup_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSmartFrame, dup_empty_data) {
   HorizonVisionSmartFrame *data;
   auto ret = HorizonVisionAllocSmartFrame(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   data->frame_id = 10;
   data->time_stamp = 23600000;
   data->image_num = 0;
   data->smart_data_list_num = 0;
   ret = HorizonVisionAllocSmartData(&data->smart_data_list, 0);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionSmartFrame *cp_data;
   ret = HorizonVisionDupSmartFrame(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSmartFrame(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->frame_id, 10u);
   EXPECT_EQ(cp_data->time_stamp, 23600000u);
@@ -258,5 +258,5 @@ TEST(HorizonVisionSmartFrame, dup_empty_data) {
   EXPECT_EQ(cp_data->smart_data_list_num, 0u);
   std::free(cp_data->image_frame);
   ret = HorizonVisionFreeSmartFrame(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }

@@ -19,9 +19,12 @@
 | 2020-08-07 | 1.20   | 1.将`BPU_ConstructCameraBufferFromPyramidBuffer`接口名修改,为<br />`BPU_getRelatedCameraBufferFromPyramidBuffer`，并修改了Buffer的释放说明<br />2. 修改`BPU_getCameraInfoFromCameraBuffer`的参数说明 |
 | 2020-08-10 | 1.21   | 1. 添加`HB_BPU_resize`对于图片尺寸的限制<br />2. 添加`HB_BPU-setModelPrior`低优先级模型运行时间过长报错原因描述 |
 | 2020-08-24 | 1.22   | 1. `HB_BPU_resize`可以指定bpu核                                |
-| 2020-09-23 | 1.23   | 完善`resize`接口编译器限制说明                                 |
+| 2020-09-23 | 1.23   | 1. 完善`resize`接口编译器限制说明                                 |
 | 2020-11-09 | 1.24   | 1. 增加Global Config选项：`BPU_GLOBAL_ENGINE_TYPE`，`BPU_GLOBAL_CUSTOM_OP_LIB_PATH`,`BPU_GLOBAL_FREE_MEM_CACHE_AFTER_UNUSED_TIMES`<br />2. `runModel`接口支持对input data进行resize来适配模型的输入要求 |
 | 2020-11-20 | 1.25   | 1. 删除pym resize功能<br />2. 补充layout和padding说明        |
+| 2020-01-08 | 1.26   | 1. 增加HB_BPU_loadModelPackage接口<br />2. 增加HB_BPU_loadModelPackageFromFile接口<br />3. 增加HB_BPU_releaseModelPackage接口 |
+| 2020-01-28 | 1.27   | 1. 增加HB_BPU_getAlignedTotalSize接口<br />2. 增加HB_BPU_addPadding接口<br />3. 增加HB_BPU_removePadding接口 |
+| 2021-01-21 | 1.28   | 1. 增加`HB_BPU_dmacopy`接口  |
 
 ## 1.系统软件接口介绍
 
@@ -89,11 +92,11 @@ Bernoulli的内存架构如上图所示。CPU与主存之间存在的cache会缓
 
 **TIPS：**
 
-对于输出内存设置cachable，通过flush来获取最新的数据。之所以设置输出为cachable，是因为CPU可能会多次访问模型的结果，这样能够利用cache缓存，提高访问速度。
+模型的输入输出内存设置为 `cachable`，可以有效利用cache缓存，提高访问速度。
 
 **输入：**
 
-1. `mem`：是由memAlloc接口申请的BPU内存结构体指针。
+1. `mem`：是由 `memAlloc` 接口申请的BPU内存结构体指针。
 2. `flag`：表示flush操作的方向。具体请见上文中的**描述**部分。
 
 **返回：**
@@ -195,6 +198,32 @@ int HB_SYS_virAddrFree(const void *virAddr);
 **返回：**
 
 1. 返回int类型的错误码。成功为`BPU_OK`，其他返回值都是失败。
+
+#### 1.2.8 HB_BPU_dmacopy
+
+```c
+int HB_BPU_dmacopy(void *dst_addr, void *src_addr, uint32_t size);
+```
+
+**描述：**
+
+这个接口的功能是使用DMA功能完成内存拷贝。
+
+**参数：**
+
+1. `dst_addr`：拷贝的目标地址，输入虚拟地址指针。
+2. `src_addr`：拷贝的源地址，输入虚拟地址指针。
+3. `size`：拷贝内存大小, size < 240M。
+
+**说明：**
+
+1. 返回int类型的错误码。成功为`BPU_OK`，其他返回值都是失败。
+2. `src_addr和dst_addr`需要通过`HB_SYS_bpuMemAlloc`分配出一片连续的物理内存，将`BPU_MEMORY_S`中的`virAddr`指针作为参数传入。
+3. DMA内存拷贝功能目前只支持XJ3开发板，XJ2没有该功能。
+4. 系统首次启用DMA拷贝会有额外的拷贝耗时，启动耗时大约在50us左右。
+5. 对于非cache内存，内存大小在4k以上时，DMA拷贝的速度为CPU速度2倍，拷贝的内存大小在4K以下，两种拷贝速度相近。
+6. 对于cache内存，CPU的拷贝速度较快，为DMA拷贝的5倍。
+7. 拷贝方案推荐：a. CPU资源充足的情况下，推荐分配cache内存，使用CPU拷贝；b. CPU资源不充足时，推荐使用DMA拷贝。
 
 ## 2.BPU predict API
 
@@ -970,8 +999,8 @@ int HB_BPU_runModelWithBbox(const BPU_MODEL_S *model,
 4. `bbox`：bbox的数组指针。
 5. `bbox_num`：bbox的个数。
 6. `output_data`：表示输出数据tensor。
-7. `output_num`：表示输出数据的个数，要跟模型输出个数一致。这两个参数要特别注意，`output_num`就是模型本身的输出个数，`output_data`则是模型每个输出的n `bbox_num` 个tensor的连续内存，举例来说：
-假设resizer模型有两个输出：A和B，有20个检测框作为输入，则n `bbox_num`=20，`output_num`=2， `output_data`[0]=20个A tensor的内存， output_data[1]=20个B tensor的内存。
+7. `output_num`：表示输出数据的个数，要跟模型输出个数一致。这两个参数要特别注意，`output_num`就是模型本身的输出个数，`output_data`则是模型每个输出的nBBox个tensor的连续内存，举例来说：
+假设resizer模型有两个输出：A和B，有20个检测框作为输入，则nBBox=20，output_num=2， output_data[0]=20个A tensor的内存， output_data[1]=20个B tensor的内存。
 8. `run_ctrl`：表示这次运行的控制信息，例如`core_id`，是否当resizer硬件不能支持时使用内部RoiResize功能。
 9. `is_sync`：表示这次执行是否用同步模式，`true`为同步模式，`false`为异步模式。
 
@@ -1288,6 +1317,75 @@ int HB_BPU_releaseModelPackage(BPU_MODEL_PACKAGE_S *model_package_s);
 **输入：**
 
 1. `model_package_s`：表示模型包的结构体对象指针。
+
+**返回：**
+
+1. 返回int类型的返回值。0表示执行成功，其他值表示失败。
+
+#### 2.3.30 HB_BPU_getAlignedTotalSize
+
+```c
+int HB_BPU_getAlignedTotalSize(int *size, BPU_MODEL_NODE_S *node);
+```
+
+**描述：**
+
+根据传入node的信息，计算所需要申请的内存大小。
+
+**输入：**
+
+1. `size`：表示需要申请的内存大小的指针。
+2. `node`：表示node信息，该node可以通过加载模型的相关接口获取到。
+
+**返回：**
+
+1. 返回int类型的返回值。0表示执行成功，其他值表示失败。
+
+#### 2.3.31 HB_BPU_addPadding
+
+```c
+int HB_BPU_addPadding(void *src, void *dst,
+                      const BPU_DATA_SHAPE_S *src_shape,
+                      const BPU_DATA_SHAPE_S *dst_shape,
+                      const BPU_DATA_TYPE_E *data_type);
+```
+
+**描述：**
+
+根据传入的 `src_shape` 和`dst_shape` 以及数据类型 `data_type`，对数据进行padding操作。
+
+**输入：**
+
+1. `src`：需要进行padding操作的原始数据。
+2. `dst`：进行padding操作后的数据。
+3. `src_shape`：需要进行padding操作的原始数据的shape。
+4. `dst_shape`：进行padding后的目标数据的shape。
+5. `data_type`：需要进行padding操作的数据类型，当前支持的类型有BPU_TYPE_IMG_Y、BPU_TYPE_IMG_YUV_NV12、BPU_TYPE_IMG_NV12_SEPARATE、BPU_TYPE_TENSOR_U8、BPU_TYPE_TENSOR_S8、BPU_TYPE_TENSOR_F32、BPU_TYPE_TENSOR_S32、BPU_TYPE_TENSOR_U32、BPU_TYPE_TENSOR_S64。
+
+**返回：**
+
+1. 返回int类型的返回值。0表示执行成功，其他值表示失败。
+
+#### 2.3.32 HB_BPU_removePadding
+
+```c
+int HB_BPU_removePadding(const void *src, void *dst,
+                         const BPU_DATA_SHAPE_S *src_shape,
+                         const BPU_DATA_SHAPE_S *dst_shape,
+                         const BPU_DATA_TYPE_E *data_type);
+```
+
+**描述：**
+
+根据传入的 `src_shape` 和 `dst_shape` 以及数据类型 `data_type`，对数据进行去padding操作。
+
+**输入：**
+
+1. `src`：需要去除padding的原始数据。
+2. `dst`：去除padding后的数据。
+3. `src_shape`：需要去除padding的原始数据的shape。
+4. `dst_shape`：去除padding后的目标数据的shape。
+5. `data_type`：需要进行padding操作的数据类型，当前支持的类型有BPU_TYPE_TENSOR_U8、BPU_TYPE_TENSOR_S8、BPU_TYPE_TENSOR_F32、BPU_TYPE_TENSOR_S32、BPU_TYPE_TENSOR_U32、BPU_TYPE_TENSOR_S64，即去除padding操作只支持tensor类型。
 
 **返回：**
 
