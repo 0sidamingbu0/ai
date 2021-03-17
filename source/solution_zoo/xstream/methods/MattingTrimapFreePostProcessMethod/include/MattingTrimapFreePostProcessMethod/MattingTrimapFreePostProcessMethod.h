@@ -32,7 +32,8 @@ class MattingTrimapFreePostProcessMethod : public DnnPostProcessMethod {
                              std::vector<BaseDataPtr> &frame_result);
 
  private:
-  float matting_thresh_ = 0.5;
+  float matting_low_thresh_ = 30;
+  float matting_high_thresh_ = 240;
 };
 }  // namespace xstream
 #endif

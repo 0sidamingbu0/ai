@@ -144,6 +144,16 @@ sh run.sh w
 
 选择2（os8a10摄像头）后回车，示例程序开始启动运行。
 
+### 编译常见报错问题
+
+#### 提示 libxxxx.so: file format not recognized; treating as linker script
+
+出错原因：在Windows中下载AIExpress源码后，然后将源码发送到Linux开发机，导致代码包中的symbolic link 失效。
+
+解决方案:
+方法1(推荐)：直接在Linux开发机下载代码：#  git clone git@github.com:HorizonRobotics-Platform/AI-EXPRESS.git
+方法2：根据提示，自行手动创建对应库的symbolic link.
+
 ## 回灌模式
 ### 回灌方式说明
 X3版本回灌支持3种模式，分别为cache， jpg与nv12这3个模式，区别如下：
@@ -288,3 +298,30 @@ uvc支持动态配置分辨率，可在potplayer端选择属性切换：
 然后可通过uvc的属性功能验证设备端的属性是否切换成功。
 
 ![get_uvc](./image/potplayer_get_uvc_attr.png "potplayer查看uvc属性")
+
+## Core文件未生成
+先设置/userdata的读写权限，然后限制指定core文件的生成路径。
+``` shell
+mount -o remount,rw /
+ulimit -c unlimited
+mkdir -p /userdata/dump
+sysctl -w kernel.core_pattern=/userdata/dump/core-%e.%p.%h.%t
+```
+这样设置后，若程序异常crash，会将core文件保存在/userdata/dump/目录下
+
+## GDB调试，设置动态库路径
+gdb若未设置动态库路径，会提示动态库加载失败的信息，则会导致动态库的调试不可行。可以根据如下步骤设置动态库路径：
+
+1. 在开发机查看应用依赖的依赖库
+```shell
+$ readelf -d pad_demo/build/bin/pad_demo  | grep NEEDED
+```
+2. 板上GDB环境下使用solib-search-patch设置库的路径
+```shell
+(gdb) set solib-search-path /home/yu/sdb/prerootfs/lib:pad_demo/build/lib/home/yu/sdb/x2j2/prebuilts/root/lib
+```
+
+## 程序运行提示vio失败
+这种情况一般是由于两种原因造成：
+1. Sensor排线插得不对，或者接入X3开发板的接口不对
+2. AIExpress版本与系统软件版本不匹配。当前阶段请根据README.md中描述的版本关系进行测试

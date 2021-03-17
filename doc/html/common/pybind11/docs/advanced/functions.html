@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Functions &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/common/pybind11/docs/advanced/functions.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -204,62 +209,62 @@ where ignoring ownership could lead to resource leaks.
 As a developer using pybind11, it’s important to be familiar with the different
 return value policies, including which situation calls for which one of them.
 The following table provides an overview of available policies:</p>
-<table class="docutils align-default">
+<table border="1" class="docutils">
 <colgroup>
-<col style="width: 40%" />
-<col style="width: 60%" />
+<col width="40%" />
+<col width="60%" />
 </colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Return value policy</p></th>
-<th class="head"><p>Description</p></th>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Return value policy</th>
+<th class="head">Description</th>
 </tr>
 </thead>
-<tbody>
-<tr class="row-even"><td><p><a href="#id8"><span class="problematic" id="id9">:enum:`return_value_policy::take_ownership`</span></a></p></td>
-<td><p>Reference an existing object (i.e. do not create a new copy) and take
+<tbody valign="top">
+<tr class="row-even"><td><a href="#id8"><span class="problematic" id="id9">:enum:`return_value_policy::take_ownership`</span></a></td>
+<td>Reference an existing object (i.e. do not create a new copy) and take
 ownership. Python will call the destructor and delete operator when the
 object’s reference count reaches zero. Undefined behavior ensues when the
-C++ side does the same, or when the data was not dynamically allocated.</p></td>
+C++ side does the same, or when the data was not dynamically allocated.</td>
 </tr>
-<tr class="row-odd"><td><p><a href="#id10"><span class="problematic" id="id11">:enum:`return_value_policy::copy`</span></a></p></td>
-<td><p>Create a new copy of the returned object, which will be owned by Python.
+<tr class="row-odd"><td><a href="#id10"><span class="problematic" id="id11">:enum:`return_value_policy::copy`</span></a></td>
+<td>Create a new copy of the returned object, which will be owned by Python.
 This policy is comparably safe because the lifetimes of the two instances
-are decoupled.</p></td>
+are decoupled.</td>
 </tr>
-<tr class="row-even"><td><p><a href="#id12"><span class="problematic" id="id13">:enum:`return_value_policy::move`</span></a></p></td>
-<td><p>Use <code class="docutils literal notranslate"><span class="pre">std::move</span></code> to move the return value contents into a new instance
+<tr class="row-even"><td><a href="#id12"><span class="problematic" id="id13">:enum:`return_value_policy::move`</span></a></td>
+<td>Use <code class="docutils literal notranslate"><span class="pre">std::move</span></code> to move the return value contents into a new instance
 that will be owned by Python. This policy is comparably safe because the
-lifetimes of the two instances (move source and destination) are decoupled.</p></td>
+lifetimes of the two instances (move source and destination) are decoupled.</td>
 </tr>
-<tr class="row-odd"><td><p><a href="#id14"><span class="problematic" id="id15">:enum:`return_value_policy::reference`</span></a></p></td>
-<td><p>Reference an existing object, but do not take ownership. The C++ side is
+<tr class="row-odd"><td><a href="#id14"><span class="problematic" id="id15">:enum:`return_value_policy::reference`</span></a></td>
+<td>Reference an existing object, but do not take ownership. The C++ side is
 responsible for managing the object’s lifetime and deallocating it when
 it is no longer used. Warning: undefined behavior will ensue when the C++
-side deletes an object that is still referenced and used by Python.</p></td>
+side deletes an object that is still referenced and used by Python.</td>
 </tr>
-<tr class="row-even"><td><p><a href="#id16"><span class="problematic" id="id17">:enum:`return_value_policy::reference_internal`</span></a></p></td>
-<td><p>Indicates that the lifetime of the return value is tied to the lifetime
+<tr class="row-even"><td><a href="#id16"><span class="problematic" id="id17">:enum:`return_value_policy::reference_internal`</span></a></td>
+<td>Indicates that the lifetime of the return value is tied to the lifetime
 of a parent object, namely the implicit <code class="docutils literal notranslate"><span class="pre">this</span></code>, or <code class="docutils literal notranslate"><span class="pre">self</span></code> argument of
 the called method or property. Internally, this policy works just like
 <a href="#id18"><span class="problematic" id="id19">:enum:`return_value_policy::reference`</span></a> but additionally applies a
 <code class="docutils literal notranslate"><span class="pre">keep_alive&lt;0,</span> <span class="pre">1&gt;</span></code> <em>call policy</em> (described in the next section) that
 prevents the parent object from being garbage collected as long as the
 return value is referenced by Python. This is the default policy for
-property getters created via <code class="docutils literal notranslate"><span class="pre">def_property</span></code>, <code class="docutils literal notranslate"><span class="pre">def_readwrite</span></code>, etc.</p></td>
+property getters created via <code class="docutils literal notranslate"><span class="pre">def_property</span></code>, <code class="docutils literal notranslate"><span class="pre">def_readwrite</span></code>, etc.</td>
 </tr>
-<tr class="row-odd"><td><p><a href="#id20"><span class="problematic" id="id21">:enum:`return_value_policy::automatic`</span></a></p></td>
-<td><p><strong>Default policy.</strong> This policy falls back to the policy
+<tr class="row-odd"><td><a href="#id20"><span class="problematic" id="id21">:enum:`return_value_policy::automatic`</span></a></td>
+<td><strong>Default policy.</strong> This policy falls back to the policy
 <a href="#id22"><span class="problematic" id="id23">:enum:`return_value_policy::take_ownership`</span></a> when the return value is a
 pointer. Otherwise, it uses <a href="#id24"><span class="problematic" id="id25">:enum:`return_value_policy::move`</span></a> or
 <a href="#id26"><span class="problematic" id="id27">:enum:`return_value_policy::copy`</span></a> for rvalue and lvalue references,
 respectively. See above for a description of what all of these different
-policies do.</p></td>
+policies do.</td>
 </tr>
-<tr class="row-even"><td><p><a href="#id28"><span class="problematic" id="id29">:enum:`return_value_policy::automatic_reference`</span></a></p></td>
-<td><p>As above, but use policy <a href="#id30"><span class="problematic" id="id31">:enum:`return_value_policy::reference`</span></a> when the
+<tr class="row-even"><td><a href="#id28"><span class="problematic" id="id29">:enum:`return_value_policy::automatic_reference`</span></a></td>
+<td>As above, but use policy <a href="#id30"><span class="problematic" id="id31">:enum:`return_value_policy::reference`</span></a> when the
 return value is a pointer. This is the default conversion policy for
 function arguments when calling Python functions manually from C++ code
-(i.e. via handle::operator()). You probably won’t need to use this.</p></td>
+(i.e. via handle::operator()). You probably won’t need to use this.</td>
 </tr>
 </tbody>
 </table>
@@ -281,15 +286,15 @@ targeted arguments can be passed through the <code class="xref py py-class docut
 </pre></div>
 </div>
 <div class="admonition warning">
-<p class="admonition-title">警告</p>
-<p>Code with invalid return value policies might access uninitialized memory or
+<p class="first admonition-title">警告</p>
+<p class="last">Code with invalid return value policies might access uninitialized memory or
 free data structures multiple times, which can lead to hard-to-debug
 non-determinism and segmentation faults, hence it is worth spending the
 time to understand all the different options in the table above.</p>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>One important aspect of the above policies is that they only apply to
+<p class="first admonition-title">注解</p>
+<p class="last">One important aspect of the above policies is that they only apply to
 instances which pybind11 has <em>not</em> seen before, in which case the policy
 clarifies essential questions about the return value’s lifetime and
 ownership.  When pybind11 knows the instance already (as identified by its
@@ -297,15 +302,15 @@ type and address in memory), it will return the existing Python object
 wrapper rather than creating a new copy.</p>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>The next section on <a class="reference internal" href="#call-policies"><span class="std std-ref">Additional call policies</span></a> discusses <em>call policies</em> that can be
+<p class="first admonition-title">注解</p>
+<p class="last">The next section on <a class="reference internal" href="#call-policies"><span class="std std-ref">Additional call policies</span></a> discusses <em>call policies</em> that can be
 specified <em>in addition</em> to a return value policy from the list above. Call
 policies indicate reference relationships that can involve both return values
 and parameters of functions.</p>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>As an alternative to elaborate call policies and lifetime management logic,
+<p class="first admonition-title">注解</p>
+<p class="last">As an alternative to elaborate call policies and lifetime management logic,
 consider using smart pointers (see the section on <a class="reference internal" href="smart_ptrs.html#id1"><span class="std std-ref">Custom smart pointers</span></a> for
 details). Smart pointers can tell whether an object is still referenced from
 C++ or Python, which generally eliminates the kinds of inconsistencies that
@@ -349,8 +354,8 @@ ties the lifetime of the constructor element to the constructed object:</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p><code class="docutils literal notranslate"><span class="pre">keep_alive</span></code> is analogous to the <code class="docutils literal notranslate"><span class="pre">with_custodian_and_ward</span></code> (if Nurse,
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">keep_alive</span></code> is analogous to the <code class="docutils literal notranslate"><span class="pre">with_custodian_and_ward</span></code> (if Nurse,
 Patient != 0) and <code class="docutils literal notranslate"><span class="pre">with_custodian_and_ward_postcall</span></code> (if Nurse/Patient ==
 0) policies from Boost.Python.</p>
 </div>
@@ -375,8 +380,8 @@ See <a class="reference internal" href="misc.html#gil"><span class="std std-ref"
 <p>Multiple guards can also be specified as <code class="docutils literal notranslate"><span class="pre">py::call_guard&lt;T1,</span> <span class="pre">T2,</span> <span class="pre">T3...&gt;</span></code>. The
 constructor order is left to right and destruction happens in reverse.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_call_policies.cpp</span></code> contains a complete example
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_call_policies.cpp</span></code> contains a complete example
 that demonstrates using <cite>keep_alive</cite> and <cite>call_guard</cite> in more detail.</p>
 </div>
 </div>
@@ -435,8 +440,8 @@ arguments accepted by the function.</p>
 and on how to cast their entries into C++ objects. A demonstration is also
 available in <code class="docutils literal notranslate"><span class="pre">tests/test_kwargs_and_defaults.cpp</span></code>.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>When combining *args or **kwargs with <a class="reference internal" href="../basics.html#keyword-args"><span class="std std-ref">Keyword arguments</span></a> you should
+<p class="first admonition-title">注解</p>
+<p class="last">When combining *args or **kwargs with <a class="reference internal" href="../basics.html#keyword-args"><span class="std std-ref">Keyword arguments</span></a> you should
 <em>not</em> include <code class="docutils literal notranslate"><span class="pre">py::arg</span></code> tags for the <code class="docutils literal notranslate"><span class="pre">py::args</span></code> and <code class="docutils literal notranslate"><span class="pre">py::kwargs</span></code>
 arguments.</p>
 </div>
@@ -484,14 +489,14 @@ like so:</p>
 <p>Certain argument types may support conversion from one type to another.  Some
 examples of conversions are:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="classes.html#implicit-conversions"><span class="std std-ref">Implicit conversions</span></a> declared using <code class="docutils literal notranslate"><span class="pre">py::implicitly_convertible&lt;A,B&gt;()</span></code></p></li>
-<li><p>Calling a method accepting a double with an integer argument</p></li>
-<li><p>Calling a <code class="docutils literal notranslate"><span class="pre">std::complex&lt;float&gt;</span></code> argument with a non-complex python type
+<li><a class="reference internal" href="classes.html#implicit-conversions"><span class="std std-ref">Implicit conversions</span></a> declared using <code class="docutils literal notranslate"><span class="pre">py::implicitly_convertible&lt;A,B&gt;()</span></code></li>
+<li>Calling a method accepting a double with an integer argument</li>
+<li>Calling a <code class="docutils literal notranslate"><span class="pre">std::complex&lt;float&gt;</span></code> argument with a non-complex python type
 (for example, with a float).  (Requires the optional <code class="docutils literal notranslate"><span class="pre">pybind11/complex.h</span></code>
-header).</p></li>
-<li><p>Calling a function taking an Eigen matrix reference with a numpy array of the
+header).</li>
+<li>Calling a function taking an Eigen matrix reference with a numpy array of the
 wrong type or of an incompatible data layout.  (Requires the optional
-<code class="docutils literal notranslate"><span class="pre">pybind11/eigen.h</span></code> header).</p></li>
+<code class="docutils literal notranslate"><span class="pre">pybind11/eigen.h</span></code> header).</li>
 </ul>
 <p>This behaviour is sometimes undesirable: the binding code may prefer to raise
 an error rather than convert the argument.  This behaviour can be obtained
@@ -520,8 +525,8 @@ will fail with a <code class="docutils literal notranslate"><span class="pre">Ty
 the argument name by using the <code class="docutils literal notranslate"><span class="pre">py::arg()</span></code> constructor without an argument
 name, i.e. by specifying <code class="docutils literal notranslate"><span class="pre">py::arg().noconvert()</span></code>.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>When specifying <code class="docutils literal notranslate"><span class="pre">py::arg</span></code> options it is necessary to provide the same
+<p class="first admonition-title">注解</p>
+<p class="last">When specifying <code class="docutils literal notranslate"><span class="pre">py::arg</span></code> options it is necessary to provide the same
 number of options as the bound function has arguments.  Thus if you want to
 enable no-convert behaviour for just one of several arguments, you will
 need to specify a <code class="docutils literal notranslate"><span class="pre">py::arg()</span></code> annotation for each argument with the
@@ -569,8 +574,8 @@ function with <code class="docutils literal notranslate"><span class="pre">nullp
 </div>
 <p>The default behaviour when the tag is unspecified is to allow <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Even when <code class="docutils literal notranslate"><span class="pre">.none(true)</span></code> is specified for an argument, <code class="docutils literal notranslate"><span class="pre">None</span></code> will be converted to a
+<p class="first admonition-title">注解</p>
+<p class="last">Even when <code class="docutils literal notranslate"><span class="pre">.none(true)</span></code> is specified for an argument, <code class="docutils literal notranslate"><span class="pre">None</span></code> will be converted to a
 <code class="docutils literal notranslate"><span class="pre">nullptr</span></code> <em>only</em> for custom and <a class="reference internal" href="cast/stl.html#opaque"><span class="std std-ref">opaque</span></a> types. Pointers to built-in types
 (<code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">*</span></code>, …) and STL types (<code class="docutils literal notranslate"><span class="pre">std::vector&lt;T&gt;</span> <span class="pre">*</span></code>, …; if <code class="docutils literal notranslate"><span class="pre">pybind11/stl.h</span></code>
 is included) are copied when converted to C++ (see <span class="xref std std-doc">/advanced/cast/overview</span>) and will
@@ -595,8 +600,8 @@ pybind11.</p>
 not require conversion of arguments to an overload that does, but otherwise prefers
 earlier-defined overloads to later-defined ones.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>pybind11 does <em>not</em> further prioritize based on the number/pattern of
+<p class="first admonition-title">注解</p>
+<p class="last">pybind11 does <em>not</em> further prioritize based on the number/pattern of
 overloaded arguments.  That is, pybind11 does not prioritize a function
 requiring one conversion over one requiring three, but only prioritizes
 overloads requiring no conversion at all to overloads that require
@@ -610,28 +615,25 @@ conversion of at least one argument.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Exceptions &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/common/pybind11/docs/advanced/exceptions.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -165,67 +170,67 @@
 automatically converted into a Python <code class="docutils literal notranslate"><span class="pre">Exception</span></code>. pybind11 defines multiple
 special exception classes that will map to different types of Python
 exceptions:</p>
-<table class="docutils align-default">
+<table border="1" class="docutils">
 <colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
+<col width="50%" />
+<col width="50%" />
 </colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>C++ exception type</p></th>
-<th class="head"><p>Python exception type</p></th>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">C++ exception type</th>
+<th class="head">Python exception type</th>
 </tr>
 </thead>
-<tbody>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::exception</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code></p></td>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::exception</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::bad_alloc</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">MemoryError</span></code></p></td>
+<tr class="row-odd"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::bad_alloc</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">MemoryError</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::domain_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></p></td>
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::domain_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::invalid_argument</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></p></td>
+<tr class="row-odd"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::invalid_argument</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::length_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></p></td>
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::length_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::out_of_range</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">IndexError</span></code></p></td>
+<tr class="row-odd"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::out_of_range</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">IndexError</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::range_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></p></td>
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::range_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ValueError</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">std::overflow_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">OverflowError</span></code></p></td>
+<tr class="row-odd"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">std::overflow_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">OverflowError</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::stop_iteration</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">StopIteration</span></code> (used to implement
-custom iterators)</p></td>
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::stop_iteration</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">StopIteration</span></code> (used to implement
+custom iterators)</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::index_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">IndexError</span></code> (used to indicate out
+<tr class="row-odd"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::index_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">IndexError</span></code> (used to indicate out
 of bounds access in <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>,
-<code class="docutils literal notranslate"><span class="pre">__setitem__</span></code>, etc.)</p></td>
+<code class="docutils literal notranslate"><span class="pre">__setitem__</span></code>, etc.)</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::value_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (used to indicate
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::value_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (used to indicate
 wrong value passed in
-<code class="docutils literal notranslate"><span class="pre">container.remove(...)</span></code>)</p></td>
+<code class="docutils literal notranslate"><span class="pre">container.remove(...)</span></code>)</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::key_error</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">KeyError</span></code> (used to indicate out
+<tr class="row-odd"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::key_error</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">KeyError</span></code> (used to indicate out
 of bounds access in <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>,
 <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code> in dict-like
-objects, etc.)</p></td>
+objects, etc.)</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::error_already_set</span></code></p></td>
-<td><p>Indicates that the Python exception
+<tr class="row-even"><td><code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11::error_already_set</span></code></td>
+<td>Indicates that the Python exception
 flag has already been set via Python
 API calls from C++ code; this C++
 exception is used to propagate such
-a Python exception back to Python.</p></td>
+a Python exception back to Python.</td>
 </tr>
 </tbody>
 </table>
@@ -243,7 +248,7 @@ pybind11 also provides support for registering custom exception translators.
 To register a simple exception conversion that translates a C++ exception into
 a new Python exception using the C++ exception’s <code class="docutils literal notranslate"><span class="pre">what()</span></code> method, a helper
 function is available:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">register_exception</span><span class="o">&lt;</span><span class="n">CppExp</span><span class="o">&gt;</span><span class="p">(</span><span class="k">module</span><span class="p">,</span> <span class="s">&quot;PyExp&quot;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">register_exception</span><span class="o">&lt;</span><span class="n">CppExp</span><span class="o">&gt;</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s">&quot;PyExp&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>This call creates a Python exception class with the name <code class="docutils literal notranslate"><span class="pre">PyExp</span></code> in the given
@@ -290,17 +295,17 @@ previously registered one gets a chance.</p>
 exception, it is handled by the default converter as described in the previous
 section.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_exceptions.cpp</span></code> contains examples
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_exceptions.cpp</span></code> contains examples
 of various custom exception translators and custom exception types.</p>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
+<p class="first admonition-title">注解</p>
 <p>You must call either <code class="docutils literal notranslate"><span class="pre">PyErr_SetString</span></code> or a custom exception’s call
 operator (<code class="docutils literal notranslate"><span class="pre">exc(string)</span></code>) for every exception caught in a custom exception
 translator.  Failure to do so will cause Python to crash with <code class="docutils literal notranslate"><span class="pre">SystemError:</span>
 <span class="pre">error</span> <span class="pre">return</span> <span class="pre">without</span> <span class="pre">exception</span> <span class="pre">set</span></code>.</p>
-<p>Exceptions that you do not plan to handle should simply not be caught, or
+<p class="last">Exceptions that you do not plan to handle should simply not be caught, or
 may be explicitly (re-)thrown to delegate it to the other,
 previously-declared existing exception translators.</p>
 </div>
@@ -312,28 +317,25 @@ previously-declared existing exception translators.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

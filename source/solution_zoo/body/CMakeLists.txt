@@ -8,20 +8,26 @@ set(SOURCE_FILES
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-set(BASE_LIBRARIES vioplugin smartplugin visualplugin FasterRCNNMethod
-        CNNMethod MOTMethod FilterMethod MergeMethod vote_method BehaviorMethod LowPassFilterMethod
-        DnnPredictMethod DnnPostProcessMethod
-        MattingPredictMethod MattingPostProcessMethod
-        MattingTrimapFreePredictMethod MattingTrimapFreePostProcessMethod
-        bpu_predict ipc_tracking xstream
-        xstream-imagetools hobotlog vision_type_util jsoncpp opencv_world websocketplugin)
+set(BASE_LIBRARIES vioplugin smartplugin 
+  visualplugin websocketplugin 
+  bpu_predict ipc_tracking xstream 
+  xstream-imagetools hobotlog vision_type_util 
+  jsoncpp opencv_world 
+       
+  FasterRCNNMethod
+  CNNMethod MOTMethod FilterMethod MergeMethod 
+  vote_method BehaviorMethod LowPassFilterMethod
+  DnnPredictMethod DnnPostProcessMethod
+  MattingPredictMethod MattingPostProcessMethod
+  MattingTrimapFreePredictMethod MattingTrimapFreePostProcessMethod
+)
 
 if (${PLATFORM_X2})
 set(BASE_LIBRARIES CNNMethod ${BASE_LIBRARIES} )
 endif()
 
 if (${PLATFORM_X3})
-set(BASE_LIBRARIES aioplugin ${BASE_LIBRARIES} uvcplugin)
+set(BASE_LIBRARIES aioplugin ${BASE_LIBRARIES} uvcplugin )
 endif()
 
 target_link_libraries(${PROJECT_NAME} ${BASE_LIBRARIES})

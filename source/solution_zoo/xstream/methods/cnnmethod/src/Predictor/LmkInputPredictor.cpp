@@ -31,15 +31,12 @@ typedef std::shared_ptr<ImageFrame> ImageFramePtr;
 namespace xstream {
 
 void LmkInputPredictor::Do(CNNMethodRunData *run_data) {
-  int frame_size = run_data->input->size();
-  run_data->mxnet_output.resize(frame_size);
-  run_data->input_dim_size.resize(frame_size);
   run_data->real_nhwc = model_info_.real_nhwc_;
   run_data->elem_size = model_info_.elem_size_;
   run_data->all_shift = model_info_.all_shift_;
 
-  for (int frame_idx = 0; frame_idx < frame_size; frame_idx++) {  // loop frame
-    auto &input_data = (*(run_data->input))[frame_idx];
+  {  // one frame
+    auto &input_data = (*(run_data->input));
 
     // BaseDataVector<BaseDataVector<shared_ptr<XStreamData<shared_ptr<snap>>>>>
     auto snaps = dynamic_cast<BaseDataVector *>(input_data[0].get());
@@ -61,8 +58,8 @@ void LmkInputPredictor::Do(CNNMethodRunData *run_data) {
       effective_idx++;
       total_snap += one_person_snaps->datas_.size();
     }
-    run_data->mxnet_output[frame_idx].resize(total_snap);
-    run_data->input_dim_size[frame_idx] = total_snap;
+    run_data->mxnet_output.resize(total_snap);
+    run_data->input_dim_size = total_snap;
 
     int layer_size = model_info_.output_layer_size_.size();
     for (int32_t obj_idx = 0, snap_idx = 0;
@@ -196,7 +193,7 @@ void LmkInputPredictor::Do(CNNMethodRunData *run_data) {
         {
           RUN_PROCESS_TIME_PROFILER(model_name_ + "_do_hbrt")
           RUN_FPS_PROFILER(model_name_ + "_do_hbrt")
-          auto &one_tgt_mxnet = run_data->mxnet_output[frame_idx][snap_idx];
+          auto &one_tgt_mxnet = run_data->mxnet_output[snap_idx];
           one_tgt_mxnet.resize(layer_size);
 
           for (int j = 0; j < layer_size; j++) {

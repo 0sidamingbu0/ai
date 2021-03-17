@@ -41,8 +41,8 @@ class VencModule {
   VencModule();
   ~VencModule();
   int Init(uint32_t chn_id, const VencModuleInfo *module_info,
-           const int channel_num,
-           const int display_mode = 0);
+           const int channel_num, const smart_vo_cfg_t &smart_vo_cfg,
+           const bool encode_smart = false, const int display_mode = 0);
   int Start();
   int Input(std::shared_ptr<VideoData> video_data, const bool copy = false);
 
@@ -66,6 +66,7 @@ class VencModule {
   static std::once_flag flag_;
   uint32_t chn_id_;
   uint32_t timeout_;
+  bool init_ = false;
 
   VencModuleInfo venc_info_;
   VencBuffer buffers_;
@@ -76,13 +77,14 @@ class VencModule {
   FILE *outfile_;
   int pipe_fd_;
 
-  bool process_running_;
+  bool process_running_ = false;
   std::shared_ptr<std::thread> process_thread_;
 
   uint32_t display_mode_ = 0;
   uint32_t channel_num_ = 0;
   bool encode_720p_ = false;
   bool encode_smart_ = false;
+  smart_vo_cfg_t vo_plot_cfg_;
   std::shared_ptr<std::thread> encode_thread_;
   hobot::vision::BlockingQueue<std::shared_ptr<VideoData>> in_queue_;
   uint32_t in_queue_len_max_ = 40;

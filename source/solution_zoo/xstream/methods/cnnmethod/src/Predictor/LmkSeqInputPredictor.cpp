@@ -102,25 +102,43 @@ void LmkSeqInputPredictor::UpdateParam(
   }
 }
 
-void LmkSeqInputPredictor::Do(CNNMethodRunData *run_data) {
-  static float timestamp_;
+bool LmkSeqInputPredictor::IsNeedReorder() {
+  return true;
+}
 
-  int frame_size = run_data->input->size();
-  run_data->mxnet_output.resize(frame_size);
-  run_data->input_dim_size.resize(frame_size);
+void LmkSeqInputPredictor::Do(CNNMethodRunData *run_data) {
+  uint64_t timestamp_;  // ms
+
   run_data->real_nhwc = model_info_.real_nhwc_;
   run_data->elem_size = model_info_.elem_size_;
   run_data->all_shift = model_info_.all_shift_;
 
-  for (int frame_idx = 0; frame_idx < frame_size; frame_idx++) {  // loop frame
-    auto &input_data = (*(run_data->input))[frame_idx];
+  {  // one frame
+    auto &input_data = (*(run_data->input));
     // timestamp_ += stride_;
-    auto cur_microsec = std::chrono::duration_cast<std::chrono::microseconds>(
-      std::chrono::system_clock::now().time_since_epoch()).count();
-    float cur_sec = cur_microsec / 1000000.0;
-    timestamp_ = cur_sec;
-    LOGD << "cur_microsec: " << cur_microsec << ", cur_sec: " << cur_sec;
-    float *timestamp_context = new float(timestamp_);
+    uint64_t cur_millsec = 0;
+    if (input_data.size() >= 4) {
+      auto img_frame = std::static_pointer_cast<BaseData>(input_data[3]);
+      auto pframe =
+              std::static_pointer_cast<XStreamData<ImageFramePtr>>(img_frame);
+      HOBOT_CHECK(pframe);
+      cur_millsec = pframe->value->time_stamp;
+      LOGD << "frame_id:" << pframe->value->frame_id
+           << "  cur_millsec:" << cur_millsec;
+    } else {
+      auto cur_microsec =
+              std::chrono::duration_cast<std::chrono::microseconds>(
+              std::chrono::system_clock::now().time_since_epoch()).count();
+      cur_millsec = cur_microsec / 1000.0;
+      timestamp_ = cur_millsec;
+      LOGD << "cur_microsec: " << cur_microsec
+           << ", cur_millsec: " << cur_millsec;
+      float *timestamp_context = new float(timestamp_);
+      run_data->context = timestamp_context;
+    }
+    timestamp_ = cur_millsec;
+    LOGD << "cur_millsec: " << cur_millsec;
+    float *timestamp_context = new float(timestamp_ / 1000.0);
     run_data->context = timestamp_context;
 
     auto rois = std::static_pointer_cast<BaseDataVector>(input_data[0]);
@@ -129,8 +147,8 @@ void LmkSeqInputPredictor::Do(CNNMethodRunData *run_data) {
         std::static_pointer_cast<BaseDataVector>(input_data[2]);
 
     int box_num = rois->datas_.size();
-    run_data->mxnet_output[frame_idx].resize(box_num);
-    run_data->input_dim_size[frame_idx] = box_num;
+    run_data->mxnet_output.resize(box_num);
+    run_data->input_dim_size = box_num;
 
     int input_n = model_info_.input_nhwc_[0];
     int input_h = model_info_.input_nhwc_[1];
@@ -227,7 +245,7 @@ void LmkSeqInputPredictor::Do(CNNMethodRunData *run_data) {
         free(feature_buf_);
         // convert to mxnet out
         uint32_t layer_size = model_info_.output_layer_size_.size();
-        auto &one_tgt_mxnet = run_data->mxnet_output[frame_idx][roi_idx];
+        auto &one_tgt_mxnet = run_data->mxnet_output[roi_idx];
         one_tgt_mxnet.resize(layer_size);
         {
           RUN_PROCESS_TIME_PROFILER(model_name_ + "_do_hbrt")
@@ -254,6 +272,6 @@ void LmkSeqInputPredictor::Do(CNNMethodRunData *run_data) {
 
     data_processor_.Instance().Clean(disappeared_track_ids);
   }
-}
 
+}
 }  // namespace xstream

@@ -27,19 +27,13 @@ int SSDMethod::Init(const std::string &config_file_path) {
   return 0;
 }
 
-std::vector<std::vector<BaseDataPtr>> SSDMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> SSDMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   LOGD << "Run SSDMethod, input's size: " << input.size();
 
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-
-  for (size_t i = 0; i < input.size(); ++i) {
-    const auto &frame_input = input[i];
-    auto &frame_output = output[i];
-    ssd_predictor_->RunSingleFrame(frame_input, frame_output);
-  }
+  std::vector<BaseDataPtr> output;
+  ssd_predictor_->RunSingleFrame(input, output);
   return output;
 }
 }  // namespace xstream

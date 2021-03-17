@@ -11,7 +11,7 @@
 TEST(HorizonVisionLandmarks, alloc_free) {
   HorizonVisionLandmarks *data;
   auto ret = HorizonVisionAllocLandmarks(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 5;
   data->score = 0.1;
   data->points = static_cast<HorizonVisionPoint *>(
@@ -22,25 +22,25 @@ TEST(HorizonVisionLandmarks, alloc_free) {
     data->points[i].score = 0.5;
   }
   ret = HorizonVisionFreeLandmarks(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionLandmarks, alloc_free_empty_data) {
   HorizonVisionLandmarks *data;
   auto ret = HorizonVisionAllocLandmarks(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 0;
   data->score = 0.1;
   data->points = static_cast<HorizonVisionPoint *>(
       std::calloc(data->num, sizeof(HorizonVisionPoint)));
   ret = HorizonVisionFreeLandmarks(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionLandmarks, cp) {
   HorizonVisionLandmarks *data;
   auto ret = HorizonVisionAllocLandmarks(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 5;
   data->score = 0.1;
   data->points = static_cast<HorizonVisionPoint *>(
@@ -53,13 +53,13 @@ TEST(HorizonVisionLandmarks, cp) {
 
   HorizonVisionLandmarks *cp_data;
   ret = HorizonVisionAllocLandmarks(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopyLandmarks(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking copy data
   ret = HorizonVisionFreeLandmarks(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->num, 5u);
   EXPECT_EQ(cp_data->score, 0.1f);
@@ -69,36 +69,36 @@ TEST(HorizonVisionLandmarks, cp) {
     EXPECT_EQ(cp_data->points[i].score, 0.5f);
   }
   ret = HorizonVisionFreeLandmarks(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionLandmarks, cp_empty_data) {
   HorizonVisionLandmarks *data;
   auto ret = HorizonVisionAllocLandmarks(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 0;
   data->score = 0.1;
 
   HorizonVisionLandmarks *cp_data;
   ret = HorizonVisionAllocLandmarks(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopyLandmarks(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking copy data
   ret = HorizonVisionFreeLandmarks(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->num, 0u);
   EXPECT_EQ(cp_data->score, 0.1f);
   ret = HorizonVisionFreeLandmarks(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionLandmarks, dup) {
   HorizonVisionLandmarks *data;
   auto ret = HorizonVisionAllocLandmarks(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 5;
   data->score = 0.1;
   data->points = static_cast<HorizonVisionPoint *>(
@@ -111,11 +111,11 @@ TEST(HorizonVisionLandmarks, dup) {
 
   HorizonVisionLandmarks *cp_data;
   ret = HorizonVisionDupLandmarks(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking copy data
   ret = HorizonVisionFreeLandmarks(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->num, 5u);
   EXPECT_EQ(cp_data->score, 0.1f);
@@ -125,26 +125,26 @@ TEST(HorizonVisionLandmarks, dup) {
     EXPECT_EQ(cp_data->points[i].score, 0.5f);
   }
   ret = HorizonVisionFreeLandmarks(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionLandmarks, dup_empty_data) {
   HorizonVisionLandmarks *data;
   auto ret = HorizonVisionAllocLandmarks(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->num = 0;
   data->score = 0.1;
 
   HorizonVisionLandmarks *cp_data;
   ret = HorizonVisionDupLandmarks(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking copy data
   ret = HorizonVisionFreeLandmarks(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   EXPECT_EQ(cp_data->num, 0u);
   EXPECT_EQ(cp_data->score, 0.1f);
   ret = HorizonVisionFreeLandmarks(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }

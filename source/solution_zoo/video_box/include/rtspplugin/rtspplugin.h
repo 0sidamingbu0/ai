@@ -13,14 +13,14 @@
 #include <thread>
 #include <vector>
 
-#include "xproto/message/pluginflow/flowmsg.h"
-#include "xproto/plugin/xpluginasync.h"
-
 #include "hobotxsdk/xstream_sdk.h"
+#include "horizon/vision_type/vision_type.h"
+#include "json/json.h"
 #include "mediapipemanager/meidapipeline.h"
 #include "rtspclient/rtspclient.h"
+#include "xproto/message/pluginflow/flowmsg.h"
+#include "xproto/plugin/xpluginasync.h"
 #include "xproto_msgtype/rtspplugin_data.h"
-#include "json/json.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,10 +73,15 @@ class RtspPlugin : public XPluginAsync {
  private:
   int Feed(XProtoMessagePtr msg);
   void OnCallback(xstream::OutputDataPtr out);
-  void ParseConfig();
   int DecodeInit();
   void Process();
   void CheckRtspState();
+  void ProcessData(const int channel_id, pym_buffer_t *out_pym_buf);
+
+  void ParseConfig();
+  void GetRtspConfigFromFile(const std::string &path);
+  void GetDropFrameConfigFromFile(const std::string &path);
+  void GetDisplayConfigFromFile(const std::string &path);
 
   std::vector<std::thread> threads_;
   std::vector<ourRTSPClient *> rtsp_clients_;
@@ -107,6 +112,21 @@ class RtspPlugin : public XPluginAsync {
 
   bool drop_frame_ = false;
   int drop_frame_interval_ = 0;
+
+  bool not_run_smart_ = false;
+  bool running_venc_1080p_ = false;
+  bool running_venc_720p_ = false;
+  bool running_vot_ = true;
+  bool encode_smart_ = false;
+  bool draw_smart_ = false;
+  int display_mode_ = 0;
+  bool transition_support_ = false;
+  bool draw_real_time_video_ = true;
+
+  int buffer_count_ = 4;
+  std::vector<pym_buffer_t *> pym_buffers_;
+  std::vector<bool> use_flag_list;
+  std::mutex pym_buffer_mutex_;
 };
 
 }  // namespace rtspplugin

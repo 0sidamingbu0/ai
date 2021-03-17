@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>快速上手 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -88,37 +91,38 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">快速上手</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ai-express">1.搭建AI Express开发环境</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id3">硬件准备</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">搭建软件开发环境</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">搭建开发板环境</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id6">开发板接线</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id7">升级开发板系统镜像版本</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">相关组件版本的匹配关系</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">硬件准备</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">搭建软件开发环境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">搭建开发板环境</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">开发板接线</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">升级开发板系统镜像版本</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#aiexpress">2.AIExpress源码编译与部署运行</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id8">AIExpress源码下载</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">编译</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">部署</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">运行参考方案</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id12">结果展示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">AIExpress源码下载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">编译</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">部署</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">运行参考方案</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">结果展示</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id13">3.运行测试用例</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id14">生成测试用例的部署包</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">运行测试用例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">3.运行测试用例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">生成测试用例的部署包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">运行测试用例</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#xstreamxproto">4.独立编译生成xstream和xproto库</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id16">5.AIExpress框架文档</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id17">6.地平线开发者社区相关资源</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id18">镜像烧录</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">5.AIExpress框架文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">6.地平线开发者社区相关资源</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id19">镜像烧录</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#video-box">多路盒子video_box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#behavior">行为分析behavior</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id19">体感游戏</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">体感游戏</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usb-camera">usb camera智慧电视</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id20">手势识别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">手势识别</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#x3usb-camera">X3接入外接usb camera</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#efuse">efuse烧录</a></li>
 </ul>
@@ -173,6 +177,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -184,7 +190,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/quick_start.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -209,19 +215,29 @@
 <h2>1.搭建AI Express开发环境<a class="headerlink" href="#ai-express" title="永久链接至标题">¶</a></h2>
 <p>搭建开发环境，主要包括：硬件准备、搭建软件开发环境和搭建开发板环境。</p>
 <div class="section" id="id3">
-<h3>硬件准备<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<ul class="simple">
-<li><p>1台安装64位Linux操作系统的开发机(或者虚拟机)。支持的操作系统版本Ubuntu、CentOS，主要用于编译AIExpress代码和日常开发。</p></li>
-<li><p>1台安装Windows操作系统的开发机，用于烧录旭日3开发板系统镜像，串口调试。</p></li>
-<li><p>1个1080p的USB摄像头</p></li>
-<li><p>1块x3sdb开发板(旭日3 AI 开发板)、1根USB转串口下载线、1根Micro USB线</p></li>
-</ul>
+<h3>相关组件版本的匹配关系<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>| AIExpress版本        |    浮点转换工具链版本  |  系统镜像版本         |
+| —————- | ————— | ————— |
+| 2.10.0           |  1.1.21  |       20210207         |
+| 2.9.0            |  1.1.20  |       20210104         |
+| 2.8.0            |  1.1.19  |       20201124         |
+| 2.7.0            |  1.1.18  |       20201023         |
+| 2.6.0            |  1.1.16  |       20200922         |</p>
 </div>
 <div class="section" id="id4">
-<h3>搭建软件开发环境<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<h3>硬件准备<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>1台安装64位Linux操作系统的开发机(或者虚拟机)。支持的操作系统版本Ubuntu、CentOS，主要用于编译AIExpress代码和日常开发。</li>
+<li>1台安装Windows操作系统的开发机，用于烧录旭日3开发板系统镜像，串口调试。</li>
+<li>1个1080p的USB摄像头</li>
+<li>1块x3sdb开发板(旭日3 AI 开发板)、1根USB转串口下载线、1根Micro USB线</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h3>搭建软件开发环境<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
 <p><strong>a. Linux开发机环境准备</strong></p>
 <ul class="simple">
-<li><p>本地安装</p></li>
+<li>本地安装</li>
 </ul>
 <p>1).安装<code class="docutils literal notranslate"><span class="pre">CMake</span> <span class="pre">3.15+</span></code>以上版本。安装方式如下：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2.tar.gz <span class="se">\</span>
@@ -237,21 +253,17 @@
 <p>2).安装交叉编译工具链。</p>
 <p>下载并安装芯片交叉编译工具<a class="reference external" href="https://pan.horizon.ai/index.php/s/d3QH3MfzHT5fwd2">gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu</a>，推荐安装路径:<code class="docutils literal notranslate"><span class="pre">/opt/</span></code>，如果交叉编译工具链有更新，需同步修改工具链配置。具体文件：AIEXPRESS代码工程根目录下的CMakeLists.txt, source/common/xstream/framework/CMakeLists.txt和source/common/xproto/framework/CMakeLists.txt。
 具体修改内容：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>set<span class="o">(</span>CMAKE_C_COMPILER /opt/<span class="si">${</span><span class="nv">工具链目录名</span><span class="si">}</span>/bin/aarch64-linux-gnu-gcc<span class="o">)</span>
-set<span class="o">(</span>CMAKE_CXX_COMPILER /opt/<span class="si">${</span><span class="nv">工具链目录名</span><span class="si">}</span>/bin/aarch64-linux-gnu-g++<span class="o">)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>set<span class="o">(</span>CMAKE_C_COMPILER /opt/<span class="si">${</span><span class="p">工具链目录名</span><span class="si">}</span>/bin/aarch64-linux-gnu-gcc<span class="o">)</span>
+set<span class="o">(</span>CMAKE_CXX_COMPILER /opt/<span class="si">${</span><span class="p">工具链目录名</span><span class="si">}</span>/bin/aarch64-linux-gnu-g++<span class="o">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>使用Docker环境</p></li>
+<li>使用Docker环境</li>
 </ul>
-<p>获取镜像及启动容器</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull hub.hobot.cc/aitools/tf-toolkit:v3.10.10
-docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.10
-</pre></div>
-</div>
+<p>获取镜像文件及使用说明:  https://pan.horizon.ai/index.php/s/md6mbFsei4DWMJq</p>
 <p><strong>b. Windows开发机环境准备</strong></p>
 <ul class="simple">
-<li><p>下载开发板系统镜像及烧录工具：<a class="reference external" href="https://developer.horizon.ai/forum/id=5f156192740aaf0beb3119dd">开发板系统镜像及烧录工具下载地址</a></p></li>
+<li>下载开发板系统镜像及烧录工具：<a class="reference external" href="https://developer.horizon.ai/forum/id=5f156192740aaf0beb3119dd">开发板系统镜像及烧录工具下载地址</a></li>
 </ul>
 <p>各文件说明如下：</p>
 <p><strong>注意：该文档列的工具和镜像版本未保证是最新版本，最新版本请联系地平线获取</strong>：</p>
@@ -293,20 +305,20 @@ docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.10
 </tr>
 </tbody>
 </table></div>
-<div class="section" id="id5">
-<h3>搭建开发板环境<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
 <div class="section" id="id6">
-<h4>开发板接线<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<h3>搭建开发板环境<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id7">
+<h4>开发板接线<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>将USB Camera插入板子的USB口中，将网线一端插入开发板网口，另一端插入Windows开发机，电源插入开发板电源接口。</p></li>
-<li><p>目前x3sdb开发板适配了1080p的USB摄像头(<a class="reference external" href="https://developer.horizon.ai/forum/id=5f312d96cc8b1e59c8581511">具体型号参考</a>)</p></li>
+<li>将USB Camera插入板子的USB口中，将网线一端插入开发板网口，另一端插入Windows开发机，电源插入开发板电源接口。</li>
+<li>目前x3sdb开发板适配了1080p的USB摄像头(<a class="reference external" href="https://developer.horizon.ai/forum/id=5f312d96cc8b1e59c8581511">具体型号参考</a>)</li>
 </ul>
 </div>
-<div class="section" id="id7">
-<h4>升级开发板系统镜像版本<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id8">
+<h4>升级开发板系统镜像版本<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p>开发板系统镜像烧录教程: <a class="reference external" href="https://developer.horizon.ai/forum/id=5f890b0ccc8b1e59c8584bfc">X3开发板板镜像烧录教程</a></p></li>
-<li><p>开发板使用注意事项：https://developer.horizon.ai/forum/id=5efac2d32ab6590143c16024</p></li>
+<li>开发板系统镜像烧录教程: <a class="reference external" href="https://developer.horizon.ai/forum/id=5f890b0ccc8b1e59c8584bfc">X3开发板板镜像烧录教程</a></li>
+<li>开发板使用注意事项：https://developer.horizon.ai/forum/id=5efac2d32ab6590143c16024</li>
 </ul>
 <p>更多参考：<a class="reference external" href="https://developer.horizon.ai/forum/id=5f156192740aaf0beb3119dd">x3sdb开发板资料包（最新汇总版）</a></p>
 </div>
@@ -314,18 +326,18 @@ docker run -i -t hub.hobot.cc/aitools/tf-toolkit:v3.10.10
 </div>
 <div class="section" id="aiexpress">
 <h2>2.AIExpress源码编译与部署运行<a class="headerlink" href="#aiexpress" title="永久链接至标题">¶</a></h2>
-<div class="section" id="id8">
-<h3>AIExpress源码下载<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id9">
+<h3>AIExpress源码下载<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
 <p>AIExpress github地址:https://github.com/HorizonRobotics-Platform/AI-EXPRESS</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:HorizonRobotics-Platform/AI-EXPRESS.git
 </pre></div>
 </div>
 </div>
-<div class="section" id="id9">
-<h3>编译<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id10">
+<h3>编译<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
 <p>代码仓库提供了编译一键脚本build.sh，git clone代码后可直接编译。 编译时需要指定平台信息即可，具体编译如下：</p>
 <ul class="simple">
-<li><p>本地环境</p></li>
+<li>本地环境</li>
 </ul>
 <p>本地环境可以直接编译:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS
@@ -333,7 +345,7 @@ bash build.sh x3
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Docker环境</p></li>
+<li>Docker环境</li>
 </ul>
 <p>登录docker环境，执行如下命令进行编译:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS
@@ -342,8 +354,8 @@ bash build.sh x3
 </div>
 <p>编译的可执行文件和库在build/bin和build/lib目录下</p>
 </div>
-<div class="section" id="id10">
-<h3>部署<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id11">
+<h3>部署<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
 <p>代码仓库提供了一键部署脚本deploy.sh，可将模型、可执行程序、库文件、配置文件以及测试图片整理到deploy部署目录中。ssh登录到开发板，通过scp命令，将deploy目录拷贝到x3sdb开发板上就可以运行人体结构化参考方案。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bash</span> <span class="n">deploy</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
@@ -391,8 +403,8 @@ bash build.sh x3
 </tr>
 </tbody>
 </table></div>
-<div class="section" id="id11">
-<h3>运行参考方案<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id12">
+<h3>运行参考方案<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
 <p>直接在开发板的deploy目录下，运行run.sh脚本即可运行指定的测试程序。以人体结构化参考方案为例，具体运行命令：</p>
 <p><strong>注意：具体示例的选择，参考可执行程序的实际打印，该文档更新可能滞后</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">run</span><span class="o">.</span><span class="n">sh</span> <span class="n">w</span>  <span class="c1"># w表示日志为warning等级，也可以输入d(debug)或者i(info)的不同等级</span>
@@ -403,25 +415,25 @@ bash build.sh x3
 </pre></div>
 </div>
 </div>
-<div class="section" id="id12">
-<h3>结果展示<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id13">
+<h3>结果展示<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
 <p>当开发板上run.sh程序执行后，可以在PC上打开Chrome浏览器，输入x3sdb开发板的ip，然后点击页面的[Web展示端]，即可查看人体结构化解决方案(body solution)的效果。</p>
 <p>各个测试程序的介绍及运行方法请参考<strong>场景参考解决方案</strong>或者<strong>常见问题</strong>章节。</p>
 <p>除了上述人体结构化解决方案外，人脸结构化参考方案，人脸识别参考方案和视频盒子参考方案也已开源。AIExpress会陆续开源<strong>人体行为分析参考方案</strong>,<strong>体感游戏参考方案</strong>,<strong>apa自动泊车参考方案</strong>，有任何建议或问题，欢迎在github上提Issue。</p>
 </div>
 </div>
-<div class="section" id="id13">
-<h2>3.运行测试用例<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
 <div class="section" id="id14">
-<h3>生成测试用例的部署包<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<h2>3.运行测试用例<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id15">
+<h3>生成测试用例的部署包<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
 <p>对AIExpress源码编译后，在Linux开发机上执行deploy_ut.sh脚本，生成含有测试用例的部署目录，并将单元测试的可执行程序、解决方案可执行程序及模型、配置文件拷贝到deploy目录下。</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash deploy_ut.sh
 </pre></div>
 </div>
 <p>ssh登录到开发板，通过scp命令，将deploy目录拷贝到x3sdb开发板上。</p>
 </div>
-<div class="section" id="id15">
-<h3>运行测试用例<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id16">
+<h3>运行测试用例<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
 <p>单元测试程序位于deploy/unit_test目录下，在开发板上执行run_ut.sh脚本，即可运行测试用例。</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> deploy/unit_test
 sh run_ut.sh
@@ -434,7 +446,7 @@ sh run_ut.sh
 <h2>4.独立编译生成xstream和xproto库<a class="headerlink" href="#xstreamxproto" title="永久链接至标题">¶</a></h2>
 <p>AI-EXPRESS支持独立编译生成xstream和xproto库，目前支持aarch64(默认)/Ubuntu/CentOS，共3种平台。可根据自己具体的开发环境来选择对应的平台。</p>
 <ul class="simple">
-<li><p>CentOS平台(CentOS7, gcc4.8.5)</p></li>
+<li>CentOS平台(CentOS7, gcc4.8.5)</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
@@ -443,7 +455,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</p></li>
+<li>Ubuntu平台(Ubuntu18.04, gcc7.5.0)</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -452,7 +464,7 @@ make -j <span class="o">&amp;&amp;</span> make install
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</p></li>
+<li>Linaro-aarch64平台(gcc-linaro-6.5-2018.12)</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> AI-EXPRESS/source/common/xstream/framework/
 mkdir build <span class="o">&amp;&amp;</span>  <span class="nb">cd</span> build
@@ -468,14 +480,14 @@ make -j <span class="o">&amp;&amp;</span> make install
 <p>编译结束后，在AI-EXPRESS/source/common/xstream/framework下会生成output目录，output目录包含libxstream.a、头文件和框架说明文档、入门教程文档和教程代码，支持独立使用xstream库。</p>
 <p>编译xproto库方法，与xstream相同，即在AI-EXPRESS/source/common/xproto/framework下创建build目录，根据需要，添加不同的CMake编译选项，进行编译即可。</p>
 </div>
-<div class="section" id="id16">
-<h2>5.AIExpress框架文档<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id17">
+<h2>5.AIExpress框架文档<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
 <p>参考doc目录下导航页<code class="docutils literal notranslate"><span class="pre">doc/html/index.html</span></code>。</p>
 </div>
-<div class="section" id="id17">
-<h2>6.<a class="reference external" href="https://developer.horizon.ai/">地平线开发者社区相关资源</a><a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
 <div class="section" id="id18">
-<h3>镜像烧录<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<h2>6.<a class="reference external" href="https://developer.horizon.ai/">地平线开发者社区相关资源</a><a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id19">
+<h3>镜像烧录<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
 <p>参考 https://developer.horizon.ai/forum/id=5f890b0ccc8b1e59c8584bfc</p>
 </div>
 <div class="section" id="video-box">
@@ -487,16 +499,16 @@ make -j <span class="o">&amp;&amp;</span> make install
 <p>行为分析solution，提供了摔倒检测的功能，功能搭建可以参考：https://developer.horizon.ai/forum/id=5efab48f38ca27ba028078dd</p>
 <p>此外提供了手势识别的参考方案，可以参考https://developer.horizon.ai/forum/id=5f30f806bec8bc98cb72b288</p>
 </div>
-<div class="section" id="id19">
-<h3>体感游戏<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id20">
+<h3>体感游戏<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
 <p>可以参考：https://developer.horizon.ai/forum/id=5ef05b412ab6590143c15d6a</p>
 </div>
 <div class="section" id="usb-camera">
 <h3>usb camera智慧电视<a class="headerlink" href="#usb-camera" title="永久链接至标题">¶</a></h3>
 <p>将X3作为UVC设备，通过USB接口接入android系统的硬件上，x3sdb开发板通过uvc协议传输图像，通过HID协议传输智能结果。具体可以参考： https://developer.horizon.ai/forum/id=5f312a94cc8b1e59c858150c</p>
 </div>
-<div class="section" id="id20">
-<h3>手势识别<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id21">
+<h3>手势识别<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
 <p>参考：https://developer.horizon.ai/forum/id=5f30f806bec8bc98cb72b288</p>
 </div>
 <div class="section" id="x3usb-camera">
@@ -515,28 +527,25 @@ make -j <span class="o">&amp;&amp;</span> make install
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

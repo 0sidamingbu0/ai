@@ -95,26 +95,23 @@ InputParamPtr FilterSkipFrameMethod::GetParameter() const {
   return param_ptr;
 }
 
-std::vector<std::vector<BaseDataPtr>> FilterSkipFrameMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-    out_batch_i.resize(in_batch_i.size());
-    LOGI << "input size: " << in_batch_i.size();
+std::vector<BaseDataPtr> FilterSkipFrameMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &param) {
+  std::vector<BaseDataPtr> output;
+  {
+    output.resize(input.size());
+    LOGI << "input size: " << input.size();
     // 只支持n个输入，输入格式是BBox的数组
-    for (size_t j = 0; j < in_batch_i.size(); ++j) {
-      if (in_batch_i[j]->state_ == DataState::INVALID) {
+    for (size_t j = 0; j < input.size(); ++j) {
+      if (input[j]->state_ == DataState::INVALID) {
         LOGI << "input slot " << j << " is invalid";
         continue;
       }
-      auto in_rects = std::static_pointer_cast<BaseDataVector>(in_batch_i[j]);
+      auto in_rects = std::static_pointer_cast<BaseDataVector>(input[j]);
       assert("BaseDataVector" == in_rects->type_);
       auto out_rects = std::make_shared<BaseDataVector>();
-      out_batch_i[j] = std::static_pointer_cast<BaseData>(out_rects);
+      output[j] = std::static_pointer_cast<BaseData>(out_rects);
       for (auto &in_rect : in_rects->datas_) {
         auto bbox = std::static_pointer_cast<XStreamBBox>(in_rect);
         float top_left_x_ = bbox->value.x1;

@@ -45,19 +45,13 @@ std::string FasterRCNNMethod::GetVersion() const {
   return faster_rcnn_imp_->GetVersion();
 }
 
-std::vector<std::vector<BaseDataPtr>>
-FasterRCNNMethod::DoProcess(const std::vector<std::vector<BaseDataPtr>> &input,
-                            const std::vector<InputParamPtr> &param) {
+std::vector<BaseDataPtr>
+FasterRCNNMethod::DoProcess(const std::vector<BaseDataPtr> &input,
+                            const InputParamPtr &param) {
   LOGD << "Run FasterRCNNMethod";
   LOGD << "input's size: " << input.size();
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-  // input size > 0 -> many frames， batch mode
-  for (size_t i = 0; i < input.size(); ++i) {
-    const auto &frame_input = input[i];
-    auto &frame_output = output[i];
-    faster_rcnn_imp_->RunSingleFrame(frame_input, frame_output);
-  }
+  std::vector<BaseDataPtr> output;
+  faster_rcnn_imp_->RunSingleFrame(input, output);
   return output;
 }
 

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Build systems &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/compiling.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -164,24 +169,26 @@
 <p>For projects on PyPI, building with setuptools is the way to go. Sylvain Corlay
 has kindly provided an example project which shows how to set up everything,
 including automatic generation of documentation using Sphinx. Please refer to
-the <a class="reference internal" href="#python-example" id="id1"><span>[python_example]</span></a> repository.</p>
-<dl class="citation">
-<dt class="label" id="python-example"><span class="brackets"><a class="fn-backref" href="#id1">python_example</a></span></dt>
-<dd><p><a class="reference external" href="https://github.com/pybind/python_example">https://github.com/pybind/python_example</a></p>
-</dd>
-</dl>
+the <a class="reference internal" href="#python-example" id="id1">[python_example]</a> repository.</p>
+<table class="docutils citation" frame="void" id="python-example" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[python_example]</a></td><td><a class="reference external" href="https://github.com/pybind/python_example">https://github.com/pybind/python_example</a></td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="building-with-cppimport">
 <h2>Building with cppimport<a class="headerlink" href="#building-with-cppimport" title="永久链接至标题">¶</a></h2>
-<p><a class="reference internal" href="#cppimport" id="id2"><span>[cppimport]</span></a> is a small Python import hook that determines whether there is a C++
+<p><a class="reference internal" href="#cppimport" id="id2">[cppimport]</a> is a small Python import hook that determines whether there is a C++
 source file whose name matches the requested module. If there is, the file is
 compiled as a Python extension using pybind11 and placed in the same folder as
 the C++ source file. Python is then able to find the module and load it.</p>
-<dl class="citation">
-<dt class="label" id="cppimport"><span class="brackets"><a class="fn-backref" href="#id2">cppimport</a></span></dt>
-<dd><p><a class="reference external" href="https://github.com/tbenthompson/cppimport">https://github.com/tbenthompson/cppimport</a></p>
-</dd>
-</dl>
+<table class="docutils citation" frame="void" id="cppimport" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[cppimport]</a></td><td><a class="reference external" href="https://github.com/tbenthompson/cppimport">https://github.com/tbenthompson/cppimport</a></td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="building-with-cmake">
 <span id="cmake"></span><h2>Building with CMake<a class="headerlink" href="#building-with-cmake" title="永久链接至标题">¶</a></h2>
@@ -200,12 +207,13 @@ The CMake command <code class="docutils literal notranslate"><span class="pre">a
 provides the <code class="docutils literal notranslate"><span class="pre">pybind11_add_module</span></code> function. It will take care of all the
 details needed to build a Python extension module on any platform.</p>
 <p>A working sample project, including a way to invoke CMake from <code class="file docutils literal notranslate"><span class="pre">setup.py</span></code> for
-PyPI integration, can be found in the <a class="reference internal" href="#cmake-example" id="id3"><span>[cmake_example]</span></a>  repository.</p>
-<dl class="citation">
-<dt class="label" id="cmake-example"><span class="brackets">cmake_example</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
-<dd><p><a class="reference external" href="https://github.com/pybind/cmake_example">https://github.com/pybind/cmake_example</a></p>
-</dd>
-</dl>
+PyPI integration, can be found in the <a class="reference internal" href="#cmake-example" id="id3">[cmake_example]</a>  repository.</p>
+<table class="docutils citation" frame="void" id="cmake-example" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[cmake_example]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <a class="reference external" href="https://github.com/pybind/cmake_example">https://github.com/pybind/cmake_example</a></td></tr>
+</tbody>
+</table>
 <div class="section" id="pybind11-add-module">
 <h3>pybind11_add_module<a class="headerlink" href="#pybind11-add-module" title="永久链接至标题">¶</a></h3>
 <p>To ease the creation of Python extension modules, pybind11 provides a CMake
@@ -301,7 +309,7 @@ make install
 <p>Once detected, the aforementioned <code class="docutils literal notranslate"><span class="pre">pybind11_add_module</span></code> can be employed as
 before. The function usage and configuration variables are identical no matter
 if pybind11 is added as a subdirectory or found as an installed package. You
-can refer to the same <a class="reference internal" href="#cmake-example" id="id4"><span>[cmake_example]</span></a> repository for a full sample project
+can refer to the same <a class="reference internal" href="#cmake-example" id="id4">[cmake_example]</a> repository for a full sample project
 – just swap out <code class="docutils literal notranslate"><span class="pre">add_subdirectory</span></code> for <code class="docutils literal notranslate"><span class="pre">find_package</span></code>.</p>
 </div>
 <div class="section" id="advanced-interface-library-target">
@@ -324,14 +332,14 @@ to an independently constructed (through <code class="docutils literal notransla
 </pre></div>
 </div>
 <div class="admonition warning">
-<p class="admonition-title">警告</p>
+<p class="first admonition-title">警告</p>
 <p>Since pybind11 is a metatemplate library, it is crucial that certain
 compiler flags are provided to ensure high quality code generation. In
 contrast to the <code class="docutils literal notranslate"><span class="pre">pybind11_add_module()</span></code> command, the CMake interface
 library only provides the <em>minimal</em> set of parameters to ensure that the
 code using pybind11 compiles, but it does <strong>not</strong> pass these extra compiler
 flags (i.e. this is up to you).</p>
-<p>These include Link Time Optimization (<code class="docutils literal notranslate"><span class="pre">-flto</span></code> on GCC/Clang/ICPC, <code class="docutils literal notranslate"><span class="pre">/GL</span></code>
+<p class="last">These include Link Time Optimization (<code class="docutils literal notranslate"><span class="pre">-flto</span></code> on GCC/Clang/ICPC, <code class="docutils literal notranslate"><span class="pre">/GL</span></code>
 and <code class="docutils literal notranslate"><span class="pre">/LTCG</span></code> on Visual Studio) and .OBJ files with many sections on Visual
 Studio (<code class="docutils literal notranslate"><span class="pre">/bigobj</span></code>).  The <a class="reference internal" href="faq.html#faq-symhidden"><span class="std std-ref">FAQ</span></a> contains an
 explanation on why these are needed.</p>
@@ -388,8 +396,8 @@ that can considerably reduce the size of the created binary. Refer to section
 <a class="reference internal" href="#cmake"><span class="std std-ref">Building with CMake</span></a> for a detailed example of a suitable cross-platform CMake-based
 build system that works on all platforms including Windows.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>On Linux and macOS, it’s better to (intentionally) not link against
+<p class="first admonition-title">注解</p>
+<p class="last">On Linux and macOS, it’s better to (intentionally) not link against
 <code class="docutils literal notranslate"><span class="pre">libpython</span></code>. The symbols will be resolved when the extension library
 is loaded into a Python binary. This is preferable because you might
 have several different installations of a given Python version (e.g. the
@@ -403,12 +411,13 @@ contains one (which will lead to a segfault).</p>
 <h2>Generating binding code automatically<a class="headerlink" href="#generating-binding-code-automatically" title="永久链接至标题">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">Binder</span></code> project is a tool for automatic generation of pybind11 binding
 code by introspecting existing C++ codebases using LLVM/Clang. See the
-<a class="reference internal" href="#binder" id="id6"><span>[binder]</span></a> documentation for details.</p>
-<dl class="citation">
-<dt class="label" id="binder"><span class="brackets"><a class="fn-backref" href="#id6">binder</a></span></dt>
-<dd><p><a class="reference external" href="http://cppbinder.readthedocs.io/en/latest/about.html">http://cppbinder.readthedocs.io/en/latest/about.html</a></p>
-</dd>
-</dl>
+<a class="reference internal" href="#binder" id="id6">[binder]</a> documentation for details.</p>
+<table class="docutils citation" frame="void" id="binder" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[binder]</a></td><td><a class="reference external" href="http://cppbinder.readthedocs.io/en/latest/about.html">http://cppbinder.readthedocs.io/en/latest/about.html</a></td></tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -417,28 +426,25 @@ code by introspecting existing C++ codebases using LLVM/Clang. See the
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

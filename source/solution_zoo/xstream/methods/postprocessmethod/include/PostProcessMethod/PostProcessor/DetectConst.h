@@ -37,6 +37,7 @@ enum class DetectBranchOutType {
   ORIENTBBOX,
   MASK,
   CORNER,
+  FCOSBBOX,
   INVALID
 };
 

@@ -15,7 +15,7 @@ fi
 function CopyXProto(){
   mkdir -p ${UT_DIR}/xproto
   XPROTO_UT_DIR=${UT_DIR}/xproto
-  cp ${ALL_PROJECT_DIR}/source/common/xproto/plugins/vioplugin/configs/ ${XPROTO_UT_DIR} -rf
+  cp ${ALL_PROJECT_DIR}/source/solution_zoo/common/xproto_plugins/vioplugin/configs/ ${XPROTO_UT_DIR} -rf
   cp ${ALL_PROJECT_DIR}/build/bin/xproto_unit_test ${XPROTO_UT_DIR} -rf
   # To check
   # cp ${ALL_PROJECT_DIR}/build/bin/vioplugin_test ${XPROTO_UT_DIR} -rf
@@ -92,10 +92,10 @@ function CopyFasterrcnnMethod(){
   cp source/solution_zoo/xstream/methods/fasterrcnnmethod/test/ ${FASTERRCNN_DIR} -rf
   cp source/solution_zoo/xstream/methods/fasterrcnnmethod/configs/ ${FASTERRCNN_DIR} -rf
   cp deps/bpu_predict/${ARCHITECTURE}/config/bpu_config.json ${FASTERRCNN_DIR}/configs/ -rf
-  cp source/common/xproto/plugins/vioplugin/configs/vio/vio_onsemi0230_fb.json ${FASTERRCNN_DIR}/configs/ -rf
+  cp source/solution_zoo/common/xproto_plugins/vioplugin/configs/vio/vio_onsemi0230_fb.json ${FASTERRCNN_DIR}/configs/ -rf
   if [ ${1} == "x2" ]
   then
-    cp source/common/xproto/plugins/vioplugin/configs/vio/vio_onsemi0230_fb.json ${FASTERRCNN_DIR}/configs/ -rf
+    cp source/solution_zoo/common/xproto_plugins/vioplugin/configs/vio/vio_onsemi0230_fb.json ${FASTERRCNN_DIR}/configs/ -rf
   elif [ ${1} == "x3" ]
   then
     cp source/common/viowrapper/config ${FASTERRCNN_DIR}/configs/vio_config -rf

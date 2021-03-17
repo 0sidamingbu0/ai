@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>First steps &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/basics.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -192,15 +197,15 @@ cmake --build . --config Release --target check
 <p>This will create a Visual Studio project, compile and run the target, all from the
 command line.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>If all tests fail, make sure that the Python binary and the testcases are compiled
+<p class="first admonition-title">注解</p>
+<p class="last">If all tests fail, make sure that the Python binary and the testcases are compiled
 for the same processor type and bitness (i.e. either <strong>i386</strong> or <strong>x86_64</strong>). You
 can specify <strong>x86_64</strong> as the target architecture for the generated Visual Studio
 project using <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-A</span> <span class="pre">x64</span> <span class="pre">..</span></code>.</p>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>Advanced users who are already familiar with Boost.Python may want to skip
+<p class="first admonition-title">参见</p>
+<p class="last">Advanced users who are already familiar with Boost.Python may want to skip
 the tutorial and look at the test cases in the <code class="file docutils literal notranslate"><span class="pre">tests</span></code> directory,
 which exercise all features of pybind11.</p>
 </div>
@@ -225,7 +230,7 @@ adds two numbers and returns their result:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>For simplicity <a class="footnote-reference brackets" href="#f1" id="id1">1</a>, we’ll put both this function and the binding code into
+<p>For simplicity <a class="footnote-reference" href="#f1" id="id1">[1]</a>, we’ll put both this function and the binding code into
 a file named <code class="file docutils literal notranslate"><span class="pre">example.cpp</span></code> with the following contents:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;pybind11/pybind11.h&gt;</span><span class="cp"></span>
 
@@ -240,12 +245,13 @@ a file named <code class="file docutils literal notranslate"><span class="pre">e
 <span class="p">}</span>
 </pre></div>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="f1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>In practice, implementation and binding code will generally be located
-in separate files.</p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>In practice, implementation and binding code will generally be located
+in separate files.</td></tr>
+</tbody>
+</table>
 <p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">PYBIND11_MODULE()</span></code> macro creates a function that will be called when an
 <code class="docutils literal notranslate"><span class="pre">import</span></code> statement is issued from within Python. The module name (<code class="docutils literal notranslate"><span class="pre">example</span></code>)
 is given as the first macro argument (it should not be in quotes). The second
@@ -253,8 +259,8 @@ argument (<code class="docutils literal notranslate"><span class="pre">m</span><
 is the main interface for creating bindings. The method <code class="xref py py-func docutils literal notranslate"><span class="pre">module::def()</span></code>
 generates binding code that exposes the <code class="docutils literal notranslate"><span class="pre">add()</span></code> function to Python.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Notice how little code was needed to expose our function to Python: all
+<p class="first admonition-title">注解</p>
+<p class="last">Notice how little code was needed to expose our function to Python: all
 details regarding the function’s parameters and return value were
 automatically inferred using template metaprogramming. This overall
 approach and the used syntax are borrowed from Boost.Python, though the
@@ -401,28 +407,25 @@ For a full overview, see the <a class="reference internal" href="advanced/cast/i
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

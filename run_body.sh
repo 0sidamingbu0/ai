@@ -54,6 +54,7 @@ solution_cfg_func() {
   cp -rf body_solution/configs/multitask_config_${resolution}M.json  body_solution/configs/multitask_config.json
   cp -rf body_solution/configs/multitask_with_hand_${resolution}M.json  body_solution/configs/multitask_with_hand.json
   cp -rf body_solution/configs/multitask_with_hand_960x544_${resolution}M.json  body_solution/configs/multitask_with_hand_960x544.json
+  cp -rf body_solution/configs/multitask_body_kps_config_${resolution}M.json  body_solution/configs/multitask_body_kps_config.json
   cp -rf body_solution/configs/segmentation_multitask_${resolution}M.json  body_solution/configs/segmentation_multitask.json
 }
 
@@ -216,6 +217,7 @@ choose_solution_func() {
   log_level="w" #(d/i/w/e)
   choose_x3_viotype_func
   echo "vio_cfg_file: $vio_cfg_file"
+  sleep 3
   ./body_solution/body_solution $vio_cfg_file ./body_solution/configs/body_solution.json ./configs/visualplugin_body.json -${log_level} normal
 }
 

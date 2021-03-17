@@ -31,20 +31,12 @@ int BehaviorEvent::Init(const Json::Value &config) {
   return 0;
 }
 
-std::vector<std::vector<BaseDataPtr>> BehaviorEvent::Process(
-      const std::vector<std::vector<BaseDataPtr> > &input,
-      const std::vector<xstream::InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> output;
+std::vector<BaseDataPtr> BehaviorEvent::Process(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) {
+  std::vector<BaseDataPtr> output;
   HOBOT_CHECK(!input.empty());
-
-  int batch_size = input.size();
-  output.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    auto &input_data = input[batch_idx];
-    auto &output_data = output[batch_idx];
-
-    RunSingleFrame(input_data, output_data);
-  }
+  RunSingleFrame(input, output);
   return output;
 }
 

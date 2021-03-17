@@ -26,10 +26,10 @@
 namespace xstream {
 
 int MergeMethod::Init(const std::string &config_file) {
-  auto ret = kHorizonVisionSuccess;
+  auto ret = 0;
   reader_ = std::make_shared<JsonReader>(config_file);
   ret = reader_->ParseJsonFile();
-  if (ret == kHorizonVisionSuccess) {
+  if (ret == 0) {
     default_method_config_param_ = std::make_shared<MergeParam>();
     default_method_config_param_->UpdateParameter(reader_);
 
@@ -47,7 +47,7 @@ int MergeMethod::Init(const std::string &config_file) {
     if (default_method_config_param_ &&
         default_method_config_param_->reader_->GetStringValue("merge_type") ==
             "rgb_nir" &&
-        ret == kHorizonVisionFailure) {
+        ret == -1) {
       return ret;
     }
 #endif  //  RGB_NIR_MERGE
@@ -62,20 +62,13 @@ int MergeMethod::Init(const std::string &config_file) {
   return ret;
 }
 
-std::vector<std::vector<BaseDataPtr>> MergeMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<InputParamPtr> &params) {
+std::vector<BaseDataPtr> MergeMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const InputParamPtr &params) {
   LOGD << "Merge::DoProcess: " << input.size();
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-  // input size > 0 -> 多帧， batch 操作
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_s = input[i];
-    auto &out_batch_s = output[i];
-    auto &param_batch_s = params[i];
-    out_batch_s = ProcessOneBatch(in_batch_s, param_batch_s);
-    LOGD << "single output size: " << out_batch_s.size();
-  }
+  std::vector<BaseDataPtr> output;
+  output = ProcessOneBatch(input, params);
+  LOGD << "output size: " << output.size();
   return output;
 }
 
@@ -178,19 +171,19 @@ int MergeMethod::UpdateParameter(InputParamPtr ptr) {
     for (auto &item : strategy_map_) {
       auto strategy = item.second;
       ret = strategy->UpdateParameter(reader);
-      if (kHorizonVisionSuccess != ret) {
+      if (0 != ret) {
         return ret;
       }
     }
-    return kHorizonVisionSuccess;
+    return 0;
   } else {
     if (ptr && ptr->Format() == "Reset") {
       LOGI << "Reset Merge";
       *method_config_param_ = *default_method_config_param_;
-      return kHorizonVisionSuccess;
+      return 0;
     }
     HOBOT_CHECK(0) << "only support json format config and reset config";
-    return kHorizonVisionErrorParam;
+    return -1;
   }
 }
 

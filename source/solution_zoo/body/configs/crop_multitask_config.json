@@ -1,0 +1,40 @@
+{
+  "in_msg_type": "pyramid_image",
+  "net_info": {
+    "model_name": "croppersonMultitask",
+    "model_version": "0.0.5",
+    "model_out_sequence": [
+      {
+        "name": "head_box_int",
+        "type": "invalid"
+      },
+      {
+        "name": "head_box",
+        "type": "bbox"
+      },
+      {
+        "name": "face_box_int",
+        "type": "invalid"
+      },
+      {
+        "name": "face_box",
+        "type": "bbox"
+      },
+      {
+        "name": "hand_box_int",
+        "type": "invalid"
+      },
+      {
+        "name": "hand_box",
+        "type": "bbox"
+      }
+    ],
+    "model_input_width": 256,
+    "model_input_height": 512
+  },
+  "method_outs": [ "head_box", "face_box", "hand_box"],
+  "bpu_config_path": "../configs/bpu_config.json",
+  "model_file_path": "../../models/croppersonMultitask.hbm",
+  "core_id": 1,
+  "is_crop": true
+}

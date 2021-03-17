@@ -44,48 +44,41 @@ MethodInfo StandardDeviation::GetMethodInfo() {
   return method_info;
 }
 
-std::vector<std::vector<BaseDataPtr>> StandardDeviation::DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> StandardDeviation::DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) {
   std::cout << "Start StandardDeviation::DoProcess..." << std::endl;
   std::cout << "StandardDeviation Instance id: " << this << std::endl;
   std::cout << "StandardDeviation Thread id: " << std::this_thread::get_id()
             << std::endl;
 
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());  // batch size
+  std::vector<BaseDataPtr> output;
   // one batch
-  for (size_t i = 0; i < input.size(); ++i) {
-    auto &in_batch_i = input[i];
-    auto &out_batch_i = output[i];
-
-    for (size_t j = 0; j < in_batch_i.size(); j++) {
-      out_batch_i.push_back(std::make_shared<FloatValue>());
-      if (in_batch_i[j]->state_ == DataState::INVALID) {
-        std::cout << "input slot " << j << " is invalid" << std::endl;
-        continue;
-      }
-      // 计算输入数组的标准差
-      auto in_datas = std::static_pointer_cast<BaseDataVector>(in_batch_i[j]);
-      auto out_data = std::static_pointer_cast<FloatValue>(out_batch_i[j]);
-      float average = 0, standard_deviation = 0;
-      int count = 0;
-      // 平均值
-      for (auto &in_data : in_datas->datas_) {
-        auto data = std::static_pointer_cast<FloatValue>(in_data);
-        average += data->value_;
-        count++;
-      }
-      average /= count;
-      for (auto &in_data : in_datas->datas_) {
-        auto data = std::static_pointer_cast<FloatValue>(in_data);
-        standard_deviation += (data->value_ - average) *
-                              (data->value_ - average);
-      }
-      standard_deviation /= count;
-      standard_deviation = sqrt(standard_deviation);
-      out_data->value_ = standard_deviation;
+  for (size_t j = 0; j < input.size(); j++) {
+    output.push_back(std::make_shared<FloatValue>());
+    if (input[j]->state_ == DataState::INVALID) {
+      std::cout << "input slot " << j << " is invalid" << std::endl;
+      continue;
     }
+    // 计算输入数组的标准差
+    auto in_datas = std::static_pointer_cast<BaseDataVector>(input[j]);
+    auto out_data = std::static_pointer_cast<FloatValue>(output[j]);
+    float average = 0, standard_deviation = 0;
+    int count = 0;
+    // 平均值
+    for (auto &in_data : in_datas->datas_) {
+      auto data = std::static_pointer_cast<FloatValue>(in_data);
+      average += data->value_;
+      count++;
+    }
+    average /= count;
+    for (auto &in_data : in_datas->datas_) {
+      auto data = std::static_pointer_cast<FloatValue>(in_data);
+      standard_deviation += (data->value_ - average) * (data->value_ - average);
+    }
+    standard_deviation /= count;
+    standard_deviation = sqrt(standard_deviation);
+    out_data->value_ = standard_deviation;
   }
   return output;
 }

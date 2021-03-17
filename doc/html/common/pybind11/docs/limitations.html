@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Limitations &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/limitations.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -162,13 +167,13 @@
 <p>pybind11 strives to be a general solution to binding generation, but it also has
 certain limitations:</p>
 <ul class="simple">
-<li><p>pybind11 casts away <code class="docutils literal notranslate"><span class="pre">const</span></code>-ness in function arguments and return values.
+<li>pybind11 casts away <code class="docutils literal notranslate"><span class="pre">const</span></code>-ness in function arguments and return values.
 This is in line with the Python language, which has no concept of <code class="docutils literal notranslate"><span class="pre">const</span></code>
 values. This means that some additional care is needed to avoid bugs that
-would be caught by the type checker in a traditional C++ program.</p></li>
-<li><p>The NumPy interface <code class="docutils literal notranslate"><span class="pre">pybind11::array</span></code> greatly simplifies accessing
+would be caught by the type checker in a traditional C++ program.</li>
+<li>The NumPy interface <code class="docutils literal notranslate"><span class="pre">pybind11::array</span></code> greatly simplifies accessing
 numerical data from C++ (and vice versa), but it’s not a full-blown array
-class like <code class="docutils literal notranslate"><span class="pre">Eigen::Array</span></code> or <code class="docutils literal notranslate"><span class="pre">boost.multi_array</span></code>.</p></li>
+class like <code class="docutils literal notranslate"><span class="pre">Eigen::Array</span></code> or <code class="docutils literal notranslate"><span class="pre">boost.multi_array</span></code>.</li>
 </ul>
 <p>These features could be implemented but would lead to a significant increase in
 complexity. I’ve decided to draw the line here to keep this project simple and
@@ -181,28 +186,25 @@ pybind11.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

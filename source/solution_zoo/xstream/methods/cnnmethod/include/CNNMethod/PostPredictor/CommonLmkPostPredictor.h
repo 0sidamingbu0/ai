@@ -28,17 +28,20 @@ class CommonLmkPostPredictor : public PostPredictor {
  private:
   void HandleLmk(const std::vector<std::vector<int8_t>> &mxnet_outs,
                      const hobot::vision::BBox &box,
+                 const hobot::vision::BBox &norm_box,
                      const std::vector<std::vector<uint32_t>> &nhwc,
                      const std::vector<std::vector<uint32_t>> &shifts,
                      std::vector<BaseDataPtr> *output);
 
   BaseDataPtr Lmk3Post(const std::vector<std::vector<int8_t>> &mxnet_outs,
                        const hobot::vision::BBox &box,
+                       const hobot::vision::BBox &norm_box,
                        const std::vector<std::vector<uint32_t>> &nhwc,
                        const std::vector<std::vector<uint32_t>> &shifts);
 
   BaseDataPtr Lmk4Post(const std::vector<std::vector<int8_t>> &mxnet_outs,
-                       const hobot::vision::BBox &box);
+                       const hobot::vision::BBox &box,
+                       const hobot::vision::BBox &norm_box);
 
   void Lmks4PostProcess(const float *vector_pred,
                         const hobot::vision::BBox &box,

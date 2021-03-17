@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>V2.2.0 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/BuildAll/doc/release_note/v2.2.0/ReleaseNotes.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -166,13 +171,13 @@
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>适配X3模型: 基于hbdk3.7.10，提供X3版本模型;基于bpu-predict master分支，bpu-predict第一套接口进行模型预测;适配FasterRCNNMethod以及CNNMethod等预测Method，同时支持X2与X3;适配SSDMethod，同时支持X2和X3</p></li>
-<li><p>适配X3 VIO: 支持X3系统软件原生vio接口，获取camera图像以及图像回灌;支持X3媒体库接口获取camera图像;适配imx327（1080p），os8a10(2160p)，s5kgm（2160p与4000x3000);封装VIOWrapper，支持X2/X3接口统一调用</p></li>
-<li><p>现有Solution支持X3平台: 现有face_solution， face_recog solution，body solution, vehicle solution， face_body_multisource能够正常在X3上运行</p></li>
-<li><p>web统一客户端: 现有solution的结果展示切换到web 统一客户端， 能够显示视频、检测结果、属性分类、关键点结果</p></li>
-<li><p>新增人体行为分析solution: 集成人体多任务检测，人体摔倒模型，支持举手、站立、下蹲等策略分析。支持X2与X3</p></li>
-<li><p>新增体感游戏solution: 集成人体多任务检测，人体特征提取，人体行为三个模型，web客户端展示游戏界面，支持CrappyBird和PandaRun两个游戏。支持X2与X3</p></li>
-<li><p>新增USB Camera功能: 支持将X3开发板，通过USB接口接到AP上，AP通过UVC/HID拿到图像与智能结果。</p></li>
+<li>适配X3模型: 基于hbdk3.7.10，提供X3版本模型;基于bpu-predict master分支，bpu-predict第一套接口进行模型预测;适配FasterRCNNMethod以及CNNMethod等预测Method，同时支持X2与X3;适配SSDMethod，同时支持X2和X3</li>
+<li>适配X3 VIO: 支持X3系统软件原生vio接口，获取camera图像以及图像回灌;支持X3媒体库接口获取camera图像;适配imx327（1080p），os8a10(2160p)，s5kgm（2160p与4000x3000);封装VIOWrapper，支持X2/X3接口统一调用</li>
+<li>现有Solution支持X3平台: 现有face_solution， face_recog solution，body solution, vehicle solution， face_body_multisource能够正常在X3上运行</li>
+<li>web统一客户端: 现有solution的结果展示切换到web 统一客户端， 能够显示视频、检测结果、属性分类、关键点结果</li>
+<li>新增人体行为分析solution: 集成人体多任务检测，人体摔倒模型，支持举手、站立、下蹲等策略分析。支持X2与X3</li>
+<li>新增体感游戏solution: 集成人体多任务检测，人体特征提取，人体行为三个模型，web客户端展示游戏界面，支持CrappyBird和PandaRun两个游戏。支持X2与X3</li>
+<li>新增USB Camera功能: 支持将X3开发板，通过USB接口接到AP上，AP通过UVC/HID拿到图像与智能结果。</li>
 </ul>
 </div>
 </div>
@@ -182,28 +187,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

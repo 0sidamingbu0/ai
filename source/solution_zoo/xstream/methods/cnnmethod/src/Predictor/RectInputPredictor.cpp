@@ -26,16 +26,12 @@ typedef std::shared_ptr<ImageFrame> ImageFramePtr;
 namespace xstream {
 
 void RectInputPredictor::Do(CNNMethodRunData *run_data) {
-  int frame_size = run_data->input->size();
-  run_data->mxnet_output.resize(frame_size);
-  run_data->input_dim_size.resize(frame_size);
-  run_data->norm_rois.resize(frame_size);
   run_data->real_nhwc = model_info_.real_nhwc_;
   run_data->elem_size = model_info_.elem_size_;
   run_data->all_shift = model_info_.all_shift_;
 
-  for (int frame_idx = 0; frame_idx < frame_size; frame_idx++) {  // loop frame
-    auto &input_data = (*(run_data->input))[frame_idx];
+  {  // one frame
+    auto &input_data = (*(run_data->input));
 
     int ret = 0;
     auto rois = std::static_pointer_cast<BaseDataVector>(input_data[0]);
@@ -45,12 +41,12 @@ void RectInputPredictor::Do(CNNMethodRunData *run_data) {
                    xstream_pyramid->value);
 
     int32_t box_num = rois->datas_.size();
-    run_data->input_dim_size[frame_idx] = box_num;
+    run_data->input_dim_size = box_num;
     std::vector<int> valid_box(box_num, 1);
-    run_data->mxnet_output[frame_idx].resize(box_num);
-    run_data->norm_rois[frame_idx].resize(box_num);
+    run_data->mxnet_output.resize(box_num);
+    run_data->norm_rois.resize(box_num);
 
-    auto &norm_rois = run_data->norm_rois[frame_idx];
+    auto &norm_rois = run_data->norm_rois;
 
     std::vector<BPU_BBOX> boxes;
     int32_t handle_num =
@@ -136,7 +132,7 @@ void RectInputPredictor::Do(CNNMethodRunData *run_data) {
       int layer_size = model_info_.output_layer_size_.size();
       for (int32_t i = 0, mxnet_rlt_idx = 0; i < box_num; i++) {
         if (valid_box[i]) {
-          auto &mxnet_rlt = run_data->mxnet_output[frame_idx][i];
+          auto &mxnet_rlt = run_data->mxnet_output[i];
           mxnet_rlt.resize(layer_size);
           for (int j = 0; j < layer_size; j++) {
             mxnet_rlt[j].resize(model_info_.mxnet_output_layer_size_[j]);

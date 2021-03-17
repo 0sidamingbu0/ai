@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>构造简单workflow &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../" src="../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../_sources/ai_express_release/source/common/xstream/framework/tutorials/stage1/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -184,9 +189,9 @@
 <h2>定义XStream框架BBox数据结构<a class="headerlink" href="#xstreambbox" title="永久链接至标题">¶</a></h2>
 <p>确定好workflow后，我们还需要定义workflow中用到的数据结构。由于XStream Framework中的数据都是基于BaseData，因此需要构建BaseData的派生数据结构。</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// method/bbox.h</span>
-<span class="k">struct</span> <span class="nc">BBox</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
-  <span class="kr">inline</span> <span class="nf">BBox</span><span class="p">()</span> <span class="p">{}</span>
-  <span class="kr">inline</span> <span class="nf">BBox</span><span class="p">(</span><span class="kt">float</span> <span class="n">x1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x2_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y2_</span><span class="p">,</span>
+<span class="k">struct</span> <span class="nl">BBox</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+  <span class="kr">inline</span> <span class="n">BBox</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="kr">inline</span> <span class="n">BBox</span><span class="p">(</span><span class="kt">float</span> <span class="n">x1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x2_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y2_</span><span class="p">,</span>
               <span class="kt">float</span> <span class="n">score_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">x1</span> <span class="o">=</span> <span class="n">x1_</span><span class="p">;</span>
     <span class="n">y1</span> <span class="o">=</span> <span class="n">y1_</span><span class="p">;</span>
@@ -273,7 +278,7 @@
 <h2>注册BBoxFilter Method到MethodFactory<a class="headerlink" href="#bboxfilter-methodmethodfactory" title="永久链接至标题">¶</a></h2>
 <p>XStream框架构建workflow时，调用全局MethodFactory创建对应Method实例，在使用BBoxFilter之前需要注册到MethodFactory中。也就是说程序需要根据workflow中的<code class="docutils literal notranslate"><span class="pre">&quot;method_type&quot;:</span> <span class="pre">&quot;BBoxFilter&quot;</span></code>，对应程序中具体的自定义Method。做法如下：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">method_factory</span> <span class="p">{</span>
-<span class="n">MethodPtr</span> <span class="nf">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">MethodPtr</span> <span class="n">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="s">&quot;BBoxFilter&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="k">new</span> <span class="n">BBoxFilter</span><span class="p">());</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -345,28 +350,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

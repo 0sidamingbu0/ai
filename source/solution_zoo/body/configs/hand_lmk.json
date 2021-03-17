@@ -12,5 +12,7 @@
   "output_size" : 1,
   "model_file_path": "../../models/handLMKs.hbm",
   "bpu_config_path": "../configs/bpu_config.json",
-  "core_id": 2
+  "core_id": 2,
+  "expand_scale": 1.25,
+  "norm_method": "norm_by_lside_ratio"
 }

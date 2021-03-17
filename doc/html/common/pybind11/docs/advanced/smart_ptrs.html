@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Smart pointers &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/common/pybind11/docs/advanced/smart_ptrs.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -230,22 +235,22 @@ claims ownership of the pointer. In the end, the object will be freed <strong>tw
 since these shared pointers have no way of knowing about each other.</p>
 <p>There are two ways to resolve this issue:</p>
 <ol class="arabic simple">
-<li><p>For types that are managed by a smart pointer class, never use raw pointers
+<li>For types that are managed by a smart pointer class, never use raw pointers
 in function arguments or return values. In other words: always consistently
 wrap pointers into their designated holder types (such as
 <code class="docutils literal notranslate"><span class="pre">std::shared_ptr&lt;...&gt;</span></code>). In this case, the signature of <code class="docutils literal notranslate"><span class="pre">get_child()</span></code>
-should be modified as follows:</p></li>
+should be modified as follows:</li>
 </ol>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;</span> <span class="n">get_child</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">child</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Adjust the definition of <code class="docutils literal notranslate"><span class="pre">Child</span></code> by specifying
+<li>Adjust the definition of <code class="docutils literal notranslate"><span class="pre">Child</span></code> by specifying
 <code class="docutils literal notranslate"><span class="pre">std::enable_shared_from_this&lt;T&gt;</span></code> (see <a class="reference external" href="http://en.cppreference.com/w/cpp/memory/enable_shared_from_this">cppreference</a> for details) as a
 base class. This adds a small bit of information to <code class="docutils literal notranslate"><span class="pre">Child</span></code> that allows
 pybind11 to realize that there is already an existing
 <code class="docutils literal notranslate"><span class="pre">std::shared_ptr&lt;...&gt;</span></code> and communicate with it. In this case, the
-declaration of <code class="docutils literal notranslate"><span class="pre">Child</span></code> should look as follows:</p></li>
+declaration of <code class="docutils literal notranslate"><span class="pre">Child</span></code> should look as follows:</li>
 </ol>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
 </pre></div>
@@ -284,8 +289,8 @@ specialized:</p>
 
 <span class="c1">// Only needed if the type&#39;s `.get()` goes by another name</span>
 <span class="k">namespace</span> <span class="n">pybind11</span> <span class="p">{</span> <span class="k">namespace</span> <span class="n">detail</span> <span class="p">{</span>
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
-    <span class="k">struct</span> <span class="nc">holder_helper</span><span class="o">&lt;</span><span class="n">SmartPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="p">{</span> <span class="c1">// &lt;-- specialization</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">struct</span> <span class="n">holder_helper</span><span class="o">&lt;</span><span class="n">SmartPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="p">{</span> <span class="c1">// &lt;-- specialization</span>
         <span class="k">static</span> <span class="k">const</span> <span class="n">T</span> <span class="o">*</span><span class="n">get</span><span class="p">(</span><span class="k">const</span> <span class="n">SmartPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">p</span><span class="p">.</span><span class="n">getPointer</span><span class="p">();</span> <span class="p">}</span>
     <span class="p">};</span>
 <span class="p">}}</span>
@@ -294,8 +299,8 @@ specialized:</p>
 <p>The above specialization informs pybind11 that the custom <code class="docutils literal notranslate"><span class="pre">SmartPtr</span></code> class
 provides <code class="docutils literal notranslate"><span class="pre">.get()</span></code> functionality via <code class="docutils literal notranslate"><span class="pre">.getPointer()</span></code>.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_smart_ptr.cpp</span></code> contains a complete example
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_smart_ptr.cpp</span></code> contains a complete example
 that demonstrates how to work with custom reference-counting holder types
 in more detail.</p>
 </div>
@@ -307,28 +312,25 @@ in more detail.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

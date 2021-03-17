@@ -48,7 +48,6 @@ class Yolov3PostProcessMethod : public DnnPostProcessMethod {
   // 需要配置，且与预测阶段选取金字塔基础层大小一致
   int basic_pyramid_image_height_;
   int basic_pyramid_image_width_;
-  // 需要配置，且与预测阶段选取金字塔层vio配置一致
 };
 
 // Yolo3Config

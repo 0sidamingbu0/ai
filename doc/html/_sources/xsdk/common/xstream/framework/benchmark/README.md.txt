@@ -44,9 +44,10 @@ std::vector<std::vector<BaseDataPtr>> PassThrough::DoProcess(
 ```
 
 ### 帧率统计
-程序中通过异步接口`AsyncPredict()`将输入数据送入框架进行运算，通过回调函数进行帧率的统计。
+程序中通过异步接口`AsyncPredict()`将输入数据送入框架进行运算，通过回调函数进行帧率的统计，每调用一次回调函数，说明有一帧数据处理完成。
 
-我们设置了大小为50的"缓冲窗口"，当任务数量大于50时，会等待任务数量完成至50内再继续输入数据。
+在示例程序中我们每隔0.5ms添加一次任务，在评测时用户可以根据需要修改此时间间隔。
+
 ```c++
   xstream::XStreamSDK *flow = xstream::XStreamSDK::CreateSDK();
   flow->SetConfig("config_file", config);
@@ -59,14 +60,9 @@ std::vector<std::vector<BaseDataPtr>> PassThrough::DoProcess(
     data->name_ = "input";   // corresponding the inputs in workflow
     inputdata->datas_.push_back(data);
 
-    {
-      std::unique_lock<std::mutex> lck(mtx);
-      cv.wait(lck, [] {return task_num < 50;});
-    }
-
     // async mode
     flow->AsyncPredict(inputdata);
-    task_num++;
+    std::this_thread::sleep_for(std::chrono::microseconds(500));
   }
 ```
 
@@ -87,29 +83,52 @@ void FrameFPS(xstream::OutputDataPtr output) {
     last_time = std::chrono::system_clock::now();
     std::cout << "fps = " << fps << std::endl;
   }
-  --task_num;
-  std::unique_lock <std::mutex> lck(mtx);
-  cv.notify_one();
 }
 ```
 
+### 调度性能
 运行benchmark_main程序后，会持续输出帧率大小，用户可以通过`ctrl+C`来终止。
 ```
 PassThrough Init
 PassThrough Init
-fps = 5180
-fps = 5171
-fps = 5165
-fps = 5185
-fps = 5190
-fps = 5160
-fps = 5157
-fps = 5169
-fps = 5173
-fps = 5159
-fps = 5175
-fps = 5174
+fps = 1693
+fps = 1691
+fps = 1690
+fps = 1690
+fps = 1689
+fps = 1689
+fps = 1690
+fps = 1691
+fps = 1691
+fps = 1691
+fps = 1690
+fps = 1691
+fps = 1690
+fps = 1690
+fps = 1690
+fps = 1690
 ^Crecv signal 2, stop
 PassThrough Finalize
 PassThrough Finalize
 ```
+
+#### xstream v.s. hobotsdk
+构建包含两个节点的workflow，节点内仅透传无其他操作。分别以0.5ms、1ms、2ms、5ms、10ms、20ms的间隔输入数据，测试xstream和hobotsdk调度性能，结果如下。可以发现当输入FPS处于100时，xstream和hobotsdk框架调度的耗时基本可以忽略。
+
+<table>
+    <tr>
+        <th> </th><th colspan=2>0.5ms</th><th> </th><th colspan=2>1ms</th><th></th><th colspan="2">2ms</th><th></th><th colspan="2">5ms</th><th></th><th colspan="2">10ms</th><th></th><th colspan="2">20ms</th>
+    </tr>
+    <tr>
+        <td></td><td>xstream</td><td>hobotsdk</td><td> </td><td>xstream</td><td>hobotsdk</td><td></td><td>xstream</td><td>hobotsdk</td><td></td><td>xstream</td><td>hobotsdk</td><td></td><td>xstream</td><td>hobotsdk</td><td></td><td>xstream</td><td>hobotsdk</td>
+    </tr>
+    <tr>
+        <td>FPS</td><td>1690.35</td><td>1728.7</td><td></td><td>909.4</td><td>901.7</td><td></td><td>467.3</td><td>471.4</td><td></td><td>197.0</td><td>197.4</td><td></td><td>100.0</td><td>99.3</td><td></td><td>50.0</td><td>49.7</td>
+    </tr>
+    <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+        <td></td><td>-2.2%</td><td></td><td></td><td>0.84%</td><td></td><td></td><td>-0.87%</td><td></td><td></td><td>-0.20%</td><td></td><td></td><td>0.70%</td><td></td><td></td><td>0.60%</td><td></td>
+    </tr>
+</table>

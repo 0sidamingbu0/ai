@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>概述 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -38,7 +41,7 @@
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="搜索" href="../../search.html" />
     <link rel="next" title="快速上手" href="quick_start.html" />
-    <link rel="prev" title="AI Express用户文档(V2.9.0)" href="../../index.html" /> 
+    <link rel="prev" title="AI Express用户文档(V2.10.0)" href="../../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -143,6 +146,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -154,7 +159,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/overview.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -178,17 +183,17 @@
 <p>完整的Open Explore架构图如图所示：</p>
 <p><img alt="open-explore" src="../../_images/open-explore.png" /></p>
 <ul class="simple">
-<li><p><strong>AI芯片工具链</strong>（AI Toolchain）：覆盖了从算法模型训练、优化和转换和部署到芯片运行模型预测的完整AI开发过程，包含模型结构检查器、性能分析器、模型编译器、模型模拟器在内的全套工具。在与AI芯片架构的深度耦合下，能够带来性能的显著提升。</p></li>
-<li><p><strong>模型仓库</strong>（Model Zoo）：地平线“天工开物”模型仓库（Model Zoo）开放了三类算法，即产品算法、基础算法和参考算法，充分响应不同合作伙伴的需求。其中涉及人脸、人体、人非车等多种类别，具备极高的算法质量和精度，可有效避免合作伙伴“重复发明轮子”，大幅节省算法训练和开发的时间与成本。</p></li>
-<li><p><strong>AI应用开发中间件</strong>（AI Express）:包含XStream和XProto两套应用开发框架，并且内置丰富且高度可复用的算法模块、业务策略模块、应用组件，帮助合作伙伴快速搭建高性能的算法工作流。如同搭积木一样，合作伙伴可灵活组合产品算法，高效组成适用于各类应用场景的算法解决方案，全面降低边缘AI应用的开发门槛。</p></li>
+<li><strong>AI芯片工具链</strong>（AI Toolchain）：覆盖了从算法模型训练、优化和转换和部署到芯片运行模型预测的完整AI开发过程，包含模型结构检查器、性能分析器、模型编译器、模型模拟器在内的全套工具。在与AI芯片架构的深度耦合下，能够带来性能的显著提升。</li>
+<li><strong>模型仓库</strong>（Model Zoo）：地平线“天工开物”模型仓库（Model Zoo）开放了三类算法，即产品算法、基础算法和参考算法，充分响应不同合作伙伴的需求。其中涉及人脸、人体、人非车等多种类别，具备极高的算法质量和精度，可有效避免合作伙伴“重复发明轮子”，大幅节省算法训练和开发的时间与成本。</li>
+<li><strong>AI应用开发中间件</strong>（AI Express）:包含XStream和XProto两套应用开发框架，并且内置丰富且高度可复用的算法模块、业务策略模块、应用组件，帮助合作伙伴快速搭建高性能的算法工作流。如同搭积木一样，合作伙伴可灵活组合产品算法，高效组成适用于各类应用场景的算法解决方案，全面降低边缘AI应用的开发门槛。</li>
 </ul>
 <p>完整AI Express功能如图所示：</p>
 <p><img alt="ai-express" src="../../_images/ai-express.png" /></p>
 <p>它整体由<strong>XStream开发框架</strong>，<strong>XProto原型框架</strong>，<strong>内置参考解决方案</strong>三部分组成，覆盖算法模型集成和场景应用APP开发的全流程。这三部分的定位如下表所示：</p>
 <ul class="simple">
-<li><p>XStream: 一套独立的算法SDK编程框架。将预测任务拆分到一系列Method中，提供能力将Method串联成Graph，完成基于Graph的计算。可以根据不同的业务场景(不同的workflow)，快速生成对应的预测SDK。</p></li>
-<li><p>XProto: 一套独立的原型应用开发框架。该框架将整个应用划分成一系列的Plugin，各个Plugin之间通过消息总线通信，完成了模块的解耦、复用、可扩展等需求。</p></li>
-<li><p>内置参考解决方案: 沉淀了人脸结构化、人体结构化、人体行为分析、视频盒子、体感游戏、usb camera、apa、车辆结构化、多路camera、多路IPM图像回灌等示例。可以直接基于这些示例修改，完成客户的产品功能开发。</p></li>
+<li>XStream: 一套独立的算法SDK编程框架。将预测任务拆分到一系列Method中，提供能力将Method串联成Graph，完成基于Graph的计算。可以根据不同的业务场景(不同的workflow)，快速生成对应的预测SDK。</li>
+<li>XProto: 一套独立的原型应用开发框架。该框架将整个应用划分成一系列的Plugin，各个Plugin之间通过消息总线通信，完成了模块的解耦、复用、可扩展等需求。</li>
+<li>内置参考解决方案: 沉淀了人脸结构化、人体结构化、人体行为分析、视频盒子、体感游戏、usb camera、apa、车辆结构化、多路camera、多路IPM图像回灌等示例。可以直接基于这些示例修改，完成客户的产品功能开发。</li>
 </ul>
 </div>
 <div class="section" id="xstreamsdk">
@@ -196,10 +201,10 @@
 <p>XStream属于一套算法SDK编程框架，Method为框架核心组件，以Graph的方式将Method实例串联起来，XStream框架内部自动完成Method的调度。</p>
 <p>XStream源码由XStream-Framework、tutorials、vision_type、imagetools组成。各个组件的功能描述如下：</p>
 <ul class="simple">
-<li><p>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发。</p></li>
-<li><p>tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性。</p></li>
-<li><p>vision_type: 沉淀了XStream-Framework框架下视觉相关的数据结构，比如金字塔图像、矩形框、分割、分类属性等。沉淀的solution中大量使用这些数据结构。客户基于XStream-Framework重新开发，可以不依赖vision_type。</p></li>
-<li><p>imagetools: 沉淀了一套图像处理的C++库，内部封装了OpenCV、libyuv、libturbojpeg等开源库，提供图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。客户基于XStream-Framework重新开发，可以不依赖imagetools。</p></li>
+<li>XStream-Framework: XStream算法SDK编程框架，定义了最基础的数据类型定义以及Method的定义；完成Graph的构建以及调度；提供C++接口，支持同步预测/异步预测等功能；支持多路输入、多路输出、子workflow、Profiler、Node输出回调、Method运行参数控制、超时预警等特性；提供数据流可视化工具。开发者基于XStream-Framework库+API接口+基础数据类型定义+Method定义完成SDK开发。</li>
+<li>tutorials: XStream-Framework使用的示例，计划覆盖所有的功能特性。</li>
+<li>vision_type: 沉淀了XStream-Framework框架下视觉相关的数据结构，比如金字塔图像、矩形框、分割、分类属性等。沉淀的solution中大量使用这些数据结构。客户基于XStream-Framework重新开发，可以不依赖vision_type。</li>
+<li>imagetools: 沉淀了一套图像处理的C++库，内部封装了OpenCV、libyuv、libturbojpeg等开源库，提供图像解码、图像格式转换、图像缩放、抠图、padding、镜像翻转、中心旋转等功能。客户基于XStream-Framework重新开发，可以不依赖imagetools。</li>
 </ul>
 <p>XStream提供<strong>流程配置</strong>功能，支持将各种Method按照业务需求组装成一个个Workflow有向图，并通过XStream内置的<strong>数据驱动</strong>的调度策略，高效完成Workflow的运行和调度，最大限度的利用地平线芯片BPU的计算资源。</p>
 <p>下图是基于XStream开发框架构建的人脸抓拍智能算法SDK示例：</p>
@@ -211,10 +216,10 @@
 <p>XProto原型应用开发框架是一套基于消息总线交互的可扩展框架，框架定义了基础的消息类型、Plugin基础类定义以及消息发布订阅的处理逻辑。开发者通过开发Plugin，以及这些Plugin之间交互的消息，降低了模块的耦合。</p>
 <p>XProto源码由XProto-Framework、tutorials、msgtype、plugins组成，各个组件的功能特性如下所示：</p>
 <ul class="simple">
-<li><p>XProto-Framework: 一种简易的消息发布订阅开发框架，定义了消息基础类以及可扩展插件Plugin。Plugin之间通过消息总线通信，Plugin可以向总线发布消息，也可以从总线上订阅感兴趣的类型的消息。框架负责消息的订阅分发。</p></li>
-<li><p>tutorials: XProto-Framework的示例代码，计划覆盖所有的功能特性。</p></li>
-<li><p>msgtype: 沉淀了XProto-Framework框架下的消息类型。沉淀的solution中大量使用这些消息类型。客户基于XProto-Framework重新开发，可以不依赖msgtype。</p></li>
-<li><p>plugins: 沉淀了XProto-Framework框架下的Plugin。沉淀的solution中大量使用这些Plugin。客户基于XProto-Framework重新开发，可以不依赖这些Plugin。</p></li>
+<li>XProto-Framework: 一种简易的消息发布订阅开发框架，定义了消息基础类以及可扩展插件Plugin。Plugin之间通过消息总线通信，Plugin可以向总线发布消息，也可以从总线上订阅感兴趣的类型的消息。框架负责消息的订阅分发。</li>
+<li>tutorials: XProto-Framework的示例代码，计划覆盖所有的功能特性。</li>
+<li>msgtype: 沉淀了XProto-Framework框架下的消息类型。沉淀的solution中大量使用这些消息类型。客户基于XProto-Framework重新开发，可以不依赖msgtype。</li>
+<li>plugins: 沉淀了XProto-Framework框架下的Plugin。沉淀的solution中大量使用这些Plugin。客户基于XProto-Framework重新开发，可以不依赖这些Plugin。</li>
 </ul>
 <p>XStream聚集算法模型、策略的集成以及最终业务Workflow生成SDK。而XProto是在XStream基础上，为基于XStream构建算法SDK提供APP的运行环境。它支持快速将XStream SDK封装成可运行的APP，运行在地平线边缘芯片中。</p>
 <p>下图是XProto APP基本架构示例图：</p>
@@ -227,16 +232,16 @@
 <p>目前提供了人脸结构化参考方案、人体结构化参考方案、人体行为分析参考方案、视频盒子参考方案、体感游戏参考方案、usb camera参考方案、apa自动泊车参考方案、车辆结构化、多路camera、多路IPM图像回灌参考方案。提供了工程代码以及配套的参考模型，可以部署运行在地平线XJ3、XJ2开发板。这些参考方案会逐步完全对外开放。</p>
 <p>各个参考方案的功能描述如下</p>
 <ul class="simple">
-<li><p>人脸结构化参考方案: 人脸的检测、人脸姿态检测、人脸关键点、人脸跟踪、优先抓拍、人脸特征提取等结构化信息提取。</p></li>
-<li><p>人体结构化参考方案: 人体、人脸、人头检测，人体谷歌关键点检测，人体分割，年龄性别等结构化信息提取。</p></li>
-<li><p>人体行为分析参考方案: 完成摔倒检测、手势识别等人体行为。</p></li>
-<li><p>视频盒子参考方案: 通过RTSP协议获取多路视频图像进行多路智能分析。</p></li>
-<li><p>体感游戏参考方案: 通过视觉分析实时画面中人员的跳跃、跑步等动作，完成游戏内角色的动作控制。</p></li>
-<li><p>usb camera参考方案: X3开发板作为USB设备，插入USB宿主机。X3开发版外接MIPI sensor，完成图像编码、视觉分析，基于标准的UVC协议将视频传输给USB宿主机；基于HID或者RNDIS协议将结构化智能结果传输给USB宿主机；基于标准UAC协议将音频数据传输给USB宿主机。</p></li>
-<li><p>apa自动泊车: XJ3开发板接入4路sensor，完成4路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框以及停车位分割结果；支持can信号的传输。当摄像头完成实车标定，且实现控车逻辑后，能够完成自动泊车功能。</p></li>
-<li><p>多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框，支持把多路图像和检测结果在web上展示。</p></li>
-<li><p>车辆结构化参考方案: 完成车辆检测、车牌检测与识别、车辆类型等结构化信息提取。</p></li>
-<li><p>多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。</p></li>
+<li>人脸结构化参考方案: 人脸的检测、人脸姿态检测、人脸关键点、人脸跟踪、优先抓拍、人脸特征提取等结构化信息提取。</li>
+<li>人体结构化参考方案: 人体、人脸、人头检测，人体谷歌关键点检测，人体分割，年龄性别等结构化信息提取。</li>
+<li>人体行为分析参考方案: 完成摔倒检测、手势识别等人体行为。</li>
+<li>视频盒子参考方案: 通过RTSP协议获取多路视频图像进行多路智能分析。</li>
+<li>体感游戏参考方案: 通过视觉分析实时画面中人员的跳跃、跑步等动作，完成游戏内角色的动作控制。</li>
+<li>usb camera参考方案: X3开发板作为USB设备，插入USB宿主机。X3开发版外接MIPI sensor，完成图像编码、视觉分析，基于标准的UVC协议将视频传输给USB宿主机；基于HID或者RNDIS协议将结构化智能结果传输给USB宿主机；基于标准UAC协议将音频数据传输给USB宿主机。</li>
+<li>apa自动泊车: XJ3开发板接入4路sensor，完成4路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框以及停车位分割结果；支持can信号的传输。当摄像头完成实车标定，且实现控车逻辑后，能够完成自动泊车功能。</li>
+<li>多路camera：XJ3开发板可接入1~4路sensor，solution完成各路图像的视觉分析，输出可行驶区域、障碍物检测框、停车位检测框，支持把多路图像和检测结果在web上展示。</li>
+<li>车辆结构化参考方案: 完成车辆检测、车牌检测与识别、车辆类型等结构化信息提取。</li>
+<li>多路IPM图像回灌：XJ3开发板支持1~4路IPM图片回灌，图片分辨率为256*512，solution完成各路图像分析，输出停车位检测框、角点、全图分割等，支持把多路图片和检测结果在web上展示。</li>
 </ul>
 <p>在开发参考方案时，沉淀了不少XStream框架下的Method，比如FasterRCNNMethod、CNNMethod、MotMethod等。</p>
 </div>
@@ -252,17 +257,17 @@
 <p>AI Express核心价值旨在加速客户从业务模型集成到应用程序的整个开发流程，规避嵌入式AI应用研发过程中常见问题，提高客户交付效率。</p>
 <p>基于AI Express来构建智能应用，你可以获得如下收益：</p>
 <ul class="simple">
-<li><p><strong>提高算法模型复用能力</strong>：算法模型本身是一个参数和配置文件，在缺乏前后处理等代码加工情况下，无法高效复用。而XStream框架支持将算法模型封装为算法Method，可以快速对Method进行算法集成，验证和交付。</p></li>
-<li><p><strong>提高算法模型交付效率</strong>：XStream内置常用检测，跟踪,属性识别等算法Method，适配同构算法模型。比如内置FasterRCNNMethod支持适配人脸检测，猫脸检测等，直接替换模型既可以快速进行集成和测试，提高算法人员以及工程人员交付效率。</p></li>
-<li><p><strong>提高策略模块复用能力</strong>：通过XStream框架式编程方式来约束策略模块实现方式，避免因为策略多样化需求以及多样性实现方式导致策略复用率低的问题。</p></li>
-<li><p><strong>简单灵活的流程式开发</strong>：基于两套开发框架以及内置场景解决方案，我们可以快速应付各种场景化需求，进行灵活任务流编排，实现AI应用开发。比如COVID-19疫情期间，针对口罩和温度识别需求，可以提高数倍的终端产品交付效率。</p></li>
-<li><p><strong>高效的AI应用执行效率</strong>：对于复杂workflow数据流，XStream内部的数据驱动调度方案可以自动解析Method之间的依赖关系，最大程度并行化执行，进而高效利用地平线BPU芯片的计算能力，减小处理延迟。</p></li>
+<li><strong>提高算法模型复用能力</strong>：算法模型本身是一个参数和配置文件，在缺乏前后处理等代码加工情况下，无法高效复用。而XStream框架支持将算法模型封装为算法Method，可以快速对Method进行算法集成，验证和交付。</li>
+<li><strong>提高算法模型交付效率</strong>：XStream内置常用检测，跟踪,属性识别等算法Method，适配同构算法模型。比如内置FasterRCNNMethod支持适配人脸检测，猫脸检测等，直接替换模型既可以快速进行集成和测试，提高算法人员以及工程人员交付效率。</li>
+<li><strong>提高策略模块复用能力</strong>：通过XStream框架式编程方式来约束策略模块实现方式，避免因为策略多样化需求以及多样性实现方式导致策略复用率低的问题。</li>
+<li><strong>简单灵活的流程式开发</strong>：基于两套开发框架以及内置场景解决方案，我们可以快速应付各种场景化需求，进行灵活任务流编排，实现AI应用开发。比如COVID-19疫情期间，针对口罩和温度识别需求，可以提高数倍的终端产品交付效率。</li>
+<li><strong>高效的AI应用执行效率</strong>：对于复杂workflow数据流，XStream内部的数据驱动调度方案可以自动解析Method之间的依赖关系，最大程度并行化执行，进而高效利用地平线BPU芯片的计算能力，减小处理延迟。</li>
 </ul>
 <p>AI Express为了让客户更好的去达成这些收益，我们还做以下事情：</p>
 <ul class="simple">
-<li><p><strong>源码级交付</strong>：我们将AI Express整套框架进行源码级别开放给客户，灵活支持客户对这个框架功能进行自主迭代。</p></li>
-<li><p><strong>产品级交付</strong>：在框架内部，我们对核心功能实现90%以上测试用例覆盖程度，并经过多家客户实际场景落地，达到产品级别交付质量的要求。</p></li>
-<li><p><strong>持续化技术支持</strong>：在地平线开发者论坛社区中，围绕AI Express我们提供技术讨论区，地平线一线技术人员持续为客户提供及时的技术支持。</p></li>
+<li><strong>源码级交付</strong>：我们将AI Express整套框架进行源码级别开放给客户，灵活支持客户对这个框架功能进行自主迭代。</li>
+<li><strong>产品级交付</strong>：在框架内部，我们对核心功能实现90%以上测试用例覆盖程度，并经过多家客户实际场景落地，达到产品级别交付质量的要求。</li>
+<li><strong>持续化技术支持</strong>：在地平线开发者论坛社区中，围绕AI Express我们提供技术讨论区，地平线一线技术人员持续为客户提供及时的技术支持。</li>
 </ul>
 </div>
 <div class="section" id="id4">
@@ -277,28 +282,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

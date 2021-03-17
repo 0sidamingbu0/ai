@@ -28,9 +28,9 @@ class ClassifyPostProcessor : public PostProcessor {
   ClassifyPostProcessor() {}
   virtual ~ClassifyPostProcessor() {}
 
-  std::vector<std::vector<BaseDataPtr>> Do(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> Do(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
  private:
   void RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,

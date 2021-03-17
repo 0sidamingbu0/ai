@@ -85,7 +85,7 @@ int MultitaskPredictMethod::GetSrcImageSize(
 
 int MultitaskPredictMethod::PrepareInputData(
     const std::vector<BaseDataPtr> &input,
-    const std::vector<InputParamPtr> param,
+    const InputParamPtr param,
     std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
     std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
   LOGD << "MultitaskPredictMethod PrepareInputData";
@@ -105,17 +105,21 @@ int MultitaskPredictMethod::PrepareInputData(
 
     int target_pym_layer_height = 0;
     int target_pym_layer_width = 0;
+    int target_pym_layer_stride = 0;
 
 #ifdef X2
     target_pym_layer_height =
         pyramid_image->img.down_scale[pyramid_layer_].height;
     target_pym_layer_width =
         pyramid_image->img.down_scale[pyramid_layer_].width;
+    target_pym_layer_stride =
+        pyramid_image->img.down_scale[pyramid_layer_].step;
 #endif
 
 #ifdef X3
     target_pym_layer_height = pyramid_image->down_scale[pyramid_layer_].height;
     target_pym_layer_width = pyramid_image->down_scale[pyramid_layer_].width;
+    target_pym_layer_stride = pyramid_image->down_scale[pyramid_layer_].stride;
 #endif
     int ret = 0;
     uint8_t *pOutputImg = nullptr;  // padding_img_data
@@ -223,7 +227,12 @@ int MultitaskPredictMethod::PrepareInputData(
       for (int h = 0; h < height; ++h) {
         auto *raw = y + h * stride;
         memcpy(raw, input_y_data, width);
-        input_y_data += width;
+        if (pOutputImg == nullptr) {
+          // pyramid data
+          input_y_data += target_pym_layer_stride;
+        } else {
+          input_y_data += width;
+        }
       }
       HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
 
@@ -233,7 +242,12 @@ int MultitaskPredictMethod::PrepareInputData(
       for (int i = 0; i < uv_height; ++i) {
         auto *raw = uv + i * stride;
         memcpy(raw, input_uv_data, width);
-        input_uv_data += width;
+        if (pOutputImg == nullptr) {
+          // pyramid data
+          input_uv_data += target_pym_layer_stride;
+        } else {
+          input_uv_data += width;
+        }
       }
       HB_SYS_flushMemCache(&tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
     }

@@ -75,6 +75,10 @@ int PlateNumPostProcessMethod::ParseDnnResult(
     std::vector<std::vector<float>> features;
     for (size_t i = 0, feat_idx = 0; i < dnn_result.valid_box.size(); ++i) {
       if (dnn_result.valid_box[i] == 1) {
+        if (HB_SYS_isMemCachable(&(output_tensors[feat_idx].data))) {
+          HB_SYS_flushMemCache(&(output_tensors[feat_idx].data),
+                                HB_SYS_MEM_CACHE_INVALIDATE);
+        }
         std::vector<float> feature(feature_size);
         auto src_ptr =
             reinterpret_cast<int8_t *>(output_tensors[0].data.virAddr) +
@@ -140,7 +144,7 @@ void PlateNumPostProcessMethod::ParsePlateNum(
       // skip splitted/repeated characters
       int last_index = -1;
       for (auto iter = nums.begin(); iter != nums.end();) {
-        if (*iter == last_index || *iter == 0) {
+        if (*iter == last_index || *iter == 73) {
           last_index = *iter;
           iter = nums.erase(iter);
         } else {

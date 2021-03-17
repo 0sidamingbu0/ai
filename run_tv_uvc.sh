@@ -54,6 +54,7 @@ solution_cfg_func() {
   cp -rf body_solution/configs/multitask_config_${resolution}M.json  body_solution/configs/multitask_config.json
   cp -rf body_solution/configs/multitask_with_hand_${resolution}M.json  body_solution/configs/multitask_with_hand.json
   cp -rf body_solution/configs/multitask_with_hand_960x544_${resolution}M.json  body_solution/configs/multitask_with_hand_960x544.json
+    cp -rf body_solution/configs/multitask_body_kps_config_${resolution}M.json  body_solution/configs/multitask_body_kps_config.json
   cp -rf body_solution/configs/segmentation_multitask_${resolution}M.json  body_solution/configs/segmentation_multitask.json
 }
 
@@ -75,6 +76,10 @@ set_cam_pipe_file_func() {
   echo "vio_mode: $vio_mode"
   echo "vio_pipe_file: $vio_pipe_file"
   sed -i 's#\("'${vio_mode}'": \).*#\1"'${vio_pipe_file}'",#g' $vio_cfg_file
+
+  key="ts_type"
+  val="relative_time"
+  sed -i 's#\("'${key}'": \).*#\1"'${val}'",#g' $vio_cfg_file
 }
 
 sensor_setting_func() {
@@ -216,6 +221,7 @@ choose_solution_func() {
   log_level="w" #(d/i/w/e)
   choose_x3_viotype_func
   echo "vio_cfg_file: $vio_cfg_file"
+  sleep 3
   ./body_solution/body_solution $vio_cfg_file ./body_solution/configs/dance_solution_multitask_960x544.json ./configs/visualplugin_body.json -${log_level} normal
 }
 

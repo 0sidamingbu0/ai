@@ -24,16 +24,11 @@
 
 namespace xstream {
 
-std::vector<std::vector<BaseDataPtr>> ClassifyPostProcessor::Do(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-  for (size_t i = 0; i < input.size(); i++) {
-    const auto &frame_input = input[i];
-    auto &frame_output = output[i];
-    RunSingleFrame(frame_input, frame_output);
-  }
+std::vector<BaseDataPtr> ClassifyPostProcessor::Do(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
+  std::vector<BaseDataPtr> output;
+  RunSingleFrame(input, output);
   return output;
 }
 

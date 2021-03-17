@@ -16,6 +16,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "PlotSmartData.h"
 #include "hobotlog/hobotlog.hpp"
 #include "smartplugin_box/displayinfo.h"
 #include "visualplugin/horizonserver_api.h"
@@ -118,9 +119,13 @@ int VencModule::VencChnAttrInit(VENC_CHN_ATTR_S *pVencChnAttr,
 }
 
 int VencModule::Init(uint32_t chn_id, const VencModuleInfo *module_info,
-                     const int channel_num, const int display_mode) {
+                     const int channel_num, const smart_vo_cfg_t &smart_vo_cfg,
+                     const bool encode_smart, const int display_mode) {
+  if (init_) return 0;
   channel_num_ = channel_num;
   display_mode_ = display_mode;
+  encode_smart_ = encode_smart;
+  memcpy(&vo_plot_cfg_, &smart_vo_cfg, sizeof(smart_vo_cfg_t));
 
   VENC_CHN_ATTR_S vencChnAttr;
   VENC_RC_ATTR_S *pstRcParam;
@@ -212,22 +217,30 @@ int VencModule::Init(uint32_t chn_id, const VencModuleInfo *module_info,
   if (s32Ret == 0) {
     printf("mmzAlloc paddr = 0x%lx, vaddr = 0x%p \n", buffers_.mmz_paddr,
            buffers_.mmz_vaddr);
+  } else if (s32Ret != 0) {
+    LOGE << "box init vencmodule HB_SYS_Alloc fail, return ret = " << s32Ret;
+    return s32Ret;
   }
 
   if (encode_720p_ &&
       ((display_mode_ == 0 && channel_num_ > 4) || display_mode_ == 1)) {
-    InitVPS();
+    s32Ret = InitVPS();
+    if (s32Ret != 0) {
+      LOGE << "box init vencmodule HB_SYS_Alloc fail, return ret = " << s32Ret;
+      return s32Ret;
+    }
   }
 
   // char stream_name[100] = {0};
   // sprintf(stream_name, "%s%d%s", "./video_box/output_stream_", chn_id_,
   //         ".h264");
   // outfile_ = fopen(stream_name, "wb");
-
+  init_ = true;
   return s32Ret;
 }
 
 int VencModule::Start() {
+  if (!init_) return -1;
   int ret = 0;
   VENC_RECV_PIC_PARAM_S pstRecvParam;
   pstRecvParam.s32RecvPicNum = 0;  // unchangable
@@ -261,6 +274,7 @@ int VencModule::Start() {
 }
 
 int VencModule::Stop() {
+  if (!process_running_) return 0;
   int ret = 0;
 
   process_running_ = false;
@@ -302,6 +316,7 @@ int VencModule::DeInit() {
     DeInitVPS();
   }
 
+  init_ = false;
   return ret;
 }
 
@@ -349,6 +364,7 @@ int VencModule::Process() {
 }
 
 int VencModule::Input(std::shared_ptr<VideoData> video_data, const bool copy) {
+  if (!process_running_) return -1;
   if (!copy) {
     in_queue_.push(video_data);
     return 0;
@@ -370,9 +386,9 @@ int VencModule::Input(std::shared_ptr<VideoData> video_data, const bool copy) {
   if (in_queue_.size() >= in_queue_len_max_) {
     in_queue_.pop();
     if (encode_720p_) {
-      LOGE << "VencModule 720p queue is full";
+      LOGW << "VencModule 720p queue is full";
     } else {
-      LOGE << "VencModule 1080p queue is full";
+      LOGW << "VencModule 1080p queue is full";
     }
   }
   in_queue_.push(video_data_new);
@@ -389,6 +405,13 @@ int VencModule::HandleData() {
       if (!is_getitem) {
         continue;
       }
+    }
+
+    if (encode_smart_ && !video_data->has_plot
+        && video_data->smart_frame) {
+      PlotSmartData objplot;
+      objplot.PlotData(vo_plot_cfg_, video_data, video_data->smart_frame);
+      video_data->has_plot = true;
     }
     EncodeData(video_data);
   }
@@ -582,6 +605,11 @@ int VencModule::DeInitVPS() {
   if (ret) {
     LOGE << "box vencmodule HB_VPS_DestroyGrp Failed. ret = " << ret;
   }
+
+  HB_SYS_Free(buffer_1080p_->img_addr.paddr[0],
+              &buffer_1080p_->img_addr.addr[0]);
+  HB_SYS_Free(buffer_1080p_->img_addr.paddr[1],
+              &buffer_1080p_->img_addr.addr[1]);
   return ret;
 }
 

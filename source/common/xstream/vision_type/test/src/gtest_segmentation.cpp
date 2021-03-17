@@ -11,7 +11,7 @@
 TEST(HorizonVisionSegmentation, alloc_free) {
   HorizonVisionSegmentation *data;
   auto ret = HorizonVisionAllocSegmentation(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->width = 10;
   data->height = 20;
   data->num = 2;
@@ -19,21 +19,21 @@ TEST(HorizonVisionSegmentation, alloc_free) {
   data->values[0] = 10.3;
   data->values[1] = 0.3;
   ret = HorizonVisionFreeSegmentation(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSegmentation, alloc_free_empty_data) {
   HorizonVisionSegmentation *data;
   auto ret = HorizonVisionAllocSegmentation(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSegmentation(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSegmentation, copy) {
   HorizonVisionSegmentation *data;
   auto ret = HorizonVisionAllocSegmentation(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->width = 10;
   data->height = 20;
   data->num = 2;
@@ -43,42 +43,42 @@ TEST(HorizonVisionSegmentation, copy) {
 
   HorizonVisionSegmentation *cp_data;
   ret = HorizonVisionAllocSegmentation(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySegmentation(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking
   ret = HorizonVisionFreeSegmentation(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   EXPECT_EQ(cp_data->width, 10);
   EXPECT_EQ(cp_data->height, 20);
   EXPECT_EQ(cp_data->num, 2u);
   EXPECT_EQ(cp_data->values[0], 10.3f);
   EXPECT_EQ(cp_data->values[1], 0.3f);
   ret = HorizonVisionFreeSegmentation(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSegmentation, copy_empty_data) {
   HorizonVisionSegmentation *data;
   auto ret = HorizonVisionAllocSegmentation(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   HorizonVisionSegmentation *cp_data;
   ret = HorizonVisionAllocSegmentation(&cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySegmentation(data, cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   ret = HorizonVisionFreeSegmentation(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSegmentation(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSegmentation, dup) {
   HorizonVisionSegmentation *data;
   auto ret = HorizonVisionAllocSegmentation(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   data->width = 10;
   data->height = 20;
   data->num = 2;
@@ -88,30 +88,30 @@ TEST(HorizonVisionSegmentation, dup) {
 
   HorizonVisionSegmentation *cp_data;
   ret = HorizonVisionDupSegmentation(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original data before checking
   ret = HorizonVisionFreeSegmentation(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   EXPECT_EQ(cp_data->width, 10);
   EXPECT_EQ(cp_data->height, 20);
   EXPECT_EQ(cp_data->num, 2u);
   EXPECT_EQ(cp_data->values[0], 10.3f);
   EXPECT_EQ(cp_data->values[1], 0.3f);
   ret = HorizonVisionFreeSegmentation(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSegmentation, dup_empty_data) {
   HorizonVisionSegmentation *data;
   auto ret = HorizonVisionAllocSegmentation(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   HorizonVisionSegmentation *cp_data;
   ret = HorizonVisionDupSegmentation(data, &cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   ret = HorizonVisionFreeSegmentation(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeSegmentation(cp_data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }

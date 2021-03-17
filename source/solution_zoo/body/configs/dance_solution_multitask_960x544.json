@@ -6,7 +6,7 @@
     "enable_result_to_json": false,
     "gesture_as_event": false,
     "gesture_mute_outside": 20,
-    "palm_move_dist_thr": 10,
+    "palm_move_dist_thr": -10,
     "dynamic_gesture_vanish_thr": 20,
     "static_gesture_vanish_thr": 10,
     "static_dynamic_dist_thr": 5,
@@ -21,6 +21,7 @@
     "distance_fit_impower": -1.085,
     "distance_smooth": true,
     "dump_result": false,
-    "hand_id_merge": true,
+    "filter_hand_gesture": true,
+    "hand_id_merge": false,
     "convert_keypoint_format": false
 }

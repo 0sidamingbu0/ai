@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>如何集成模型至AI-EXPRESS &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -170,6 +173,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -181,7 +186,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/integration.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -201,10 +206,10 @@
 <p>本章节解决该问题！</p>
 <p>解决该问题，我们需要关注这几个模块：</p>
 <ul class="simple">
-<li><p>图像获取</p></li>
-<li><p>智能预测</p></li>
-<li><p>效果展示</p></li>
-<li><p>运行部署</p></li>
+<li>图像获取</li>
+<li>智能预测</li>
+<li>效果展示</li>
+<li>运行部署</li>
 </ul>
 <p>图像获取部分主要是复用XProto中的IotVioPlugin。其中需要修改的地方是金字塔的配置：建议配置金字塔中存在一层图像，该层的分辨率直接是全图检测/分割模型需要的输入大小，避免需要ARM上软件缩放图像。</p>
 <p>智能预测模块主要是复用XProto中的SmartPlugin，SmartPlugin内部会调用XStream-Framework接口，完成workflow的计算。集成新模型需要我们关注的主要是这几个地方：模型编译、感知结果数据结构定义、模型预测Method的开发、workflow的构建。</p>
@@ -216,9 +221,9 @@
 <p>大的组建框架关系如下图所示：
 <img alt="plugin关系" src="../../_images/integration.png" /></p>
 <ul class="simple">
-<li><p>IotVioPlugin: 用于获取图像，直接复用，适配新的sensor比较麻烦，暂时建议不要对它做扩展。</p></li>
-<li><p>SmartPlugin: 从XProto总线上获取图像，调用XStream，完成workflow的预测，向总线推送感知结果消息。感知结果与SmartPlugin均可以通过继承进行扩展，用于支持新的感知消息数据类型。</p></li>
-<li><p>WebsocketPlugin: 从XProto总线上获取图像与感知结果，对图像进行编码，对感知结果进行序列化，完成图像与感知结果的匹配，通过websocket方式发给PC浏览器。可通过继承进行扩展，支持不同的感知消息类型。</p></li>
+<li>IotVioPlugin: 用于获取图像，直接复用，适配新的sensor比较麻烦，暂时建议不要对它做扩展。</li>
+<li>SmartPlugin: 从XProto总线上获取图像，调用XStream，完成workflow的预测，向总线推送感知结果消息。感知结果与SmartPlugin均可以通过继承进行扩展，用于支持新的感知消息数据类型。</li>
+<li>WebsocketPlugin: 从XProto总线上获取图像与感知结果，对图像进行编码，对感知结果进行序列化，完成图像与感知结果的匹配，通过websocket方式发给PC浏览器。可通过继承进行扩展，支持不同的感知消息类型。</li>
 </ul>
 <div class="section" id="id1">
 <h2>图像获取<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
@@ -309,8 +314,8 @@
 <p>XStream-Framework推荐一个模型，使用两个Method完成，一个Method用于模型的预处理，调用bpu-predict的异步预测接口；一个Method用于获取异步预测的结果，进行模型后处理。这样设计的好处是让模型预测与模型后处理在多线程中异步执行，当输入任务足够时，整个pipeline吞吐大，bpu使用率高。</p>
 <p>XStream-Framework对这两个Method做了封装，分别为DnnPredictMethod与DnnPostProcessMethod。对于每个模型，需要分别继承它们，重写前后处理接口。</p>
 <ul class="simple">
-<li><p>DnnPredictMethod： 完成模型的加载、输入与输出Tensor的分配、异步/同步bpu-predict接口调用。支持以Tensor方式预测，或者ROI方式预测。 继承者需要实现将Method的输入拷贝到输入Tensor，或者将Method的输入拷贝到金字塔与ROI数组中。</p></li>
-<li><p>DnnPostProcessMethod: 调用HB_BPU_waitModelDone等待异步任务完成，然后进行后处理；或者对于同步任务，直接进行后处理。 继承者需要实现将模型的输出转成Method的输出的接口。</p></li>
+<li>DnnPredictMethod： 完成模型的加载、输入与输出Tensor的分配、异步/同步bpu-predict接口调用。支持以Tensor方式预测，或者ROI方式预测。 继承者需要实现将Method的输入拷贝到输入Tensor，或者将Method的输入拷贝到金字塔与ROI数组中。</li>
+<li>DnnPostProcessMethod: 调用HB_BPU_waitModelDone等待异步任务完成，然后进行后处理；或者对于同步任务，直接进行后处理。 继承者需要实现将模型的输出转成Method的输出的接口。</li>
 </ul>
 <p>xstream/framework/methods/DnnPredictMethod定义了模型预测Method的基类。</p>
 <p>xstream/framework/methods/DnnPostProcessMethod定义了模型后处理Method的基类。</p>
@@ -318,7 +323,7 @@
 <div class="section" id="dnnasyncdata">
 <h4>DnnAsyncData<a class="headerlink" href="#dnnasyncdata" title="永久链接至标题">¶</a></h4>
 <p>XStream框架定义了DnnAsyncData，用于DnnPredictMethod与DnnPostProcessMethod之间传递的数据。DnnAsyncData的定义与说明如下：</p>
-<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">DnnAsyncData</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">DnnAsyncData</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="c1">// 模型handle,解析结果时需要通过它获取模型的信息，比如shape、shift等</span>
   <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">BPUModelWrapper</span><span class="o">&gt;</span> <span class="n">dnn_model</span><span class="p">;</span>
   <span class="c1">// 输入tensor, 由DnnPostProcess进行资源释放</span>
@@ -408,12 +413,12 @@
   <span class="c1">// OUT: input_tensors: PrepareInputData接口需要将预处理后的结果，填充到input_tensors中</span>
   <span class="c1">// OUT: output_tensors:PrepareInputData接口内部主要需要申请输出空间</span>
   <span class="c1">// 返回码：0，成功；否则失败；</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">PrepareInputData</span><span class="p">(</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">PrepareInputData</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">input_tensors</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">output_tensors</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="c1">// 派生类需要实现，两个PrepareInputData，根据是否ROI，二选一实现即可。</span>
@@ -432,14 +437,14 @@
   <span class="c1">// 后处理模块需要.</span>
   <span class="c1">// OUT: output_tensors:PrepareInputData接口内部主要需要申请输出空间.</span>
   <span class="c1">// 返回码：0，成功；否则失败</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">PrepareInputData</span><span class="p">(</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">PrepareInputData</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span>
       <span class="n">hobot</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">PymImageFrame</span> <span class="o">&amp;</span><span class="n">pyramid</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_BBOX</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input_bbox</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">valid_box</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">output_tensors</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="c1">// 用于获取原图分辨率的配置，后处理可能需要。</span>
@@ -447,7 +452,7 @@
   <span class="c1">// GetSrcImageSize的地方直接返回，</span>
   <span class="c1">// 若程序支持多分辨率输入，</span>
   <span class="c1">// GetSrcImageSize则可以运行时根据输入返回原图的大小</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GetSrcImageSize</span><span class="p">(</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">GetSrcImageSize</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
       <span class="kt">int</span> <span class="o">&amp;</span><span class="n">src_image_height</span><span class="p">,</span>
       <span class="kt">int</span> <span class="o">&amp;</span><span class="n">src_image_width</span><span class="p">);</span>
@@ -470,11 +475,11 @@
 </div>
 <p>配置相关的说明：</p>
 <ul class="simple">
-<li><p>model_file_path: 模型hbm/bin文件路径，建议使用绝对路径</p></li>
-<li><p>dnn_is_sync：使用bpu-predict同步方式与否，true表示同步方式，false为异步方式，建议为异步方式</p></li>
-<li><p>dnn_run_with_roi：是否上ROI输入类型，true表示ROI输入。ROI输入方式表示BpuPredictMethod的内部实现会调用HB_BPU_runModelWithBbox完成预测，继承者需要实现PrepareInputData(for Rio)这个接口。非ROI方式输入，表示BpuPredictMethod的内部实现会调用HB_BPU_runModel完成预测，继承者需要实现PrepareInputData(for tensor)这个接口。</p></li>
-<li><p>dnn_model_group：表示是否开启了group方式。对于开启model group方式，则需要设置一个group_id。注意：DnnPredictMethod本身不负责model group的创建，即DnnPredictMethod实现中不会调用HB_BPU_createGroup、HB_BPU_setGroupProportion、HB_BPU_deleteGroup等接口，只有可能调用HB_BPU_setModelGroup。</p></li>
-<li><p>dnn_model_group_id： group模式，该模型的group id。</p></li>
+<li>model_file_path: 模型hbm/bin文件路径，建议使用绝对路径</li>
+<li>dnn_is_sync：使用bpu-predict同步方式与否，true表示同步方式，false为异步方式，建议为异步方式</li>
+<li>dnn_run_with_roi：是否上ROI输入类型，true表示ROI输入。ROI输入方式表示BpuPredictMethod的内部实现会调用HB_BPU_runModelWithBbox完成预测，继承者需要实现PrepareInputData(for Rio)这个接口。非ROI方式输入，表示BpuPredictMethod的内部实现会调用HB_BPU_runModel完成预测，继承者需要实现PrepareInputData(for tensor)这个接口。</li>
+<li>dnn_model_group：表示是否开启了group方式。对于开启model group方式，则需要设置一个group_id。注意：DnnPredictMethod本身不负责model group的创建，即DnnPredictMethod实现中不会调用HB_BPU_createGroup、HB_BPU_setGroupProportion、HB_BPU_deleteGroup等接口，只有可能调用HB_BPU_setModelGroup。</li>
+<li>dnn_model_group_id： group模式，该模型的group id。</li>
 </ul>
 <p>进一步看下DnnPredictMethod::DoProcess的实现，大致可以了解模型预测的工作。</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;&gt;</span> <span class="n">DnnPredictMethod</span><span class="o">::</span><span class="n">DoProcess</span><span class="p">(</span>
@@ -596,7 +601,7 @@
 </div>
 <p>接下来重点解释下模型预处理这个接口的含义。这两个接口，用于不同的模型，实现其中一个即可。</p>
 <p>ROI方式使用限制很多，在后续章节会有补充的说明。大部分模型，均建议使用非ROI方式。</p>
-<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span>  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">PrepareInputData</span><span class="p">(</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span>  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">PrepareInputData</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">input_tensors</span><span class="p">,</span>
@@ -621,7 +626,7 @@
 <span class="cm">    */</span>
   <span class="p">}</span>
 
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">PrepareInputData</span><span class="p">(</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">PrepareInputData</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span>
       <span class="n">hobot</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">PymImageFrame</span> <span class="o">&amp;</span><span class="n">pyramid</span><span class="p">,</span>
@@ -679,7 +684,7 @@
   <span class="c1">// 派生类需要实现</span>
   <span class="c1">// 完成模型的后处理，以及转换成Method输出格式;不需考虑tensor的释放</span>
   <span class="c1">// IN: dnn_result. OUT: frame_result</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">ParseDnnResult</span><span class="p">(</span><span class="n">DnnAsyncData</span> <span class="o">&amp;</span><span class="n">dnn_result</span><span class="p">,</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">ParseDnnResult</span><span class="p">(</span><span class="n">DnnAsyncData</span> <span class="o">&amp;</span><span class="n">dnn_result</span><span class="p">,</span>
                              <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">frame_result</span><span class="p">);</span>
 <span class="p">};</span>
 </pre></div>
@@ -767,8 +772,8 @@
 <p>当前CustomSmartMessage参杂着一些业务代码，但是不影响可扩展。后续CustomSmartMessage可能择机重构。</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define TYPE_SMART_MESSAGE &quot;XPLUGIN_SMART_MESSAGE&quot;</span>
 
-<span class="k">struct</span> <span class="nc">CustomSmartMessage</span> <span class="o">:</span> <span class="n">SmartMessage</span> <span class="p">{</span>
-  <span class="k">explicit</span> <span class="nf">CustomSmartMessage</span><span class="p">(</span>
+<span class="k">struct</span> <span class="nl">CustomSmartMessage</span> <span class="p">:</span> <span class="n">SmartMessage</span> <span class="p">{</span>
+  <span class="k">explicit</span> <span class="n">CustomSmartMessage</span><span class="p">(</span>
     <span class="n">xstream</span><span class="o">::</span><span class="n">OutputDataPtr</span> <span class="n">out</span><span class="p">)</span> <span class="o">:</span> <span class="n">smart_result</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 消息类型。派生类需要换另外一个名字</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="n">TYPE_SMART_MESSAGE</span><span class="p">;</span>
@@ -1047,7 +1052,7 @@ message FrameMessage {
 <p>打包的示例solution，需要提供Method的工厂接口实现，main函数中需要完成Plugin的创建与启动。</p>
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">xstream</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">method_factory</span> <span class="p">{</span>
-<span class="n">MethodPtr</span> <span class="nf">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">MethodPtr</span> <span class="n">CreateMethod</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// 这里的类型名字需要和workflow中配置的method的type类型一致。</span>
   <span class="k">if</span> <span class="p">(</span><span class="s">&quot;MultitaskPredictMethod&quot;</span> <span class="o">==</span> <span class="n">method_name</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">MethodPtr</span><span class="p">(</span><span class="k">new</span> <span class="n">MultitaskPredictMethod</span><span class="p">());</span>
@@ -1062,14 +1067,14 @@ message FrameMessage {
 </pre></div>
 </div>
 <p>main函数的参考实现如下：</p>
-<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">void</span> <span class="n">signal_handle</span><span class="p">(</span><span class="kt">int</span> <span class="n">param</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">signal_handle</span><span class="p">(</span><span class="kt">int</span> <span class="n">param</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;recv signal &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">param</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;, stop&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">param</span> <span class="o">==</span> <span class="n">SIGINT</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">exit_</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">vio_config_file</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">smart_config_file</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">websocket_config_file</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
@@ -1085,15 +1090,15 @@ message FrameMessage {
   <span class="c1">// 分别初始化</span>
   <span class="k">auto</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">vio_plg</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="n">ret</span> <span class="o">=</span> <span class="n">smart_plg</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="n">ret</span> <span class="o">=</span> <span class="n">websocket_plg</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
   
   <span class="c1">// 分别启动</span>
@@ -1171,13 +1176,13 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
 </div>
 <p>这里还需注意的是，由于对原图做了底部的padding，因此需要对映射后的坐标(x’, y’)【主要是y’】，限制在原图坐标范围内。</p>
 <p>后处理解析的检测框使用<code class="docutils literal notranslate"><span class="pre">hobot::vision::BBox</span></code>数据结构来表示(定义在common/xstream/vision_type/include/horizon/vision_type/vision_type.hpp)。此外，在函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>中还需要将解析后的数据封装为xstream-frame框架支持的BaseData数据结构。由于全图可能存在多个目标，结果会有多个检测框，这里需要使用派生数据结构xstream::BaseDataVector，将检测框封装到成员变量datas_中，Yolov3PostProcessMethod的输出数据结构是xstream::BaseDataVector&lt;xstream::XStreamData<a class="reference external" href="hobot::vision::BBox">hobot::vision::BBox</a>&gt;.</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">BaseDataVector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">BaseDataVector</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">BaseDataVector</span><span class="p">();</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Dtype</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="nc">XStreamData</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Dtype</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nl">XStreamData</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">Dtype</span> <span class="n">value</span><span class="p">;</span>
   <span class="n">XStreamData</span><span class="p">()</span> <span class="p">{}</span>
   <span class="k">explicit</span> <span class="n">XStreamData</span><span class="p">(</span><span class="k">const</span> <span class="n">Dtype</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
@@ -1208,8 +1213,8 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
 <div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define EXAMPLE_SMART_MESSAGE &quot;EXAMPLE_XPLUGIN_SMART_MESSAGE&quot;</span>
 <span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">EXAMPLE_XPLUGIN_SMART_MESSAGE</span><span class="p">)</span>
 
-<span class="k">struct</span> <span class="nc">ExampleCustomSmartMessage</span> <span class="o">:</span> <span class="n">CustomSmartMessage</span> <span class="p">{</span>
-  <span class="k">explicit</span> <span class="nf">ExampleCustomSmartMessage</span><span class="p">(</span>
+<span class="k">struct</span> <span class="nl">ExampleCustomSmartMessage</span> <span class="p">:</span> <span class="n">CustomSmartMessage</span> <span class="p">{</span>
+  <span class="k">explicit</span> <span class="n">ExampleCustomSmartMessage</span><span class="p">(</span>
     <span class="n">xstream</span><span class="o">::</span><span class="n">OutputDataPtr</span> <span class="n">out</span><span class="p">)</span> <span class="o">:</span> <span class="n">CustomSmartMessage</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="n">EXAMPLE_SMART_MESSAGE</span><span class="p">;</span>
   <span class="p">}</span>
@@ -1353,17 +1358,17 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
 
   <span class="k">auto</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">vio_plg</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="n">ret</span> <span class="o">=</span> <span class="n">smart_plg</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="n">ret</span> <span class="o">=</span> <span class="n">websocket_plg</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="n">vio_plg</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">();</span>
@@ -1434,28 +1439,25 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -20,12 +20,10 @@
 namespace xstream {
 
 void AgeGenderPostPredictor::Do(CNNMethodRunData *run_data) {
-  int batch_size = run_data->input_dim_size.size();
-  run_data->output.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    int dim_size = run_data->input_dim_size[batch_idx];
-    auto &mxnet_output = run_data->mxnet_output[batch_idx];
-    std::vector<BaseDataPtr> &batch_output = run_data->output[batch_idx];
+  {
+    int dim_size = run_data->input_dim_size;
+    auto &mxnet_output = run_data->mxnet_output;
+    std::vector<BaseDataPtr> &batch_output = run_data->output;
     batch_output.resize(output_slot_size_);
     for (int i = 0; i < output_slot_size_; i++) {
       auto base_data_vector = std::make_shared<BaseDataVector>();
@@ -35,8 +33,8 @@ void AgeGenderPostPredictor::Do(CNNMethodRunData *run_data) {
       RUN_FPS_PROFILER(model_name_ + "_post");
       RUN_PROCESS_TIME_PROFILER(model_name_ + "_post");
 
-      auto boxes = std::static_pointer_cast<BaseDataVector>(
-          (*(run_data->input))[batch_idx][0]);
+      auto boxes =
+          std::static_pointer_cast<BaseDataVector>((*(run_data->input))[0]);
 
       for (int dim_idx = 0; dim_idx < dim_size; dim_idx++) {
         std::vector<BaseDataPtr> output;

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>STL containers &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/common/pybind11/docs/advanced/cast/stl.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -173,12 +178,12 @@ converted (i.e. copied) on every Python-&gt;C++ and C++-&gt;Python transition, w
 can have implications on the program semantics and performance. Please read the
 next sections for more details and alternative approaches that avoid this.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>Arbitrary nesting of any of these types is possible.</p>
+<p class="first admonition-title">注解</p>
+<p class="last">Arbitrary nesting of any of these types is possible.</p>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_stl.cpp</span></code> contains a complete
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_stl.cpp</span></code> contains a complete
 example that demonstrates how to pass STL data types in more detail.</p>
 </div>
 </div>
@@ -192,8 +197,8 @@ pybind11 provides an easy way to specialize the <code class="docutils literal no
 types:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// `boost::optional` as an example -- can be any `std::optional`-like container</span>
 <span class="k">namespace</span> <span class="n">pybind11</span> <span class="p">{</span> <span class="k">namespace</span> <span class="n">detail</span> <span class="p">{</span>
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
-    <span class="k">struct</span> <span class="nc">type_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">optional_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+    <span class="k">struct</span> <span class="n">type_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">optional_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
 <span class="p">}}</span>
 </pre></div>
 </div>
@@ -203,11 +208,11 @@ for custom variant types:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// `boost::variant` as an example -- can be any `std::variant`-like container</span>
 <span class="k">namespace</span> <span class="n">pybind11</span> <span class="p">{</span> <span class="k">namespace</span> <span class="n">detail</span> <span class="p">{</span>
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Ts</span><span class="o">&gt;</span>
-    <span class="k">struct</span> <span class="nc">type_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Ts</span><span class="p">...</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">variant_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Ts</span><span class="p">...</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
+    <span class="k">struct</span> <span class="n">type_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Ts</span><span class="p">...</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">variant_caster</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Ts</span><span class="p">...</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
 
     <span class="c1">// Specifies the function used to visit the variant -- `apply_visitor` instead of `visit`</span>
     <span class="k">template</span> <span class="o">&lt;&gt;</span>
-    <span class="k">struct</span> <span class="nc">visit_helper</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">variant</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">visit_helper</span><span class="o">&lt;</span><span class="n">boost</span><span class="o">::</span><span class="n">variant</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
         <span class="k">static</span> <span class="k">auto</span> <span class="n">call</span><span class="p">(</span><span class="n">Args</span> <span class="o">&amp;&amp;</span><span class="p">...</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">decltype</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">apply_visitor</span><span class="p">(</span><span class="n">args</span><span class="p">...))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="n">boost</span><span class="o">::</span><span class="n">apply_visitor</span><span class="p">(</span><span class="n">args</span><span class="p">...);</span>
@@ -220,8 +225,8 @@ for custom variant types:</p>
 a <code class="docutils literal notranslate"><span class="pre">name::visit()</span></code> function. For any other function name, the specialization must be
 included to tell pybind11 how to visit the variant.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>pybind11 only supports the modern implementation of <code class="docutils literal notranslate"><span class="pre">boost::variant</span></code>
+<p class="first admonition-title">注解</p>
+<p class="last">pybind11 only supports the modern implementation of <code class="docutils literal notranslate"><span class="pre">boost::variant</span></code>
 which makes use of variadic templates. This requires Boost 1.56 or newer.
 Additionally, on Windows, MSVC 2017 is required because <code class="docutils literal notranslate"><span class="pre">boost::variant</span></code>
 falls back to the old non-variadic implementation on MSVC 2015.</p>
@@ -307,8 +312,8 @@ in Python, and to define a set of available operations, e.g.:</p>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_opaque_types.cpp</span></code> contains a complete
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_opaque_types.cpp</span></code> contains a complete
 example that demonstrates how to create and expose opaque types using
 pybind11 in more detail.</p>
 </div>
@@ -356,8 +361,8 @@ module at the same time as any other pybind module that also attempts to bind
 the same container type (<code class="docutils literal notranslate"><span class="pre">std::vector&lt;int&gt;</span></code> in the above example).</p>
 <p>See <a class="reference internal" href="../classes.html#module-local"><span class="std std-ref">Module-local class bindings</span></a> for more details on module-local bindings.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>The file <code class="file docutils literal notranslate"><span class="pre">tests/test_stl_binders.cpp</span></code> shows how to use the
+<p class="first admonition-title">参见</p>
+<p class="last">The file <code class="file docutils literal notranslate"><span class="pre">tests/test_stl_binders.cpp</span></code> shows how to use the
 convenience STL container wrappers.</p>
 </div>
 </div>
@@ -368,28 +373,25 @@ convenience STL container wrappers.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -236,7 +236,7 @@ static void parseRTSPURL(char const *url, char *&username, char *&password,
 ourRTSPClient *openURL(UsageEnvironment &env, char const *progName,
                        char const *rtspURL, const bool tcp_flag,
                        const int frame_max_size, const std::string &file_name,
-                       const bool save_stream) {
+                       const bool save_stream, int channel) {
   char *username = NULL;
   char *password = NULL;
   char *urlWithoutPassword = NULL;
@@ -254,7 +254,7 @@ ourRTSPClient *openURL(UsageEnvironment &env, char const *progName,
     return nullptr;
   }
   rtspClient->SetOutputFileName(save_stream, file_name);
-  rtspClient->SetChannel(rtspClientCount);
+  rtspClient->SetChannel(channel);
   rtspClient->SetTCPFlag(tcp_flag);
   rtspClient->SetFrameMaxSize(frame_max_size);
 
@@ -281,6 +281,10 @@ ourRTSPClient *openURL(UsageEnvironment &env, char const *progName,
 
 void continueAfterDESCRIBE(RTSPClient *rtspClient, int resultCode,
                            char *resultString) {
+  ourRTSPClient * client = dynamic_cast<ourRTSPClient *>(rtspClient);
+  HOBOT_CHECK(client);
+  LOGD << "continueAfterDESCRIBE resultCode:" << resultCode
+       << "  channel:" << client->channel_;
   do {
     UsageEnvironment &env = rtspClient->envir();  // alias
     StreamClientState &scs =
@@ -315,6 +319,10 @@ void continueAfterDESCRIBE(RTSPClient *rtspClient, int resultCode,
     // "MediaSubsession::initiate()", and then sending a RTSP "SETUP" command,
     // on each one. (Each 'subsession' will have its own data source.)
     scs.iter = new MediaSubsessionIterator(*scs.session);
+    auto media = horizon::vision::MediaPipeManager::GetInstance()
+                     .GetPipeLine()[client->GetChannel()];
+    media->SetDecodeType(horizon::vision::RTSP_Payload_H264);
+    LOGW << "channel:" << client->GetChannel() << " recv describe success!!!";
     // ad
     setupNextSubsession(rtspClient);
     return;
@@ -368,7 +376,9 @@ void setupNextSubsession(RTSPClient *rtspClient) {
   StreamClientState &scs =
       (reinterpret_cast<ourRTSPClient *>(rtspClient))->scs;  // alias
   bool tcp_flag = (reinterpret_cast<ourRTSPClient *>(rtspClient))->GetTCPFlag();
-
+  LOGW << "channel:"
+       << (reinterpret_cast<ourRTSPClient *>(rtspClient))->GetChannel()
+       << " begin to setup to ipc";
   scs.subsession = scs.iter->next();
   if (scs.subsession != NULL) {
     if (!scs.subsession->initiate()) {
@@ -611,6 +621,10 @@ void continueAfterPLAY(RTSPClient *rtspClient, int resultCode,
   if (!success) {
     // An unrecoverable error occurred with this stream.
     shutdownStream(rtspClient);
+  } else {
+    LOGW << "channel:"
+         << (reinterpret_cast<ourRTSPClient *>(rtspClient))->GetChannel()
+         << " start playing success!";
   }
 }
 

@@ -70,12 +70,14 @@ int VdecModule::Init(uint32_t group_id, const PipeModuleInfo *module_info) {
   }
   ret = HB_VDEC_CreateChn(group_id_, &vdec_attr);
   if (ret != 0) {
-    LOGE << "HB_VDEC_CreateChn Failed. ret = " << ret;
+    LOGE << "HB_VDEC_CreateChn Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   ret = HB_VDEC_SetChnAttr(group_id_, &vdec_attr);
   if (ret != 0) {
-    LOGE << "HB_VDEC_SetChnAttr Failed. ret = " << ret;
+    LOGE << "HB_VDEC_SetChnAttr Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -85,7 +87,8 @@ int VdecModule::Start() {
   int ret = 0;
   ret = HB_VDEC_StartRecvStream(group_id_);
   if (ret != 0) {
-    LOGE << "HB_VDEC_StartRecvStream Failed. ret = " << ret;
+    LOGE << "HB_VDEC_StartRecvStream Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -96,13 +99,14 @@ int VdecModule::Input(void *data) {
   VIDEO_STREAM_S *pstStream = (VIDEO_STREAM_S *)data;
   ret = HB_VDEC_SendStream(group_id_, pstStream, timeout_);
   if (ret != 0) {
-    LOGE << "HB_VDEC_SendStream Failed. ret = " << ret;
+    LOGE << "HB_VDEC_SendStream Failed. group:" << group_id_
+         << " ret = " << ret;
   } else {
     in_fps_++;
     std::chrono::duration<double, std::milli> interval_ms =
             std::chrono::high_resolution_clock::now() - in_start_tp_;
     if (interval_ms.count() >= 1000) {
-      LOGI << "vdec in fps " << in_fps_;
+      LOGD << "vdec chn:" << group_id_ << " in fps " << in_fps_;
       in_fps_ = 0;
       in_start_tp_ = std::chrono::high_resolution_clock::now();
     }
@@ -116,15 +120,17 @@ int VdecModule::Output(void **data) {
   ret = HB_VDEC_GetFrame(group_id_, &buffers_[index], timeout_);
   if (ret != 0) {
     data = nullptr;
-    LOGE << "HB_VDEC_GetFrame Failed. ret = " << ret;
+    LOGE << "HB_VDEC_GetFrame Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   } else {
     out_fps_++;
     std::chrono::duration<double, std::milli> interval_ms =
             std::chrono::high_resolution_clock::now() - out_start_tp_;
     if (interval_ms.count() >= 1000) {
-      LOGI << "vdec out fps " << out_fps_;
-      out_fps_ = 0;
+      LOGD << "vdec chn:"
+           << group_id_ << " out fps " << out_fps_;
+          out_fps_ = 0;
       out_start_tp_ = std::chrono::high_resolution_clock::now();
     }
   }
@@ -143,7 +149,8 @@ int VdecModule::OutputBufferFree(void *data) {
   if (data == nullptr) return -1;
   ret = HB_VDEC_ReleaseFrame(group_id_, (VIDEO_FRAME_S *)data);
   if (ret != 0) {
-    LOGE << "HB_VDEC_ReleaseFrame Failed. ret = " << ret;
+    LOGE << "HB_VDEC_ReleaseFrame Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -154,12 +161,14 @@ int VdecModule::Stop() {
   LOGI << "Vdec Stop id: " << group_id_;
   ret = HB_VDEC_StopRecvStream(group_id_);
   if (ret != 0) {
-    LOGE << "HB_VDEC_StopRecvStream Failed. ret = " << ret;
+    LOGE << "HB_VDEC_StopRecvStream Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   ret = HB_VDEC_DestroyChn(group_id_);
   if (ret != 0) {
-    LOGE << "HB_VENC_DestroyChn Failed. ret = " << ret;
+    LOGE << "HB_VENC_DestroyChn Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   return ret;
@@ -169,7 +178,8 @@ int VdecModule::DeInit() {
   int ret = 0;
   ret = HB_VDEC_DestroyChn(group_id_);
   if (ret != 0) {
-    LOGE << "HB_VDEC_DestroyChn Failed. ret = " << ret;
+    LOGE << "HB_VDEC_DestroyChn Failed. group:" << group_id_
+         << " ret = " << ret;
     return ret;
   }
   return ret;

@@ -22,7 +22,6 @@
 #include "CNNMethod/util/CNNMethodConfig.h"
 #include "CNNMethod/util/CNNMethodData.h"
 #include "CNNMethod/util/ModelInfo.h"
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 #include "bpu_predict/bpu_predict_extension.h"
 #include "horizon/vision_type/vision_type.hpp"
@@ -49,6 +48,9 @@ class Predictor {
   virtual void UpdateParam(std::shared_ptr<CNNMethodConfig> config);
   virtual std::string GetVersion() const {
     return model_version_;
+  }
+  virtual bool IsNeedReorder() {
+    return false;
   }
 
  protected:

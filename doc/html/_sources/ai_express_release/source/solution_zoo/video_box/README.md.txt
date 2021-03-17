@@ -37,7 +37,10 @@ bash deploy.sh
 
 ```json
 {
-  "xstream_workflow_file": "./video_box/configs/body_detection.json",	// xstream配置文件 
+  "xstream_workflow_file": "./video_box/configs/body_detection.json",	// xstream配置文件
+  "xstream_workflow_file_pic": "./video_box/configs/recog_flow.json",   // xstream配置文件
+  "xstream_workflow_file_feature": "./video_box/configs/feature_flow.json",  // xstream配置文件
+  "enable_recog": false,                      // 是否使能人脸识别功能
   "enable_profile": 0,
   "profile_log_path": "",
   "enable_result_to_json": false,
@@ -50,7 +53,8 @@ bash deploy.sh
   "plot_fps": false,
   "rtsp_config_file": "./video_box/configs/rtsp.json",					// rtsp配置文件
   "display_config_file": "./video_box/configs/display.json",				// 显示配置文件
-  "drop_frame_config_file": "./video_box/configs/drop_frames.json"  // 配置是否丢帧以及丢帧策略
+  "drop_frame_config_file": "./video_box/configs/drop_frames.json",  // 配置是否丢帧以及丢帧策略
+  "run_smart": true                            // 是否运行智能分析功能，当不运行智能分析功能时，从网络rtsp过来的码流解码之后直接VO显示输出
 }
 ```
 
@@ -93,12 +97,14 @@ bash deploy.sh
   "vo": {
     "enable": true,											// 是否开启VO输出
     "display_mode": 0, 									// 显示模式，0: auto, 1: 9 pictures
-    "transition_support": 0             // 是否支持动态融合
+    "transition_support": 0,            // 是否支持动态融合
+    "draw_real_time_video": false,       // 渲染视频是否实时，不丢帧
+    "draw_smart": true                 // 是否渲染智能帧信息
   },
   "rtsp": {
     "stream_1080p": false,									// 是否开启1080P RTSP码流推送
     "stream_720p": false,									// 是否开启720P RTSP码流推送
-    "encode_smart_info": true             // 编码码流是否包括智能信息
+    "encode_smart_info": false             // 编码码流是否包括智能信息
   }
 }
 ```

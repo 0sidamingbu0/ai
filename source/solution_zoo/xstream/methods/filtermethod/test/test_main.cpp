@@ -190,12 +190,10 @@ TEST_F(FilterMethodTest, default_config) {
       "\n}\n";
   EXPECT_EQ(content, param_gt);
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  auto &frame_input = input;
   frame_input.resize(3);
   for (int i = 0; i < 3; ++i) {
     frame_input[i] =
@@ -211,12 +209,11 @@ TEST_F(FilterMethodTest, default_config) {
     landmark->datas_.push_back(
         std::static_pointer_cast<BaseData>(landmark_[i]));
   }
-  EXPECT_EQ(input[0].size(), uint(3));
+  EXPECT_EQ(input.size(), uint(3));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), uint(1));
-  EXPECT_EQ(output[0].size(), uint(4));
-  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+  EXPECT_EQ(output.size(), uint(4));
+  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), uint(2));
   int actual_size = 0;
   for (size_t i = 0; i < output_box->datas_.size(); i++) {
@@ -237,20 +234,17 @@ TEST_F(FilterMethodTest, basic) {
   int ret = method.Init(config_path_);
 
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
-  frame_input.resize(3);
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  input.resize(3);
   for (int i = 0; i < 3; ++i) {
-    frame_input[i] =
+    input[i] =
         std::static_pointer_cast<BaseData>(std::make_shared<BaseDataVector>());
   }
-  auto face_box = std::static_pointer_cast<BaseDataVector>(frame_input[0]);
-  auto pose = std::static_pointer_cast<BaseDataVector>(frame_input[1]);
-  auto landmark = std::static_pointer_cast<BaseDataVector>(frame_input[2]);
+  auto face_box = std::static_pointer_cast<BaseDataVector>(input[0]);
+  auto pose = std::static_pointer_cast<BaseDataVector>(input[1]);
+  auto landmark = std::static_pointer_cast<BaseDataVector>(input[2]);
   for (std::size_t i = 0; i < face_box_.size(); ++i) {
     face_box->datas_.push_back(
         std::static_pointer_cast<BaseData>(face_box_[i]));
@@ -258,12 +252,11 @@ TEST_F(FilterMethodTest, basic) {
     landmark->datas_.push_back(
         std::static_pointer_cast<BaseData>(landmark_[i]));
   }
-  EXPECT_EQ(input[0].size(), uint(3));
+  EXPECT_EQ(input.size(), uint(3));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), uint(1));
-  EXPECT_EQ(output[0].size(), uint(4));
-  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+  EXPECT_EQ(output.size(), uint(4));
+  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), uint(2));
   int actual_size = 0;
   for (size_t i = 0; i < output_box->datas_.size(); i++) {
@@ -283,24 +276,20 @@ TEST_F(FilterMethodTest, normal) {
   FilterMethod method;
   int ret = method.Init(config_path_);
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
-  frame_input.resize(6);
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
+  input.resize(6);
   for (int i = 0; i < 6; ++i) {
-    frame_input[i] =
+    input[i] =
         std::static_pointer_cast<BaseData>(std::make_shared<BaseDataVector>());
   }
-  auto face_box = std::static_pointer_cast<BaseDataVector>(frame_input[0]);
-  auto pose = std::static_pointer_cast<BaseDataVector>(frame_input[1]);
-  auto landmark = std::static_pointer_cast<BaseDataVector>(frame_input[2]);
-  auto quality = std::static_pointer_cast<BaseDataVector>(frame_input[3]);
-  auto brightness = std::static_pointer_cast<BaseDataVector>(frame_input[4]);
-  auto occluded_attribute =
-      std::static_pointer_cast<BaseDataVector>(frame_input[5]);
+  auto face_box = std::static_pointer_cast<BaseDataVector>(input[0]);
+  auto pose = std::static_pointer_cast<BaseDataVector>(input[1]);
+  auto landmark = std::static_pointer_cast<BaseDataVector>(input[2]);
+  auto quality = std::static_pointer_cast<BaseDataVector>(input[3]);
+  auto brightness = std::static_pointer_cast<BaseDataVector>(input[4]);
+  auto occluded_attribute = std::static_pointer_cast<BaseDataVector>(input[5]);
   for (std::size_t i = 0; i < face_box_.size(); ++i) {
     face_box->datas_.push_back(
         std::static_pointer_cast<BaseData>(face_box_[i]));
@@ -315,13 +304,11 @@ TEST_F(FilterMethodTest, normal) {
         std::static_pointer_cast<BaseData>(occluded_attribute_[i]));
     occluded_attribute->datas_[i]->type_ = "Attribute";
   }
-  EXPECT_EQ(input[0].size(), uint(6));
-
+  EXPECT_EQ(input.size(), uint(6));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), uint(1));
-  EXPECT_EQ(output[0].size(), uint(7));
-  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+  EXPECT_EQ(output.size(), uint(7));
+  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), uint(2));
   int actual_size = 0;
   for (size_t i = 0; i < output_box->datas_.size(); i++) {
@@ -374,28 +361,24 @@ TEST_F(FilterMethodTest, big_face_mode) {
   ret = method.UpdateParameter(method_param);
 
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  xstream::InputParamPtr param;
   input.resize(1);
-  param.resize(1);
-  auto &frame_input = input[0];
-  frame_input.resize(1);
   for (int i = 0; i < 1; ++i) {
-    frame_input[i] =
+    input[i] =
         std::static_pointer_cast<BaseData>(std::make_shared<BaseDataVector>());
   }
-  auto face_box = std::static_pointer_cast<BaseDataVector>(frame_input[0]);
+  auto face_box = std::static_pointer_cast<BaseDataVector>(input[0]);
 
   for (std::size_t i = 0; i < face_box_.size(); ++i) {
     face_box->datas_.push_back(
         std::static_pointer_cast<BaseData>(face_box_[i]));
   }
-  EXPECT_EQ(input[0].size(), uint(1));
+  EXPECT_EQ(input.size(), uint(1));
   output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), uint(1));
-  EXPECT_EQ(output[0].size(), uint(2));
-  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0][0]);
+  EXPECT_EQ(output.size(), uint(2));
+  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0]);
   EXPECT_EQ(output_err_code->datas_.size(), uint(2));
   int actual_size = 0;
   for (const auto &data : output_err_code->datas_) {
@@ -410,7 +393,7 @@ TEST_F(FilterMethodTest, big_face_mode) {
   err_code = std::static_pointer_cast<XStreamFilterDescription>(
       output_err_code->datas_[1]);
   EXPECT_EQ(err_code->value, 0);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), uint(2));
   actual_size = 0;
   for (const auto &data : output_box->datas_) {
@@ -426,19 +409,16 @@ TEST_F(FilterMethodTest, pass_through) {
   int ret = method.Init(config_path_);
 
   EXPECT_EQ(ret, 0);
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<std::vector<BaseDataPtr>> output;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  auto &frame_input = input[0];
-  frame_input.resize(3);
+  std::vector<BaseDataPtr> input;
+  std::vector<BaseDataPtr> output;
+  input.resize(3);
   for (int i = 0; i < 3; ++i) {
-    frame_input[i] =
+    input[i] =
         std::static_pointer_cast<BaseData>(std::make_shared<BaseDataVector>());
   }
-  auto face_box = std::static_pointer_cast<BaseDataVector>(frame_input[0]);
-  auto pose = std::static_pointer_cast<BaseDataVector>(frame_input[1]);
-  auto landmark = std::static_pointer_cast<BaseDataVector>(frame_input[2]);
+  auto face_box = std::static_pointer_cast<BaseDataVector>(input[0]);
+  auto pose = std::static_pointer_cast<BaseDataVector>(input[1]);
+  auto landmark = std::static_pointer_cast<BaseDataVector>(input[2]);
   for (std::size_t i = 0; i < face_box_.size(); ++i) {
     face_box->datas_.push_back(
         std::static_pointer_cast<BaseData>(face_box_[i]));
@@ -450,13 +430,11 @@ TEST_F(FilterMethodTest, pass_through) {
   xstream::InputParamPtr pass_through_param(
       new FilterMethodParam("filter_example", "pass-through"));
   pass_through_param->is_json_format_ = false;
-  param.emplace_back(pass_through_param);
-  EXPECT_EQ(input[0].size(), uint(3));
-  output = method.DoProcess(input, param);
-  EXPECT_EQ(output.size(), uint(1));
-  EXPECT_EQ(output[0].size(), uint(4));
-  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0][0]);
-  auto output_box = std::static_pointer_cast<BaseDataVector>(output[0][1]);
+  EXPECT_EQ(input.size(), uint(3));
+  output = method.DoProcess(input, pass_through_param);
+  EXPECT_EQ(output.size(), uint(4));
+  auto output_err_code = std::static_pointer_cast<BaseDataVector>(output[0]);
+  auto output_box = std::static_pointer_cast<BaseDataVector>(output[1]);
   EXPECT_EQ(output_box->datas_.size(), uint(2));
   int actual_size = 0;
   for (auto &data : output_box->datas_) {

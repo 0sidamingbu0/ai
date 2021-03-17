@@ -15,7 +15,6 @@
 #include "yuv_utils.h"    // NOLINT
 #include "FasterRCNNMethod/dump.h"
 
-#include "bpu_predict/bpu_io.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 #include "hobotxsdk/xstream_sdk.h"
@@ -76,14 +75,12 @@ TEST(FasterRCNNTest, FbPyramid) {
     std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
   xstream_img->value = pym_image_frame_ptr;
 
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  input[0].push_back(xstream_img);
-  std::vector<std::vector<BaseDataPtr>> xstream_output =
+  std::vector<BaseDataPtr> input;
+  xstream::InputParamPtr param;
+  input.push_back(xstream_img);
+  std::vector<BaseDataPtr> xstream_output =
     faster_rcnn_method.DoProcess(input, param);
-  ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-  auto faster_rcnn_out = xstream_output[0];
+  auto faster_rcnn_out = xstream_output;
   ASSERT_EQ(faster_rcnn_out.size(), static_cast<std::size_t>(6));
   auto face_rects =
     std::static_pointer_cast<BaseDataVector>(faster_rcnn_out[0]);
@@ -108,14 +105,12 @@ TEST(FasterRCNNTest, FbPyramid) {
       std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
   xstream_img->value = pym_image_frame_ptr;
 
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  input[0].push_back(xstream_img);
-  std::vector<std::vector<BaseDataPtr>> xstream_output =
-    faster_rcnn_method.DoProcess(input, param);
-  ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-  auto faster_rcnn_out = xstream_output[0];
+  std::vector<BaseDataPtr> input;
+  xstream::InputParamPtr param;
+  input.push_back(xstream_img);
+  std::vector<BaseDataPtr> xstream_output =
+      faster_rcnn_method.DoProcess(input, param);
+  auto faster_rcnn_out = xstream_output;
   ASSERT_EQ(faster_rcnn_out.size(), static_cast<std::size_t>(6));
   auto face_rects =
     std::static_pointer_cast<BaseDataVector>(faster_rcnn_out[0]);
@@ -153,14 +148,12 @@ TEST(FasterRCNNTest, Multitask) {
     std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
   xstream_img->value = cv_image_frame_ptr;
 
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  input[0].push_back(xstream_img);
-  std::vector<std::vector<BaseDataPtr>> xstream_output =
-    faster_rcnn_method.DoProcess(input, param);
-  ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-  auto faster_rcnn_out = xstream_output[0];
+  std::vector<BaseDataPtr> input;
+  xstream::InputParamPtr param;
+  input.push_back(xstream_img);
+  std::vector<BaseDataPtr> xstream_output =
+      faster_rcnn_method.DoProcess(input, param);
+  auto faster_rcnn_out = xstream_output;
   ASSERT_EQ(faster_rcnn_out.size(), static_cast<std::size_t>(6));
   auto face_rects =
     std::static_pointer_cast<BaseDataVector>(faster_rcnn_out[2]);
@@ -199,14 +192,12 @@ TEST(FasterRCNNTest, Vehicle) {
     std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
   xstream_img->value = cv_image_frame_ptr;
 
-  std::vector<std::vector<BaseDataPtr>> input;
-  std::vector<xstream::InputParamPtr> param;
-  input.resize(1);
-  input[0].push_back(xstream_img);
-  std::vector<std::vector<BaseDataPtr>> xstream_output =
-    faster_rcnn_method.DoProcess(input, param);
-  ASSERT_EQ(xstream_output.size(), static_cast<std::size_t>(1));
-  auto faster_rcnn_out = xstream_output[0];
+  std::vector<BaseDataPtr> input;
+  xstream::InputParamPtr param;
+  input.push_back(xstream_img);
+  std::vector<BaseDataPtr> xstream_output =
+      faster_rcnn_method.DoProcess(input, param);
+  auto faster_rcnn_out = xstream_output;
   ASSERT_EQ(faster_rcnn_out.size(), static_cast<std::size_t>(7));
   auto plate_color =
     std::static_pointer_cast<BaseDataVector>(faster_rcnn_out[5]);

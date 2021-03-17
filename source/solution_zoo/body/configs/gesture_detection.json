@@ -10,7 +10,7 @@
   ],
   "workflow": [
     {
-      "thread_count": 1,
+      "thread_count": 2,
       "method_type": "FasterRCNNMethod",
       "unique_name": "multi_task",
       "inputs": [
@@ -18,10 +18,13 @@
       ],
       "outputs": [
         "body_box",
+        "head_box",
         "face_box",
-        "hand_box"
+        "hand_box",
+        "kps",
+        "mask"
       ],
-      "method_config_file": "gesture_multitask.json"
+      "method_config_file": "multitask_with_hand_960x544.json"
     },
     {
       "thread_count": 1,

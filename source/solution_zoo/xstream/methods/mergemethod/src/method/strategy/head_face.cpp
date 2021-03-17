@@ -41,7 +41,7 @@ std::vector<BaseDataPtr> HeadFaceStrategy::ProcessFrame(
           content.c_str(), content.c_str() + content.size(), &out_jv, &error);
       auto reader = std::make_shared<JsonReader>(out_jv);
       ret = UpdateParameter(reader);
-      HOBOT_CHECK(ret == kHorizonVisionSuccess) << "param error";
+      HOBOT_CHECK(ret == 0) << "param error";
       RunSingleFrame(in, &out);
     }
   } else {
@@ -140,7 +140,7 @@ int HeadFaceStrategy::Init(std::shared_ptr<MergeParam> config) {
   box_offset_.x_offset_ratio = 0.0f;
   box_offset_.y_offset_ratio = 0.0f;
   merge_config_param_ = config;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 void HeadFaceStrategy::PassThroughSingleFrame(

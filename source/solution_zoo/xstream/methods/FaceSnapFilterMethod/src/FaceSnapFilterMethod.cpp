@@ -43,25 +43,17 @@ int FaceSnapFilterMethod::Init(const std::string &config_file_path) {
 }
 
 #define FILTER_LOG(index, item)                                      \
-  LOGI << "item index:" << index << " filtered by " << item;
+  LOGD << "item index:" << index << " filtered by " << item;
 
 #define FILTER_LOG_VALUE(index, item, value)                         \
-  LOGI << "item index:" << index                                     \
+  LOGD << "item index:" << index                                     \
   << " filtered by " << item << " with the value: " << value;
 
-std::vector<std::vector<BaseDataPtr>> FaceSnapFilterMethod::DoProcess(\
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> ret;
-  int batch_size = input.size();
-  HOBOT_CHECK(batch_size > 0);
-  ret.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; ++batch_idx) {
-    auto &batch_i = input[batch_idx];
-    auto &frame_output = ret[batch_idx];
-    auto &param_i = param[batch_idx];
-    ProcessOneBatch(batch_i, &frame_output, param_i);
-  }
+std::vector<BaseDataPtr> FaceSnapFilterMethod::DoProcess(\
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) {
+  std::vector<BaseDataPtr> ret;
+  ProcessOneBatch(input, &ret, param);
   return ret;
 }
 

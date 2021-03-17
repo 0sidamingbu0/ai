@@ -52,6 +52,7 @@ static void signal_handle(int param) {
 }
 
 int main(int argc, char **argv) {
+  HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_MAX_TASK_NUM, "128");
   auto mallopt_option = getenv("MALLOC");
   auto bpu_engine_option = getenv("BPU_ENGINE");
   if (mallopt_option && !strcmp(mallopt_option, "OFF")) {

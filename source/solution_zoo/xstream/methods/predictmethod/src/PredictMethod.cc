@@ -65,9 +65,9 @@ void PredictMethod::Finalize() {
   predictor_->Finalize();
 }
 
-std::vector<std::vector<BaseDataPtr>> PredictMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> PredictMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   return predictor_->Do(input, param);
 }
 

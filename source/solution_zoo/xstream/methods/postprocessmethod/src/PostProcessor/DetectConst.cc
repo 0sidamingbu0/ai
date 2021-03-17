@@ -16,8 +16,10 @@
 namespace xstream {
 
 std::map<std::string, DetectBranchOutType> str2detect_out_type =
-    {{"bbox", DetectBranchOutType::BBOX},
+    {
+     {"bbox", DetectBranchOutType::BBOX},
      {"apabbox", DetectBranchOutType::APABBOX},
+     {"fcosbbox", DetectBranchOutType::FCOSBBOX},
      {"orient_bbox", DetectBranchOutType::ORIENTBBOX},
      {"mask", DetectBranchOutType::MASK},
      {"corner", DetectBranchOutType::CORNER}};

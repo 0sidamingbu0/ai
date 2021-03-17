@@ -16,9 +16,9 @@
 typedef int (*example_fn)(int, char **);
 
 extern int GetModelInfo(int, char **);
-extern int DoPyramid(int, char **);
+// extern int DoPyramid(int, char **);
 extern int DoFbFeature(int argc, char **argv);
-extern int DoVerFeature(int argc, char **argv);
+// extern int DoVerFeature(int argc, char **argv);
 extern int DoFB(int argc, char **argv);
 extern int DoFbRectCnn(int argc, char **argv);
 extern int DoFbDetCNN(int argc, char **argv);
@@ -54,9 +54,9 @@ int PrintUsage() {
 
 static std::map<std::string, example_fn> examples = {
     {"get_model_info", GetModelInfo},
-    {"do_pyramid", DoPyramid},
+    // {"do_pyramid", DoPyramid},
     {"do_fb_feature", DoFbFeature},
-    {"ver_feature", DoVerFeature},
+    // {"ver_feature", DoVerFeature},
     {"do_fb_det_cnn", DoFbDetCNN},
     {"do_fb", DoFB},
     {"do_fb_rect_cnn", DoFbRectCnn},

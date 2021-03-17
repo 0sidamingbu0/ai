@@ -38,9 +38,8 @@ class DetectPostProcessor : public PostProcessor {
 
   virtual int Init(const std::string &cfg);
 
-  std::vector<std::vector<BaseDataPtr>> Do(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> Do(const std::vector<BaseDataPtr> &input,
+                              const xstream::InputParamPtr &param) override;
 
  private:
   void GetModelInfo();
@@ -55,7 +54,8 @@ class DetectPostProcessor : public PostProcessor {
   void CoordinateTransOutMsg(
       DetectOutMsg &det_result,
       int src_image_width, int src_image_height,
-      int model_input_width, int model_input_hight);
+      int model_input_width, int model_input_hight,
+      std::shared_ptr<std::vector<BPU_BBOX>> bboxes);
 
   void ParseDetectionBox(
       void* result, int branch_num, void* anchor,
@@ -63,7 +63,8 @@ class DetectPostProcessor : public PostProcessor {
   void ParseOrientBox(
     void* box_score, void* box_reg, void* box_ctr, void* box_orient,
     int branch_score, int branch_reg, int branch_ctr, int branch_orient,
-    std::vector<Oriented_BBox> &oriented_boxes);
+    std::vector<Oriented_BBox> &oriented_boxes,
+    bool has_rect = false, void* box_rect = nullptr, int branch_rect = -1);
   void ParseCorner(void* result, int branch,
                    std::vector<Point> &corners);
   void LocalIOU(std::vector<BBox> &candidates,
@@ -82,6 +83,9 @@ class DetectPostProcessor : public PostProcessor {
   void ParseAPADetectionBox(
       void* result, int branch_num,
       std::vector<BBox> &boxes);
+  void ParseFCOSDetectBox(const std::vector<BPU_TENSOR_S> &output_tensors,
+                          int branch_level,
+                          std::vector<BBox> &result_boxes);
   // 定点转浮点
   // IN: src_ptr【定点数据地址】, out_index【输出数据所在层数】
   // IN: channel【需要转换的通道数】
@@ -114,6 +118,23 @@ class DetectPostProcessor : public PostProcessor {
                            int out_index,
                            const std::vector<int> &valid_index,
                            const int &valid_num);
+  // 计算fmap上每个点到原图的坐标
+  // IN: height, width, feature_stride:输出大小以及到原图的scale
+  // OUT: location对应到原图的坐标, [height*width, 2]
+  void ComputeLocations(
+      const int &height,
+      const int &width,
+      const int &feature_stride,
+      cv::Mat &location);
+
+  void ConvertOutputFilterFromFile(int i,
+                                   void *p_int,
+                                   int branch_lever,
+                                   float threshold,
+                                   std::vector<int> &valid_index,
+                                   int &valid_num);
+  void ConvertOutputFromFile(int i, void *dest_ptr, int out_index,
+      std::vector<int> &valid_index, const int &valid_num);
 
  private:
   std::map<int, DetectBranchInfo> out_level2branch_info_;
@@ -125,11 +146,21 @@ class DetectPostProcessor : public PostProcessor {
   int pre_nms_top_n_;
   int post_nms_top_n_;
   float box_score_thresh_ = 0.55;
+  float box_rect_thresh_ = 0.5;
+  bool has_rect_ = false;  // 默认无rect属性
+
   float corner_score_threshold_ = 0.3;
   bool mask_confidence_ = true;    // 默认mask有置信度
 
   std::pair<char*, size_t> mem_seg_ = std::make_pair(nullptr, 0);
   std::mutex mem_mtx_;
+  void RunSingleFrameImpl(const BaseDataPtr frame_input,
+      std::vector<BaseDataPtr> &frame_output);
+
+  bool is_crop_ = false;
+  std::vector<int> feat_stride_ = {16};
+  void GlobalIOU(const BaseDataPtr &method_output,
+      std::vector<BBox> &total_boxes_result);
 };
 }  // namespace xstream
 

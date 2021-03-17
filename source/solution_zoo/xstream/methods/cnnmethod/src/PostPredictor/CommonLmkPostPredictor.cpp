@@ -48,12 +48,10 @@ int32_t CommonLmkPostPredictor::Init(std::shared_ptr<CNNMethodConfig> config) {
 }
 
 void CommonLmkPostPredictor::Do(CNNMethodRunData *run_data) {
-  int batch_size = run_data->input_dim_size.size();
-  run_data->output.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    int dim_size = run_data->input_dim_size[batch_idx];
-    auto &mxnet_output = run_data->mxnet_output[batch_idx];
-    std::vector<BaseDataPtr> &batch_output = run_data->output[batch_idx];
+  {
+    int dim_size = run_data->input_dim_size;
+    auto &mxnet_output = run_data->mxnet_output;
+    std::vector<BaseDataPtr> &batch_output = run_data->output;
     batch_output.resize(output_slot_size_);
     for (int i = 0; i < output_slot_size_; i++) {
       auto base_data_vector = std::make_shared<BaseDataVector>();
@@ -63,13 +61,16 @@ void CommonLmkPostPredictor::Do(CNNMethodRunData *run_data) {
       RUN_PROCESS_TIME_PROFILER(model_name_ + "_post");
       RUN_FPS_PROFILER(model_name_ + "_post");
       auto boxes = std::static_pointer_cast<BaseDataVector>(
-          (*(run_data->input))[batch_idx][0]);
+          (*(run_data->input))[0]);
+      auto norm_rois = run_data->norm_rois;
 
       for (int dim_idx = 0; dim_idx < dim_size; dim_idx++) {
         std::vector<BaseDataPtr> output;
         auto xstream_box = std::static_pointer_cast<XStreamData<
                            hobot::vision::BBox>>(boxes->datas_[dim_idx]);
-        HandleLmk(mxnet_output[dim_idx], xstream_box->value,
+        auto norm_box = std::static_pointer_cast<XStreamData<
+                hobot::vision::BBox>>(norm_rois[dim_idx]);
+        HandleLmk(mxnet_output[dim_idx], xstream_box->value, norm_box->value,
                       run_data->real_nhwc, run_data->all_shift, &output);
 
         for (int i = 0; i < output_slot_size_; i++) {
@@ -85,15 +86,16 @@ void CommonLmkPostPredictor::Do(CNNMethodRunData *run_data) {
 void CommonLmkPostPredictor::HandleLmk(
     const std::vector<std::vector<int8_t>> &mxnet_outs,
     const hobot::vision::BBox &box,
+    const hobot::vision::BBox &norm_box,
     const std::vector<std::vector<uint32_t>> &nhwc,
     const std::vector<std::vector<uint32_t>> &shifts,
     std::vector<BaseDataPtr> *output) {
   if (mxnet_outs.size()) {
     BaseDataPtr lmk;
     if ("common_lmk" == post_fn_) {
-      lmk = Lmk3Post(mxnet_outs, box, nhwc, shifts);
+      lmk = Lmk3Post(mxnet_outs, box, norm_box, nhwc, shifts);
     } else if ("common_lmk_106pts" == post_fn_) {
-      lmk = Lmk4Post(mxnet_outs, box);
+      lmk = Lmk4Post(mxnet_outs, box, norm_box);
     } else {
       lmk = std::make_shared<XStreamData<hobot::vision::Landmarks>>();
       lmk->state_ = DataState::INVALID;
@@ -186,7 +188,8 @@ void CommonLmkPostPredictor::Lmks4PostProcess(
 
 BaseDataPtr CommonLmkPostPredictor::Lmk4Post(
         const std::vector<std::vector<int8_t>> &mxnet_outs,
-        const hobot::vision::BBox &box) {
+        const hobot::vision::BBox &box,
+        const hobot::vision::BBox &norm_box) {
   auto vector_x = reinterpret_cast<const float *>(mxnet_outs[0].data());
   auto vector_y = reinterpret_cast<const float *>(mxnet_outs[1].data());
   auto landmarks = std::make_shared<XStreamData<hobot::vision::Landmarks>>();
@@ -194,7 +197,9 @@ BaseDataPtr CommonLmkPostPredictor::Lmk4Post(
   Lmks4PostProcess(vector_x, box, landmarks->value.values, 1);
   Lmks4PostProcess(vector_y, box, landmarks->value.values, 0);
 
-  if (NormMethod::BPU_MODEL_NORM_BY_LSIDE_RATIO == norm_type_) {
+  if (NormMethod::BPU_MODEL_NORM_BY_LSIDE_RATIO == norm_type_ &&
+          box.Width() != norm_box.Width() &&
+          box.Height() != norm_box.Height()) {
     const auto& c_x = box.CenterX();
     const auto& c_y = box.CenterY();
     for (auto& val : landmarks->value.values) {
@@ -208,6 +213,7 @@ BaseDataPtr CommonLmkPostPredictor::Lmk4Post(
 BaseDataPtr CommonLmkPostPredictor::Lmk3Post(
     const std::vector<std::vector<int8_t>> &mxnet_outs,
     const hobot::vision::BBox &box,
+    const hobot::vision::BBox &norm_box,
     const std::vector<std::vector<uint32_t>> &nhwc,
     const std::vector<std::vector<uint32_t>> &shifts) {
   auto heatmap_pred = reinterpret_cast<const int8_t *>(mxnet_outs[0].data());
@@ -301,6 +307,17 @@ BaseDataPtr CommonLmkPostPredictor::Lmk3Post(
     LOGD << "hand_lmk" << k << " x y score:( " << x << " " << y << " "
          << poi.score;
   }  // c
+
+  if (NormMethod::BPU_MODEL_NORM_BY_LSIDE_RATIO == norm_type_ &&
+          box.Width() != norm_box.Width() &&
+          box.Height() != norm_box.Height()) {
+    const auto& c_x = box.CenterX();
+    const auto& c_y = box.CenterY();
+    for (auto& val : landmarks->value.values) {
+      val.x = (val.x - c_x) * expand_scale_ + c_x;
+      val.y = (val.y - c_y) * expand_scale_ + c_y;
+    }
+  }
 
   return std::static_pointer_cast<BaseData>(landmarks);
 }

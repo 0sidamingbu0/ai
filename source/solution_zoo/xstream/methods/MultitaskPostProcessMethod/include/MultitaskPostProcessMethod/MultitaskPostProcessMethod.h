@@ -94,6 +94,8 @@ class MultitaskPostProcessMethod : public DnnPostProcessMethod {
   int face_pose_number_;
   float face_pv_thr_ = 0;
 
+  float bbox_threshold_;
+
   int core_id_ = 2;
 };
 

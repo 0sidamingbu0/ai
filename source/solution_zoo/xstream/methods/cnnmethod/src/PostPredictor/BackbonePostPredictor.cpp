@@ -49,14 +49,11 @@ void BackBonePostPredictor::HandleBackboneInfo(
 }
 
 void BackBonePostPredictor::Do(CNNMethodRunData *run_data) {
-  int batch_size = run_data->input_dim_size.size();
-  run_data->output.resize(batch_size);
-  HOBOT_CHECK(batch_size == 1);
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    int box_num = run_data->input_dim_size[batch_idx];
+  {
+    int box_num = run_data->input_dim_size;
     box_num = box_num > 1 ? 1 : box_num;
-    auto &mxnet_output = run_data->mxnet_output[batch_idx];
-    std::vector<BaseDataPtr> &batch_i_output = run_data->output[batch_idx];
+    auto &mxnet_output = run_data->mxnet_output;
+    std::vector<BaseDataPtr> &batch_i_output = run_data->output;
     batch_i_output.resize(output_slot_size_);
     for (int i = 0; i < output_slot_size_; i++) {
       auto base_data_vector = std::make_shared<BaseDataVector>();
@@ -64,14 +61,13 @@ void BackBonePostPredictor::Do(CNNMethodRunData *run_data) {
     }
     {
       auto boxes = std::static_pointer_cast<BaseDataVector>(
-          (*(run_data->input))[batch_idx][0]);
+          (*(run_data->input))[0]);
 
       for (int dim_idx = 0; dim_idx < box_num; dim_idx++) {
         HOBOT_CHECK(dim_idx == 0)
             << "box num: " << box_num << " dim idx: " << dim_idx;
         std::vector<BaseDataPtr> output;
-        HandleBackboneInfo(mxnet_output[dim_idx], &output, run_data,
-                           batch_idx * box_num + dim_idx);
+        HandleBackboneInfo(mxnet_output[dim_idx], &output, run_data, dim_idx);
         for (int i = 0; i < output_slot_size_; i++) {
           HOBOT_CHECK(output_slot_size_ == 1);
           auto output_slot_i_data =

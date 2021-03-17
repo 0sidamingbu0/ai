@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Upgrade guide &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/upgrade.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -173,7 +178,7 @@ modernization and other useful information.</p>
 The old macro emits a compile-time deprecation warning.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// old</span>
 <span class="n">PYBIND11_PLUGIN</span><span class="p">(</span><span class="n">example</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="n">m</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span> <span class="s">&quot;documentation string&quot;</span><span class="p">);</span>
+    <span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="n">m</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span> <span class="s">&quot;documentation string&quot;</span><span class="p">);</span>
 
     <span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="p">});</span>
 
@@ -198,13 +203,13 @@ compiler errors or warnings), or it can initialize the same object multiple time
 if not careful with the Python-side <code class="docutils literal notranslate"><span class="pre">__init__</span></code> calls. The new-style custom
 constructors prevent such mistakes. See <a class="reference internal" href="advanced/classes.html#custom-constructors"><span class="std std-ref">Custom constructors</span></a> for details.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// old -- deprecated (runtime warning shown only in debug mode)</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__init__&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="n">Foo</span> <span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="p">...)</span> <span class="p">{</span>
         <span class="k">new</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span> <span class="n">Foo</span><span class="p">(...);</span> <span class="c1">// uses placement-new</span>
     <span class="p">});</span>
 
 <span class="c1">// new</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="p">([](...)</span> <span class="p">{</span> <span class="c1">// Note: no `self` argument</span>
         <span class="k">return</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">(...);</span> <span class="c1">// return by raw pointer</span>
         <span class="c1">// or: return std::make_unique&lt;Foo&gt;(...); // return by holder</span>
@@ -215,7 +220,7 @@ constructors prevent such mistakes. See <a class="reference internal" href="adva
 <p>Mirroring the custom constructor changes, <code class="docutils literal notranslate"><span class="pre">py::pickle()</span></code> is now the preferred
 way to get and set object state. See <a class="reference internal" href="advanced/classes.html#pickling"><span class="std std-ref">Pickling support</span></a> for details.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// old -- deprecated (runtime warning shown only in debug mode)</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
     <span class="p">...</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__getstate__&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="k">const</span> <span class="n">Foo</span> <span class="o">&amp;</span><span class="n">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">py</span><span class="o">::</span><span class="n">make_tuple</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">value1</span><span class="p">(),</span> <span class="n">self</span><span class="p">.</span><span class="n">value2</span><span class="p">(),</span> <span class="p">...);</span>
@@ -225,7 +230,7 @@ way to get and set object state. See <a class="reference internal" href="advance
     <span class="p">});</span>
 
 <span class="c1">// new</span>
-<span class="n">py</span><span class="o">::</span><span class="k">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">::</span><span class="n">class</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Foo&quot;</span><span class="p">)</span>
     <span class="p">...</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">pickle</span><span class="p">(</span>
         <span class="p">[](</span><span class="k">const</span> <span class="n">Foo</span> <span class="o">&amp;</span><span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// __getstate__</span>
@@ -266,19 +271,19 @@ modules, not for embedding the interpreter).</p>
 <p>The namespace-scope hidden visibility is done automatically in pybind11’s
 headers and it’s generally transparent to users. It ensures that:</p>
 <ul class="simple">
-<li><p>Modules compiled with different pybind11 versions don’t clash with each other.</p></li>
-<li><p>Some new features, like <code class="docutils literal notranslate"><span class="pre">py::module_local</span></code> bindings, can work as intended.</p></li>
+<li>Modules compiled with different pybind11 versions don’t clash with each other.</li>
+<li>Some new features, like <code class="docutils literal notranslate"><span class="pre">py::module_local</span></code> bindings, can work as intended.</li>
 </ul>
 <p>The <code class="docutils literal notranslate"><span class="pre">-fvisibility=hidden</span></code> flag applies the same visibility to user bindings
 outside of the <code class="docutils literal notranslate"><span class="pre">pybind11</span></code> namespace. It’s now set automatic by pybind11’s
 CMake and Python build systems, but this needs to be done manually by users
 of other build systems. Adding this flag:</p>
 <ul class="simple">
-<li><p>Minimizes the chances of symbol conflicts between modules. E.g. if two
+<li>Minimizes the chances of symbol conflicts between modules. E.g. if two
 unrelated modules were statically linked to different (ABI-incompatible)
 versions of the same third-party library, a symbol clash would be likely
-(and would end with unpredictable results).</p></li>
-<li><p>Produces smaller binaries on Linux and macOS, as pointed out previously.</p></li>
+(and would end with unpredictable results).</li>
+<li>Produces smaller binaries on Linux and macOS, as pointed out previously.</li>
 </ul>
 <p>Within pybind11’s CMake build system, <code class="docutils literal notranslate"><span class="pre">pybind11_add_module</span></code> has always been
 setting the <code class="docutils literal notranslate"><span class="pre">-fvisibility=hidden</span></code> flag in release mode. From now on, it’s
@@ -321,9 +326,9 @@ accept foreign  <code class="docutils literal notranslate"><span class="pre">py:
 The locality only affects the C++-to-Python direction. If this is needed in
 multiple modules, you’ll need to either:</p>
 <ul class="simple">
-<li><p>Add a copy of the same STL binding to all of the modules which need it.</p></li>
-<li><p>Restore the global status of that single binding by marking it
-<code class="docutils literal notranslate"><span class="pre">py::module_local(false)</span></code>.</p></li>
+<li>Add a copy of the same STL binding to all of the modules which need it.</li>
+<li>Restore the global status of that single binding by marking it
+<code class="docutils literal notranslate"><span class="pre">py::module_local(false)</span></code>.</li>
 </ul>
 <p>The latter is an easy workaround, but in the long run it would be best to
 localize all common type bindings in order to avoid conflicts with
@@ -358,7 +363,7 @@ Attempting to bind a function with such arguments now results in a compile-time
 error instead of waiting to fail at run time.</p>
 <p><code class="docutils literal notranslate"><span class="pre">py::init&lt;...&gt;()</span></code> constructor definitions are also stricter and now prevent
 bindings which could cause unexpected behavior:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Example</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Example</span> <span class="p">{</span>
     <span class="n">Example</span><span class="p">(</span><span class="kt">int</span> <span class="o">&amp;</span><span class="p">);</span>
 <span class="p">};</span>
 
@@ -379,10 +384,10 @@ note that a constructor taking <code class="docutils literal notranslate"><span 
 <p>The minimums also apply to v2.0 but the check is now explicit and a compile-time
 error is raised if the compiler does not meet the requirements:</p>
 <ul class="simple">
-<li><p>GCC &gt;= 4.8</p></li>
-<li><p>clang &gt;= 3.3 (appleclang &gt;= 5.0)</p></li>
-<li><p>MSVC &gt;= 2015u3</p></li>
-<li><p>Intel C++ &gt;= 15.0</p></li>
+<li>GCC &gt;= 4.8</li>
+<li>clang &gt;= 3.3 (appleclang &gt;= 5.0)</li>
+<li>MSVC &gt;= 2015u3</li>
+<li>Intel C++ &gt;= 15.0</li>
 </ul>
 </div>
 <div class="section" id="the-py-metaclass-attribute-is-not-required-for-static-properties">
@@ -414,7 +419,7 @@ cases when a custom metaclass is needed to override pybind11’s default.</p>
 future-proof, to support PyPy via its <code class="docutils literal notranslate"><span class="pre">cpyext</span></code> mechanism (<a class="reference external" href="https://github.com/pybind/pybind11/pull/527">#527</a>), and to improve efficiency
 (<a class="reference external" href="https://github.com/pybind/pybind11/commit/86d825">rev. 86d825</a>).</p>
 <ol class="arabic">
-<li><p>Declarations of types that provide access via the buffer protocol must
+<li><p class="first">Declarations of types that provide access via the buffer protocol must
 now include the <code class="docutils literal notranslate"><span class="pre">py::buffer_protocol()</span></code> annotation as an argument to
 the <code class="docutils literal notranslate"><span class="pre">py::class_</span></code> constructor.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Matrix</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span> <span class="n">py</span><span class="o">::</span><span class="n">buffer_protocol</span><span class="p">())</span>
@@ -423,11 +428,12 @@ the <code class="docutils literal notranslate"><span class="pre">py::class_</spa
 </pre></div>
 </div>
 </li>
-<li><p>Classes which include static properties (e.g. <code class="docutils literal notranslate"><span class="pre">def_readwrite_static()</span></code>)
+<li><p class="first">Classes which include static properties (e.g. <code class="docutils literal notranslate"><span class="pre">def_readwrite_static()</span></code>)
 must now include the <code class="docutils literal notranslate"><span class="pre">py::metaclass()</span></code> attribute. Note: this requirement
 has since been removed in v2.1. If you’re upgrading from 1.x, it’s
-recommended to skip directly to v2.1 or newer.</p></li>
-<li><p>This version of pybind11 uses a redesigned mechanism for instantiating
+recommended to skip directly to v2.1 or newer.</p>
+</li>
+<li><p class="first">This version of pybind11 uses a redesigned mechanism for instantiating
 trampoline classes that are used to override virtual methods from within
 Python. This led to the following user-visible syntax change:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// old v1.x syntax</span>
@@ -485,37 +491,37 @@ but it’s completely redundant.</p>
 <div class="section" id="deprecation-of-a-few-py-object-apis">
 <h3>Deprecation of a few <code class="docutils literal notranslate"><span class="pre">py::object</span></code> APIs<a class="headerlink" href="#deprecation-of-a-few-py-object-apis" title="永久链接至标题">¶</a></h3>
 <p>All of the old-style calls emit deprecation warnings.</p>
-<table class="docutils align-default">
+<table border="1" class="docutils">
 <colgroup>
-<col style="width: 46%" />
-<col style="width: 54%" />
+<col width="46%" />
+<col width="54%" />
 </colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Old syntax</p></th>
-<th class="head"><p>New syntax</p></th>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Old syntax</th>
+<th class="head">New syntax</th>
 </tr>
 </thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">obj.call(args...)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">obj(args...)</span></code></p></td>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">obj.call(args...)</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">obj(args...)</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">obj.str()</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">py::str(obj)</span></code></p></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">obj.str()</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">py::str(obj)</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto</span> <span class="pre">l</span> <span class="pre">=</span> <span class="pre">py::list(obj);</span> <span class="pre">l.check()</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">py::isinstance&lt;py::list&gt;(obj)</span></code></p></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">auto</span> <span class="pre">l</span> <span class="pre">=</span> <span class="pre">py::list(obj);</span> <span class="pre">l.check()</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">py::isinstance&lt;py::list&gt;(obj)</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">py::object(ptr,</span> <span class="pre">true)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">py::reinterpret_borrow&lt;py::object&gt;(ptr)</span></code></p></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">py::object(ptr,</span> <span class="pre">true)</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">py::reinterpret_borrow&lt;py::object&gt;(ptr)</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">py::object(ptr,</span> <span class="pre">false)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">py::reinterpret_steal&lt;py::object&gt;(ptr)</span></code></p></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">py::object(ptr,</span> <span class="pre">false)</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">py::reinterpret_steal&lt;py::object&gt;(ptr)</span></code></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(obj.attr(&quot;foo&quot;))</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(py::hasattr(obj,</span> <span class="pre">&quot;foo&quot;))</span></code></p></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(obj.attr(&quot;foo&quot;))</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(py::hasattr(obj,</span> <span class="pre">&quot;foo&quot;))</span></code></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(obj[&quot;bar&quot;])</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(obj.contains(&quot;bar&quot;))</span></code></p></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(obj[&quot;bar&quot;])</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(obj.contains(&quot;bar&quot;))</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -528,28 +534,25 @@ but it’s completely redundant.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

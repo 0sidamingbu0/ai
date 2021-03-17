@@ -17,14 +17,14 @@
 #include <memory>
 #include "json/json.h"
 #include "PostProcessMethod/PostProcessor/PostProcessor.h"
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "hobotxsdk/xstream_data.h"
 #include "bpu_predict/bpu_predict.h"
 #include "bpu_predict/bpu_predict_extension.h"
 
 namespace xstream {
 
-class PostProcessMethod : public Method {
+class PostProcessMethod : public SimpleMethod {
  public:
   PostProcessMethod() {}
   virtual ~PostProcessMethod() {}
@@ -32,9 +32,9 @@ class PostProcessMethod : public Method {
   virtual int Init(const std::string &cfg_path);
   virtual void Finalize();
 
-  virtual std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param);
+  virtual std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param);
 
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;

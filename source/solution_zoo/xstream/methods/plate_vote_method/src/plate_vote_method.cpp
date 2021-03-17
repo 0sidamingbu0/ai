@@ -53,20 +53,14 @@ int PlateVoteMethod::Init(const std::string &config_file_path) {
   return 0;
 }
 
-std::vector<std::vector<BaseDataPtr>> PlateVoteMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> PlateVoteMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   LOGI << "Run PlateVoteMethod";
   LOGD << "input's size: " << input.size();
 
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-
-  for (size_t i = 0; i < input.size(); ++i) {
-    const auto &frame_input = input[i];
-    auto &frame_output = output[i];
-    RunSingleFrame(frame_input, frame_output);
-  }
+  std::vector<BaseDataPtr> output;
+  RunSingleFrame(input, output);
   return output;
 }
 
@@ -98,7 +92,7 @@ void PlateVoteMethod::RunSingleFrame(
   }
 
   if (vote_infos.size() == 0) {
-    LOGW << "no vote info to process";
+    LOGD << "no vote info to process";
     return;
   }
   HOBOT_CHECK(boxes.size() == vote_infos.size()) << "boxes.size(): "

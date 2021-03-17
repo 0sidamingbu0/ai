@@ -53,9 +53,9 @@ int PostProcessMethod::Init(const std::string &cfg_path) {
 void PostProcessMethod::Finalize() {
 }
 
-std::vector<std::vector<BaseDataPtr>> PostProcessMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> PostProcessMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   return post_processor_->Do(input, param);
 }
 

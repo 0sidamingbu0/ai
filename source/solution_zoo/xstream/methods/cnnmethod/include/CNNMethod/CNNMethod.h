@@ -17,14 +17,14 @@
 #include <mutex>
 #include <string>
 #include <vector>
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 
 namespace xstream {
 class PostPredictor;
 class Predictor;
 class CNNMethodConfig;
 
-class CNNMethod : public Method {
+class CNNMethod : public SimpleMethod {
  public:
   CNNMethod() {}
   virtual ~CNNMethod() {}
@@ -32,12 +32,13 @@ class CNNMethod : public Method {
   virtual int Init(const std::string &cfg_path);
   virtual void Finalize();
 
-  virtual std::vector<std::vector<BaseDataPtr> >
-  DoProcess(const std::vector<std::vector<BaseDataPtr> > &input,
-            const std::vector<xstream::InputParamPtr> &param);
+  virtual std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param);
   virtual int UpdateParameter(xstream::InputParamPtr ptr);
   virtual InputParamPtr GetParameter() const;
   virtual std::string GetVersion() const;
+  virtual MethodInfo GetMethodInfo();
 
  private:
   std::shared_ptr<Predictor> predictor_;

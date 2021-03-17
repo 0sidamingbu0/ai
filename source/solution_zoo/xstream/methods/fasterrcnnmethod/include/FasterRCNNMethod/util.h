@@ -55,21 +55,27 @@ inline float GetFloatByInt(int32_t value, uint32_t shift) {
 
 void CoordinateTransform(FasterRCNNOutMsg &det_result,
                          int src_image_width, int src_image_height,
-                         int model_input_width, int model_input_hight) {
+                         int model_input_width, int model_input_hight,
+                         BBox* body_box = nullptr) {
+  int x_drift = 0, y_drift = 0;
+  if (body_box) {
+    x_drift = body_box->x1;
+    y_drift = body_box->y1;
+  }
   for (auto &boxes : det_result.boxes) {
     for (auto &box : boxes.second) {
-      box.x1 = box.x1 * src_image_width / model_input_width;
-      box.y1 = box.y1 * src_image_height / model_input_hight;
-      box.x2 = box.x2 * src_image_width / model_input_width;
-      box.y2 = box.y2 * src_image_height / model_input_hight;
+      box.x1 = box.x1 * src_image_width / model_input_width + x_drift;
+      box.y1 = box.y1 * src_image_height / model_input_hight + y_drift;
+      box.x2 = box.x2 * src_image_width / model_input_width + x_drift;
+      box.y2 = box.y2 * src_image_height / model_input_hight + y_drift;
     }
   }
 
   for (auto &landmarks : det_result.landmarks) {
     for (auto &landmark : landmarks.second) {
       for (auto &point : landmark.values) {
-        point.x = point.x * src_image_width / model_input_width;
-        point.y = point.y * src_image_height / model_input_hight;
+        point.x = point.x * src_image_width / model_input_width + x_drift;
+        point.y = point.y * src_image_height / model_input_hight + y_drift;
       }
     }
   }

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Background &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../../../../" src="../../../../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../../../../_sources/models/aidi-openapi/auto_sq/auto_matrix_development_toolkit/python/pyramid_resizer/dependencies/share/doc/libjpeg-turbo/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -192,20 +197,20 @@ Refer to <a class="reference internal" href="LICENSE.html"><span class="doc">LIC
 <p>libjpeg-turbo includes two APIs that can be used to compress and decompress
 JPEG images:</p>
 <ul class="simple">
-<li><p><strong>TurboJPEG API</strong><br>
+<li><strong>TurboJPEG API</strong><br>
 This API provides an easy-to-use interface for compressing and decompressing
 JPEG images in memory.  It also provides some functionality that would not be
 straightforward to achieve using the underlying libjpeg API, such as
 generating planar YUV images and performing multiple simultaneous lossless
 transforms on an image.  The Java interface for libjpeg-turbo is written on
-top of the TurboJPEG API.</p></li>
-<li><p><strong>libjpeg API</strong><br>
+top of the TurboJPEG API.</li>
+<li><strong>libjpeg API</strong><br>
 This is the de facto industry-standard API for compressing and decompressing
 JPEG images.  It is more difficult to use than the TurboJPEG API but also
 more powerful.  The libjpeg API implementation in libjpeg-turbo is both
 API/ABI-compatible and mathematically compatible with libjpeg v6b.  It can
 also optionally be configured to be API/ABI-compatible with libjpeg v7 and v8
-(see below.)</p></li>
+(see below.)</li>
 </ul>
 <p>There is no significant performance advantage to either API when both are used
 to perform similar operations.</p>
@@ -283,24 +288,24 @@ which aren’t.</p>
 <div class="section" id="fully-supported">
 <h4>Fully supported<a class="headerlink" href="#fully-supported" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
-<li><p><strong>libjpeg: IDCT scaling extensions in decompressor</strong><br>
+<li><strong>libjpeg: IDCT scaling extensions in decompressor</strong><br>
 libjpeg-turbo supports IDCT scaling with scaling factors of 1/8, 1/4, 3/8,
 1/2, 5/8, 3/4, 7/8, 9/8, 5/4, 11/8, 3/2, 13/8, 7/4, 15/8, and 2/1 (only 1/4
-and 1/2 are SIMD-accelerated.)</p></li>
-<li><p><strong>libjpeg: Arithmetic coding</strong></p></li>
-<li><p><strong>libjpeg: In-memory source and destination managers</strong><br>
-See notes below.</p></li>
-<li><p><strong>cjpeg: Separate quality settings for luminance and chrominance</strong><br>
+and 1/2 are SIMD-accelerated.)</li>
+<li><strong>libjpeg: Arithmetic coding</strong></li>
+<li><strong>libjpeg: In-memory source and destination managers</strong><br>
+See notes below.</li>
+<li><strong>cjpeg: Separate quality settings for luminance and chrominance</strong><br>
 Note that the libpjeg v7+ API was extended to accommodate this feature only
 for convenience purposes.  It has always been possible to implement this
-feature with libjpeg v6b (see rdswitch.c for an example.)</p></li>
-<li><p><strong>cjpeg: 32-bit BMP support</strong></p></li>
-<li><p><strong>cjpeg: <code class="docutils literal notranslate"><span class="pre">-rgb</span></code> option</strong></p></li>
-<li><p><strong>jpegtran: Lossless cropping</strong></p></li>
-<li><p><strong>jpegtran: <code class="docutils literal notranslate"><span class="pre">-perfect</span></code> option</strong></p></li>
-<li><p><strong>jpegtran: Forcing width/height when performing lossless crop</strong></p></li>
-<li><p><strong>rdjpgcom: <code class="docutils literal notranslate"><span class="pre">-raw</span></code> option</strong></p></li>
-<li><p><strong>rdjpgcom: Locale awareness</strong></p></li>
+feature with libjpeg v6b (see rdswitch.c for an example.)</li>
+<li><strong>cjpeg: 32-bit BMP support</strong></li>
+<li><strong>cjpeg: <code class="docutils literal notranslate"><span class="pre">-rgb</span></code> option</strong></li>
+<li><strong>jpegtran: Lossless cropping</strong></li>
+<li><strong>jpegtran: <code class="docutils literal notranslate"><span class="pre">-perfect</span></code> option</strong></li>
+<li><strong>jpegtran: Forcing width/height when performing lossless crop</strong></li>
+<li><strong>rdjpgcom: <code class="docutils literal notranslate"><span class="pre">-raw</span></code> option</strong></li>
+<li><strong>rdjpgcom: Locale awareness</strong></li>
 </ul>
 </div>
 <div class="section" id="not-supported">
@@ -312,13 +317,13 @@ means of quality improvement.  The reader is invited to peruse the research at
 but it is the general belief of our project that these features have not
 demonstrated sufficient usefulness to justify inclusion in libjpeg-turbo.</p>
 <ul class="simple">
-<li><p><strong>libjpeg: DCT scaling in compressor</strong><br>
+<li><strong>libjpeg: DCT scaling in compressor</strong><br>
 <code class="docutils literal notranslate"><span class="pre">cinfo.scale_num</span></code> and <code class="docutils literal notranslate"><span class="pre">cinfo.scale_denom</span></code> are silently ignored.
 There is no technical reason why DCT scaling could not be supported when
 emulating the libjpeg v7+ API/ABI, but without the SmartScale extension (see
 below), only scaling factors of 1/2, 8/15, 4/7, 8/13, 2/3, 8/11, 4/5, and
-8/9 would be available, which is of limited usefulness.</p></li>
-<li><p><strong>libjpeg: SmartScale</strong><br>
+8/9 would be available, which is of limited usefulness.</li>
+<li><strong>libjpeg: SmartScale</strong><br>
 <code class="docutils literal notranslate"><span class="pre">cinfo.block_size</span></code> is silently ignored.
 SmartScale is an extension to the JPEG format that allows for DCT block
 sizes other than 8x8.  Providing support for this new format would be
@@ -329,15 +334,15 @@ there is no sense of whether or how it might change in the future.  It is
 our belief that SmartScale has not demonstrated sufficient usefulness as a
 lossless format nor as a means of quality enhancement, and thus our primary
 interest in providing this feature would be as a means of supporting
-additional DCT scaling factors.</p></li>
-<li><p><strong>libjpeg: Fancy downsampling in compressor</strong><br>
+additional DCT scaling factors.</li>
+<li><strong>libjpeg: Fancy downsampling in compressor</strong><br>
 <code class="docutils literal notranslate"><span class="pre">cinfo.do_fancy_downsampling</span></code> is silently ignored.
-This requires the DCT scaling feature, which is not supported.</p></li>
-<li><p><strong>jpegtran: Scaling</strong><br>
+This requires the DCT scaling feature, which is not supported.</li>
+<li><strong>jpegtran: Scaling</strong><br>
 This requires both the DCT scaling and SmartScale features, which are not
-supported.</p></li>
-<li><p><strong>Lossless RGB JPEG files</strong><br>
-This requires the SmartScale feature, which is not supported.</p></li>
+supported.</li>
+<li><strong>Lossless RGB JPEG files</strong><br>
+This requires the SmartScale feature, which is not supported.</li>
 </ul>
 </div>
 </div>
@@ -399,11 +404,11 @@ v6b.  The one exception to this is when using the floating point DCT/IDCT, in
 which case the outputs of libjpeg v6b and libjpeg-turbo can differ for the
 following reasons:</p>
 <ul class="simple">
-<li><p>The SSE/SSE2 floating point DCT implementation in libjpeg-turbo is ever so
+<li>The SSE/SSE2 floating point DCT implementation in libjpeg-turbo is ever so
 slightly more accurate than the implementation in libjpeg v6b, but not by
 any amount perceptible to human vision (generally in the range of 0.01 to
-0.08 dB gain in PNSR.)</p></li>
-<li><p>When not using the SIMD extensions, libjpeg-turbo uses the more accurate
+0.08 dB gain in PNSR.)</li>
+<li>When not using the SIMD extensions, libjpeg-turbo uses the more accurate
 (and slightly faster) floating point IDCT algorithm introduced in libjpeg
 v8a as opposed to the algorithm used in libjpeg v6b.  It should be noted,
 however, that this algorithm basically brings the accuracy of the floating
@@ -412,27 +417,27 @@ point DCT/IDCT algorithms are mainly a legacy feature, and they do not
 produce significantly more accuracy than the slow integer algorithms (to put
 numbers on this, the typical difference in PNSR between the two algorithms
 is less than 0.10 dB, whereas changing the quality level by 1 in the upper
-range of the quality scale is typically more like a 1.0 dB difference.)</p></li>
-<li><p>If the floating point algorithms in libjpeg-turbo are not implemented using
+range of the quality scale is typically more like a 1.0 dB difference.)</li>
+<li>If the floating point algorithms in libjpeg-turbo are not implemented using
 SIMD instructions on a particular platform, then the accuracy of the
-floating point DCT/IDCT can depend on the compiler settings.</p></li>
+floating point DCT/IDCT can depend on the compiler settings.</li>
 </ul>
 <p>While libjpeg-turbo does emulate the libjpeg v8 API/ABI, under the hood it is
 still using the same algorithms as libjpeg v6b, so there are several specific
 cases in which libjpeg-turbo cannot be expected to produce the same output as
 libjpeg v8:</p>
 <ul class="simple">
-<li><p>When decompressing using scaling factors of 1/2 and 1/4, because libjpeg v8
+<li>When decompressing using scaling factors of 1/2 and 1/4, because libjpeg v8
 implements those scaling algorithms differently than libjpeg v6b does, and
-libjpeg-turbo’s SIMD extensions are based on the libjpeg v6b behavior.</p></li>
-<li><p>When using chrominance subsampling, because libjpeg v8 implements this
+libjpeg-turbo’s SIMD extensions are based on the libjpeg v6b behavior.</li>
+<li>When using chrominance subsampling, because libjpeg v8 implements this
 with its DCT/IDCT scaling algorithms rather than with a separate
 downsampling/upsampling algorithm.  In our testing, the subsampled/upsampled
 output of libjpeg v8 is less accurate than that of libjpeg v6b for this
-reason.</p></li>
-<li><p>When decompressing using a scaling factor &gt; 1 and merged (AKA “non-fancy” or
+reason.</li>
+<li>When decompressing using a scaling factor &gt; 1 and merged (AKA “non-fancy” or
 “non-smooth”) chrominance upsampling, because libjpeg v8 does not support
-merged upsampling with scaling factors &gt; 1.</p></li>
+merged upsampling with scaling factors &gt; 1.</li>
 </ul>
 </div>
 <div class="section" id="performance-pitfalls">
@@ -464,28 +469,25 @@ whenever encoding images with a JPEG quality of 98 or higher.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

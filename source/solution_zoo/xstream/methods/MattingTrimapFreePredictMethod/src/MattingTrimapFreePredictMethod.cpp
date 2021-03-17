@@ -35,7 +35,7 @@ int MattingTrimapFreePredictMethod::Init(const std::string &cfg_path) {
 
 int MattingTrimapFreePredictMethod::PrepareInputData(
       const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
+      const InputParamPtr param,
       std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
       std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
   LOGD << "MattingTrimapFreePredictMethod PrepareInputData";
@@ -66,8 +66,8 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
     if (roi->state_ != xstream::DataState::VALID) {
       continue;
     }
-    float src_roi_height = roi->value.Height();
-    float src_roi_width = roi->value.Width();
+    float src_roi_height = roi->value.Height() + 1;
+    float src_roi_width = roi->value.Width() + 1;
     float expansion_height = src_roi_height * expansion_ratio_;
     float expansion_width = src_roi_width * expansion_ratio_;
 
@@ -118,11 +118,13 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
     float expand_roi_y1 = roi->value.y1 - expansion_height;
     float expand_roi_x2 = roi->value.x2 + expansion_width;
     float expand_roi_y2 = roi->value.y2 + expansion_height;
-    float expand_roi_height = src_roi_height + 2 * expansion_height;
-    float expand_roi_width = src_roi_width + 2 * expansion_width;
+    int expand_roi_height =
+        static_cast<int>(expand_roi_y2) - static_cast<int>(expand_roi_y1) + 1;
+    int expand_roi_width =
+        static_cast<int>(expand_roi_x2) - static_cast<int>(expand_roi_x1) + 1;
 
-    float resize_ratio = std::min(model_input_height_ / expand_roi_height,
-                                  model_input_width_ / expand_roi_width);
+    float resize_ratio = std::min(model_input_height_ * 1.0 / expand_roi_height,
+                                  model_input_width_ * 1.0 / expand_roi_width);
 
     float expand_resize_height = expand_roi_height * resize_ratio;
     float expand_resize_width = expand_roi_width * resize_ratio;
@@ -167,6 +169,7 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
 
       resize_height = expand_resize_height - need_padding_height;
       resize_width = expand_resize_width - need_padding_width;
+
       // need AlignEven
       if (resize_height & (static_cast<int>(0X01) != 0)) {
         resize_height++;
@@ -297,6 +300,7 @@ int MattingTrimapFreePredictMethod::PrepareInputData(
              model_input_height_ * model_input_width_ / 2);
       HobotXStreamFreeImage(padding_nv12_data);
       HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
+      HB_SYS_flushMemCache(&tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
     }
   }
   return 0;

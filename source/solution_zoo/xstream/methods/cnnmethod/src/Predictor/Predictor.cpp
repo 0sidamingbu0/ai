@@ -137,7 +137,7 @@ int Predictor::RunModelWithBBox(
       pym_image.img.ds_pym_layer,
       box, box_num, output_tensors_.data(),
       bpu_model_->output_num, &run_ctrl,
-      false, resizable_cnt, &task_handle);
+      true, resizable_cnt, &task_handle);
 #endif
 
 #ifdef X3
@@ -151,21 +151,16 @@ int Predictor::RunModelWithBBox(
       bpu_predict_pyramid.result_info.ds_pym_layer,
       box, box_num, output_tensors_.data(),
       bpu_model_->output_num, &run_ctrl,
-      false, resizable_cnt, &task_handle);
+      true, resizable_cnt, &task_handle);
 
 #endif
   if (ret != 0 && *resizable_cnt == 0) {
     LOGE << "no box pass resizer," << HB_BPU_getErrorName(ret);
-    HB_BPU_releaseTask(&task_handle);
     return -1;
   } else if (ret != 0) {
     LOGE << "RunModelWithBBox failed, " << HB_BPU_getErrorName(ret);
-    HB_BPU_releaseTask(&task_handle);
     return -1;
   }
-
-  HB_BPU_waitModelDone(&task_handle);
-  HB_BPU_releaseTask(&task_handle);
 
   LOGD << "resizeable box:" << *resizable_cnt;
   return 0;
@@ -583,7 +578,7 @@ int Predictor::RunModel(uint8_t *img_data,
                             output_tensors_.data(),
                             bpu_model_->output_num,
                             &run_ctrl_s,
-                            false,
+                            true,
                             &task_handle);
 
   if (ret != 0) {
@@ -592,15 +587,11 @@ int Predictor::RunModel(uint8_t *img_data,
     // ReleaseInputTensor();
     // release output
     // ReleaseOutputTensor();
-    // release task_handle
-    HB_BPU_releaseTask(&task_handle);
     return ret;
   }
-  HB_BPU_waitModelDone(&task_handle);
   // 4. release input
   // ReleaseInputTensor();
   // 5. release BPU_TASK_HANDLE
-  HB_BPU_releaseTask(&task_handle);
 
   return 0;
 }

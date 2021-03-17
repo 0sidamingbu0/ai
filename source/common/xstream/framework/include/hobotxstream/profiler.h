@@ -13,6 +13,7 @@
 #include <atomic>
 #include <chrono>
 #include <fstream>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -20,7 +21,6 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
-
 
 inline std::int64_t getMicroSecond() {
   auto time_now = std::chrono::system_clock::now();
@@ -30,8 +30,6 @@ inline std::int64_t getMicroSecond() {
 }
 
 struct FpsStatisticInfo {
-  /// the interval of Statistical result output
-  static int cycle_ms;
   /// FPS start time
   std::int64_t pre_time;
   /// current total count
@@ -48,25 +46,6 @@ struct TimeStatisticInfo {
 
   TimeStatisticInfo() { pre_time = 0; }
 };
-
-#if 0
-struct StatisticInfo {
-  /// the interval of Statistical result output
-  static int cycle_num;
-  /// the interval of Statistical result output
-  static int cycle_ms;
-
-  /// start time
-  int64_t pre_time;
-  /// current total count
-  std::atomic_int cnt;
-
-  StatisticInfo() {
-    cnt = 0;
-    // pre_time = getMicroSecond();
-  }
-};
-#endif
 
 class ProfilerScope;
 class Profiler;
@@ -96,13 +75,15 @@ class Profiler : public std::enable_shared_from_this<Profiler> {
   bool SetOutputFile(const std::string &file);
 
   void SetIntervalForTimeStat(int cycle_ms);
-  void SetIntervalForFPSStat(int cycle_ms);
 
   enum class Type { kFps, kProcessTime };
-  std::unique_ptr<ProfilerScope> CreateScope(const std::string &name,
-                                             const std::string &tag);
+  std::unique_ptr<ProfilerScope> CreateFpsScope(const std::string &name);
+  std::unique_ptr<ProfilerScope> CreateTimeScope(const std::string &name,
+                                                 int sequence_id);
 
   std::string name_ = "";
+  // thread_id to thread_name
+  static std::map<std::thread::id, std::string> thread_id2name_;
 
  private:
   Profiler(const Profiler &) = delete;
@@ -120,23 +101,30 @@ class Profiler : public std::enable_shared_from_this<Profiler> {
 
 class ProfilerScope {
  public:
-  ProfilerScope(ProfilerPtr profiler, const std::string &name,
-                const std::string tag)
-      : profiler_(profiler), name_(name), tag_(tag) {}
+  ProfilerScope(ProfilerPtr profiler, const std::string &name)
+      : profiler_(profiler), name_(name) {}
 
   virtual ~ProfilerScope() {}
+
+  enum ProFilerType {
+    FPS = 0,
+    TIME
+  };
 
  protected:
   ProfilerPtr profiler_;
   std::string name_;
-  std::string tag_;
+
+  ProFilerType tag_;
 };
 
 class ScopeTime : public ProfilerScope {
  public:
   ScopeTime(ProfilerPtr profiler, const std::string &name,
-            const std::string tag, std::shared_ptr<TimeStatisticInfo> stat)
-      : ProfilerScope(profiler, name, tag), stat_(stat) {
+            std::shared_ptr<TimeStatisticInfo> stat, int64_t sequence_id = -1)
+      : ProfilerScope(profiler, name), stat_(stat) {
+    tag_ = ProFilerType::TIME;
+    sequence_id_ = sequence_id;
     if (stat_->pre_time == 0) {
       stat_->pre_time = getMicroSecond();
     }
@@ -147,7 +135,19 @@ class ScopeTime : public ProfilerScope {
     auto diff = cur_time - stat_->pre_time;
     if (diff > stat_->cycle_ms) {
       std::stringstream ss;
-      ss << name_ << " | " << std::this_thread::get_id() << " | "
+      ss << name_ << " | ";
+      if (sequence_id_ < 0) {  // method内部
+        auto id = std::this_thread::get_id();
+        auto iter = Profiler::thread_id2name_.find(id);
+        if (iter != Profiler::thread_id2name_.end()) {
+          ss << Profiler::thread_id2name_[id];
+        } else {
+          ss << std::this_thread::get_id();
+        }
+      } else {
+        ss << "sequencec_id_" << sequence_id_;
+      }
+      ss << " | "
          << "X"
          << " | " << std::to_string(stat_->pre_time) << " | "
          << std::to_string(diff) << "\n";
@@ -157,14 +157,16 @@ class ScopeTime : public ProfilerScope {
   }
 
  private:
+  int64_t sequence_id_;
   std::shared_ptr<TimeStatisticInfo> stat_;
 };
 
 class ScopeFps : public ProfilerScope {
  public:
-  ScopeFps(ProfilerPtr profiler, const std::string &name, const std::string tag,
+  ScopeFps(ProfilerPtr profiler, const std::string &name,
            std::shared_ptr<FpsStatisticInfo> stat)
-      : ProfilerScope(profiler, name, tag), stat_(stat) {
+      : ProfilerScope(profiler, name), stat_(stat) {
+    tag_ = ProFilerType::FPS;
     if (stat_->cnt == 0) {
       stat_->pre_time = getMicroSecond();
     }
@@ -174,7 +176,7 @@ class ScopeFps : public ProfilerScope {
   ~ScopeFps() {
     auto cur_time = getMicroSecond();
     auto diff = cur_time - stat_->pre_time;
-    if (diff > stat_->cycle_ms) {
+    if (diff > 1000000) {
       std::stringstream ss;
       ss << name_ << " | " << std::this_thread::get_id() << " | "
          << "C"
@@ -197,20 +199,19 @@ class ScopeFps : public ProfilerScope {
 #define RUN_FPS_PROFILER_WITH_PROFILER(profiler, name) \
   std::unique_ptr<ProfilerScope> scope_fps;            \
   if (profiler->IsRunning()) {                         \
-    scope_fps = profiler->CreateScope(name, "FPS");    \
+    scope_fps = profiler->CreateFpsScope(name);    \
   }
 
-#define RUN_TIME_PROFILER_WITH_PROFILER(profiler, name) \
-  std::unique_ptr<ProfilerScope> scope_time;            \
-  if (profiler->IsRunning()) {                          \
-    scope_time = profiler->CreateScope(name, "TIME");   \
+#define RUN_TIME_PROFILER_WITH_PROFILER(profiler, name, sequence_id) \
+  std::unique_ptr<ProfilerScope> scope_time;                         \
+  if (profiler->IsRunning()) {                                       \
+    scope_time = profiler->CreateTimeScope(name, sequence_id);       \
   }
 
 #define RUN_FPS_PROFILER(name) \
   RUN_FPS_PROFILER_WITH_PROFILER(Profiler::Get(), name)
 
-// TODO(zhe.sun) SnapshotMethod
 #define RUN_PROCESS_TIME_PROFILER(name) \
-  RUN_TIME_PROFILER_WITH_PROFILER(Profiler::Get(), name)
+  RUN_TIME_PROFILER_WITH_PROFILER(Profiler::Get(), name, -1)
 
 #endif  // HOBOTXSTREAM_PROFILER_H_

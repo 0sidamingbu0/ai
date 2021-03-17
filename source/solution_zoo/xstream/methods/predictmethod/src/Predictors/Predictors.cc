@@ -57,12 +57,24 @@ int Predictors::Init(const std::string &cfg) {
   ret = HB_BPU_getHWCIndex(bpu_model_->inputs[0].data_type,
                            &bpu_model_->inputs[0].shape.layout,
                            &input_h_idx_, &input_w_idx_, &input_c_idx_);
+  LOGD << "input_h_idx_: " << input_h_idx_ << ", "
+       << "input_w_idx_: " << input_w_idx_ << ", "
+       << "input_c_idx_: " << input_c_idx_;
   HOBOT_CHECK(ret == 0) << "load model input index failed: "
       << HB_BPU_getErrorName(ret);
-
   // 5. 获取金字塔层数
   pyramid_layer_ = config_["pyramid_layer"].isInt() ?
                    config_["pyramid_layer"].asInt() : pyramid_layer_;
+
+  std::string resize_type;
+  resize_type = config_["resize_type"].isNull() ?
+      "cpu" : config_["resize_type"].asString();
+  if (resize_type == "cpu") {
+    resize_type_ = CROPPING_RESIZE_TYPE::CPU_RESIZE;
+  } else if (resize_type == "bpu") {
+    resize_type_ = CROPPING_RESIZE_TYPE::BPU_RESIZE;
+  }
+
   return 0;
 }
 
@@ -135,6 +147,78 @@ int Predictors::PrepareInputTensorFromPym(
           auto *raw = uv + i * stride;
           memcpy(raw, uv_data, image_width);
           uv_data += image_width;
+        }
+        HB_SYS_flushMemCache(&tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
+        break;
+      }
+      default:
+        HOBOT_CHECK(0) << "unsupport data_type: " << data_type;
+        break;
+    }
+  }
+  return 0;
+}
+
+int Predictors::PrepareInputTensorData(
+    uint8_t *img_data, int data_length,
+    int image_width, int image_height,
+    std::shared_ptr<std::vector<BPU_TENSOR_S>> input_tensors,
+    BPU_DATA_TYPE_E data_type) {
+  input_tensors->resize(bpu_model_->input_num);
+  for (int i = 0; i < bpu_model_->input_num; i++) {
+    BPU_TENSOR_S &tensor = input_tensors->at(i);
+    BPU_MODEL_NODE_S &node = bpu_model_->inputs[i];
+    tensor.data_type = data_type;
+    tensor.data_shape.layout = node.shape.layout;
+    tensor.aligned_shape.layout = node.shape.layout;
+
+    LOGD << "node data_type: " << node.data_type;
+
+    tensor.data_shape.ndim = 4;
+    tensor.data_shape.d[0] = 1;
+    tensor.data_shape.d[input_h_idx_] = image_height;
+    tensor.data_shape.d[input_w_idx_] = image_width;
+    tensor.data_shape.d[input_c_idx_] = node.shape.d[input_c_idx_];
+    tensor.aligned_shape.ndim = 4;
+    tensor.aligned_shape.d[0] = 1;
+    tensor.aligned_shape.d[input_h_idx_] = image_height;
+    tensor.aligned_shape.d[input_w_idx_] = (image_width + 15) & ~15;
+    tensor.aligned_shape.d[input_c_idx_] = node.aligned_shape.d[input_c_idx_];
+    LOGD << "input_tensor.data_shape.d[0]: " << tensor.data_shape.d[0] << ", "
+         << "input_tensor.data_shape.d[1]: " << tensor.data_shape.d[1] << ", "
+         << "input_tensor.data_shape.d[2]: " << tensor.data_shape.d[2] << ", "
+         << "input_tensor.data_shape.d[3]: " << tensor.data_shape.d[3] << ", "
+         << "input_tensor.data_shape.layout: " << tensor.data_shape.layout;
+
+    int image_channel = tensor.data_shape.d[input_c_idx_];
+    int stride = tensor.aligned_shape.d[input_w_idx_];
+    LOGD << "image_height: " << image_height << ", "
+         << "image_width: " << image_width << ", "
+         << "image channel: " << image_channel << ", "
+         << "stride: " << stride;
+
+    switch (data_type) {
+      case BPU_TYPE_IMG_NV12_SEPARATE: {
+        int y_length = image_height * stride;
+        int uv_length = image_height * stride / 2;
+        HB_SYS_bpuMemAlloc("in_data0", y_length, true, &tensor.data);
+        HB_SYS_bpuMemAlloc("in_data1", uv_length, true, &tensor.data_ext);
+        // Copy y data to data0
+        uint8_t *y = reinterpret_cast<uint8_t *>(tensor.data.virAddr);
+        for (int h = 0; h < image_height; ++h) {
+          auto *raw = y + h * stride;
+          memcpy(raw, img_data, image_width);
+          img_data += image_width;
+        }
+        HB_SYS_flushMemCache(&tensor.data, HB_SYS_MEM_CACHE_CLEAN);
+
+        // Copy uv data to data_ext
+        uint8_t *uv = reinterpret_cast<uint8_t *>(tensor.data_ext.virAddr);
+        int uv_height = image_height / 2;
+        for (int i = 0; i < uv_height; ++i) {
+          auto *raw = uv + i * stride;
+          memcpy(raw, img_data, image_width);
+          img_data += image_width;
         }
         HB_SYS_flushMemCache(&tensor.data_ext, HB_SYS_MEM_CACHE_CLEAN);
         break;

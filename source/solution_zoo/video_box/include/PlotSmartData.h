@@ -24,7 +24,8 @@ class PlotSmartData {
 
  public:
   int PlotData(const smart_vo_cfg_t vo_confg,
-               std::shared_ptr<VideoData> video_data, const bool face = true,
+               std::shared_ptr<VideoData> video_data,
+               HorizonVisionSmartFrame *smart_frame, const bool face = true,
                const bool head = true, const bool body = true,
                const bool kps = true, const bool veh = true);
 

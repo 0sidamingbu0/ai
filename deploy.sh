@@ -14,6 +14,7 @@ cp ${ALL_PROJECT_DIR}/build/lib/libvisualplugin*.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/build/lib/libwebsocketplugin*.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/build/lib/libaioplugin*.so ${RELEASE_DIR}/lib/ -rf
 cp ${ALL_PROJECT_DIR}/build/lib/libalsadevice*.so ${RELEASE_DIR}/lib/ -rf
+# cp ${ALL_PROJECT_DIR}/build/lib/libf37_plugin.so ${RELEASE_DIR}/lib/ -rf
 
 if [ ${ARCHITECTURE} == "x3" ]
 then
@@ -71,7 +72,7 @@ then
   cp ${ALL_PROJECT_DIR}/output/multisourceinput ${RELEASE_DIR}/ -rf 2>/dev/null
 fi
 cp ${ALL_PROJECT_DIR}/output/visualplugin/config/visualplugin*.json ${RELEASE_DIR}/configs/ -rf
-cp ${ALL_PROJECT_DIR}/source/common/xproto/plugins/websocketplugin/configs/websocketplugin_attribute.json ${RELEASE_DIR}/configs/ -rf
+cp ${ALL_PROJECT_DIR}/source/solution_zoo/common/xproto_plugins/websocketplugin/configs/websocketplugin_attribute.json ${RELEASE_DIR}/configs/ -rf
 ## models
 mkdir -p ${RELEASE_DIR}/models
 cp ${ALL_PROJECT_DIR}/models/${ARCHITECTURE}/*/so/*.hbm ${RELEASE_DIR}/models/ -rf

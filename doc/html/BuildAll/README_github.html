@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>AIExpress &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
-        <script src="../_static/translations.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script type="text/javascript" src="../_static/translations.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/BuildAll/README_github.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -165,17 +170,27 @@
 <p>AI Express，中文名称AI应用开发中间件，是地平线芯片“天工开物”（Horizon OpenExplorer™️ Platform）AI开发平台的一部分，旨在通过全面降低开发者门槛、提升开发速度、保证开发质量，赋能产业智慧升级。</p>
 </div>
 <div class="section" id="id2">
-<h1>快速上手<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
+<h1>地平线相关组件版本的匹配关系<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
+<p>| AIExpress版本        |    浮点转换工具链版本  |  系统镜像版本         |
+| —————- | ————— | ————— |
+| 2.10.0           |  1.1.21  |       20210207         |
+| 2.9.0            |  1.1.20  |       20210104         |
+| 2.8.0            |  1.1.19  |       20201124         |
+| 2.7.0            |  1.1.18  |       20201023         |
+| 2.6.0            |  1.1.16  |       20200922         |</p>
+</div>
+<div class="section" id="id3">
+<h1>快速上手<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h1>
 <p><strong>硬件环境</strong></p>
 <ul class="simple">
-<li><p>1台安装64位Linux操作系统的开发机(或者虚拟机)。操作系统Debian(推荐)/Ubuntu、CentOS，主要用于编译AIExpress代码和日常开发。</p></li>
-<li><p>1台安装Windows操作系统的开发机，用于烧录系统镜像，串口调试。</p></li>
-<li><p>1个1080p的USB摄像头</p></li>
-<li><p>x3sdb开发板(旭日3 AI 开发板)</p></li>
+<li>1台安装64位Linux操作系统的开发机(或者虚拟机)。操作系统Debian(推荐)/Ubuntu、CentOS，主要用于编译AIExpress代码和日常开发。</li>
+<li>1台安装Windows操作系统的开发机，用于烧录系统镜像，串口调试。</li>
+<li>1个1080p的USB摄像头</li>
+<li>x3sdb开发板(旭日3 AI 开发板)</li>
 </ul>
 <p><strong>1. Linux开发机环境准备</strong></p>
 <ul class="simple">
-<li><p>安装<code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">3.15+</span></code>以上版本,安装方式：</p></li>
+<li>安装<code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">3.15+</span></code>以上版本,安装方式：</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2.tar.gz <span class="se">\</span>
     <span class="o">&amp;&amp;</span> tar -zxvf cmake-3.17.2.tar.gz <span class="se">\</span>
@@ -188,14 +203,14 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>下载并安装芯片交叉编译工具<a class="reference external" href="https://pan.horizon.ai/index.php/s/d3QH3MfzHT5fwd2">gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu</a>，推荐安装路径:<code class="docutils literal notranslate"><span class="pre">/opt/</span></code>，如果交叉编译工具链有更新，需同步修改根目录下的CMakeLists.txt。
-具体修改内容：</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set(CMAKE_C_COMPILER</span> <span class="pre">/opt/${工具链目录名}/bin/aarch64-linux-gnu-gcc)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set(CMAKE_CXX_COMPILER</span> <span class="pre">/opt/${工具链目录名}/bin/aarch64-linux-gnu-g++)</span></code></p></li>
+<li>下载并安装芯片交叉编译工具<a class="reference external" href="https://pan.horizon.ai/index.php/s/d3QH3MfzHT5fwd2">gcc-linaro-6.5.0-2018.12-x86_64_aarch64-linux-gnu</a>，推荐安装路径:<code class="docutils literal notranslate"><span class="pre">/opt/</span></code>，如果交叉编译工具链有更新，需同步修改根目录下的CMakeLists.txt。
+具体修改内容：</li>
+<li><code class="docutils literal notranslate"><span class="pre">set(CMAKE_C_COMPILER</span> <span class="pre">/opt/${工具链目录名}/bin/aarch64-linux-gnu-gcc)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">set(CMAKE_CXX_COMPILER</span> <span class="pre">/opt/${工具链目录名}/bin/aarch64-linux-gnu-g++)</span></code></li>
 </ul>
 <p><strong>2. Windows开发机环境准备</strong></p>
 <ul class="simple">
-<li><p>下载开发板系统镜像及烧录工具：<a class="reference external" href="https://pan.horizon.ai/index.php/s/ymA5ELRCb7JyTka">开发板系统镜像及烧录工具下载地址</a></p></li>
+<li>下载开发板系统镜像及烧录工具：<a class="reference external" href="https://pan.horizon.ai/index.php/s/nck4sexB77A9sJ2">开发板系统镜像及烧录工具下载地址</a></li>
 </ul>
 <p>各文件说明：</p>
 <table border="1" class="docutils">
@@ -233,12 +248,15 @@
 </tbody>
 </table><p><strong>3. 开发板环境准备</strong></p>
 <ul>
-<li><p>开发板接线</p>
+<li><p class="first">开发板接线</p>
 <p>将USB Camera插入板子的USB口中，将网线一端插入开发板网口，另一端插入Windows开发机，电源插入开发板电源接口。</p>
 </li>
-<li><p>目前x3sdb开发板适配了1080p的USB摄像头(<a class="reference external" href="https://developer.horizon.ai/forum/id=5f312d96cc8b1e59c8581511">具体型号参考</a>)</p></li>
-<li><p>开发板系统镜像烧录教程: <a class="reference external" href="https://developer.horizon.ai/forum/id=5f1aa3ee86cc4d95e81a73e6">X3开发板板镜像烧录体验</a></p></li>
-<li><p>开发板使用注意事项：https://developer.horizon.ai/forum/id=5efac2d32ab6590143c16024</p></li>
+<li><p class="first">目前x3sdb开发板适配了1080p的USB摄像头(<a class="reference external" href="https://developer.horizon.ai/forum/id=5f312d96cc8b1e59c8581511">具体型号参考</a>)</p>
+</li>
+<li><p class="first">开发板系统镜像烧录教程: <a class="reference external" href="https://developer.horizon.ai/forum/id=5f1aa3ee86cc4d95e81a73e6">X3开发板板镜像烧录体验</a></p>
+</li>
+<li><p class="first">开发板使用注意事项：https://developer.horizon.ai/forum/id=5efac2d32ab6590143c16024</p>
+</li>
 </ul>
 <p>更多参考：<a class="reference external" href="https://developer.horizon.ai/forum/id=5f156192740aaf0beb3119dd">x3sdb开发板资料包（最新汇总版）</a></p>
 <p><strong>4. 编译</strong></p>
@@ -300,12 +318,12 @@
 <p>各个测试程序的介绍及运行方法请参考相应源码目录下的README.md。</p>
 <p>除了上述人体结构化解决方案外，AIExpress会陆续支持人脸抓拍、人脸识别、行为分析、视频多路盒子、手势识别、体感游戏等、智慧电视等参考示例，有任何建议或问题，欢迎提Issue。</p>
 </div>
-<div class="section" id="id3">
-<h1>AIExpress用户手册<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id4">
+<h1>AIExpress用户手册<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h1>
 <p>参考doc目录下导航页<code class="docutils literal notranslate"><span class="pre">doc/html/index.html</span></code>。</p>
 </div>
-<div class="section" id="id4">
-<h1><a class="reference external" href="https://developer.horizon.ai/">地平线开发者社区相关资源</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id5">
+<h1><a class="reference external" href="https://developer.horizon.ai/">地平线开发者社区相关资源</a><a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h1>
 <div class="section" id="video-box">
 <h2>多路盒子video_box<a class="headerlink" href="#video-box" title="永久链接至标题">¶</a></h2>
 <p>多路盒子的solution，具体描述可以参考：https://developer.horizon.ai/forum/id=5f2be161740aaf0beb31234a</p>
@@ -314,12 +332,12 @@
 <h2>行为分析behavior<a class="headerlink" href="#behavior" title="永久链接至标题">¶</a></h2>
 <p>行为分析solution，提供了摔倒检测的功能，功能搭建可以参考：https://developer.horizon.ai/forum/id=5efab48f38ca27ba028078dd</p>
 </div>
-<div class="section" id="id5">
-<h2>体感游戏<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id6">
+<h2>体感游戏<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
 <p>可以参考：https://developer.horizon.ai/forum/id=5ef05b412ab6590143c15d6a</p>
 </div>
-<div class="section" id="id6">
-<h2>手势识别<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id7">
+<h2>手势识别<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
 <p>可以参考：https://developer.horizon.ai/forum/id=5f30f806bec8bc98cb72b288</p>
 </div>
 <div class="section" id="uvc-device">
@@ -333,28 +351,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

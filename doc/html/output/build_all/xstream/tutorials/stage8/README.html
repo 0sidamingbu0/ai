@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>子workflow &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/output/build_all/xstream/tutorials/stage8/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -166,11 +171,11 @@
 <p>json中，{} 表示一个对象。</p>
 <p>配置文件中，有如下几种对象：</p>
 <ul class="simple">
-<li><p>Root</p></li>
-<li><p>Template</p></li>
-<li><p>TemplateRef</p></li>
-<li><p>Workflow</p></li>
-<li><p>Node</p></li>
+<li>Root</li>
+<li>Template</li>
+<li>TemplateRef</li>
+<li>Workflow</li>
+<li>Node</li>
 </ul>
 <div class="section" id="root">
 <h3>Root对象<a class="headerlink" href="#root" title="永久链接至标题">¶</a></h3>
@@ -187,9 +192,9 @@
 </div>
 <p>Root对象包含了：</p>
 <ul class="simple">
-<li><p>version：协议的版本；</p></li>
-<li><p>templates：定义的模板；</p></li>
-<li><p>workflows：定义的工作流；</p></li>
+<li>version：协议的版本；</li>
+<li>templates：定义的模板；</li>
+<li>workflows：定义的工作流；</li>
 </ul>
 </div>
 <div class="section" id="template">
@@ -207,10 +212,10 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>template_name 字段表示该模板名称，是模板的唯一性标志；</p></li>
-<li><p>parameters 字段指明了这个template所需要的参数；</p></li>
-<li><p>template 字段是这个模板的内容；在模板内容中，XXX格式的字符串，表示parameters字段中所定义的参数，在实例化该模板时直接替换为参数内容。需要注意，在定义的模板中，若存在输入输出name参数，只需在global inputs、outputs用${name}格式表示，模板其他位置直接用参数name表示。
-本示例中，定义一个名为”test_filter.tpl”的Template对象：</p></li>
+<li>template_name 字段表示该模板名称，是模板的唯一性标志；</li>
+<li>parameters 字段指明了这个template所需要的参数；</li>
+<li>template 字段是这个模板的内容；在模板内容中，XXX格式的字符串，表示parameters字段中所定义的参数，在实例化该模板时直接替换为参数内容。需要注意，在定义的模板中，若存在输入输出name参数，只需在global inputs、outputs用${name}格式表示，模板其他位置直接用参数name表示。
+本示例中，定义一个名为”test_filter.tpl”的Template对象：</li>
 </ul>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s">&quot;type&quot;</span><span class="o">:</span> <span class="s">&quot;template&quot;</span><span class="p">,</span>
@@ -275,8 +280,8 @@
 </div>
 <p>其中：</p>
 <ul class="simple">
-<li><p>template_name 指明了需要引用的template的名字；</p></li>
-<li><p>parameters 指定了这个template 所需要的参数的值。</p></li>
+<li>template_name 指明了需要引用的template的名字；</li>
+<li>parameters 指定了这个template 所需要的参数的值。</li>
 </ul>
 <p>如下所示，定义了一个TemplateRef对象：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -418,14 +423,14 @@
 <h1>sub_workflow示例<a class="headerlink" href="#sub-workflow" title="永久链接至标题">¶</a></h1>
 <p>示例中定义一个名为”test_filter.tpl”的Template对象，对于输入的box对象，其功能如下：</p>
 <ul class="simple">
-<li><p>node1过滤面积过小的box</p></li>
-<li><p>node2过滤靠近图像边缘的box</p></li>
+<li>node1过滤面积过小的box</li>
+<li>node2过滤靠近图像边缘的box</li>
 </ul>
 <p>sub_workflow_config.json定义总的workflow，输入为一个image，最终输出为检测的box形状结果：</p>
 <ul class="simple">
-<li><p>node1：对于输入的image，输出检测的box列表，test示例中每次运行输出随机的box列表</p></li>
-<li><p>node2：包含test_filter.tpl的子workflow，此处最终会展开两个method</p></li>
-<li><p>node3: 判断box是否为正方形，输入0或1的结果</p></li>
+<li>node1：对于输入的image，输出检测的box列表，test示例中每次运行输出随机的box列表</li>
+<li>node2：包含test_filter.tpl的子workflow，此处最终会展开两个method</li>
+<li>node3: 判断box是否为正方形，输入0或1的结果</li>
 </ul>
 <div class="section" id="id3">
 <h2>编译<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
@@ -464,28 +469,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

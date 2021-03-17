@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>XStream hobotsdk engine &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
-        <script src="../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../_sources/xsdk/common/xstream/framework/doc/hobotsdk_engine.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -175,27 +180,27 @@
 <p><img alt="XStream hobotsdk engine架构" src="../../../../../_images/xstream-hobotsdk-engine-arch1.png" /></p>
 <p><strong>Node</strong>: 作为管理多个同类型method实例的抽象，由３种基础module组成：</p>
 <ul class="simple">
-<li><p><em>Dispatch Module</em>: 负责将连续帧消息分发到多个method实例上，默认策略为Round-Robin;同时可根据工作流的控制参数，将输入消息直接passthrough到Node的输出模块(CollectModule).</p></li>
-<li><p><em>Method Module</em>: load method方法，负责method实例的执行．</p></li>
-<li><p><em>Collect Module</em>: Node的输出模块，将Method Module的处理结果或者来自Dispatch Module　passthrough的结果分发到下一级Node.</p></li>
+<li><em>Dispatch Module</em>: 负责将连续帧消息分发到多个method实例上，默认策略为Round-Robin;同时可根据工作流的控制参数，将输入消息直接passthrough到Node的输出模块(CollectModule).</li>
+<li><em>Method Module</em>: load method方法，负责method实例的执行．</li>
+<li><em>Collect Module</em>: Node的输出模块，将Method Module的处理结果或者来自Dispatch Module　passthrough的结果分发到下一级Node.</li>
 </ul>
 <div class="section" id="nodemodulenode">
 <h2>Node内部module及Node之间的连接方式<a class="headerlink" href="#nodemodulenode" title="永久链接至标题">¶</a></h2>
 <p><img alt="Node内部模块及Node之间的连接方式" src="../../../../../_images/xstream-hobotsdk-node-link1.png" /></p>
 <ul class="simple">
-<li><p>Node内部Dispatch Module与method Module之间是默认的连接方式即AllExp(多个输入之间是and的关系，且每个输入每次取一个);</p></li>
-<li><p>Dispatch Module到Collect Module的passthrough的连接，以及method module到Collect Module的连接之间是OR表达式;</p></li>
-<li><p>Node之间的连接是通过上一级输出<em>CollectModule</em>连接到下一级的输入<em>DispatchModule</em>, 默认也是AllExp.</p></li>
-<li><p>另外XStream框架的计算是帧内计算，因此输入DispatchModule还要调用hobtsdk接口SyncOnFeed()保证每次来自多个slot的输入消息都属于于同一帧．</p></li>
+<li>Node内部Dispatch Module与method Module之间是默认的连接方式即AllExp(多个输入之间是and的关系，且每个输入每次取一个);</li>
+<li>Dispatch Module到Collect Module的passthrough的连接，以及method module到Collect Module的连接之间是OR表达式;</li>
+<li>Node之间的连接是通过上一级输出<em>CollectModule</em>连接到下一级的输入<em>DispatchModule</em>, 默认也是AllExp.</li>
+<li>另外XStream框架的计算是帧内计算，因此输入DispatchModule还要调用hobtsdk接口SyncOnFeed()保证每次来自多个slot的输入消息都属于于同一帧．</li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h2>线程模型<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>调用hobotsdk engine的<code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">ExecuteOnThread(Module</span> <span class="pre">*module,</span> <span class="pre">int</span> <span class="pre">forward_index,</span> <span class="pre">int</span> <span class="pre">thread_index)</span></code>可设置每个module运行线程id,从而轻松实现线程分配、共享等。</p>
 <ul class="simple">
-<li><p>用户可指定的线程id合法范围为[0, 999];</p></li>
-<li><p>DispatchModule与CollectModule并不负责业务计算，主要完成消息的分发和收集，实际负载比较小，为避免产生过多线程，同时又兼顾效率，分别为所有DispatchModule与CollectModule预留了一个线程，线程id分别为1000与1001, 因此基于hobotsdk的引擎实际分配的线程数为<code class="docutils literal notranslate"><span class="pre">用户指定线程数+2</span></code>.</p></li>
-<li><p>从1100开始的idx，作为内部自动生成的idx，若用户没有明确指定thread配置参数，或者使用thread_count只指定线程数量，没指定具体的thread idx(使用thread_list配置参数可指定具体的thread idx)，内部会从1100自动生产id.</p></li>
+<li>用户可指定的线程id合法范围为[0, 999];</li>
+<li>DispatchModule与CollectModule并不负责业务计算，主要完成消息的分发和收集，实际负载比较小，为避免产生过多线程，同时又兼顾效率，分别为所有DispatchModule与CollectModule预留了一个线程，线程id分别为1000与1001, 因此基于hobotsdk的引擎实际分配的线程数为<code class="docutils literal notranslate"><span class="pre">用户指定线程数+2</span></code>.</li>
+<li>从1100开始的idx，作为内部自动生成的idx，若用户没有明确指定thread配置参数，或者使用thread_count只指定线程数量，没指定具体的thread idx(使用thread_list配置参数可指定具体的thread idx)，内部会从1100自动生产id.</li>
 </ul>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// user thread idx: 0~999;</span>
 <span class="c1">// reserved thread_idx: 1000 ~1099</span>
@@ -220,8 +225,8 @@
 <p>当method设置了is_need_reorder属性时，输入的消息帧需要按顺序处理;
 hobotsdk提供了接口<code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">SyncOnFeed(Module</span> <span class="pre">*module,</span> <span class="pre">int</span> <span class="pre">forward_index,</span> <span class="pre">std::vector&lt;int&gt;</span> <span class="pre">input_slots,</span> <span class="pre">bool</span> <span class="pre">order_by_feedid)</span></code>可以设置某个module的输入消息按Feedid的大小顺序处理，但是hobotsdk的排序是基于当前对应Module看到id，比如如果Module当前只看到Feedid为｛10, 12, 13}输入消息，即使feedid=11的消息还没到来，该module一样会顺序处理｛10, 12,13}，并不会等待11出现，但是xstream要求的顺序中间是不能有空缺的，也就是如果feedid=11尚未出现，{12, 13}的处理需要先等待11到来．为了实现XStream的顺序要求，每个Node的输入Dispatch Module都添加了一个input param的link，这个link有两个作用：</p>
 <ol class="simple">
-<li><p>传递每帧的输入参数，数据结构为InputParamPtr,该消息可以更新method的参数，也可以控制workflow数据流的处理，比如在线disable某个node等．</p></li>
-<li><p>参数消息在Input的时候Feed,能保证每个node第一时间看到所有需要处理的frame，从而保证XStream顺序处理连续、中间不能有空缺的帧序要求．</p></li>
+<li>传递每帧的输入参数，数据结构为InputParamPtr,该消息可以更新method的参数，也可以控制workflow数据流的处理，比如在线disable某个node等．</li>
+<li>参数消息在Input的时候Feed,能保证每个node第一时间看到所有需要处理的frame，从而保证XStream顺序处理连续、中间不能有空缺的帧序要求．</li>
 </ol>
 <p><img alt="Node input　link" src="../../../../../_images/xstream-node-input-link1.png" /></p>
 </div>
@@ -236,28 +241,25 @@ hobotsdk提供了接口<code class="docutils literal notranslate"><span class="p
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

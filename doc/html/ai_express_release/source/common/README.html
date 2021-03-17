@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>common &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/ai_express_release/source/common/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -166,15 +171,14 @@
 <div class="section" id="id2">
 <h3>环境准备<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p>安装 bazel (当前建议安装1.2.0)</p>
-<ul>
-<li><p>Ubuntu
-参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-ubuntu.html">Installing Bazel on Ubuntu</a></p></li>
-<li><p>Fedora and CentOS
-参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-redhat.html">Installing Bazel on Fedora and CentOS</a></p></li>
-<li><p>macOS
+<li>安装 bazel (当前建议安装1.2.0)<ul>
+<li>Ubuntu
+参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-ubuntu.html">Installing Bazel on Ubuntu</a></li>
+<li>Fedora and CentOS
+参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-redhat.html">Installing Bazel on Fedora and CentOS</a></li>
+<li>macOS
 参见 <a class="reference external" href="https://docs.bazel.build/versions/master/install-os-x.html">Installing Bazel on macOS</a>
-<strong>更多Bazel帮助信息请参见<a class="reference external" href="https://docs.bazel.build/">Bazel Documentation</a></strong></p></li>
+<strong>更多Bazel帮助信息请参见<a class="reference external" href="https://docs.bazel.build/">Bazel Documentation</a></strong></li>
 </ul>
 </li>
 </ul>
@@ -182,17 +186,17 @@
 <div class="section" id="project">
 <h3>编译project<a class="headerlink" href="#project" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p>编译 xstream-framework
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//xstream/framework:xstream-framework</span></code></p></li>
+<li>编译 xstream-framework
+<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//xstream/framework:xstream-framework</span></code></li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h3>单元测试：<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p>all 单元测试
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//:test_all</span> <span class="pre">--define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span> <span class="pre">--spawn_strategy=local</span></code></p></li>
-<li><p>xstream-framework 单元测试，其他测试项请查看xstream/framework/BUILD rule:tests_individual
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">-s</span> <span class="pre">//xstream/framework:test_all</span> <span class="pre">--define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span> <span class="pre">--spawn_strategy=local</span></code></p></li>
+<li>all 单元测试
+<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//:test_all</span> <span class="pre">--define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span> <span class="pre">--spawn_strategy=local</span></code></li>
+<li>xstream-framework 单元测试，其他测试项请查看xstream/framework/BUILD rule:tests_individual
+<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">-s</span> <span class="pre">//xstream/framework:test_all</span> <span class="pre">--define</span> <span class="pre">cpu=x86_64</span> <span class="pre">--define</span> <span class="pre">os=linux</span> <span class="pre">--spawn_strategy=local</span></code></li>
 </ul>
 </div>
 <div class="section" id="id4">
@@ -204,9 +208,9 @@
 <h2>Methods<a class="headerlink" href="#methods" title="永久链接至标题">¶</a></h2>
 <p>在 <code class="docutils literal notranslate"><span class="pre">//xstream/methods</span></code>，目前methods中的method 有：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">//xstream/methods/cnnmethod</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">//xstream/methods/fasterrcnnmethod</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">//xstream/methods/motmethod</span></code></p></li>
+<li><code class="docutils literal notranslate"><span class="pre">//xstream/methods/cnnmethod</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">//xstream/methods/fasterrcnnmethod</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">//xstream/methods/motmethod</span></code></li>
 </ul>
 </div>
 <div class="section" id="id5">
@@ -214,11 +218,11 @@
 <div class="section" id="id6">
 <h3>环境准备<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p>安装Sphinx
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-U</span> <span class="pre">Sphinx</span></code></p></li>
-<li><p>安装recommonmark
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">recommonmark</span></code></p></li>
-<li><p>Sphinx更多信息请参看<a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">sphinx-doc</a></p></li>
+<li>安装Sphinx
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-U</span> <span class="pre">Sphinx</span></code></li>
+<li>安装recommonmark
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">recommonmark</span></code></li>
+<li>Sphinx更多信息请参看<a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">sphinx-doc</a></li>
 </ul>
 </div>
 <div class="section" id="xstream">
@@ -235,28 +239,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>关闭指定的method实例 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../_sources/xsdk/common/xstream/framework/tutorials/stage9/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -233,9 +238,9 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 <p><img alt="workflow" src="../../../../../../_images/workflow2.png" /></p>
 <p>定义XStream框架BBox数据结构</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// method/bbox.h</span>
-<span class="k">struct</span> <span class="nc">BBox</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
-  <span class="kr">inline</span> <span class="nf">BBox</span><span class="p">()</span> <span class="p">{}</span>
-  <span class="kr">inline</span> <span class="nf">BBox</span><span class="p">(</span><span class="kt">float</span> <span class="n">x1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x2_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y2_</span><span class="p">,</span>
+<span class="k">struct</span> <span class="nl">BBox</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+  <span class="kr">inline</span> <span class="n">BBox</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="kr">inline</span> <span class="n">BBox</span><span class="p">(</span><span class="kt">float</span> <span class="n">x1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y1_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x2_</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y2_</span><span class="p">,</span>
               <span class="kt">float</span> <span class="n">score_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">x1</span> <span class="o">=</span> <span class="n">x1_</span><span class="p">;</span>
     <span class="n">y1</span> <span class="o">=</span> <span class="n">y1_</span><span class="p">;</span>
@@ -638,10 +643,10 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
 <h2>总结<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <p>以上就是控制计算节点运行的4种方式: Invalid, UsePreDefine, PassThrough, BestEffortPassThrough。</p>
 <ul class="simple">
-<li><p>Invalid模式: 直接关闭节点，输出数据是INVALID。依赖其输出数据的后置网络，都会受到影响，无法输出期待的输出数据。</p></li>
-<li><p>UsePreDefine模式: 直接定义关闭节点的输出数据。在模拟, 测试等场景可以使用</p></li>
-<li><p>PassThrough模式: 直接将关闭节点的输入数据当做输出数据,前提是输入数据和输出相等。</p></li>
-<li><p>BestEffortPassThrough: 如果关闭节点的输入数据多于或等于输出数据，则按顺序将输入数据拷贝到输出数据；如果输入数据少于输出数据, 则多余的输出为Invalid的BaseData。BestEffortPassThrough模式是PassThrough模式的高阶版本。</p></li>
+<li>Invalid模式: 直接关闭节点，输出数据是INVALID。依赖其输出数据的后置网络，都会受到影响，无法输出期待的输出数据。</li>
+<li>UsePreDefine模式: 直接定义关闭节点的输出数据。在模拟, 测试等场景可以使用</li>
+<li>PassThrough模式: 直接将关闭节点的输入数据当做输出数据,前提是输入数据和输出相等。</li>
+<li>BestEffortPassThrough: 如果关闭节点的输入数据多于或等于输出数据，则按顺序将输入数据拷贝到输出数据；如果输入数据少于输出数据, 则多余的输出为Invalid的BaseData。BestEffortPassThrough模式是PassThrough模式的高阶版本。</li>
 </ul>
 </div>
 </div>
@@ -651,28 +656,25 @@ XSTREAM提供了一下几种关闭Method的方式：</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

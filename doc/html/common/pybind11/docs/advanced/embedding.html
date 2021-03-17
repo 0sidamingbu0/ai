@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Embedding the interpreter &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-        <script src="../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/common/pybind11/docs/advanced/embedding.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -179,7 +184,7 @@ information, see <span class="xref std std-doc">/compiling</span>.</p>
 </pre></div>
 </div>
 <p>The essential structure of the <code class="docutils literal notranslate"><span class="pre">main.cpp</span></code> file looks like this:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;pybind11/embed.h&gt;</span><span class="c1"> // everything needed for embedding</span><span class="cp"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;pybind11/embed.h&gt; // everything needed for embedding</span><span class="cp"></span>
 <span class="k">namespace</span> <span class="n">py</span> <span class="o">=</span> <span class="n">pybind11</span><span class="p">;</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -252,7 +257,7 @@ the context of an executable with an embedded interpreter:</p>
 <div class="section" id="importing-modules">
 <h2>Importing modules<a class="headerlink" href="#importing-modules" title="永久链接至标题">¶</a></h2>
 <p>Python modules can be imported using <cite>module::import()</cite>:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="n">sys</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;sys&quot;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="n">sys</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;sys&quot;</span><span class="p">);</span>
 <span class="n">py</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;path&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
@@ -264,7 +269,7 @@ embedding the interpreter. This makes it easy to import local Python files:</p>
     <span class="k">return</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span>
 </pre></div>
 </div>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="n">calc</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;calc&quot;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="n">calc</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;calc&quot;</span><span class="p">);</span>
 <span class="n">py</span><span class="o">::</span><span class="n">object</span> <span class="n">result</span> <span class="o">=</span> <span class="n">calc</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">)(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="n">cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="n">assert</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
@@ -293,7 +298,7 @@ like any other module.</p>
 <span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">py</span><span class="o">::</span><span class="n">scoped_interpreter</span> <span class="n">guard</span><span class="p">{};</span>
 
-    <span class="k">auto</span> <span class="n">fast_calc</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;fast_calc&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">fast_calc</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;fast_calc&quot;</span><span class="p">);</span>
     <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">fast_calc</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">)(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">).</span><span class="n">cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="n">assert</span><span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
 <span class="p">}</span>
@@ -322,7 +327,7 @@ naturally:</p>
 <span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">py</span><span class="o">::</span><span class="n">scoped_interpreter</span> <span class="n">guard</span><span class="p">{};</span>
 
-    <span class="k">auto</span> <span class="n">py_module</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;py_module&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">py_module</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">module</span><span class="o">::</span><span class="n">import</span><span class="p">(</span><span class="s">&quot;py_module&quot;</span><span class="p">);</span>
 
     <span class="k">auto</span> <span class="n">locals</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="p">(</span><span class="s">&quot;fmt&quot;</span><span class="n">_a</span><span class="o">=</span><span class="s">&quot;{} + {} = {}&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">py_module</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;__dict__&quot;</span><span class="p">));</span>
     <span class="n">assert</span><span class="p">(</span><span class="n">locals</span><span class="p">[</span><span class="s">&quot;a&quot;</span><span class="p">].</span><span class="n">cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">);</span>
@@ -352,11 +357,11 @@ there are several caveats with regard to interpreter restarting. In short, not
 all memory may be freed, either due to Python reference cycles or user-created
 global data. All the details can be found in the CPython documentation.</p>
 <div class="admonition warning">
-<p class="admonition-title">警告</p>
+<p class="first admonition-title">警告</p>
 <p>Creating two concurrent <cite>scoped_interpreter</cite> guards is a fatal error. So is
 calling <cite>initialize_interpreter</cite> for a second time after the interpreter
 has already been initialized.</p>
-<p>Do not use the raw CPython API functions <code class="docutils literal notranslate"><span class="pre">Py_Initialize</span></code> and
+<p class="last">Do not use the raw CPython API functions <code class="docutils literal notranslate"><span class="pre">Py_Initialize</span></code> and
 <code class="docutils literal notranslate"><span class="pre">Py_Finalize</span></code> as these do not properly handle the lifetime of
 pybind11’s internal data.</p>
 </div>
@@ -372,14 +377,14 @@ documentation for all the details regarding this feature.</p>
 <p>We’ll just mention a couple of caveats the sub-interpreters support in pybind11:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>Sub-interpreters will not receive independent copies of embedded modules.
+<li>Sub-interpreters will not receive independent copies of embedded modules.
 Instead, these are shared and modifications in one interpreter may be
-reflected in another.</p></li>
-<li><p>Managing multiple threads, multiple interpreters and the GIL can be
+reflected in another.</li>
+<li>Managing multiple threads, multiple interpreters and the GIL can be
 challenging and there are several caveats here, even within the pure
 CPython API (please refer to the Python docs for details). As for
 pybind11, keep in mind that <cite>gil_scoped_release</cite> and <cite>gil_scoped_acquire</cite>
-do not take sub-interpreters into account.</p></li>
+do not take sub-interpreters into account.</li>
 </ol>
 </div></blockquote>
 </div>
@@ -390,28 +395,25 @@ do not take sub-interpreters into account.</p></li>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

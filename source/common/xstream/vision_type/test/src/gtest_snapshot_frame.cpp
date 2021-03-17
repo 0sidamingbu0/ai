@@ -13,20 +13,20 @@
 TEST(HorizonVisionSnapShotFrame, alloc_free) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   int target_num = 20;
   ret = HorizonVisionAllocSnapshotTarget(&snapshot_frame->targets, target_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   snapshot_frame->targets_num = target_num;
 
   for (auto i = 0; i < target_num; ++i) {
     auto &target = snapshot_frame->targets[i];
     int snap_num = 3;
     ret = HorizonVisionAllocSnapshot(&target.snapshots, snap_num);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     target.snapshots_num = snap_num;
     ret = HorizonVisionAllocSmartData(&target.snapshots[0].smart_data, 1);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     target.snapshots[0].smart_data->track_id = 99;
   }
 
@@ -36,47 +36,47 @@ TEST(HorizonVisionSnapShotFrame, alloc_free) {
   EXPECT_EQ(snapshot_frame->targets[0].snapshots[0].smart_data->track_id,
             size_t(99));
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSnapShotFrame, copy) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   snapshot_frame->targets_num = 2;
   ret = HorizonVisionAllocSnapshotTarget(
       &snapshot_frame->targets, snapshot_frame->targets_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   for (uint32_t i = 0; i < snapshot_frame->targets_num; i++) {
     auto &target = snapshot_frame->targets[i];
     target.snapshots_num = 3;
     ret = HorizonVisionAllocSnapshot(&target.snapshots, target.snapshots_num);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     for (uint32_t ii = 0; ii < target.snapshots_num; ii++) {
       auto &snapshot = target.snapshots[ii];
       snapshot.time_stamp = 26000000 + 2000 * ii;
       ret = HorizonVisionAllocSmartData(&snapshot.smart_data, 1);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
 
       auto &smart_data = *snapshot.smart_data;
       smart_data.track_id = i;
       ret = HorizonVisionAllocBodySmartData(&smart_data.body);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
       smart_data.body->body_rect.x1 = 1;
       smart_data.body->body_rect.y1 = 1;
       smart_data.body->body_rect.x2 = 2;
       smart_data.body->body_rect.y2 = 2;
       ret = HorizonVisionAllocFaceSmartData(&smart_data.face);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
       smart_data.face->face_rect.x1 = 3;
       smart_data.face->face_rect.y1 = 3;
       smart_data.face->face_rect.x2 = 4;
       smart_data.face->face_rect.y2 = 4;
 
       ret = HorizonVisionAllocImage(&snapshot.croped_image);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
 
       auto &image = *snapshot.croped_image;
       snapshot.croped_image->pixel_format =
@@ -96,13 +96,13 @@ TEST(HorizonVisionSnapShotFrame, copy) {
 
   HorizonVisionSnapshotFrame *cp_snapshot_frame;
   ret = HorizonVisionAllocSnapshotFrame(&cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySnapshotFrame(snapshot_frame, cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original snapshot_frame data before checking copy data
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // checking copy data
   EXPECT_EQ(cp_snapshot_frame->targets_num, 2u);
@@ -139,61 +139,61 @@ TEST(HorizonVisionSnapShotFrame, copy) {
   }
 
   ret = HorizonVisionFreeSnapshotFrame(cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSnapShotFrame, copy_empty_target_data) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   snapshot_frame->targets_num = 0;
   ret = HorizonVisionAllocSnapshotTarget(
       &snapshot_frame->targets, snapshot_frame->targets_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionSnapshotFrame *cp_snapshot_frame;
   ret = HorizonVisionAllocSnapshotFrame(&cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySnapshotFrame(snapshot_frame, cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original snapshot_frame data before checking copy data
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // checking copy data
   EXPECT_EQ(cp_snapshot_frame->targets_num, 0u);
   ret = HorizonVisionFreeSnapshotFrame(cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSnapShotFrame, copy_empty_snapshot) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   snapshot_frame->targets_num = 2;
   ret = HorizonVisionAllocSnapshotTarget(
       &snapshot_frame->targets, snapshot_frame->targets_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   for (uint32_t i = 0; i < snapshot_frame->targets_num; i++) {
     auto &target = snapshot_frame->targets[i];
     target.snapshots_num = 0;
     ret = HorizonVisionAllocSnapshot(&target.snapshots, target.snapshots_num);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
   }
 
   HorizonVisionSnapshotFrame *cp_snapshot_frame;
   ret = HorizonVisionAllocSnapshotFrame(&cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionCopySnapshotFrame(snapshot_frame, cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original snapshot_frame data before checking copy data
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // checking copy data
   EXPECT_EQ(cp_snapshot_frame->targets_num, 2u);
@@ -203,47 +203,47 @@ TEST(HorizonVisionSnapShotFrame, copy_empty_snapshot) {
   }
 
   ret = HorizonVisionFreeSnapshotFrame(cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSnapShotFrame, dup) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   snapshot_frame->targets_num = 2;
   ret = HorizonVisionAllocSnapshotTarget(
       &snapshot_frame->targets, snapshot_frame->targets_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   for (uint32_t i = 0; i < snapshot_frame->targets_num; i++) {
     auto &target = snapshot_frame->targets[i];
     target.snapshots_num = 3;
     ret = HorizonVisionAllocSnapshot(&target.snapshots, target.snapshots_num);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
     for (uint32_t ii = 0; ii < target.snapshots_num; ii++) {
       auto &snapshot = target.snapshots[ii];
       snapshot.time_stamp = 26000000 + 2000 * ii;
       ret = HorizonVisionAllocSmartData(&snapshot.smart_data, 1);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
 
       auto &smart_data = *snapshot.smart_data;
       smart_data.track_id = i;
       ret = HorizonVisionAllocBodySmartData(&smart_data.body);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
       smart_data.body->body_rect.x1 = 1;
       smart_data.body->body_rect.y1 = 1;
       smart_data.body->body_rect.x2 = 2;
       smart_data.body->body_rect.y2 = 2;
       ret = HorizonVisionAllocFaceSmartData(&smart_data.face);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
       smart_data.face->face_rect.x1 = 3;
       smart_data.face->face_rect.y1 = 3;
       smart_data.face->face_rect.x2 = 4;
       smart_data.face->face_rect.y2 = 4;
 
       ret = HorizonVisionAllocImage(&snapshot.croped_image);
-      EXPECT_EQ(kHorizonVisionSuccess, ret);
+      EXPECT_EQ(0, ret);
 
       auto &image = *snapshot.croped_image;
       snapshot.croped_image->pixel_format =
@@ -263,11 +263,11 @@ TEST(HorizonVisionSnapShotFrame, dup) {
 
   HorizonVisionSnapshotFrame *dup_snapshot_frame;
   ret = HorizonVisionDupSnapshotFrame(snapshot_frame, &dup_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original snapshot_frame data before checking copy data
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // checking copy data
   EXPECT_EQ(dup_snapshot_frame->targets_num, 2u);
@@ -304,57 +304,57 @@ TEST(HorizonVisionSnapShotFrame, dup) {
   }
 
   ret = HorizonVisionFreeSnapshotFrame(dup_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSnapShotFrame, dup_empty_target_data) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   snapshot_frame->targets_num = 0;
   ret = HorizonVisionAllocSnapshotTarget(
       &snapshot_frame->targets, snapshot_frame->targets_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   HorizonVisionSnapshotFrame *cp_snapshot_frame;
   ret = HorizonVisionDupSnapshotFrame(snapshot_frame, &cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original snapshot_frame data before checking copy data
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // checking copy data
   EXPECT_EQ(cp_snapshot_frame->targets_num, 0u);
   ret = HorizonVisionFreeSnapshotFrame(cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSnapShotFrame, dup_empty_snapshot) {
   HorizonVisionSnapshotFrame *snapshot_frame;
   auto ret = HorizonVisionAllocSnapshotFrame(&snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   snapshot_frame->targets_num = 2;
   ret = HorizonVisionAllocSnapshotTarget(
       &snapshot_frame->targets, snapshot_frame->targets_num);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   for (uint32_t i = 0; i < snapshot_frame->targets_num; i++) {
     auto &target = snapshot_frame->targets[i];
     target.snapshots_num = 0;
     ret = HorizonVisionAllocSnapshot(&target.snapshots, target.snapshots_num);
-    EXPECT_EQ(kHorizonVisionSuccess, ret);
+    EXPECT_EQ(0, ret);
   }
 
   HorizonVisionSnapshotFrame *cp_snapshot_frame;
   ret = HorizonVisionDupSnapshotFrame(snapshot_frame, &cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // release original snapshot_frame data before checking copy data
   ret = HorizonVisionFreeSnapshotFrame(snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 
   // checking copy data
   EXPECT_EQ(cp_snapshot_frame->targets_num, 2u);
@@ -364,5 +364,5 @@ TEST(HorizonVisionSnapShotFrame, dup_empty_snapshot) {
   }
 
   ret = HorizonVisionFreeSnapshotFrame(cp_snapshot_frame);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }

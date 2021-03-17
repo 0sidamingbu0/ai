@@ -33,7 +33,7 @@ class MultitaskPredictMethod : public DnnPredictMethod {
   // 返回码：0，成功；否则失败
   int PrepareInputData(
       const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
+      const InputParamPtr param,
       std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
       std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) override;
 

@@ -28,7 +28,8 @@ public:
   explicit ImageVioMessage(
       std::vector<std::shared_ptr<PymImageFrame>> &image_frame,
       uint32_t img_num, bool is_valid = true, int channel = -1,
-      std::shared_ptr<MediaPipeLine> pipeline = nullptr, void *data = nullptr);
+      std::shared_ptr<MediaPipeLine> pipeline = nullptr,
+      void *data = nullptr, const int index = 0);
   ~ImageVioMessage();
 
   // serialize proto
@@ -39,6 +40,7 @@ public:
 
   std::shared_ptr<MediaPipeLine> pipeline_;
   void *slot_data_;
+  int index_;
 };
 
 struct DropVioMessage : VioMessage {

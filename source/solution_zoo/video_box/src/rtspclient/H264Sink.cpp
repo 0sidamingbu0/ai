@@ -88,6 +88,10 @@ void H264Sink::afterGettingFrame(void *clientData, unsigned frameSize,
                                  struct timeval presentationTime,
                                  unsigned durationInMicroseconds) {
   H264Sink *sink = reinterpret_cast<H264Sink *>(clientData);
+  if (!sink) {
+    LOGE << "H264Sink::afterGettingFrame get H264Sink is null, error!!!";
+    return;
+  }
   sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime,
                           durationInMicroseconds);
 }
@@ -123,6 +127,7 @@ void H264Sink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
 #endif
   envir() << "\n";
 #endif
+  if (!buffers_vir_) return;
   // unsigned char start_code[4] = {0x00, 0x00, 0x00, 0x01};
   waiting_ = isNeedToWait(frameSize);
   if (waiting_) {
@@ -166,7 +171,6 @@ void H264Sink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
 
   if (batch_send_) {
     for (auto cache : buffer_stat_cache_) {
-      LOGW << "batch_send_";
       u_int8_t *buffer = buffers_vir_ + (cache.buffer_idx) * buffer_size_;
       uint64_t buffer_phy = buffers_pyh_ + (cache.buffer_idx) * buffer_size_;
 #if DEBUG_PRINT_EACH_RECEIVED_FRAME
@@ -318,7 +322,6 @@ Boolean H264Sink::continuePlaying() {
 
   u_int8_t *buffer =
       buffers_vir_ + (frame_count_ % buffer_count_) * buffer_size_;
-
   // Request the next frame of data from our input source. "afterGettingFrame()"
   // will get called later, when it arrives:
   memcpy(reinterpret_cast<void *>(buffer), start_code, 4);

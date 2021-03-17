@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 namespace xstream {
@@ -30,18 +30,18 @@ class SSDParam : public xstream::InputParam {
 
 using SSDParamPtr = std::shared_ptr<SSDParam>;
 
-class SSDMethod : public Method {
+class SSDMethod : public SimpleMethod {
  public:
-  SSDMethod() : Method() {}
+  SSDMethod() : SimpleMethod() {}
 
   virtual ~SSDMethod() {}
 
   // return 0 for successed, -1 for failed.
   int Init(const std::string &config_file_path) override;
 
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
   void Finalize() override {}
 

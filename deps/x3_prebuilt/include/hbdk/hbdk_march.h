@@ -36,10 +36,26 @@ HBRT_PRAGMA_WARN( \
 HBRT_MAGIC_HEADER_SIZE
 
 typedef enum {
+#ifdef __cplusplus
+  HBRT_MARCH_UNKNOWN = (static_cast<unsigned>('?') << 0U) + (static_cast<unsigned>('?') << 8U) + (static_cast<unsigned>('?') << 16U),
+#else
   HBRT_MARCH_UNKNOWN = ((unsigned)('?') << 0U) + ((unsigned)('?') << 8U) + ((unsigned)('?') << 16U),
+#endif
+#ifdef __cplusplus
+  HBRT_MARCH_BERNOULLI = (static_cast<unsigned>('X') << 0U) + (static_cast<unsigned>('2') << 8U) + (static_cast<unsigned>(' ') << 16U),
+#else
   HBRT_MARCH_BERNOULLI = ((unsigned)('X') << 0U) + ((unsigned)('2') << 8U) + ((unsigned)(' ') << 16U),
+#endif
+#ifdef __cplusplus
+  HBRT_MARCH_BERNOULLI2 = (static_cast<unsigned>('X') << 0U) + (static_cast<unsigned>('2') << 8U) + (static_cast<unsigned>('A') << 16U),
+#else
   HBRT_MARCH_BERNOULLI2 = ((unsigned)('X') << 0U) + ((unsigned)('2') << 8U) + ((unsigned)('A') << 16U),
+#endif
+#ifdef __cplusplus
+  HBRT_MARCH_BERNOULLI3 = (static_cast<unsigned>('X') << 0U) + (static_cast<unsigned>('3') << 8U) + (static_cast<unsigned>(' ') << 16U),
+#else
   HBRT_MARCH_BERNOULLI3 = ((unsigned)('X') << 0U) + ((unsigned)('3') << 8U) + ((unsigned)(' ') << 16U),
+#endif
 } hbrt_march_t;
 
 typedef hbrt_march_t MARCH HBRT_DEPRECATED_NAME(hbrt_march_t, MARCH, 3.7.1);

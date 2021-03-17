@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>&lt;no title&gt; &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/release.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -159,31 +164,33 @@
             
   <p>To release a new version of pybind11:</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt>Update the version number and push to pypi</dt><dd><ul>
-<li><p>Update <code class="docutils literal notranslate"><span class="pre">pybind11/_version.py</span></code> (set release version, remove ‘dev’).</p></li>
-<li><p>Update <code class="docutils literal notranslate"><span class="pre">PYBIND11_VERSION_MAJOR</span></code> etc. in <code class="docutils literal notranslate"><span class="pre">include/pybind11/detail/common.h</span></code>.</p></li>
-<li><p>Ensure that all the information in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> is up-to-date.</p></li>
-<li><p>Update version in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>.</p></li>
-<li><p>Tag release date in <code class="docutils literal notranslate"><span class="pre">docs/changelog.rst</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>.</p></li>
-<li><p>if new minor version: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">vX.Y</span></code>, <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">-u</span> <span class="pre">origin</span> <span class="pre">vX.Y</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-a</span> <span class="pre">vX.Y.Z</span> <span class="pre">-m</span> <span class="pre">'vX.Y.Z</span> <span class="pre">release'</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">sdist</span> <span class="pre">upload</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">bdist_wheel</span> <span class="pre">upload</span></code>.</p></li>
+<li><dl class="first docutils">
+<dt>Update the version number and push to pypi</dt>
+<dd><ul class="first last">
+<li>Update <code class="docutils literal notranslate"><span class="pre">pybind11/_version.py</span></code> (set release version, remove ‘dev’).</li>
+<li>Update <code class="docutils literal notranslate"><span class="pre">PYBIND11_VERSION_MAJOR</span></code> etc. in <code class="docutils literal notranslate"><span class="pre">include/pybind11/detail/common.h</span></code>.</li>
+<li>Ensure that all the information in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> is up-to-date.</li>
+<li>Update version in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>.</li>
+<li>Tag release date in <code class="docutils literal notranslate"><span class="pre">docs/changelog.rst</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>.</li>
+<li>if new minor version: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">vX.Y</span></code>, <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">-u</span> <span class="pre">origin</span> <span class="pre">vX.Y</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-a</span> <span class="pre">vX.Y.Z</span> <span class="pre">-m</span> <span class="pre">'vX.Y.Z</span> <span class="pre">release'</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">sdist</span> <span class="pre">upload</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">bdist_wheel</span> <span class="pre">upload</span></code>.</li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt>Get back to work</dt><dd><ul>
-<li><p>Update <code class="docutils literal notranslate"><span class="pre">_version.py</span></code> (add ‘dev’ and increment minor).</p></li>
-<li><p>Update version in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code></p></li>
-<li><p>Update version macros in <code class="docutils literal notranslate"><span class="pre">include/pybind11/common.h</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>.
-<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></p></li>
+<li><dl class="first docutils">
+<dt>Get back to work</dt>
+<dd><ul class="first last">
+<li>Update <code class="docutils literal notranslate"><span class="pre">_version.py</span></code> (add ‘dev’ and increment minor).</li>
+<li>Update version in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code></li>
+<li>Update version macros in <code class="docutils literal notranslate"><span class="pre">include/pybind11/common.h</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>.
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></li>
 </ul>
 </dd>
 </dl>
@@ -195,28 +202,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

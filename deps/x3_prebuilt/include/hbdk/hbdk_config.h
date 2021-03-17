@@ -17,11 +17,11 @@
 
 #define HBRT_VERSION_MAJOR 3U
 #define HBRT_VERSION_MINOR 10U
-#define HBRT_VERSION_PATCH 4U
+#define HBRT_VERSION_PATCH 8U
 
 #define HBDK_COMPILER_VERSION_MAJOR 3U
-#define HBDK_COMPILER_VERSION_MINOR 15U
-#define HBDK_COMPILER_VERSION_PATCH 4U
+#define HBDK_COMPILER_VERSION_MINOR 16U
+#define HBDK_COMPILER_VERSION_PATCH 6U
 
 #define COMPILE_X2 1
 #define COMPILE_X2A 1
@@ -64,6 +64,12 @@ __attribute__ ((deprecated))
 #define HBDK_PUBLIC __attribute__((__visibility__("default")))
 #else
 #define HBDK_PUBLIC
+#endif
+
+#ifdef __cplusplus
+#define HBDK_NULLPTR nullptr
+#else
+#define HBDK_NULLPTR NULL
 #endif
 
 #endif // HBDK_CONFIG_H_

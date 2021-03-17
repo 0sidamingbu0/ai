@@ -16,6 +16,7 @@
 namespace xstream {
 
 const std::map<std::string, PredictType> g_predict_type_map = {
+    {"cropdetect", PredictType::CROP_DETECT},
     {"detect", PredictType::DETECT},
     {"classify", PredictType::CLASSIFY}};
 

@@ -25,13 +25,11 @@ extern "C" {
 #define BPU_ERR_KEY_NAME_NOT_FOUND (BPU_ERR_BASE - 4)
 #define BPU_ERR_MEM_NOT_CACHABLE (BPU_ERR_BASE - 5)
 #define BPU_ERR_MEM_ALLOC_FAILED (BPU_ERR_BASE - 6)
+#define BPU_DMA_MEM_CPY_FAILED (BPU_ERR_BASE - 7)
 
-// bpu io error
-#define BPU_ERR_CAM_HAS_STARTED (BPU_ERR_BASE - 10)
-#define BPU_ERR_CREATE_FAKE_IMAGE_FAILED (BPU_ERR_BASE - 11)
-#define BPU_ERR_FEEDBACK_SIZE_MISMATCH (BPU_ERR_BASE - 12)
-#define BPU_ERR_PYM_RESULT_NULLPTR (BPU_ERR_BASE - 13)
 #define BPU_ERR_NOT_IMPLEMENT (BPU_ERR_BASE - 14)
+#define BPU_ERR_INVALID_DATA_TYPE (BPU_ERR_BASE - 15)
+#define BPU_ERR_ADD_PADDING_FAILED (BPU_ERR_BASE - 16)
 
 // bpu predict error when init instance
 #define BPU_ERR_CONFIG_ERR (BPU_ERR_BASE - 100)
@@ -185,14 +183,6 @@ static inline const char* BPU_getErrorName(int error) {
       return "bpu mem is not cachable";
     case BPU_ERR_NOT_INITED:
       return "bpu instance is not inited";
-    case BPU_ERR_CAM_HAS_STARTED:
-      return "camera has started";
-    case BPU_ERR_CREATE_FAKE_IMAGE_FAILED:
-      return "create fake image failed";
-    case BPU_ERR_FEEDBACK_SIZE_MISMATCH:
-      return "feedback input size is not same with pym";
-    case BPU_ERR_PYM_RESULT_NULLPTR:
-      return "pym result buffer is nullptr";
     case BPU_ERR_NOT_IMPLEMENT:
       return "this funtion not implement";
     case BPU_ERR_CONFIG_ERR:
@@ -219,12 +209,16 @@ static inline const char* BPU_getErrorName(int error) {
       return "bpu engine init failed";
     case BPU_ERR_MEM_ALLOC_FAILED:
       return "bpu mem alloc failed";
+    case BPU_DMA_MEM_CPY_FAILED:
+      return "bpu dma mem copy failed";
     case BPU_ERR_INVALID_MODEL_NAME:
       return "bpu input model name is invalid";
     case BPU_ERR_INVALID_CORE_ID:
       return "bpu input core id is invalid";
     case BPU_ERR_INVALID_PARAMETER:
       return "bpu input parameter is invalid";
+    case BPU_ERR_LOAD_MODEL_PACKAGE_FAILED:
+      return "bpu load model pack failed";
     case BPU_ERR_RUNTASK_ALLOC_FAILED:
       return "bpu model runtask alloc failed";
     case BPU_ERR_RUNTASK_INIT_FAILED:
@@ -319,6 +313,8 @@ static inline const char* BPU_getErrorName(int error) {
       return "bpu model runtask set input resize rio failed";
     case BPU_ERR_CHECK_MODEL_VALIDITY_FAILED:
       return "bpu model check model validity failed";
+    case BPU_ERR_MODEL_OUTPUT_NUM_ERROR:
+      return "bpu model output num invalid";
     case BPU_ERR_VIO_BASE:
       return "vio base error";
     case BPU_ERR_VIO_PAESER_FAIL:
@@ -374,9 +370,9 @@ static inline const char* BPU_getErrorName(int error) {
     case BPU_ERR_CAM_BASE:
       return "cam base error";
     case BPU_ERR_CAM_PARSE_BOARD_CFG_FAIL:
-      return "cam cfg error";
+      return "cam parse board cfg error";
     case BPU_ERR_CAM_PARSE_MIPI_CFG_FAIL:
-      return "cam cfg error";
+      return "cam parse mipi cfg error";
     case BPU_ERR_CAM_DLOPEN_LIBRARY_FAIL:
       return "open cam library failed";
     case BPU_ERR_CAM_INIT_FAIL:
@@ -427,6 +423,10 @@ static inline const char* BPU_getErrorName(int error) {
       return "pym resize input mem size set error";
     case BPU_ERR_PYM_RESIZE_OUTPUT_MEM_SIZE_SET_ERROR:
       return "pym resize output mem size set error";
+    case BPU_ERR_INVALID_DATA_TYPE:
+      return "bpu error invalid data type";
+    case BPU_ERR_ADD_PADDING_FAILED:
+      return "bpu error add padding.";
   }
   return "invalid bpu error code";
 }

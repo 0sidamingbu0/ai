@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "hobotlog/hobotlog.hpp"
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 
 namespace xstream {
 
@@ -32,7 +32,7 @@ struct MultiSourceInput : public BaseData {
 };
 typedef std::shared_ptr<MultiSourceInput> MulSrcTestInputPtr;
 
-class MultiSourceMethod : public Method {
+class MultiSourceMethod : public SimpleMethod {
  public:
   MultiSourceMethod() {
     method_id_ = instance_count_++;
@@ -43,9 +43,9 @@ class MultiSourceMethod : public Method {
 
   int UpdateParameter(InputParamPtr ptr) override { return 0; }
 
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const InputParamPtr &param) override;
 
   // 获取Method运行参数配置
   InputParamPtr GetParameter() const override { return InputParamPtr(); }

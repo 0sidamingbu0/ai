@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>常见问题 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -111,32 +114,39 @@
 <li class="toctree-l3"><a class="reference internal" href="#id9">编译</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id10">部署</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id11">示例运行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">编译常见报错问题</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libxxxx-so-file-format-not-recognized-treating-as-linker-script">提示 libxxxx.so: file format not recognized; treating as linker script</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">回灌模式</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id13">回灌方式说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id14">回灌示例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">回灌模式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">回灌方式说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">回灌示例</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#usb-uvcweb">usb智慧电视场景，切换uvc与web模式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#hdmi">视频盒子使用HDMI显示</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ipm">多路IPM图像回灌</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#jpg">jpg格式回灌</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id15">1、准备回灌图片</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id16">2、修改回灌文件列表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">1、准备回灌图片</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">2、修改回灌文件列表</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#nv12">nv12格式回灌</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id17">1、准备回灌图片</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id18">2、修改回灌文件列表</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id19">3、修改配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">1、准备回灌图片</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">2、修改回灌文件列表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id20">3、修改配置</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id20">说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">说明</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vlcrtp-over-tcp">VLC设置RTP Over TCP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#potplayeruvc">potplayer播放uvc及切换码流</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core">Core文件未生成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gdb">GDB调试，设置动态库路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vio">程序运行提示vio失败</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="version.html">Release Notes</a></li>
@@ -181,6 +191,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -192,7 +204,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/faq.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -269,7 +281,7 @@
 <h4>usb摄像头<a class="headerlink" href="#usb" title="永久链接至标题">¶</a></h4>
 <p>直接把摄像头连接接入到图中6所示的usb接口。
 输入命令：</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="k">class</span><span class="o">/</span><span class="n">video4linux</span><span class="o">/</span> <span class="o">-</span><span class="n">all</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">class</span><span class="o">/</span><span class="n">video4linux</span><span class="o">/</span> <span class="o">-</span><span class="n">all</span>
 </pre></div>
 </div>
 <p>此目录下如果新增了video*设备，表示usb摄像头连接正常。</p>
@@ -379,11 +391,21 @@
 <p><img alt="菜单" src="../../_images/menu_sensor.png" /></p>
 <p>选择2（os8a10摄像头）后回车，示例程序开始启动运行。</p>
 </div>
-</div>
 <div class="section" id="id12">
-<h2>回灌模式<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
+<h3>编译常见报错问题<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<div class="section" id="libxxxx-so-file-format-not-recognized-treating-as-linker-script">
+<h4>提示 libxxxx.so: file format not recognized; treating as linker script<a class="headerlink" href="#libxxxx-so-file-format-not-recognized-treating-as-linker-script" title="永久链接至标题">¶</a></h4>
+<p>出错原因：在Windows中下载AIExpress源码后，然后将源码发送到Linux开发机，导致代码包中的symbolic link 失效。</p>
+<p>解决方案:
+方法1(推荐)：直接在Linux开发机下载代码：#  git clone git&#64;github.com:HorizonRobotics-Platform/AI-EXPRESS.git
+方法2：根据提示，自行手动创建对应库的symbolic link.</p>
+</div>
+</div>
+</div>
 <div class="section" id="id13">
-<h3>回灌方式说明<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<h2>回灌模式<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id14">
+<h3>回灌方式说明<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
 <p>X3版本回灌支持3种模式，分别为cache， jpg与nv12这3个模式，区别如下：</p>
 <table border="1" class="docutils">
 <thead>
@@ -428,8 +450,8 @@
 </tr>
 </tbody>
 </table></div>
-<div class="section" id="id14">
-<h3>回灌示例<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id15">
+<h3>回灌示例<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
 <p>这里以body solution为例，说明如何运行回灌模式。</p>
 <p>提前拷贝部署包到设备上，然后进入deploy目录，执行命令：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">run</span><span class="p">.</span><span class="n">sh</span> <span class="n">w</span>
@@ -516,9 +538,9 @@
 <h2>视频盒子使用HDMI显示<a class="headerlink" href="#hdmi" title="永久链接至标题">¶</a></h2>
 <p>运行视频盒子示例前，需要使用HDMI显示。系统默认未开启HDMI显示功能，系统烧录成功后，可以参考如下方法，开启HDMI显示。</p>
 <ol class="simple">
-<li><p>使用串口连接开发板，然后重启X3设备</p></li>
-<li><p>重启后根据提示随意按任意键进入uboot模式。</p></li>
-<li><p>在uboot模式中敲入如下命令：</p></li>
+<li>使用串口连接开发板，然后重启X3设备</li>
+<li>重启后根据提示随意按任意键进入uboot模式。</li>
+<li>在uboot模式中敲入如下命令：</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setenv</span> <span class="n">bootargs</span> <span class="n">earlycon</span> <span class="n">console</span><span class="o">=</span><span class="n">ttyS0</span><span class="p">,</span><span class="mi">921600</span> <span class="n">clk_ignore_unused</span> <span class="n">video</span><span class="o">=</span><span class="n">hobot</span><span class="p">:</span><span class="n">x3sdb</span><span class="o">-</span><span class="n">hdmi</span> <span class="n">kgdboc</span><span class="o">=</span><span class="n">ttyS0</span>
 
@@ -538,28 +560,28 @@
 <p>发布版本中，默认时jpg回灌模式
 进入到<code class="docutils literal notranslate"><span class="pre">deploy/configs/vio_hg/multi_fb/name_jpg_256x512</span></code>目录
 替换图片并修改对应的fb_pipex.list文件即可</p>
-<div class="section" id="id15">
-<h4>1、准备回灌图片<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id16">
+<h4>1、准备回灌图片<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
 <p>images_pipe0存放第1路回灌图片，images_pipe1存放第2路回灌图片，以此类推，把需要回灌的图片放入对应目录</p>
 </div>
-<div class="section" id="id16">
-<h4>2、修改回灌文件列表<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id17">
+<h4>2、修改回灌文件列表<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
 <p>fb_pipe0.list文件中填写第1路回灌图片路径列表，fb_pipe1.list对应第2路回灌图片路径列表，以此类推，修改成需要回灌的图片路径即可</p>
 </div>
 </div>
 <div class="section" id="nv12">
 <h3>nv12格式回灌<a class="headerlink" href="#nv12" title="永久链接至标题">¶</a></h3>
 <p>进入到<code class="docutils literal notranslate"><span class="pre">deploy/configs/vio_hg/multi_fb/name_nv12_256x512</span></code>目录</p>
-<div class="section" id="id17">
-<h4>1、准备回灌图片<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id18">
+<h4>1、准备回灌图片<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
 <p>images_pipe0存放第1路回灌图片，images_pipe1存放第2路回灌图片，以此类推，把需要回灌的图片放入对应目录</p>
 </div>
-<div class="section" id="id18">
-<h4>2、修改回灌文件列表<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id19">
+<h4>2、修改回灌文件列表<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
 <p>fb_pipe0.list文件中填写第1路回灌图片路径列表，fb_pipe1.list对应第2路回灌图片路径列表，以此类推，修改成需要回灌的图片路径即可</p>
 </div>
-<div class="section" id="id19">
-<h4>3、修改配置<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id20">
+<h4>3、修改配置<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
 <p>修改<code class="docutils literal notranslate"><span class="pre">deploy/configs/vio_config.json.j3dev.multi_fb_sync.256x512</span></code>配置中multi_feedback_mode字段为nv12_image_list;
 配置中file_path字段修改为回灌图片的路径。</p>
 <table border="1" class="docutils">
@@ -581,8 +603,8 @@
 </tbody>
 </table></div>
 </div>
-<div class="section" id="id20">
-<h3>说明<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id21">
+<h3>说明<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
 <p>多路回灌时，要求每一路的图片数量必须相同。
 比如第一路回灌，fb_pipe0.list中填写N个图片路径，那么第二、三、四路回灌，也必须填写N个图片路径。</p>
 </div>
@@ -605,6 +627,41 @@ vlc使用tcp协议具体设置如下：</p>
 <p>然后可通过uvc的属性功能验证设备端的属性是否切换成功。</p>
 <p><img alt="get_uvc" src="../../_images/potplayer_get_uvc_attr.png" /></p>
 </div>
+<div class="section" id="core">
+<h2>Core文件未生成<a class="headerlink" href="#core" title="永久链接至标题">¶</a></h2>
+<p>先设置/userdata的读写权限，然后限制指定core文件的生成路径。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mount -o remount,rw /
+<span class="nb">ulimit</span> -c unlimited
+mkdir -p /userdata/dump
+sysctl -w kernel.core_pattern<span class="o">=</span>/userdata/dump/core-%e.%p.%h.%t
+</pre></div>
+</div>
+<p>这样设置后，若程序异常crash，会将core文件保存在/userdata/dump/目录下</p>
+</div>
+<div class="section" id="gdb">
+<h2>GDB调试，设置动态库路径<a class="headerlink" href="#gdb" title="永久链接至标题">¶</a></h2>
+<p>gdb若未设置动态库路径，会提示动态库加载失败的信息，则会导致动态库的调试不可行。可以根据如下步骤设置动态库路径：</p>
+<ol class="simple">
+<li>在开发机查看应用依赖的依赖库</li>
+</ol>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ readelf -d pad_demo/build/bin/pad_demo  <span class="p">|</span> grep NEEDED
+</pre></div>
+</div>
+<ol class="simple">
+<li>板上GDB环境下使用solib-search-patch设置库的路径</li>
+</ol>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>gdb<span class="o">)</span> <span class="nb">set</span> solib-search-path /home/yu/sdb/prerootfs/lib:pad_demo/build/lib/home/yu/sdb/x2j2/prebuilts/root/lib
+</pre></div>
+</div>
+</div>
+<div class="section" id="vio">
+<h2>程序运行提示vio失败<a class="headerlink" href="#vio" title="永久链接至标题">¶</a></h2>
+<p>这种情况一般是由于两种原因造成：</p>
+<ol class="simple">
+<li>Sensor排线插得不对，或者接入X3开发板的接口不对</li>
+<li>AIExpress版本与系统软件版本不匹配。当前阶段请根据README.md中描述的版本关系进行测试</li>
+</ol>
+</div>
 </div>
 
 
@@ -612,28 +669,25 @@ vlc使用tcp协议具体设置如下：</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

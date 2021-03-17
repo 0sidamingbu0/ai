@@ -41,7 +41,7 @@ TEST(ImageFrame, initialized_frame_id) {
 }
 
 TEST(Error, Detail) {
-  auto error_detail = GetHorizonVisionError(kHorizonVisionSuccess);
+  auto error_detail = GetHorizonVisionError(0);
   EXPECT_STREQ(error_detail, "Run OK");
 }
 

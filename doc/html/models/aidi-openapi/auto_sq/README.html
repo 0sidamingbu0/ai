@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>艾迪平台使用流程介绍 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/models/aidi-openapi/auto_sq/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -162,12 +167,12 @@
 <div class="section" id="id2">
 <h2>流程概述<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>数据打包和上传</p></li>
-<li><p>提交训练任务</p></li>
-<li><p>模型保存</p></li>
-<li><p>模型预测</p></li>
-<li><p>模型评测</p></li>
-<li><p>模型发版与编译</p></li>
+<li>数据打包和上传</li>
+<li>提交训练任务</li>
+<li>模型保存</li>
+<li>模型预测</li>
+<li>模型评测</li>
+<li>模型发版与编译</li>
 </ul>
 <p>其中，模型保存、模型预测、模型评测和模型发版与编译在二期交付</p>
 </div>
@@ -177,52 +182,50 @@
 <h3>Step1 数据打包和上传<a class="headerlink" href="#step1" title="永久链接至标题">¶</a></h3>
 <p>将adas_mini数据集，打包成rec格式，然后上传到艾迪平台</p>
 <ul class="simple">
-<li><p>数据打包
+<li>数据打包
 用于进行数据打包的脚本入口在<code class="docutils literal notranslate"><span class="pre">auto_matrix_development_toolkit/scripts/auto_matrix_pack_tools</span></code>下
-将adas_mini数据集放到data目录下，然后使用<code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">tools/pipeline.sh</span> <span class="pre">--config</span> <span class="pre">configs/4pe_xxx/train.py</span></code>命令来进行数据打包，其中<code class="docutils literal notranslate"><span class="pre">xxx</span></code>表示具体的场景，包括</p>
-<ul>
-<li><p>cyclist</p></li>
-<li><p>default_parsing</p></li>
-<li><p>lane_parsing</p></li>
-<li><p>pedestrian</p></li>
-<li><p>traffic_light</p></li>
-<li><p>traffic_sign</p></li>
-<li><p>vehicle</p></li>
-<li><p>vehicle_rear
-打包完成后，在<code class="docutils literal notranslate"><span class="pre">data/rec</span></code>目录下会得到各类场景的打包结果文件</p></li>
+将adas_mini数据集放到data目录下，然后使用<code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">tools/pipeline.sh</span> <span class="pre">--config</span> <span class="pre">configs/4pe_xxx/train.py</span></code>命令来进行数据打包，其中<code class="docutils literal notranslate"><span class="pre">xxx</span></code>表示具体的场景，包括<ul>
+<li>cyclist</li>
+<li>default_parsing</li>
+<li>lane_parsing</li>
+<li>pedestrian</li>
+<li>traffic_light</li>
+<li>traffic_sign</li>
+<li>vehicle</li>
+<li>vehicle_rear
+打包完成后，在<code class="docutils literal notranslate"><span class="pre">data/rec</span></code>目录下会得到各类场景的打包结果文件</li>
 </ul>
 </li>
-<li><p>数据上传
+<li>数据上传
 将打包结果文件上传到艾迪平台，在训练时作为输入
 在<code class="docutils literal notranslate"><span class="pre">data/rec</span></code>目录下，使用hitc命令行工具进行上传
 首先使用<code class="docutils literal notranslate"><span class="pre">hitc</span> <span class="pre">init</span> <span class="pre">-t</span> <span class="pre">your_token</span></code>将用户信息添加到命令行配置中，其中your_token为用户的标识信息，可以在艾迪平台-个人中心页面查看到，hitc命令行的默认配置文件路径为<code class="docutils literal notranslate"><span class="pre">~/.olympus/config.yaml</span></code>
 然后使用<code class="docutils literal notranslate"><span class="pre">hitc</span> <span class="pre">dataspace</span> <span class="pre">upload</span> <span class="pre">-n</span> <span class="pre">adasmini_4pe</span> <span class="pre">-t</span> <span class="pre">trainset</span> <span class="pre">-f</span> <span class="pre">./</span></code>将当前目录下的所有rec文件上传到艾迪平台-训练数据集中，其中<code class="docutils literal notranslate"><span class="pre">adasmini_4pe</span></code>为训练集名称，<code class="docutils literal notranslate"><span class="pre">trainset</span></code>表示该数据集为训练集
-上传成功后，在艾迪平台<code class="docutils literal notranslate"><span class="pre">数据管理/训练数据集</span></code>中可以看到对应的数据集，点击进入之后可以看到数据集的详细信息</p></li>
+上传成功后，在艾迪平台<code class="docutils literal notranslate"><span class="pre">数据管理/训练数据集</span></code>中可以看到对应的数据集，点击进入之后可以看到数据集的详细信息</li>
 </ul>
 </div>
 <div class="section" id="step2">
 <h3>Step2 提交训练任务<a class="headerlink" href="#step2" title="永久链接至标题">¶</a></h3>
 <p>将本地训练代码包提交到GPU集群运行，具体的训练场景为4pe检测任务</p>
 <ul class="simple">
-<li><p>配置任务信息
+<li>配置任务信息
 编辑训练任务的相关信息，包括任务名称、本地的代码包文件路径、代码包加密的密码、任务所需要的服务器和GPU数量、任务的启动脚本等必填项，以及任务优先级、使用的Docker镜像、任务的最大运行时间以及挂载的数据集等选填项，具体参见<code class="docutils literal notranslate"><span class="pre">train_job.yaml</span></code>文件
-在此，我们定义训练任务的启动脚本为<code class="docutils literal notranslate"><span class="pre">auto_matrix_development_toolkit/run.sh</span></code>，从中可以看出</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">tools/quanti_training_2step_fusion_bn.sh</span></code>为真正的训练入口</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">${WORKING_PATH}/scripts/auto_matrix_algo/configs/4pe_resize/multitask.py</span></code>为真正的训练任务配置</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--ctx</span> <span class="pre">0,1,2,3</span></code>表明本次训练使用的GPU卡数为4</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--pipeline-test</span></code>表示使用快速模式，可以很快的跑完整个训练，但产出的模型精度不高。如果需要保证模型的效果，可以去掉该参数
-同时，在<code class="docutils literal notranslate"><span class="pre">auto_matrix_development_toolkit/scripts/auto_matrix_algo/configs/4pe_resize/datasets.yaml</span></code>，我们定义了训练时读取的各个场景下数据集的路径</p></li>
+在此，我们定义训练任务的启动脚本为<code class="docutils literal notranslate"><span class="pre">auto_matrix_development_toolkit/run.sh</span></code>，从中可以看出<ul>
+<li><code class="docutils literal notranslate"><span class="pre">tools/quanti_training_2step_fusion_bn.sh</span></code>为真正的训练入口</li>
+<li><code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">${WORKING_PATH}/scripts/auto_matrix_algo/configs/4pe_resize/multitask.py</span></code>为真正的训练任务配置</li>
+<li><code class="docutils literal notranslate"><span class="pre">--ctx</span> <span class="pre">0,1,2,3</span></code>表明本次训练使用的GPU卡数为4</li>
+<li><code class="docutils literal notranslate"><span class="pre">--pipeline-test</span></code>表示使用快速模式，可以很快的跑完整个训练，但产出的模型精度不高。如果需要保证模型的效果，可以去掉该参数
+同时，在<code class="docutils literal notranslate"><span class="pre">auto_matrix_development_toolkit/scripts/auto_matrix_algo/configs/4pe_resize/datasets.yaml</span></code>，我们定义了训练时读取的各个场景下数据集的路径</li>
 </ul>
 </li>
-<li><p>配置集群信息
+<li>配置集群信息
 首先在艾迪平台-个人中心页面-集群配置处进行创建APP KEY操作，得到集群队列的Appid和Appkey
 traincli命令行的默认配置文件路径为<code class="docutils literal notranslate"><span class="pre">~/.hobot/gpucluster.yaml</span></code>
-将Appid和Appkey信息填入到traincli配置文件中的<code class="docutils literal notranslate"><span class="pre">clusters.mycluster1.appid</span></code>和<code class="docutils literal notranslate"><span class="pre">clusters.mycluster1.appkey</span></code>字段下</p></li>
-<li><p>提交集群训练
+将Appid和Appkey信息填入到traincli配置文件中的<code class="docutils literal notranslate"><span class="pre">clusters.mycluster1.appid</span></code>和<code class="docutils literal notranslate"><span class="pre">clusters.mycluster1.appkey</span></code>字段下</li>
+<li>提交集群训练
 用于进行训练的脚本入口在<code class="docutils literal notranslate"><span class="pre">auto_matrix_development_toolkit/scripts/auto_matrix_algo</span></code>下
 使用<code class="docutils literal notranslate"><span class="pre">traincli</span> <span class="pre">submit</span> <span class="pre">-f</span> <span class="pre">train_job.yaml</span></code>命令，将训练代码包提交到GPU集群运行
-提交成功后，在艾迪平台<code class="docutils literal notranslate"><span class="pre">任务管理/训练任务</span></code>的<code class="docutils literal notranslate"><span class="pre">运行任务</span></code>中标签栏中可以看到创建的训练任务，点击进入之后可以看到训练任务的详细信息</p></li>
+提交成功后，在艾迪平台<code class="docutils literal notranslate"><span class="pre">任务管理/训练任务</span></code>的<code class="docutils literal notranslate"><span class="pre">运行任务</span></code>中标签栏中可以看到创建的训练任务，点击进入之后可以看到训练任务的详细信息</li>
 </ul>
 </div>
 </div>
@@ -233,28 +236,25 @@ traincli命令行的默认配置文件路径为<code class="docutils literal not
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

@@ -90,7 +90,7 @@ int32_t DnnPredictMethod::Init(const std::string &cfg_path) {
                           << HB_BPU_getErrorName(ret);
   }
   // 3. 获取模型输入大小
-  HOBOT_CHECK(dnn_model_->bpu_model.input_num == 1);
+  HOBOT_CHECK(dnn_model_->bpu_model.input_num >= 1);
   ret = HB_BPU_getHW(dnn_model_->bpu_model.inputs[0].data_type,
                      &dnn_model_->bpu_model.inputs[0].shape,
                      &model_input_height_, &model_input_width_);
@@ -126,23 +126,26 @@ int DnnPredictMethod::AllocInputTensor(
 
     tensor.data_shape.ndim = 4;
     tensor.data_shape.d[0] = 1;
-    tensor.data_shape.d[input_h_idx_] = node.shape.d[input_h_idx_];
-    tensor.data_shape.d[input_w_idx_] = node.shape.d[input_w_idx_];
-    tensor.data_shape.d[input_c_idx_] = node.shape.d[input_c_idx_];
+    tensor.data_shape.d[1] = node.shape.d[1];
+    tensor.data_shape.d[2] = node.shape.d[2];
+    tensor.data_shape.d[3] = node.shape.d[3];
     tensor.aligned_shape.ndim = 4;
     tensor.aligned_shape.d[0] = 1;
-    tensor.aligned_shape.d[input_h_idx_] = node.aligned_shape.d[input_h_idx_];
-    tensor.aligned_shape.d[input_w_idx_] = node.aligned_shape.d[input_w_idx_];
-    tensor.aligned_shape.d[input_c_idx_] = node.aligned_shape.d[input_c_idx_];
+    tensor.aligned_shape.d[1] = node.aligned_shape.d[1];
+    tensor.aligned_shape.d[2] = node.aligned_shape.d[2];
+    tensor.aligned_shape.d[3] = node.aligned_shape.d[3];
     LOGD << "input_tensor.data_shape.d[0]: " << tensor.data_shape.d[0] << ", "
          << "input_tensor.data_shape.d[1]: " << tensor.data_shape.d[1] << ", "
          << "input_tensor.data_shape.d[2]: " << tensor.data_shape.d[2] << ", "
          << "input_tensor.data_shape.d[3]: " << tensor.data_shape.d[3] << ", "
          << "input_tensor.data_shape.layout: " << tensor.data_shape.layout;
 
-    int input_height = tensor.data_shape.d[input_h_idx_];
-    int input_width = tensor.data_shape.d[input_w_idx_];
-    int input_channel = tensor.data_shape.d[input_c_idx_];
+    int h_ix, w_ix, c_ix;
+    HB_BPU_getHWCIndex(tensor.data_type, &tensor.data_shape.layout,
+                                 &h_ix, &w_ix, &c_ix);
+    int input_height = tensor.data_shape.d[h_ix];
+    int input_width = tensor.data_shape.d[w_ix];
+    int input_channel = tensor.data_shape.d[c_ix];
     LOGD << "input_height: " << input_height << ", "
          << "input_width: " << input_width << ", "
          << "input_channel: " << input_channel;
@@ -311,21 +314,18 @@ void DnnPredictMethod::FreeTensor(std::vector<BPU_TENSOR_S> &tensors) {
   tensors.clear();
 }
 
-std::vector<std::vector<BaseDataPtr>> DnnPredictMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> DnnPredictMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   LOGD << "DnnPredictMethod DoProcess";
   HOBOT_CHECK(!input.empty());
   RUN_PROCESS_TIME_PROFILER("DnnPredictMethod_DoProcess");
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());  // frame_size
-  for (size_t i = 0; i < input.size(); i++) {
-    const std::vector<BaseDataPtr> &frame_input = input[i];
-    std::vector<BaseDataPtr> &frame_output = output[i];
+  std::vector<BaseDataPtr> output;
+  {
     // 创建BpuAsyncData，用于传递给DnnPostProcessMethod，或者同步预测结果解析使用
     auto dnn_result = std::make_shared<DnnAsyncData>();
-    frame_output.resize(1);
-    frame_output[0] = dnn_result;
+    output.resize(1);
+    output[0] = dnn_result;
 
     // bpu 任务句柄
     std::vector<BPU_TASK_HANDLE> task_handle;
@@ -339,15 +339,15 @@ std::vector<std::vector<BaseDataPtr>> DnnPredictMethod::DoProcess(
       // 预测库bpu-predict内部根据金字塔每层大小以及ROI，自动完成抠图，缩放到模型输入大小
       // ROI输入方式，调用HB_BPU_runModelWithBbox进行预测，需要准备金字塔与ROI
       // X2和X3版本的金字塔数据结构不同, 需要根据平台做不同处理
-      hobot::vision::PymImageFrame pyramid;  // get from frame_input
+      hobot::vision::PymImageFrame pyramid;  // get from input
       std::vector<BPU_BBOX> input_box;
       std::vector<int> valid_box;  // 大小和Method输入的检测框一样，框是否有效
       std::vector<BPU_TENSOR_S> output_tensor;
       {
         RUN_PROCESS_TIME_PROFILER("DnnPredictMethod_PrepareInputData");
         // 调用派生类实现的预处理部分
-        ret = PrepareInputData(frame_input, param, pyramid,
-                               input_box, valid_box, output_tensor);
+        ret = PrepareInputData(input, param, pyramid, input_box, valid_box,
+                               output_tensor);
       }
       if (ret != 0) {
         return output;
@@ -405,14 +405,14 @@ std::vector<std::vector<BaseDataPtr>> DnnPredictMethod::DoProcess(
       std::vector<std::vector<BPU_TENSOR_S>> input_tensor;
       std::vector<std::vector<BPU_TENSOR_S>> output_tensor;
       // 调用派生类实现的预处理部分  TODO
-      int rv = GetSrcImageSize(frame_input, dnn_result->src_image_height,
+      int rv = GetSrcImageSize(input, dnn_result->src_image_height,
                                dnn_result->src_image_width);
       if (rv != 0) {
         LOGE << "Error getting src image size";
       }
       {
         RUN_PROCESS_TIME_PROFILER("DnnPredictMethod_PrepareInputData");
-        ret = PrepareInputData(frame_input, param, input_tensor, output_tensor);
+        ret = PrepareInputData(input, param, input_tensor, output_tensor);
       }
       if (ret != 0) {
         return output;

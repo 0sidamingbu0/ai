@@ -16,10 +16,10 @@
 
 #define CHECK_NULL(p)                                                          \
   if (nullptr == p)                                                            \
-    return kHorizonVisionErrorParam;
+    return -1;
 
 #define CHECK_SUCCESS(code)                                                    \
-  if (kHorizonVisionSuccess != code)                                           \
+  if (0 != code)                                           \
     return code;
 
 char *HorizonVisionStrDup(const char *str) {
@@ -49,7 +49,7 @@ int HorizonVisionAllocImage(HorizonVisionImage **pimg) {
   CHECK_NULL(pimg)
   *pimg = static_cast<HorizonVisionImage *>(
       std::calloc(1, sizeof(HorizonVisionImage)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyImage(HorizonVisionImage *image,
@@ -66,7 +66,7 @@ int HorizonVisionCopyImage(HorizonVisionImage *image,
     new_image->data = nullptr;
     new_image->data_size = 0;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupImage(HorizonVisionImage *image,
@@ -75,7 +75,7 @@ int HorizonVisionDupImage(HorizonVisionImage *image,
   CHECK_NULL(image)
   CHECK_SUCCESS(HorizonVisionAllocImage(pnew_image))
   CHECK_SUCCESS(HorizonVisionCopyImage(image, dup_image_data, *pnew_image))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanImage(HorizonVisionImage *img) {
@@ -84,7 +84,7 @@ int HorizonVisionCleanImage(HorizonVisionImage *img) {
     std::free(img->data);
     img->data = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanImageWithoutData(HorizonVisionImage *img) {
@@ -92,28 +92,28 @@ int HorizonVisionCleanImageWithoutData(HorizonVisionImage *img) {
   if (img->data) {
     img->data = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeImage(HorizonVisionImage *img) {
   CHECK_NULL(img)
   HorizonVisionCleanImage(img);
   std::free(img);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeImageWithoutData(HorizonVisionImage *img) {
   CHECK_NULL(img)
   img->data = nullptr;
   std::free(img);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocImageFrame(HorizonVisionImageFrame **pimage) {
   CHECK_NULL(pimage)
   *pimage = static_cast<HorizonVisionImageFrame *>(
       std::calloc(1, sizeof(HorizonVisionImageFrame)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocImageFrames(HorizonVisionImageFrame ***pimage,
@@ -122,7 +122,7 @@ int HorizonVisionAllocImageFrames(HorizonVisionImageFrame ***pimage,
   auto image_frames = static_cast<HorizonVisionImageFrame **>(
       std::calloc(frame_num, sizeof(HorizonVisionImageFrame *)));
   *pimage = image_frames;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyImageFrame(HorizonVisionImageFrame *image_frame,
@@ -134,7 +134,7 @@ int HorizonVisionCopyImageFrame(HorizonVisionImageFrame *image_frame,
   CHECK_SUCCESS(HorizonVisionCopyImage(&image_frame->image,
                                        copy_image_data,
                                        &new_image_frame->image))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupImageFrame(HorizonVisionImageFrame *image_frame,
@@ -145,7 +145,7 @@ int HorizonVisionDupImageFrame(HorizonVisionImageFrame *image_frame,
   CHECK_SUCCESS(HorizonVisionCopyImageFrame(image_frame,
                                             dup_image_data,
                                             *pnew_image_frame))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 static int DupImageFrames(HorizonVisionImageFrame **image_frame,
@@ -155,14 +155,14 @@ static int DupImageFrames(HorizonVisionImageFrame **image_frame,
   CHECK_NULL(image_frame)
   HorizonVisionImageFrame **new_frames = nullptr;
   auto ret = HorizonVisionAllocImageFrames(&new_frames, image_num);
-  if (ret != kHorizonVisionSuccess) {
+  if (ret != 0) {
     return ret;
   }
   for (uint i = 0; i < image_num; ++i) {
     HorizonVisionDupImageFrame(image_frame[i], dup_image_data, &new_frames[i]);
   }
   *pnew_image_frame = new_frames;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupImageFrames(HorizonVisionImageFrame **image_frame,
@@ -182,14 +182,14 @@ int HorizonVisionFreeImageFrame(HorizonVisionImageFrame *image) {
   CHECK_NULL(image)
   HorizonVisionCleanImage(&image->image);
   std::free(image);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeImageFrameWithoutData(HorizonVisionImageFrame *image) {
   CHECK_NULL(image)
   HorizonVisionCleanImageWithoutData(&image->image);
   std::free(image);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeImageFrames(HorizonVisionImageFrame **images,
@@ -197,12 +197,12 @@ int HorizonVisionFreeImageFrames(HorizonVisionImageFrame **images,
   CHECK_NULL(images)
   for (uint32_t i = 0; i < image_num; ++i) {
     auto ret = HorizonVisionFreeImageFrame(images[i]);
-    if (ret != kHorizonVisionSuccess) {
+    if (ret != 0) {
       return ret;
     }
   }
   std::free(images);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeImageFramesWithoutData(HorizonVisionImageFrame **images,
@@ -210,19 +210,19 @@ int HorizonVisionFreeImageFramesWithoutData(HorizonVisionImageFrame **images,
   CHECK_NULL(images)
   for (uint32_t i = 0; i < image_num; ++i) {
     auto ret = HorizonVisionFreeImageFrameWithoutData(images[i]);
-    if (ret != kHorizonVisionSuccess) {
+    if (ret != 0) {
       return ret;
     }
   }
   std::free(images);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocLandmarks(HorizonVisionLandmarks **pnew_lmks) {
   CHECK_NULL(pnew_lmks)
   *pnew_lmks = static_cast<HorizonVisionLandmarks *>(
       std::calloc(1, sizeof(HorizonVisionLandmarks)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyLandmarks(HorizonVisionLandmarks *lmks,
@@ -231,15 +231,15 @@ int HorizonVisionCopyLandmarks(HorizonVisionLandmarks *lmks,
   CHECK_NULL(new_lmks)
   *new_lmks = *lmks;
   if (lmks->num == 0) {
-    return kHorizonVisionSuccess;
+    return 0;
   }
   auto points = static_cast<HorizonVisionPoint *>(
       std::calloc(lmks->num, sizeof(HorizonVisionPoint)));
   if (nullptr == points)
-    return kHorizonVisionErrorNoMem;
+    return -1;
   std::memcpy(points, lmks->points, sizeof(HorizonVisionPoint) * lmks->num);
   new_lmks->points = points;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupLandmarks(HorizonVisionLandmarks *lmks,
@@ -247,7 +247,7 @@ int HorizonVisionDupLandmarks(HorizonVisionLandmarks *lmks,
   CHECK_NULL(lmks)
   CHECK_SUCCESS(HorizonVisionAllocLandmarks(pnew_lmks))
   CHECK_SUCCESS(HorizonVisionCopyLandmarks(lmks, *pnew_lmks))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanLandmarks(HorizonVisionLandmarks *lmks) {
@@ -257,28 +257,28 @@ int HorizonVisionCleanLandmarks(HorizonVisionLandmarks *lmks) {
     std::free(lmks->points);
     lmks->points = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeLandmarks(HorizonVisionLandmarks *lmks) {
   CHECK_NULL(lmks)
   HorizonVisionCleanLandmarks(lmks);
   std::free(lmks);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 // char array
 int HorizonVisionAllocCharArray(HorizonVisionCharArray **pnew_farray) {
   CHECK_NULL(pnew_farray)
   *pnew_farray = static_cast<HorizonVisionCharArray *>(
       std::calloc(1, sizeof(HorizonVisionCharArray)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyCharArray(HorizonVisionCharArray *farray,
                                HorizonVisionCharArray *new_farray) {
   CHECK_NULL(farray)
   if (farray->num == 0) {
-    return kHorizonVisionSuccess;
+    return 0;
   }
   char *values = nullptr;
   if (new_farray->num != farray->num) {
@@ -286,14 +286,14 @@ int HorizonVisionCopyCharArray(HorizonVisionCharArray *farray,
     new_farray->num = 0;
     values = static_cast<char *>(std::calloc(farray->num, sizeof(char)));
     if (nullptr == values)
-      return kHorizonVisionErrorNoMem;
+      return -1;
   } else {
     values = new_farray->values;
   }
   std::memcpy(values, farray->values, sizeof(char) * farray->num);
   *new_farray = *farray;
   new_farray->values = values;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupCharArray(HorizonVisionCharArray *farray,
@@ -301,7 +301,7 @@ int HorizonVisionDupCharArray(HorizonVisionCharArray *farray,
   CHECK_NULL(farray)
   CHECK_SUCCESS(HorizonVisionAllocCharArray(pnew_farray))
   CHECK_SUCCESS(HorizonVisionCopyCharArray(farray, *pnew_farray))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanCharArray(HorizonVisionCharArray *farray) {
@@ -311,14 +311,14 @@ int HorizonVisionCleanCharArray(HorizonVisionCharArray *farray) {
     std::free(farray->values);
     farray->values = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeCharArray(HorizonVisionCharArray *farray) {
   CHECK_NULL(farray)
   HorizonVisionCleanCharArray(farray);
   std::free(farray);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 // float array
@@ -326,14 +326,14 @@ int HorizonVisionAllocFloatArray(HorizonVisionFloatArray **pnew_farray) {
   CHECK_NULL(pnew_farray)
   *pnew_farray = static_cast<HorizonVisionFloatArray *>(
       std::calloc(1, sizeof(HorizonVisionFloatArray)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyFloatArray(HorizonVisionFloatArray *farray,
                                 HorizonVisionFloatArray *new_farray) {
   CHECK_NULL(farray)
   if (farray->num == 0) {
-    return kHorizonVisionSuccess;
+    return 0;
   }
   float *values = nullptr;
   if (new_farray->num != farray->num) {
@@ -341,14 +341,14 @@ int HorizonVisionCopyFloatArray(HorizonVisionFloatArray *farray,
     new_farray->num = 0;
     values = static_cast<float *>(std::calloc(farray->num, sizeof(float)));
     if (nullptr == values)
-      return kHorizonVisionErrorNoMem;
+      return -1;
   } else {
     values = new_farray->values;
   }
   std::memcpy(values, farray->values, sizeof(float) * farray->num);
   *new_farray = *farray;
   new_farray->values = values;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupFloatArray(HorizonVisionFloatArray *farray,
@@ -356,7 +356,7 @@ int HorizonVisionDupFloatArray(HorizonVisionFloatArray *farray,
   CHECK_NULL(farray)
   CHECK_SUCCESS(HorizonVisionAllocFloatArray(pnew_farray))
   CHECK_SUCCESS(HorizonVisionCopyFloatArray(farray, *pnew_farray))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanFloatArray(HorizonVisionFloatArray *farray) {
@@ -366,28 +366,28 @@ int HorizonVisionCleanFloatArray(HorizonVisionFloatArray *farray) {
     std::free(farray->values);
     farray->values = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeFloatArray(HorizonVisionFloatArray *farray) {
   CHECK_NULL(farray)
   HorizonVisionCleanFloatArray(farray);
   std::free(farray);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocSegmentation(HorizonVisionSegmentation **pnew_farray) {
   CHECK_NULL(pnew_farray)
   *pnew_farray = static_cast<HorizonVisionSegmentation *>(
       std::calloc(1, sizeof(HorizonVisionSegmentation)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopySegmentation(HorizonVisionSegmentation *farray,
                                   HorizonVisionSegmentation *new_farray) {
   CHECK_NULL(farray)
   if (farray->num == 0) {
-    return kHorizonVisionSuccess;
+    return 0;
   }
   float *values = nullptr;
   if (new_farray->num != farray->num) {
@@ -395,14 +395,14 @@ int HorizonVisionCopySegmentation(HorizonVisionSegmentation *farray,
     new_farray->num = 0;
     values = static_cast<float *>(std::calloc(farray->num, sizeof(float)));
     if (nullptr == values)
-      return kHorizonVisionErrorNoMem;
+      return -1;
   } else {
     values = new_farray->values;
   }
   std::memcpy(values, farray->values, sizeof(float) * farray->num);
   *new_farray = *farray;
   new_farray->values = values;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupSegmentation(HorizonVisionSegmentation *farray,
@@ -410,7 +410,7 @@ int HorizonVisionDupSegmentation(HorizonVisionSegmentation *farray,
   CHECK_NULL(farray)
   CHECK_SUCCESS(HorizonVisionAllocSegmentation(pnew_farray))
   CHECK_SUCCESS(HorizonVisionCopySegmentation(farray, *pnew_farray))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanSegmentation(HorizonVisionSegmentation *farray) {
@@ -420,21 +420,21 @@ int HorizonVisionCleanSegmentation(HorizonVisionSegmentation *farray) {
     std::free(farray->values);
     farray->values = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeSegmentation(HorizonVisionSegmentation *farray) {
   CHECK_NULL(farray)
   HorizonVisionCleanSegmentation(farray);
   std::free(farray);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocFaceSmartData(HorizonVisionFaceSmartData **psmart) {
   CHECK_NULL(psmart)
   *psmart = static_cast<HorizonVisionFaceSmartData *>(
       std::calloc(1, sizeof(HorizonVisionFaceSmartData)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyFaceSmartData(HorizonVisionFaceSmartData *smart_data,
@@ -455,7 +455,7 @@ int HorizonVisionCopyFaceSmartData(HorizonVisionFaceSmartData *smart_data,
         HorizonVisionDupCharArray(smart_data->encrypted_feature,
                                   &new_smart->encrypted_feature))
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupFaceSmartData(HorizonVisionFaceSmartData *smart_data,
@@ -463,7 +463,7 @@ int HorizonVisionDupFaceSmartData(HorizonVisionFaceSmartData *smart_data,
   CHECK_NULL(smart_data)
   CHECK_SUCCESS(HorizonVisionAllocFaceSmartData(pnew_smart))
   CHECK_SUCCESS(HorizonVisionCopyFaceSmartData(smart_data, *pnew_smart))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanFaceSmartData(HorizonVisionFaceSmartData *smart) {
@@ -477,21 +477,21 @@ int HorizonVisionCleanFaceSmartData(HorizonVisionFaceSmartData *smart) {
   if (smart->encrypted_feature) {
     HorizonVisionFreeCharArray(smart->encrypted_feature);
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeFaceSmartData(HorizonVisionFaceSmartData *smart) {
   CHECK_NULL(smart)
   HorizonVisionCleanFaceSmartData(smart);
   std::free(smart);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocBodySmartData(HorizonVisionBodySmartData **psmart) {
   CHECK_NULL(psmart)
   *psmart = static_cast<HorizonVisionBodySmartData *>(
       std::calloc(1, sizeof(HorizonVisionBodySmartData)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyBodySmartData(HorizonVisionBodySmartData *smart_data,
@@ -507,7 +507,7 @@ int HorizonVisionCopyBodySmartData(HorizonVisionBodySmartData *smart_data,
     CHECK_SUCCESS(
         HorizonVisionDupLandmarks(smart_data->skeleton, &new_smart->skeleton))
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupBodySmartData(HorizonVisionBodySmartData *smart_data,
@@ -515,7 +515,7 @@ int HorizonVisionDupBodySmartData(HorizonVisionBodySmartData *smart_data,
   CHECK_NULL(smart_data)
   CHECK_SUCCESS(HorizonVisionAllocBodySmartData(pnew_smart))
   CHECK_SUCCESS(HorizonVisionCopyBodySmartData(smart_data, *pnew_smart))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanBodySmartData(HorizonVisionBodySmartData *smart) {
@@ -527,21 +527,21 @@ int HorizonVisionCleanBodySmartData(HorizonVisionBodySmartData *smart) {
     HorizonVisionFreeSegmentation(smart->segmentation);
   }
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeBodySmartData(HorizonVisionBodySmartData *smart) {
   CHECK_NULL(smart)
   HorizonVisionCleanBodySmartData(smart);
   std::free(smart);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocHandSmartData(HorizonVisionHandSmartData **psmart) {
   CHECK_NULL(psmart)
   *psmart = static_cast<HorizonVisionHandSmartData *>(
       std::calloc(1, sizeof(HorizonVisionHandSmartData)));
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopyHandSmartData(HorizonVisionHandSmartData *smart_data,
@@ -549,7 +549,7 @@ int HorizonVisionCopyHandSmartData(HorizonVisionHandSmartData *smart_data,
   CHECK_NULL(smart_data)
   CHECK_NULL(new_smart)
   *new_smart = *smart_data;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupHandSmartData(HorizonVisionHandSmartData *smart_data,
@@ -557,27 +557,27 @@ int HorizonVisionDupHandSmartData(HorizonVisionHandSmartData *smart_data,
   CHECK_NULL(smart_data)
   CHECK_SUCCESS(HorizonVisionAllocHandSmartData(pnew_smart))
   CHECK_SUCCESS(HorizonVisionCopyHandSmartData(smart_data, *pnew_smart))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanHandSmartData(HorizonVisionHandSmartData *smart) {
   CHECK_NULL(smart)
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeHandSmartData(HorizonVisionHandSmartData *smart) {
   CHECK_NULL(smart)
   HorizonVisionCleanHandSmartData(smart);
   std::free(smart);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocSmartData(HorizonVisionSmartData **psmart, int num) {
   CHECK_NULL(psmart)
   if (num == 0) {
     *psmart = nullptr;
-    return kHorizonVisionSuccess;
+    return 0;
   }
   auto smart_data = static_cast<HorizonVisionSmartData *>(
       std::calloc(num, sizeof(HorizonVisionSmartData)));
@@ -588,7 +588,7 @@ int HorizonVisionAllocSmartData(HorizonVisionSmartData **psmart, int num) {
     smart_data[i].face_extra = nullptr;
   }
   *psmart = smart_data;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopySmartData(HorizonVisionSmartData *smart_data,
@@ -616,7 +616,7 @@ int HorizonVisionCopySmartData(HorizonVisionSmartData *smart_data,
     (calloc(1, sizeof(HorizonVisionFaceExtraInfo)));
     *new_smart->face_extra = *smart_data->face_extra;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupSmartData(HorizonVisionSmartData *smart_data,
@@ -624,7 +624,7 @@ int HorizonVisionDupSmartData(HorizonVisionSmartData *smart_data,
   CHECK_NULL(smart_data)
   CHECK_SUCCESS(HorizonVisionAllocSmartData(pnew_smart, 1))
   CHECK_SUCCESS(HorizonVisionCopySmartData(smart_data, *pnew_smart))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanSmartData(HorizonVisionSmartData *smart) {
@@ -639,7 +639,7 @@ int HorizonVisionCleanSmartData(HorizonVisionSmartData *smart) {
     std::free(smart->face_extra);
   }
   smart->face_extra = nullptr;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeSmartData(HorizonVisionSmartData *smart, int num) {
@@ -649,7 +649,7 @@ int HorizonVisionFreeSmartData(HorizonVisionSmartData *smart, int num) {
   }
   std::free(smart);
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocSmartFrame(HorizonVisionSmartFrame **psmart) {
@@ -660,7 +660,7 @@ int HorizonVisionAllocSmartFrame(HorizonVisionSmartFrame **psmart) {
   (*psmart)->image_frame = nullptr;
   (*psmart)->smart_data_list_num = 0;
   (*psmart)->smart_data_list = nullptr;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 static int CopySmartFrame(HorizonVisionSmartFrame *smart_frame,
@@ -693,7 +693,7 @@ static int CopySmartFrame(HorizonVisionSmartFrame *smart_frame,
     CHECK_SUCCESS(HorizonVisionCopySmartData(&old_smart_data, &new_smart_data))
   }
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopySmartFrame(HorizonVisionSmartFrame *smart_frame,
@@ -720,7 +720,7 @@ static int dup_smart_frame(HorizonVisionSmartFrame *smart_frame,
                                                          *pnew_smart_frame))
   }
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupSmartFrame(HorizonVisionSmartFrame *smart_frame,
@@ -759,7 +759,7 @@ static int FreeSmartFrame(HorizonVisionSmartFrame *smart,
     smart->smart_data_list = nullptr;
   }
   std::free(smart);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeSmartFrame(HorizonVisionSmartFrame *smart) {
@@ -774,7 +774,7 @@ int HorizonVisionAllocSnapshot(HorizonVisionSnapshot **psnaps, int num) {
   CHECK_NULL(psnaps)
   if (num == 0) {
     *psnaps = nullptr;
-    return kHorizonVisionSuccess;
+    return 0;
   }
   auto snapshots = static_cast<HorizonVisionSnapshot *>(
       std::calloc(num, sizeof(HorizonVisionSnapshot)));
@@ -783,7 +783,7 @@ int HorizonVisionAllocSnapshot(HorizonVisionSnapshot **psnaps, int num) {
     snapshots[i].croped_image = nullptr;
   }
   *psnaps = snapshots;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopySnapshot(HorizonVisionSnapshot *snapshot,
@@ -799,7 +799,7 @@ int HorizonVisionCopySnapshot(HorizonVisionSnapshot *snapshot,
     CHECK_SUCCESS(HorizonVisionDupImage(
         snapshot->croped_image, true, &new_snapshot->croped_image))
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupSnapshot(HorizonVisionSnapshot *snapshot,
@@ -807,7 +807,7 @@ int HorizonVisionDupSnapshot(HorizonVisionSnapshot *snapshot,
   CHECK_NULL(snapshot)
   CHECK_SUCCESS(HorizonVisionAllocSnapshot(pnew_snapshot, 1))
   CHECK_SUCCESS(HorizonVisionCopySnapshot(snapshot, *pnew_snapshot))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanSnapshot(HorizonVisionSnapshot *snap) {
@@ -820,7 +820,7 @@ int HorizonVisionCleanSnapshot(HorizonVisionSnapshot *snap) {
     HorizonVisionFreeImage(snap->croped_image);
   }
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeSnapshot(HorizonVisionSnapshot *snap, int num) {
@@ -829,7 +829,7 @@ int HorizonVisionFreeSnapshot(HorizonVisionSnapshot *snap, int num) {
     HorizonVisionCleanSnapshot(&snap[i]);
   }
   std::free(snap);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocSnapshotTarget(HorizonVisionSnapshotTarget **ptargets,
@@ -837,7 +837,7 @@ int HorizonVisionAllocSnapshotTarget(HorizonVisionSnapshotTarget **ptargets,
   CHECK_NULL(ptargets)
   if (num == 0) {
     *ptargets = nullptr;
-    return kHorizonVisionSuccess;
+    return 0;
   }
   auto targets = static_cast<HorizonVisionSnapshotTarget *>(
       std::calloc(num, sizeof(HorizonVisionSnapshotTarget)));
@@ -846,7 +846,7 @@ int HorizonVisionAllocSnapshotTarget(HorizonVisionSnapshotTarget **ptargets,
     targets[i].snapshots = nullptr;
   }
   *ptargets = targets;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopySnapshotTarget(HorizonVisionSnapshotTarget *target,
@@ -861,7 +861,7 @@ int HorizonVisionCopySnapshotTarget(HorizonVisionSnapshotTarget *target,
     auto &old_snapshot = target->snapshots[i];
     CHECK_SUCCESS(HorizonVisionCopySnapshot(&old_snapshot, &new_snapshot))
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupSnapshotTarget(HorizonVisionSnapshotTarget *target,
@@ -869,7 +869,7 @@ int HorizonVisionDupSnapshotTarget(HorizonVisionSnapshotTarget *target,
   CHECK_NULL(target)
   CHECK_SUCCESS(HorizonVisionAllocSnapshotTarget(pnew_target, 1))
   CHECK_SUCCESS(HorizonVisionCopySnapshotTarget(target, *pnew_target))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanSnapshotTarget(HorizonVisionSnapshotTarget *targets) {
@@ -881,7 +881,7 @@ int HorizonVisionCleanSnapshotTarget(HorizonVisionSnapshotTarget *targets) {
     std::free(targets->snapshots);
     targets->snapshots = nullptr;
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionFreeSnapshotTarget(HorizonVisionSnapshotTarget *targets,
@@ -891,7 +891,7 @@ int HorizonVisionFreeSnapshotTarget(HorizonVisionSnapshotTarget *targets,
     HorizonVisionCleanSnapshotTarget(&targets[i]);
   }
   std::free(targets);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionAllocSnapshotFrame(HorizonVisionSnapshotFrame **psnapshots) {
@@ -900,7 +900,7 @@ int HorizonVisionAllocSnapshotFrame(HorizonVisionSnapshotFrame **psnapshots) {
       std::calloc(1, sizeof(HorizonVisionSnapshotFrame)));
   (*psnapshots)->targets_num = 0;
   (*psnapshots)->targets = nullptr;
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCopySnapshotFrame(HorizonVisionSnapshotFrame *snapshots,
@@ -915,7 +915,7 @@ int HorizonVisionCopySnapshotFrame(HorizonVisionSnapshotFrame *snapshots,
     auto &new_target = new_snapshots->targets[i];
     CHECK_SUCCESS(HorizonVisionCopySnapshotTarget(&old_target, &new_target))
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionDupSnapshotFrame(HorizonVisionSnapshotFrame *snapshots,
@@ -923,7 +923,7 @@ int HorizonVisionDupSnapshotFrame(HorizonVisionSnapshotFrame *snapshots,
   CHECK_NULL(snapshots)
   CHECK_SUCCESS(HorizonVisionAllocSnapshotFrame(pnew_snapshots))
   CHECK_SUCCESS(HorizonVisionCopySnapshotFrame(snapshots, *pnew_snapshots))
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int HorizonVisionCleanSnapshotFrame(HorizonVisionSnapshotFrame *snapshots) {
@@ -937,5 +937,5 @@ int HorizonVisionFreeSnapshotFrame(HorizonVisionSnapshotFrame *snapshots) {
   CHECK_NULL(snapshots)
   HorizonVisionCleanSnapshotFrame(snapshots);
   std::free(snapshots);
-  return kHorizonVisionSuccess;
+  return 0;
 }

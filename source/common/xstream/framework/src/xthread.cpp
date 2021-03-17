@@ -180,7 +180,18 @@ bool XThread::SetPriority(const std::string &policy, int priority) {
   return true;
 }
 
+int XThread::SetThreadName(std::string name) {
+  thread_name_ = name;
+  return 0;
+}
+
+std::string XThread::GetThreadName() {
+  return thread_name_;
+}
+
 uint32_t XThread::GetThreadIdx() const { return thread_idx_; }
+
+std::thread::id XThread::GetThreadId() const {return thread_->get_id();}
 
 void XThread::ExecLoop() {
   do {

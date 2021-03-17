@@ -27,14 +27,12 @@ int32_t PlateNumPostPredictor::Init(std::shared_ptr<CNNMethodConfig> config) {
   return 0;
 }
 void PlateNumPostPredictor::Do(CNNMethodRunData *run_data) {
-  int batch_size = run_data->input_dim_size.size();
-  run_data->output.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; batch_idx++) {
-    auto &mxnet_output = run_data->mxnet_output[batch_idx];
-    std::vector<BaseDataPtr> &batch_output = run_data->output[batch_idx];
+  {
+    auto &mxnet_output = run_data->mxnet_output;
+    std::vector<BaseDataPtr> &batch_output = run_data->output;
     batch_output.resize(output_slot_size_);
 
-    auto &input_data = (*(run_data->input))[batch_idx];
+    auto &input_data = (*(run_data->input));
     auto plate_types = std::static_pointer_cast<BaseDataVector>(input_data[2]);
     auto rois = std::static_pointer_cast<BaseDataVector>(input_data[0]);
     int dim_size = rois->datas_.size();

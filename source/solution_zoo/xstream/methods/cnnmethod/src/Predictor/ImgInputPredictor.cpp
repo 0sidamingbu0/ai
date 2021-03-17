@@ -81,16 +81,12 @@ void ImgInputPredictor::UpdateParam(std::shared_ptr<CNNMethodConfig> config) {
 }
 
 void ImgInputPredictor::Do(CNNMethodRunData *run_data) {
-  int frame_size = run_data->input->size();
-  run_data->mxnet_output.resize(frame_size);
-  run_data->input_dim_size.resize(frame_size);
-  run_data->norm_rois.resize(frame_size);
   run_data->real_nhwc = model_info_.real_nhwc_;
   run_data->elem_size = model_info_.elem_size_;
   run_data->all_shift = model_info_.all_shift_;
 
-  for (int frame_idx = 0; frame_idx < frame_size; frame_idx++) {  // loop frame
-    auto &input_data = (*(run_data->input))[frame_idx];
+  {  // one frame
+    auto &input_data = *(run_data->input);
     auto xstream_pyramid =
         std::static_pointer_cast<XStreamData<ImageFramePtr>>(input_data[1]);
     auto pyramid = std::static_pointer_cast<PymImageFrame>(
@@ -102,11 +98,11 @@ void ImgInputPredictor::Do(CNNMethodRunData *run_data) {
 
     int box_num = rois->datas_.size();
 
-    run_data->mxnet_output[frame_idx].resize(box_num);
-    run_data->input_dim_size[frame_idx] = box_num;
-    run_data->norm_rois[frame_idx].resize(box_num);
+    run_data->mxnet_output.resize(box_num);
+    run_data->input_dim_size = box_num;
+    run_data->norm_rois.resize(box_num);
 
-    auto &norm_rois = run_data->norm_rois[frame_idx];
+    auto &norm_rois = run_data->norm_rois;
 
     uint32_t w = pyramid->Width();
     uint32_t h = pyramid->Height();
@@ -270,7 +266,7 @@ void ImgInputPredictor::Do(CNNMethodRunData *run_data) {
       LOGD << "RunModel From ImgInput success";
       HobotXStreamFreeImage(tmp_src_data);
 
-      auto &one_tgt_mxnet = run_data->mxnet_output[frame_idx][roi_idx];
+      auto &one_tgt_mxnet = run_data->mxnet_output[roi_idx];
       one_tgt_mxnet.resize(layer_size);
       // change raw data to mxnet layout
       {

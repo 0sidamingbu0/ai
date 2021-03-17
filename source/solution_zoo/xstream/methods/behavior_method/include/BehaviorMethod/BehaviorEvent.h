@@ -42,9 +42,9 @@ class BehaviorEvent {
 
   virtual int Init(const Json::Value &config);
 
-  std::vector<std::vector<BaseDataPtr>> Process(
-      const std::vector<std::vector<BaseDataPtr> > &input,
-      const std::vector<xstream::InputParamPtr> &param);
+  std::vector<BaseDataPtr> Process(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param);
 
   void RunSingleFrame(const std::vector<BaseDataPtr> &frame_input,
                       std::vector<BaseDataPtr> &frame_output);

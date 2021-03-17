@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>检测 + 分类 模型集成示例 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../../" src="../../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../../_static/language_data.js"></script>
-        <script src="../../../../../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../../../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../../../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../../../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../../../../_sources/ai_express_release/source/common/xstream/framework/tutorials/stage10/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -167,24 +172,24 @@
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">input_tensors</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">output_tensors</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">PrepareInputData</span><span class="p">(</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">PrepareInputData</span><span class="p">(</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
       <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">InputParamPtr</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span>
       <span class="n">hobot</span><span class="o">::</span><span class="n">vision</span><span class="o">::</span><span class="n">PymImageFrame</span> <span class="o">&amp;</span><span class="n">pyramid</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_BBOX</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">input_bbox</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">valid_box</span><span class="p">,</span>
       <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BPU_TENSOR_S</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">output_tensors</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 </pre></div>
 </div>
 <p>DnnPostProcessMethod中包括虚函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>，主要操作是根据BPU输出数据解析结果，并封装成框架支持的BaseData数据类型。</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>  <span class="kt">int</span> <span class="nf">ParseDnnResult</span><span class="p">(</span><span class="n">DnnAsyncData</span> <span class="o">&amp;</span><span class="n">dnn_result</span><span class="p">,</span>
                      <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">frame_result</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">}</span>
 </pre></div>
 </div>
@@ -213,8 +218,8 @@ output[0]: data type: BPU_TYPE_TENSOR_F32, shape:(1,1000,1,1), layout: BPU_LAYOU
 <h2>金字塔概念说明<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <p>金字塔包含基本层与缩放层：</p>
 <ul class="simple">
-<li><p>基本层为0，4，8，12，16，20这6层，图像分辨率分别为原图、原图/2、原图/4等等，基本层缩放比例固定。</p></li>
-<li><p>其他层为缩放层，缩放层的缩放范围可以配置：金字塔1-3层，为基于基本层0的缩放层；金字塔5-7层，为基于基本层4的缩放层；以此类推。通过设置<code class="docutils literal notranslate"><span class="pre">roi_x_i、roi_y_i、roi_w_i、roi_h_i</span></code>，从对应基本层中扣取该区域ROI；<code class="docutils literal notranslate"><span class="pre">factor_i</span></code>用于表示相对对应的基本层，需要缩放的倍数。缩放倍数计算公式为： 64/(64+factor)， factor取值范围为[1-63], factor设置为0表示该层不使能。最终该缩放层的大小为： ROI * 64/(64+factor)，宽与高分别向下取整。</p></li>
+<li>基本层为0，4，8，12，16，20这6层，图像分辨率分别为原图、原图/2、原图/4等等，基本层缩放比例固定。</li>
+<li>其他层为缩放层，缩放层的缩放范围可以配置：金字塔1-3层，为基于基本层0的缩放层；金字塔5-7层，为基于基本层4的缩放层；以此类推。通过设置<code class="docutils literal notranslate"><span class="pre">roi_x_i、roi_y_i、roi_w_i、roi_h_i</span></code>，从对应基本层中扣取该区域ROI；<code class="docutils literal notranslate"><span class="pre">factor_i</span></code>用于表示相对对应的基本层，需要缩放的倍数。缩放倍数计算公式为： 64/(64+factor)， factor取值范围为[1-63], factor设置为0表示该层不使能。最终该缩放层的大小为： ROI * 64/(64+factor)，宽与高分别向下取整。</li>
 </ul>
 <p>以原图1920x1080为例，金字塔第0层大小为1920x1080，第4层为960x540，第8层为480x270，以此类推。</p>
 </div>
@@ -252,13 +257,13 @@ y&#39; = [y * (960.0 / 416.0)] * (1080 / 540)
 </div>
 <p>这里还需注意的是，由于对原图做了底部的padding，因此需要对映射后的坐标(x’, y’)【主要是y’】，限制在原图坐标范围内。</p>
 <p>后处理解析的检测框使用<code class="docutils literal notranslate"><span class="pre">hobot::vision::BBox</span></code>数据结构来表示(定义在common/xstream/vision_type/include/horizon/vision_type/vision_type.hpp)。此外，在函数<code class="docutils literal notranslate"><span class="pre">ParseDnnResult()</span></code>中还需要将解析后的数据封装为xstream-frame框架支持的BaseData数据结构。由于全图可能存在多个目标，结果会有多个检测框，这里需要使用派生数据结构xstream::BaseDataVector，将检测框封装到成员变量datas_中，Yolov3PostProcessMethod的输出数据结构是xstream::BaseDataVector&lt;xstream::XStreamData<a class="reference external" href="hobot::vision::BBox">hobot::vision::BBox</a>&gt;.</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">BaseDataVector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">BaseDataVector</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">BaseDataVector</span><span class="p">();</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BaseDataPtr</span><span class="o">&gt;</span> <span class="n">datas_</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Dtype</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="nc">XStreamData</span> <span class="o">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Dtype</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nl">XStreamData</span> <span class="p">:</span> <span class="k">public</span> <span class="n">BaseData</span> <span class="p">{</span>
   <span class="n">Dtype</span> <span class="n">value</span><span class="p">;</span>
   <span class="n">XStreamData</span><span class="p">()</span> <span class="p">{}</span>
   <span class="k">explicit</span> <span class="n">XStreamData</span><span class="p">(</span><span class="k">const</span> <span class="n">Dtype</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
@@ -290,28 +295,25 @@ y&#39; = [y * (960.0 / 416.0)] * (1080 / 540)
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

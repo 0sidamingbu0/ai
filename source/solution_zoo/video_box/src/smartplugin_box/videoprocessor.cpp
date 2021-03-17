@@ -12,8 +12,16 @@
 
 namespace horizon {
 namespace vision {
+VideoProcessor *VideoProcessor::instance_ = nullptr;
+
 VideoProcessor::VideoProcessor() {
   memset(&vo_plot_cfg_, 0, sizeof(smart_vo_cfg_t));
+}
+
+VideoProcessor &VideoProcessor::GetInstance() {
+  static std::once_flag flag;
+  std::call_once(flag, [&]() { instance_ = new VideoProcessor(); });
+  return *instance_;
 }
 
 VideoProcessor::~VideoProcessor() {
@@ -22,23 +30,25 @@ VideoProcessor::~VideoProcessor() {
 }
 
 int VideoProcessor::Init(const int channel_num, const int display_mode,
-                         const smart_vo_cfg_t& smart_vo_cfg,
-                         const bool encode_smart,
-                         const bool encode_1080p,
-                         const bool encode_720p,
-                         const bool display) {
+                         const smart_vo_cfg_t &smart_vo_cfg,
+                         const bool encode_smart, const bool draw_smart,
+                         const bool encode_1080p, const bool encode_720p,
+                         const bool display, const bool draw_real_time_video) {
   if (init_) return 0;
   channel_num_ = channel_num;
   display_mode_ = display_mode;
   encode_smart_ = encode_smart;
   display_ = display;
   encode_720p_ = encode_720p;
+  draw_smart_ = draw_smart;
   memcpy(&vo_plot_cfg_, &smart_vo_cfg, sizeof(smart_vo_cfg_t));
 
   if (display) {
     vot_module_ = std::make_shared<VotModule>();
     vot_module_->SetDisplayMode(display_mode_);
     vot_module_->SetChannelNum(channel_num_);
+    vot_module_->SetDrawSmart(draw_smart_);
+    vot_module_->SetDrawRealTimeVideo(draw_real_time_video);
     vot_module_->Init(0, vo_plot_cfg_);
   }
   if (encode_1080p) {
@@ -48,8 +58,8 @@ int VideoProcessor::Init(const int channel_num, const int display_mode,
     module_info_venc.height = 1080;
     module_info_venc.type = 1;
     module_info_venc.bits = 2000;
-    venc_module_1080p_->Init(0, &module_info_venc,
-                             channel_num_, display_mode_);
+    venc_module_1080p_->Init(0, &module_info_venc, channel_num_,
+                             smart_vo_cfg, encode_smart_, display_mode_);
   }
 
   if (encode_720p_) {
@@ -60,7 +70,7 @@ int VideoProcessor::Init(const int channel_num, const int display_mode,
     module_info_venc.type = 1;
     module_info_venc.bits = 2000;
     venc_module_720p_->Init(1, &module_info_venc, channel_num_,
-                            display_mode_);
+                            smart_vo_cfg, encode_smart_, display_mode_);
   }
 
   init_ = true;
@@ -107,7 +117,7 @@ int VideoProcessor::Input(std::shared_ptr<VideoData> video_data,
       // std::lock_guard<std::mutex> lk(cache_mtx_);
       if (in_queue_.size() >= in_queue_len_max_) {
         in_queue_.pop();
-        LOGE << "vodeo processor queue is full";
+        LOGW << "vodeo processor queue is full";
       }
       // in_queue_.push(std::move(video_data));
       in_queue_.push(video_data);
@@ -117,11 +127,21 @@ int VideoProcessor::Input(std::shared_ptr<VideoData> video_data,
       // std::lock_guard<std::mutex> lk(cache_mtx_720p_);
       if (in_queue_720p_.size() >= in_queue_len_max_) {
         in_queue_720p_.pop();
-        LOGE << "vodeo processor queue is full";
+        LOGW << "vodeo processor queue is full";
       }
       in_queue_720p_.push(video_data);
     }
   }
+  return 0;
+}
+
+int VideoProcessor::Input(const int channel,
+      HorizonVisionSmartFrame *smart_frame) {
+  if (!display_) {
+    HorizonVisionFreeSmartFrame(smart_frame);
+    return 0;
+  }
+  vot_module_->Input(channel, smart_frame);
   return 0;
 }
 
@@ -145,7 +165,6 @@ int VideoProcessor::Stop() {
   if (venc_module_720p_) {
     venc_module_720p_->Stop();
   }
-
   in_queue_.clear();
   in_queue_720p_.clear();
 
@@ -183,9 +202,9 @@ int VideoProcessor::HandleData() {
       }
     }
 
-    if (encode_smart_) {
+    if (encode_smart_ && draw_smart_ && vot_data->smart_frame) {
       PlotSmartData objplot;
-      objplot.PlotData(vo_plot_cfg_, vot_data);
+      objplot.PlotData(vo_plot_cfg_, vot_data, vot_data->smart_frame);
       vot_data->has_plot = true;
     }
 
@@ -208,9 +227,9 @@ int VideoProcessor::HandleData_720P() {
       }
     }
 
-    if (encode_smart_) {
+    if (encode_smart_ && draw_smart_ && vot_data->smart_frame) {
       PlotSmartData objplot;
-      objplot.PlotData(vo_plot_cfg_, vot_data);
+      objplot.PlotData(vo_plot_cfg_, vot_data, vot_data->smart_frame);
       vot_data->has_plot = true;
     }
 

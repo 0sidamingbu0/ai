@@ -15,7 +15,6 @@
 #define COMMON_XTHREAD_H_
 
 #include <limits.h>
-
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -29,7 +28,6 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
-
 #include "hobotlog/hobotlog.hpp"
 
 namespace xstream {
@@ -84,12 +82,19 @@ class XThread {
 
   bool SetPriority(const std::string &policy, int priority);
 
+  int SetThreadName(std::string name);
+
+  std::string GetThreadName();
+
   uint32_t GetThreadIdx() const;
+
+  std::thread::id GetThreadId() const;
 
  private:
   XThread() = delete;
   void ExecLoop();
   uint32_t thread_idx_;
+  std::string thread_name_ = "";
   std::shared_ptr<std::thread> thread_;
 
   int TaskCount() { return task_queue_.size(); }

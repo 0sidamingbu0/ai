@@ -50,9 +50,9 @@ int32_t BehaviorMethod::Init(const std::string &cfg_path) {
 
 void BehaviorMethod::Finalize() {}
 
-std::vector<std::vector<BaseDataPtr>> BehaviorMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
+std::vector<BaseDataPtr> BehaviorMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
   return behavior_event_->Process(input, param);
 }
 

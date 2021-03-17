@@ -35,7 +35,7 @@ class H265Sink : public MediaSink {
       MediaSubsession
           &subsession,  // identifies the kind of data that's being received
       char const *streamId = NULL, int buffer_size = 200000,
-      int buffer_count = 8);  // identifies the stream itself (optional)
+      int buffer_count = 4);  // identifies the stream itself (optional)
 
   virtual ~H265Sink();
   void SetFileName(std::tuple<bool, std::string> file);

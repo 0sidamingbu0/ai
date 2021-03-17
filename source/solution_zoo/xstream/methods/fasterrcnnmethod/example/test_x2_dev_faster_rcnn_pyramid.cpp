@@ -88,17 +88,14 @@ int TestX2DEVFasterRCNNPyramid(int argc, char **argv) {
       std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_pyramid->value = py_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_pyramid);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_pyramid);
     auto xstream_output = faster_rcnn_method.DoProcess(input, param);
-    assert(xstream_output.size() == 1);
-    auto faster_rcnn_out = xstream_output[0];
 #if 1
     static int dump_cnt = 0;
     if (dump_cnt++ < 5) {
-      DumpFaceLmk(&bgr_mat, faster_rcnn_out);
+      DumpFaceLmk(&bgr_mat, xstream_output);
     }
 #endif
     std::cout << "predict success: " << i << std::endl;

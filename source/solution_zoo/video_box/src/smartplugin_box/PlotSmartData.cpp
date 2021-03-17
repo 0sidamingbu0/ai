@@ -19,8 +19,13 @@ PlotSmartData::~PlotSmartData() {}
 
 int PlotSmartData::PlotData(const smart_vo_cfg_t vo_confg,
                             std::shared_ptr<VideoData> video_data,
+                            HorizonVisionSmartFrame *smart_frame,
                             const bool face, const bool head, const bool body,
                             const bool kps, const bool veh) {
+  if (smart_frame == nullptr)
+    return 0;
+  if (smart_frame->smart_data_list_num <= 0)
+    return 0;
   uint32_t width_tmp = video_data->width;
   uint32_t height_tmp = video_data->height;
   auto image_data_size_ = width_tmp * height_tmp * 3;
@@ -75,8 +80,8 @@ int PlotSmartData::PlotData(const smart_vo_cfg_t vo_confg,
                       color, thickness);
       };
 
-  for (uint32_t i = 0; i < video_data->smart_frame->smart_data_list_num; ++i) {
-    const auto &s_data = video_data->smart_frame->smart_data_list[i];
+  for (uint32_t i = 0; i < smart_frame->smart_data_list_num; ++i) {
+    const auto &s_data = smart_frame->smart_data_list[i];
     if (s_data.body && body) {
     #if 0
       if (s_data.body->skeleton) {
@@ -231,10 +236,11 @@ int PlotSmartData::PlotData(const smart_vo_cfg_t vo_confg,
         if (iter != video_data->recog_cache.end())
         {
           auto cach = iter->second;
-          LOGI << "recog success,ch:" << video_data->channel << ",track_id:"
-               << s_data.track_id << ",record_id:" << cach->record_id
-               << ",similar:" << cach->similar << ",image_url:"
-               << cach->img_uri_list;
+          LOGD << "recog success,ch:" << video_data->channel
+               << ",track_id:" << s_data.track_id
+               << ",record_id:" << cach->record_id
+               << ",similar:" << cach->similar
+               << ",image_url:" << cach->img_uri_list;
 #if 1
           cv::putText(bgr, cach->record_id,
                       cv::Point(rect.x1 * x_scale + x_offset,
@@ -243,8 +249,8 @@ int PlotSmartData::PlotData(const smart_vo_cfg_t vo_confg,
                       1);
 #endif
         } else {
-          LOGI << "recog fail,ch:" << video_data->channel << ",track_id:"
-               << s_data.track_id;
+          LOGD << "recog fail,ch:" << video_data->channel
+               << ",track_id:" << s_data.track_id;
         }
 #endif
       }

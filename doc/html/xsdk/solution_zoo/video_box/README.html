@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>智能计算盒参考方案 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/xsdk/solution_zoo/video_box/README.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -205,7 +210,10 @@
 <h2>配置文件说明<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
 <p>1.video_box_config.json</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
-  &quot;xstream_workflow_file&quot;: &quot;./video_box/configs/body_detection.json&quot;,	// xstream配置文件 
+  &quot;xstream_workflow_file&quot;: &quot;./video_box/configs/body_detection.json&quot;,	// xstream配置文件
+  &quot;xstream_workflow_file_pic&quot;: &quot;./video_box/configs/recog_flow.json&quot;,   // xstream配置文件
+  &quot;xstream_workflow_file_feature&quot;: &quot;./video_box/configs/feature_flow.json&quot;,  // xstream配置文件
+  &quot;enable_recog&quot;: false,                      // 是否使能人脸识别功能
   &quot;enable_profile&quot;: 0,
   &quot;profile_log_path&quot;: &quot;&quot;,
   &quot;enable_result_to_json&quot;: false,
@@ -218,7 +226,8 @@
   &quot;plot_fps&quot;: false,
   &quot;rtsp_config_file&quot;: &quot;./video_box/configs/rtsp.json&quot;,					// rtsp配置文件
   &quot;display_config_file&quot;: &quot;./video_box/configs/display.json&quot;,				// 显示配置文件
-  &quot;drop_frame_config_file&quot;: &quot;./video_box/configs/drop_frames.json&quot;  // 配置是否丢帧以及丢帧策略
+  &quot;drop_frame_config_file&quot;: &quot;./video_box/configs/drop_frames.json&quot;,  // 配置是否丢帧以及丢帧策略
+  &quot;run_smart&quot;: true                            // 是否运行智能分析功能，当不运行智能分析功能时，从网络rtsp过来的码流解码之后直接VO显示输出
 }
 </pre></div>
 </div>
@@ -257,12 +266,14 @@
   &quot;vo&quot;: {
     &quot;enable&quot;: true,											// 是否开启VO输出
     &quot;display_mode&quot;: 0, 									// 显示模式，0: auto, 1: 9 pictures
-    &quot;transition_support&quot;: 0             // 是否支持动态融合
+    &quot;transition_support&quot;: 0,            // 是否支持动态融合
+    &quot;draw_real_time_video&quot;: false,       // 渲染视频是否实时，不丢帧
+    &quot;draw_smart&quot;: true                 // 是否渲染智能帧信息
   },
   &quot;rtsp&quot;: {
     &quot;stream_1080p&quot;: false,									// 是否开启1080P RTSP码流推送
     &quot;stream_720p&quot;: false,									// 是否开启720P RTSP码流推送
-    &quot;encode_smart_info&quot;: true             // 编码码流是否包括智能信息
+    &quot;encode_smart_info&quot;: false             // 编码码流是否包括智能信息
   }
 }
 </pre></div>
@@ -294,9 +305,9 @@
 <h2>常见问题<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
 <p>1.拉取码流出错</p>
 <ol class="simple">
-<li><p>rtsp.json文件里面的url地址问题，注意检查url的用户名密码以及ip。</p></li>
-<li><p>设备支持的连接数目达到最大限制，不再支持继续接入。
-比如，某些设备rtsp的tcp方式最大支持一路，当前已使用tcp接入了一路，此时可修改rtsp.json对应通道的连接方式。</p></li>
+<li>rtsp.json文件里面的url地址问题，注意检查url的用户名密码以及ip。</li>
+<li>设备支持的连接数目达到最大限制，不再支持继续接入。
+比如，某些设备rtsp的tcp方式最大支持一路，当前已使用tcp接入了一路，此时可修改rtsp.json对应通道的连接方式。</li>
 </ol>
 <p>2.解码出错</p>
 <p>1）目前接收码流buffer默认为200KB，如果码流帧大小超过200KB，会导致接收到的帧不完整，送给解码器后解码失败。
@@ -331,28 +342,25 @@ saveenv
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

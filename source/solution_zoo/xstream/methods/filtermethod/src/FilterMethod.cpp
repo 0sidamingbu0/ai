@@ -44,19 +44,11 @@ int FilterMethod::Init(const std::string &config_file_path) {
   return 0;
 }
 
-std::vector<std::vector<BaseDataPtr>> FilterMethod::DoProcess(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> output;
-  int batch_size = input.size();
-  HOBOT_CHECK(batch_size > 0);
-  output.resize(batch_size);
-  for (int batch_idx = 0; batch_idx < batch_size; ++batch_idx) {
-    auto &frame_i = input[batch_idx];
-    auto &frame_o = output[batch_idx];
-    auto &param_i = param[batch_idx];
-    ProcessOneBatch(frame_i, &frame_o, param_i);
-  }
+std::vector<BaseDataPtr> FilterMethod::DoProcess(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
+  std::vector<BaseDataPtr> output;
+  ProcessOneBatch(input, &output, param);
   return output;
 }
 

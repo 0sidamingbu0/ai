@@ -15,7 +15,6 @@
 #include <fstream>
 #include <vector>
 #include <memory>
-#include "bpu_predict/bpu_io.h"
 #include "bpu_predict/bpu_predict.h"
 #include "bpu_predict/bpu_predict_extension.h"
 
@@ -307,18 +306,16 @@ int CNNMethodForDDRInput(std::string box_file,
     xstream_rois->datas_.push_back(xstream_roi);
     xstream_landmarks->datas_.push_back(xstream_landmark);
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_rois);
-    input[0].push_back(xstream_landmarks);
-    input[0].push_back(disappeared_track_ids);
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_rois);
+    input.push_back(xstream_landmarks);
+    input.push_back(disappeared_track_ids);
 
-    std::vector<std::vector<BaseDataPtr>> xstream_output =
+    std::vector<BaseDataPtr> xstream_output =
         cnn_method.DoProcess(input, param);
-    auto cnn_output = xstream_output[0];
     auto act_rets =
-        std::static_pointer_cast<xstream::BaseDataVector>(cnn_output[0]);
+        std::static_pointer_cast<xstream::BaseDataVector>(xstream_output[0]);
     auto act_ret = std::static_pointer_cast<
         xstream::XStreamData<
             hobot::vision::Attribute<int>>>(act_rets->datas_[0]);

@@ -95,18 +95,15 @@ TEST(SSD_TEST, BoxDetect) {
         std::static_pointer_cast<hobot::vision::ImageFrame>(py_img);
     xstream_img->name_ = "pyramid";
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_img);
-    std::vector<std::vector<BaseDataPtr>> xstream_output =
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_img);
+    std::vector<BaseDataPtr> xstream_output =
         ssd_method.DoProcess(input, param);
     fb_handle.FreeImgInfo(&feed_back_info);
 
     std::cout << xstream_output.size() << std::endl;
-    ASSERT_TRUE(xstream_output.size() == 1); // NOLINT
-    auto ssd_out = xstream_output[0];
-    auto box_out = std::static_pointer_cast<BaseDataVector>(ssd_out[0]);
+    auto box_out = std::static_pointer_cast<BaseDataVector>(xstream_output[0]);
     for (size_t i = 0; i < box_out->datas_.size(); i++) {
       auto item =
           std::static_pointer_cast<xstream::XStreamData<hobot::vision::BBox>>(
@@ -137,18 +134,17 @@ TEST(SSD_TEST, BoxDetect) {
         std::static_pointer_cast<hobot::vision::ImageFrame>(py_img);
     xstream_img->name_ = "pyramid";
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_img);
-    std::vector<std::vector<BaseDataPtr>> xstream_output =
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_img);
+    std::vector<BaseDataPtr> xstream_output =
         ssd_method.DoProcess(input, param);
     fb_handle.FreeImgInfo(py_img);
 
     std::cout << xstream_output.size() << std::endl;
-    ASSERT_TRUE(xstream_output.size() == 1); // NOLINT
+    // ASSERT_TRUE(xstream_output.size() == 1); // NOLINT
     auto ssd_out = xstream_output[0];
-    auto box_out = std::static_pointer_cast<BaseDataVector>(ssd_out[0]);
+    auto box_out = std::static_pointer_cast<BaseDataVector>(ssd_out);
     for (size_t i = 0; i < box_out->datas_.size(); i++) {
       auto item =
           std::static_pointer_cast<xstream::XStreamData<hobot::vision::BBox>>(

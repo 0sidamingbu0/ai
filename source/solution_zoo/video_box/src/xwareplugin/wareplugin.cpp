@@ -57,7 +57,7 @@ void WarePlugin::ParseConfig() {
 }
 
 int WarePlugin::Init() {
-  if (isinit_) return kHorizonVisionSuccess;
+  if (isinit_) return 0;
   isinit_ = true;
   LOGI << "WarePlugin INIT";
   RegisterMsg(TYPE_FEATURE_MESSAGE,
@@ -70,12 +70,12 @@ int WarePlugin::Start() {
   LOGI << "WarePlugin Start";
   DB::Get(db_path_);
   db_table_ = DB::Get()->CreateTable(db_name_, db_modul_version_);
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int WarePlugin::Stop() {
   LOGI << "WarePlugin Stop";
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int WarePlugin::DeInit() {
@@ -152,7 +152,7 @@ int WarePlugin::OnGetFeatureResult(const XProtoMessagePtr& msg) {
       }
     }
   }
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 int WarePlugin::db_list() {

@@ -15,7 +15,6 @@
 #include "./yuv_utils.h"
 #include "FasterRCNNMethod/dump.h"
 
-#include "bpu_predict/bpu_io.h"
 #include "horizon/vision_type/vision_type.hpp"
 
 #include "hobotxsdk/xstream_sdk.h"
@@ -61,14 +60,12 @@ TEST(FACE_DET_TEST, Basic) {
       std::make_shared<XStreamData<std::shared_ptr<ImageFrame>>>();
     xstream_img->value = cv_image_frame_ptr;
 
-    std::vector<std::vector<BaseDataPtr>> input;
-    std::vector<xstream::InputParamPtr> param;
-    input.resize(1);
-    input[0].push_back(xstream_img);
-    std::vector<std::vector<BaseDataPtr>> xstream_output =
+    std::vector<BaseDataPtr> input;
+    xstream::InputParamPtr param;
+    input.push_back(xstream_img);
+    std::vector<BaseDataPtr> xstream_output =
       faster_rcnn_method.DoProcess(input, param);
-    ASSERT_TRUE(xstream_output.size() == 1);    // NOLINT
-    auto faster_rcnn_out = xstream_output[0];
+    auto faster_rcnn_out = xstream_output;
     auto rects = std::static_pointer_cast<BaseDataVector>(faster_rcnn_out[0]);
     ASSERT_TRUE(rects->datas_.size() == 3);     // NOLINT
   }

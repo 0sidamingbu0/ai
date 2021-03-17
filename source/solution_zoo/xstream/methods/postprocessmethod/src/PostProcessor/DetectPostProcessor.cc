@@ -58,10 +58,18 @@ int DetectPostProcessor::Init(const std::string &cfg) {
   post_nms_top_n_ = config_->GetIntValue("post_nms_top_n");
   box_score_thresh_ = config_->GetFloatValue("box_score_thresh",
                                              box_score_thresh_);
+  box_rect_thresh_ = config_->GetFloatValue("box_rect_thresh",
+                                            box_rect_thresh_);
+  has_rect_ = config_->GetBoolValue("has_rect",
+                                    has_rect_);
+
   corner_score_threshold_ = config_->GetFloatValue("corner_score_threshold",
                                                    corner_score_threshold_);
   mask_confidence_ = config_->GetBoolValue("mask_confidence",
                                            mask_confidence_);
+  is_crop_ = config_->GetBoolValue("is_crop", is_crop_);
+
+  feat_stride_ = config_->GetSTDIntArray("feat_stride", feat_stride_);
   return 0;
 }
 
@@ -121,31 +129,77 @@ void DetectPostProcessor::GetModelInfo() {
   }
 }
 
-std::vector<std::vector<BaseDataPtr>> DetectPostProcessor::Do(
-    const std::vector<std::vector<BaseDataPtr>> &input,
-    const std::vector<xstream::InputParamPtr> &param) {
-  std::vector<std::vector<BaseDataPtr>> output;
-  output.resize(input.size());
-  for (size_t i = 0; i < input.size(); i++) {
-    const auto &frame_input = input[i];
-    auto &frame_output = output[i];
-    RunSingleFrame(frame_input, frame_output);
-  }
+std::vector<BaseDataPtr> DetectPostProcessor::Do(
+    const std::vector<BaseDataPtr> &input,
+    const xstream::InputParamPtr &param) {
+  std::vector<BaseDataPtr> output;
+  RunSingleFrame(input, output);
   return output;
+}
+
+void DetectPostProcessor::GlobalIOU(
+    const BaseDataPtr &method_output,
+    std::vector<BBox> &total_boxes_result) {
+  auto method_out_slot = std::static_pointer_cast<
+      xstream::BaseDataVector>(method_output);
+  std::vector<BBox> total_boxes(method_out_slot->datas_.size());
+  for (size_t j = 0; j < method_out_slot->datas_.size(); j++) {
+    auto box = std::static_pointer_cast<XStreamData<
+        hobot::vision::BBox>>(method_out_slot->datas_[j]);
+    total_boxes[j] = box->value;
+  }
+  LocalIOU(total_boxes, total_boxes_result,
+           iou_threshold_, post_nms_top_n_, false);
 }
 
 void DetectPostProcessor::RunSingleFrame(
     const std::vector<BaseDataPtr> &frame_input,
     std::vector<BaseDataPtr> &frame_output) {
   LOGD << "DetectPostProcessor RunSingleFrame";
-  HOBOT_CHECK(frame_input.size() == 1);
-
+  RUN_PROCESS_TIME_PROFILER("DetectPostProcessor RunSingleFrame");
+  RUN_FPS_PROFILER("DetectPostProcessor RunSingleFrame");
+  //  HOBOT_CHECK(frame_input.size() == 1);
+  std::vector<BaseDataPtr> method_output;
   for (size_t out_index = 0; out_index < method_outs_.size(); ++out_index) {
     frame_output.push_back(std::make_shared<xstream::BaseDataVector>());
+    method_output.push_back(std::make_shared<xstream::BaseDataVector>());
   }
 
+  auto async_datas = std::make_shared<xstream::BaseDataVector>();
+  if (is_crop_) {
+    async_datas = std::static_pointer_cast<
+        xstream::BaseDataVector>(frame_input[0]);
+  } else {
+    async_datas->datas_.push_back(frame_input[0]);
+  }
+
+  for (const auto & data : async_datas->datas_) {
+    auto async_data = std::static_pointer_cast<XStreamData<
+        std::shared_ptr<hobot::vision::AsyncData>>>(data);
+    RunSingleFrameImpl(data, method_output);
+  }
+  if (!is_crop_) {
+    frame_output = std::move(method_output);
+  } else {
+    for (size_t i = 0; i < method_output.size(); i++) {
+      std::vector<BBox> total_boxes_result;
+      GlobalIOU(method_output[i], total_boxes_result);
+      auto frame_out_slot = std::static_pointer_cast<
+          xstream::BaseDataVector>(frame_output[i]);
+      for (const auto box : total_boxes_result) {
+        auto xstream_box = std::make_shared<XStreamData<BBox>>();
+        xstream_box->value = box;
+        xstream_box->value.score = 1;
+        frame_out_slot->datas_.push_back(xstream_box);
+      }
+    }
+  }
+}
+
+void DetectPostProcessor::RunSingleFrameImpl(const BaseDataPtr frame_input,
+                        std::vector<BaseDataPtr> &frame_output) {
   auto async_data = std::static_pointer_cast<XStreamData<
-      std::shared_ptr<hobot::vision::AsyncData>>>(frame_input[0]);
+      std::shared_ptr<hobot::vision::AsyncData>>>(frame_input);
   if (async_data->value->bpu_model == nullptr ||
       async_data->value->task_handle == nullptr ||
       async_data->value->output_tensors == nullptr ||
@@ -153,6 +207,8 @@ void DetectPostProcessor::RunSingleFrame(
     LOGE << "Invalid AsyncData";
     return;
   }
+  bpu_boxes_ = std::static_pointer_cast<std::vector<BPU_BBOX>>(
+      async_data->value->bpu_boxes);
   bpu_model_ = std::static_pointer_cast<BPU_MODEL_S>(
       async_data->value->bpu_model);
   task_handle_ = std::static_pointer_cast<BPU_TASK_HANDLE>(
@@ -165,7 +221,6 @@ void DetectPostProcessor::RunSingleFrame(
   src_image_height_ = async_data->value->src_image_height;
   model_input_height_ = async_data->value->model_input_height;
   model_input_width_ = async_data->value->model_input_width;
-
   // get model info
   if (!is_init_) {
     GetModelInfo();
@@ -194,7 +249,9 @@ void DetectPostProcessor::RunSingleFrame(
     ReleaseTensor(output_tensors_);
 
     CoordinateTransOutMsg(det_result, src_image_width_, src_image_height_,
-                          model_input_width_, model_input_height_);
+                          model_input_width_, model_input_height_,
+                          bpu_boxes_);
+
     for (auto &boxes : det_result.boxes) {
       LOGD << boxes.first << ", num: " << boxes.second.size();
       for (auto &box : boxes.second) {
@@ -214,7 +271,12 @@ void DetectPostProcessor::RunSingleFrame(
 
     for (size_t out_index = 0; out_index < method_outs_.size(); ++out_index) {
       if (xstream_det_result[method_outs_[out_index]]) {
-        frame_output[out_index] = xstream_det_result[method_outs_[out_index]];
+        auto frame_out_slot = std::static_pointer_cast<
+            xstream::BaseDataVector>(frame_output[out_index]);
+        auto det_result_slot = xstream_det_result[method_outs_[out_index]];
+        frame_out_slot->datas_.insert(frame_out_slot->datas_.end(),
+                                      det_result_slot->datas_.begin(),
+                                      det_result_slot->datas_.end());
       }
     }
   }
@@ -286,17 +348,34 @@ void DetectPostProcessor::PostProcess(DetectOutMsg &det_result) {
         break;
       case DetectBranchOutType::ORIENTBBOX:
         // need next 4 layer data, need flush
-        for (int i = 1; i <= 3; i++) {
-          HB_SYS_flushMemCache(&(output_tensors_->at(out_level+i).data),
-                               HB_SYS_MEM_CACHE_INVALIDATE);
+        if (!has_rect_) {
+          for (int i = 1; i <= 3; i++) {
+            HB_SYS_flushMemCache(&(output_tensors_->at(out_level+i).data),
+                                 HB_SYS_MEM_CACHE_INVALIDATE);
+          }
+          ParseOrientBox(
+              output_tensors_->at(out_level).data.virAddr,
+              output_tensors_->at(out_level+1).data.virAddr,
+              output_tensors_->at(out_level+2).data.virAddr,
+              output_tensors_->at(out_level+3).data.virAddr,
+              out_level, out_level+1, out_level+2, out_level+3,
+              det_result.orient_boxes[branch_info.name]);
+        } else {
+          for (int i = 1; i <= 4; i++) {
+            HB_SYS_flushMemCache(&(output_tensors_->at(out_level+i).data),
+                                 HB_SYS_MEM_CACHE_INVALIDATE);
+          }
+          ParseOrientBox(
+              output_tensors_->at(out_level).data.virAddr,
+              output_tensors_->at(out_level+1).data.virAddr,
+              output_tensors_->at(out_level+2).data.virAddr,
+              output_tensors_->at(out_level+3).data.virAddr,
+              out_level, out_level+1, out_level+2, out_level+3,
+              det_result.orient_boxes[branch_info.name],
+              has_rect_,
+              output_tensors_->at(out_level+4).data.virAddr,
+              out_level+4);
         }
-        ParseOrientBox(
-            output_tensors_->at(out_level).data.virAddr,
-            output_tensors_->at(out_level+1).data.virAddr,
-            output_tensors_->at(out_level+2).data.virAddr,
-            output_tensors_->at(out_level+3).data.virAddr,
-            out_level, out_level+1, out_level+2, out_level+3,
-            det_result.orient_boxes[branch_info.name]);
         break;
       case DetectBranchOutType::CORNER:
         ParseCorner(output_tensors_->at(out_level).data.virAddr,
@@ -308,6 +387,14 @@ void DetectPostProcessor::PostProcess(DetectOutMsg &det_result) {
           output_tensors_->at(out_level).data.virAddr,
           out_level, det_result.segmentations[branch_info.name],
           mask_confidence_);
+        break;
+      case DetectBranchOutType::FCOSBBOX:
+        for (size_t i = 1; i < 3 * feat_stride_.size(); i++) {
+          HB_SYS_flushMemCache(&(output_tensors_->at(out_level + i).data),
+                               HB_SYS_MEM_CACHE_INVALIDATE);
+        }
+        ParseFCOSDetectBox(*output_tensors_.get(),
+            out_level, det_result.boxes[branch_info.name]);
         break;
       default:
         break;
@@ -378,7 +465,14 @@ void DetectPostProcessor::GetResultMsg(
 void DetectPostProcessor::CoordinateTransOutMsg(
     DetectOutMsg &det_result,
     int src_image_width, int src_image_height,
-    int model_input_width, int model_input_hight) {
+    int model_input_width, int model_input_hight,
+    std::shared_ptr<std::vector<BPU_BBOX>> bboxes) {
+  int x_drift = 0, y_drift = 0;
+  if (bboxes && !bboxes->empty()) {
+    x_drift = bboxes->at(0).x1;
+    y_drift = bboxes->at(0).y1;
+  }
+
   for (auto &boxes : det_result.boxes) {
     for (auto &box : boxes.second) {
       CoordinateTransform(box.x1, box.y1,
@@ -387,6 +481,9 @@ void DetectPostProcessor::CoordinateTransOutMsg(
       CoordinateTransform(box.x2, box.y2,
                           src_image_width, src_image_height,
                           model_input_width, model_input_hight);
+
+      CoordinateDrift(box.x1, box.y1, x_drift, y_drift);
+      CoordinateDrift(box.x2, box.y2, x_drift, y_drift);
     }
   }
 
@@ -811,13 +908,190 @@ void DetectPostProcessor::LocalIOU(
   return;
 }
 
+void DetectPostProcessor::ComputeLocations(
+    const int &height,
+    const int &width,
+    const int &feature_stride,
+    cv::Mat &location) {
+  std::vector<int32_t> shift_x = Arange(0, width);
+  std::vector<int32_t> shift_y = Arange(0, height);
+  cv::Mat shift_x_mat = cv::Mat(shift_x) * feature_stride;
+  cv::Mat shift_y_mat = cv::Mat(shift_y) * feature_stride;
+  // meshgrid
+  cv::Mat shift_x_mesh, shift_y_mesh;
+  MeshGrid(shift_x_mat, shift_y_mat, shift_x_mesh, shift_y_mesh);
+  cv::Mat concat_xy;
+  cv::vconcat(shift_x_mesh.reshape(1, 1),
+              shift_y_mesh.reshape(1, 1),
+              concat_xy);    // 纵向拼接两个行向量
+  cv::transpose(concat_xy, location);
+  location = location + feature_stride / 2;  // 向下取整
+}
+
+void DetectPostProcessor::ParseFCOSDetectBox(
+    const std::vector<BPU_TENSOR_S> &output_tensors,
+    int branch_level, std::vector<BBox> &result_boxes) {
+  RUN_PROCESS_TIME_PROFILER("Parse_FCOS_Detect_Box")
+  RUN_FPS_PROFILER("Parse_FCOS_Detect_Box")
+
+  int height = out_level2branch_info_[branch_level].real_nhwc[1];
+  int width = out_level2branch_info_[branch_level].real_nhwc[2];
+  const auto stride_size = feat_stride_.size();
+
+  std::vector<void*> bpu_out_scores(stride_size);
+  std::vector<void*> bpu_out_regs(stride_size);
+  std::vector<void*> bpu_out_ctrs(stride_size);
+
+  for (size_t i = 0; i < stride_size; i++) {
+    auto feat_offset = branch_level + i;
+    bpu_out_scores[i] = output_tensors[feat_offset].data.virAddr;
+    bpu_out_regs[i] = output_tensors[feat_offset + stride_size].data.virAddr;
+    bpu_out_ctrs[i] = output_tensors[
+        feat_offset + stride_size * 2].data.virAddr;
+  }
+
+  // 1. 计算fmap上每个点对应其在原图中的坐标locations : (h*w, 2)
+  static std::vector<cv::Mat> locations(stride_size);  // 对应feat_stride
+  static std::once_flag flag;
+  std::call_once(flag, [&width, &height, this]() {
+    for (size_t i = 0; i < locations.size(); i++) {
+      int scale = 1 << i;
+      int height_scale = height / scale;
+      int width_scale = width / scale;
+      ComputeLocations(height_scale, width_scale,
+                       feat_stride_[i], locations[i]);
+    }
+  });
+
+  // 2. 根据定点阈值，转换定点数据
+  // scores_valid_index[i]: stride i
+  std::vector<std::vector<int>> scores_valid_index(stride_size);
+  std::vector<std::vector<int32_t>> scores_valid_float(stride_size);
+  std::vector<std::vector<float>> reg_valid_float(stride_size);
+  std::vector<std::vector<int32_t>> ctr_valid_float(stride_size);
+
+
+  // 2.1 先解析score, 过滤得到初步的valid_index
+  float box_score_tmp_thresh =
+      log(box_score_thresh_ / (1.0 - box_score_thresh_));
+
+  std::vector<int> valid_nums(stride_size);
+
+  for (size_t i = 0; i < stride_size; i++) {
+    scores_valid_float[i].resize(height * width);
+    scores_valid_index[i].resize(height * width);
+    ConvertOutputFilter(
+        bpu_out_scores[i],
+        scores_valid_float[i].data(),
+        branch_level + i,
+        box_score_tmp_thresh,
+        scores_valid_index[i], valid_nums[i]);
+    LOGD << "valid_num: " << valid_nums[i];
+  }
+
+  for (size_t i = 0; i < stride_size; i++) {
+    ctr_valid_float[i].resize(valid_nums[i]);
+    ConvertOutputFilter(
+        bpu_out_ctrs[i],
+        ctr_valid_float[i].data(),
+        branch_level + i + stride_size * 2,
+        scores_valid_index[i], valid_nums[i]);
+  }
+
+  for (size_t i = 0; i < stride_size; i++) {
+    reg_valid_float[i].resize(valid_nums[i] * 4);
+    ConvertOutputFilter(
+        bpu_out_regs[i],
+        reg_valid_float[i].data(),
+        branch_level + i + stride_size,
+        scores_valid_index[i], valid_nums[i]);
+  }
+
+    std::vector<BBox> box_data;
+    int pre_nms_top_n = pre_nms_top_n_;
+    for (size_t i = 0; i < stride_size; i++) {  // stride i
+      int valid_num = valid_nums[i];
+      if (valid_num == 0) continue;
+      // score
+      cv::Mat box_score_data_raw(valid_num, 1, CV_32FC1,
+                                 scores_valid_float[i].data());
+      cv::Mat box_ctr_data_raw(valid_num, 1, CV_32FC1,
+                               ctr_valid_float[i].data());
+      cv::Mat box_score_data, box_ctr_data;
+      cv::exp(box_score_data_raw * (-1), box_score_data);
+      box_score_data = 1 / (1 + box_score_data);
+      cv::exp(box_ctr_data_raw * (-1), box_ctr_data);
+      box_ctr_data = 1 / (1 + box_ctr_data);
+      cv::multiply(box_score_data, box_ctr_data, box_score_data);
+      // reg
+      cv::Mat box_reg_data_raw(valid_num, 4, CV_32FC1,
+                           reg_valid_float[i].data());
+      cv::Mat box_reg_data;
+      cv::exp(box_reg_data_raw, box_reg_data);
+      box_reg_data = box_reg_data * feat_stride_[i];
+
+      // box_score_thresh_过滤
+      cv::Mat candidate_inds;
+      // 元素值大于thresh 得到255，否则0
+      cv::compare(
+          box_score_data, box_score_thresh_, candidate_inds, cv::CMP_GT);
+
+      candidate_inds = candidate_inds / 255;  // 0 or 1
+      pre_nms_top_n = cv::sum(candidate_inds)[0];  // box_num
+      LOGD << "pre_nms_top_n: " << pre_nms_top_n
+           << " , pre_nms_top_n_: " << pre_nms_top_n_;
+
+      // 根据score阈值过滤
+      for (int row = 0; row < box_score_data.rows; row++) {
+        float* ptr = box_score_data.ptr<float>(row);
+        for (int col = 0; col < box_score_data.cols; col++) {
+          if (ptr[col] > box_score_thresh_) {
+            BBox one_box_data;
+            one_box_data.score = ptr[col];
+            int location_0, location_1;
+            location_0 = locations[i].ptr<int32_t>(
+                scores_valid_index[i][row])[0];
+            location_1 = locations[i].ptr<int32_t>(
+                scores_valid_index[i][row])[1];
+
+            // 限制框大小在图像内
+            one_box_data.x1 = std::max(
+                std::min(location_0 - box_reg_data.ptr<float>(row)[0],
+                         static_cast<float>(model_input_width_) - 1), 0.0f);
+            one_box_data.y1 = std::max(
+                std::min(location_1 - box_reg_data.ptr<float>(row)[1],
+                         static_cast<float>(model_input_height_) - 1), 0.0f);
+            one_box_data.x2 = std::max(
+                std::min(location_0 + box_reg_data.ptr<float>(row)[2],
+                         static_cast<float>(model_input_width_) - 1), 0.0f);
+            one_box_data.y2 = std::max(
+                std::min(location_1 + box_reg_data.ptr<float>(row)[3],
+                         static_cast<float>(model_input_height_) - 1), 0.0f);
+            box_data.push_back(std::move(one_box_data));
+          }
+        }
+      }
+    }  // end stride i
+    // NMS box
+    if (pre_nms_top_n > pre_nms_top_n_) {  // 需要取前top_n_个
+      auto greater = [](const BBox &a, const BBox &b) {
+        return a.score > b.score;
+      };
+      std::sort(box_data.begin(), box_data.end(), greater);  // 降序排序
+      box_data.resize(pre_nms_top_n_);
+    }
+
+    LocalIOU(box_data, result_boxes,
+        iou_threshold_, post_nms_top_n_, false);
+}
+
 // branch 所在层
 void DetectPostProcessor::ParseOrientBox(
     void* box_score, void* box_reg, void* box_ctr, void* box_orient,
     int branch_score, int branch_reg, int branch_ctr, int branch_orient,
-    std::vector<Oriented_BBox> &oriented_boxes) {
+    std::vector<Oriented_BBox> &oriented_boxes,
+    bool has_rect, void* box_rect, int branch_rect) {
   RUN_PROCESS_TIME_PROFILER("Parse_Orient_Box");
-  RUN_FPS_PROFILER("Parse_Orient_Box");
   int height = out_level2branch_info_[branch_score].real_nhwc[1];
   int width = out_level2branch_info_[branch_score].real_nhwc[2];
   int stride = out_level2branch_info_[branch_score].aligned_nhwc[3];
@@ -864,6 +1138,10 @@ void DetectPostProcessor::ParseOrientBox(
                       valid_index,
                       valid_num);
   LOGD << "valid_num: " << valid_num;
+  if (valid_num <= 0) {
+    LOGD << "no box detected";
+    return;
+  }
 
   // 2.2. 解析ctr、reg、ori, 只需根据valid_index解析部分即可
   std::vector<float> vec_data_ctr(valid_num);
@@ -884,9 +1162,23 @@ void DetectPostProcessor::ParseOrientBox(
                       bpu_datas[3].branch,
                       valid_index,
                       valid_num);
-  if (valid_num <= 0) {
-    LOGD << "no box detected";
-    return;
+  cv::Mat box_rect_candidate;
+  if (has_rect) {
+    std::vector<float> vec_data_rect(valid_num);
+    ConvertOutputFilter(box_rect,
+                        vec_data_rect.data(),
+                        branch_rect,
+                        valid_index,
+                        valid_num);
+    // 计算rect
+    cv::Mat box_rect_data;
+    cv::Mat box_rect_data_raw(valid_num, 1, CV_32FC1, vec_data_rect.data());
+    cv::exp(box_rect_data_raw * (-1), box_rect_data);
+    box_rect_data = 1 / (1 + box_rect_data);
+    // 元素值大于thresh 得到255，否则0
+    cv::compare(box_rect_data, box_rect_thresh_,
+                box_rect_candidate, cv::CMP_GT);
+    box_rect_candidate /= 255;
   }
   // 2.3. 计算score
   cv::Mat box_score_data_raw(valid_num, 1, CV_32FC1, vec_data_score.data());
@@ -930,7 +1222,6 @@ void DetectPostProcessor::ParseOrientBox(
       if (ptr[col] > box_score_thresh_) {
         BoxData one_box_data;
         one_box_data.score = ptr[col];
-        one_box_data.class_id = col + 1;
         std::vector<int> location(2);
         std::vector<float> reg(4), orient(2);
         location[0] = locations.ptr<int32_t>(valid_index[row])[0];
@@ -939,11 +1230,21 @@ void DetectPostProcessor::ParseOrientBox(
         reg[1] = box_reg_data.ptr<float>(row)[1];
         reg[2] = box_reg_data.ptr<float>(row)[2];
         reg[3] = box_reg_data.ptr<float>(row)[3];
-        orient[0] = box_orient_data.ptr<float>(row)[0];
-        orient[1] = box_orient_data.ptr<float>(row)[1];
+
+        orient[0] =
+          std::max(std::min(box_orient_data.ptr<float>(row)[0], 2.0f), 0.0f);
+        orient[1] =
+          std::max(std::min(box_orient_data.ptr<float>(row)[1], 2.0f), 0.0f);
         one_box_data.location = location;
         one_box_data.reg = reg;
         one_box_data.orient = orient;
+
+        if (has_rect) {
+          // class_id表示矩形框与否
+          one_box_data.class_id = box_rect_candidate.ptr<uchar>(row)[0];
+        } else {
+          one_box_data.class_id = col + 1;
+        }
 
         box_data[box_data_index++] = one_box_data;
       }
@@ -968,9 +1269,9 @@ void DetectPostProcessor::ParseOrientBox(
     horizontal_boxes[i].push_back(box_data[i].location[0] + box_data[i].reg[2]);
     horizontal_boxes[i].push_back(box_data[i].location[1] + box_data[i].reg[3]);
     per_box_w_rot[i] =
-      (box_data[i].reg[2] + box_data[i].reg[0]) / 2 * box_data[i].orient[0] - 1;
+      (box_data[i].reg[2] + box_data[i].reg[0]) / 2 * box_data[i].orient[0];
     per_box_h_rot[i] =
-      (box_data[i].reg[3] + box_data[i].reg[1]) / 2 * box_data[i].orient[1] - 1;
+      (box_data[i].reg[3] + box_data[i].reg[1]) / 2 * box_data[i].orient[1];
 
     obb[i].x1 = horizontal_boxes[i][0];
     obb[i].y1 = horizontal_boxes[i][3] - per_box_h_rot[i];
@@ -1207,7 +1508,6 @@ void DetectPostProcessor::ConvertOutputFilter(
   }
   auto shift = bpu_model_->outputs[out_index].shifts;
   float threshold_quanti = threshold * (1 << shift[0]);
-
   uint32_t src_n_stride =
       aligned_shape.d[1] * aligned_shape.d[2] * aligned_shape.d[3] * elem_size;
   uint32_t src_h_stride = aligned_shape.d[2] * aligned_shape.d[3] * elem_size;
@@ -1269,8 +1569,8 @@ void DetectPostProcessor::ConvertOutputFilter(
   for (int i = 0; i < valid_num; i++) {
     int index = valid_index[i];
     // 根据index计算h,w
-    int h_index = index / 32;  // 32是有效宽度
-    int w_index = index % 32;
+    int h_index = index / real_shape.d[2];
+    int w_index = index % real_shape.d[2];
     // 对有效索引处的数据定点转浮点
     for (int cc = 0; cc < real_shape.d[3]; cc++) {
       tmp_int32_value = *(reinterpret_cast<int32_t *>(
@@ -1280,6 +1580,77 @@ void DetectPostProcessor::ConvertOutputFilter(
       *(reinterpret_cast<float *>(dest_ptr)) = tmp_float_value;
       dest_ptr = reinterpret_cast<char *>(dest_ptr) + elem_size;
     }
+  }
+}
+
+void DetectPostProcessor::ConvertOutputFilterFromFile(
+    int i, void *dest_ptr,
+    int out_index, float threshold,
+    std::vector<int> &valid_index, int &valid_num) {
+  const int stride_offset = feat_stride_.size() * 3;
+  std::map<int, std::string> branch_name {
+      {0, "head"},
+      {1, "face"},
+      {2, "hand"}
+  };
+  std::map<int, std::string> level_name {
+      {0, "score"},
+      {1, "regression"},
+      {2, "centerness"}
+  };
+  std::string file_name = "./bins/" +
+      branch_name[out_index / stride_offset] +
+      "_branch_stride" + std::to_string(feat_stride_[i]) + "_" +
+      level_name[out_index % stride_offset / feat_stride_.size()] + ".bin";
+
+  float obj_f;
+  std::fstream tri_f(file_name, std::ios::in | std::ios::binary);
+
+  if (!tri_f) {
+    LOGE << "open file: " << file_name << " failed";
+    return;
+  }
+  int index = 0;
+  while (tri_f.read(reinterpret_cast<char *>(&obj_f), sizeof(obj_f))) {
+    valid_index[valid_num] = index;
+    valid_num++;
+    *(reinterpret_cast<float *>(dest_ptr)) = obj_f;
+    dest_ptr = reinterpret_cast<char *>(dest_ptr) + sizeof(obj_f);
+    index++;
+  }
+}
+
+void DetectPostProcessor::ConvertOutputFromFile(
+    int i, void *dest_ptr,
+    int out_index,
+    std::vector<int> &valid_index, const int &valid_num) {
+  const int stride_offset = feat_stride_.size() * 3;
+  std::map<int, std::string> branch_name {
+      {0, "head"},
+      {1, "face"},
+      {2, "hand"}
+  };
+  std::map<int, std::string> level_name {
+      {0, "score"},
+      {1, "regression"},
+      {2, "centerness"}
+  };
+  std::string file_name = "./bins/" +
+      branch_name[out_index / stride_offset] +
+      "_branch_stride" + std::to_string(feat_stride_[i]) + "_" +
+      level_name[out_index % stride_offset / feat_stride_.size()] + ".bin";
+
+  float obj_f;
+  std::fstream tri_f(file_name, std::ios::in | std::ios::binary);
+
+  if (!tri_f) {
+    LOGE << "open file: " << file_name << "failed";
+    return;
+  }
+
+  while (tri_f.read(reinterpret_cast<char *>(&obj_f), sizeof(obj_f))) {
+    *(reinterpret_cast<float *>(dest_ptr)) = obj_f;
+    dest_ptr = reinterpret_cast<char *>(dest_ptr) + sizeof(obj_f);
   }
 }
 

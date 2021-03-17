@@ -19,7 +19,8 @@ namespace xstream {
 
 enum class PredictType {
   DETECT,
-  CLASSIFY
+  CLASSIFY,
+  CROP_DETECT
 };
 
 extern const std::map<std::string, PredictType> g_predict_type_map;

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Frequently asked questions &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/faq.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -232,8 +237,8 @@ documentation for examples on binding lambda functions). An example:</p>
 <p>It’s good practice to split binding code over multiple files, as in the
 following example:</p>
 <p><code class="file docutils literal notranslate"><span class="pre">example.cpp</span></code>:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">init_ex1</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="o">&amp;</span><span class="p">);</span>
-<span class="kt">void</span> <span class="nf">init_ex2</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="o">&amp;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">init_ex1</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="o">&amp;</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">init_ex2</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="o">&amp;</span><span class="p">);</span>
 <span class="cm">/* ... */</span>
 
 <span class="n">PYBIND11_MODULE</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="p">{</span>
@@ -244,13 +249,13 @@ following example:</p>
 </pre></div>
 </div>
 <p><code class="file docutils literal notranslate"><span class="pre">ex1.cpp</span></code>:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">init_ex1</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">init_ex1</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="p">});</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p><code class="file docutils literal notranslate"><span class="pre">ex2.cpp</span></code>:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">init_ex2</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">init_ex2</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">module</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;sub&quot;</span><span class="p">,</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">;</span> <span class="p">});</span>
 <span class="p">}</span>
 </pre></div>
@@ -268,11 +273,11 @@ separate files that can be compiled independently from one another, and then
 linked together into the same final shared object.  Following this approach
 will:</p>
 <ol class="arabic simple">
-<li><p>reduce memory requirements per compilation unit.</p></li>
-<li><p>enable parallel builds (if desired).</p></li>
-<li><p>allow for faster incremental builds. For instance, when a single class
+<li>reduce memory requirements per compilation unit.</li>
+<li>enable parallel builds (if desired).</li>
+<li>allow for faster incremental builds. For instance, when a single class
 definition is changed, only a subset of the binding code will generally need
-to be recompiled.</p></li>
+to be recompiled.</li>
 </ol>
 </div>
 <div class="section" id="recursive-template-instantiation-exceeded-maximum-depth-of-256">
@@ -417,28 +422,25 @@ discourse:</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

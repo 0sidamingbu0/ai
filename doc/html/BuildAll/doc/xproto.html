@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>XProto原型应用开发框架开发指南 &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -52,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -172,6 +175,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -183,7 +188,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/BuildAll/doc/xproto.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -244,7 +249,7 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <div class="section" id="id6">
 <h4>消息基础类<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
 <p>消息基础类XProtoMessage，新的Message类型需要继承XProtoMessage。</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">XProtoMessage</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">XProtoMessage</span> <span class="p">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XProtoMessage</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">XProtoMessage</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XProtoMessage</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type_</span> <span class="o">=</span> <span class="s">&quot;NONE&quot;</span><span class="p">;</span>
@@ -261,7 +266,7 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define TYPE_SAMPLE_MESSAGE &quot;XPLUGIN_SAMPLE_MESSAGE&quot;  </span><span class="c1">// 消息类型</span>
 <span class="n">XPLUGIN_REGISTER_MSG_TYPE</span><span class="p">(</span><span class="n">XPLUGIN_SAMPLE_MESSAGE</span><span class="p">)</span>     <span class="c1">// 注册消息</span>
 
-<span class="k">struct</span> <span class="nc">NumberProdMessage</span> <span class="o">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>            <span class="c1">// 自定义消息</span>
+<span class="k">struct</span> <span class="nl">NumberProdMessage</span> <span class="p">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>            <span class="c1">// 自定义消息</span>
   <span class="kt">float</span> <span class="n">num_</span><span class="p">;</span>
   <span class="k">explicit</span> <span class="nf">NumberProdMessage</span><span class="p">(</span><span class="kt">float</span> <span class="n">num</span><span class="p">)</span> <span class="o">:</span><span class="n">num_</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="n">TYPE_SAMPLE_MESSAGE</span><span class="p">;</span>
@@ -284,19 +289,19 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <p>插件提供了两个基础类XPlugin和XPluginAsync，继承这两个基础类之一可实现一个新的plugin，通过override的函数包括:<code class="docutils literal notranslate"><span class="pre">Init()、Start()、Stop()、Desc();</span></code>等接口来管理插件的生命周期。</p>
 <p>两个plugin基类功能上有些差异：</p>
 <ul class="simple">
-<li><p>XPlugin类：定义了管理周期的相关接口以及发送接收消息的接口，派生类通过overide OnMsg接口，处理plugin感兴趣的消息。消息总线处理消息，会同步调用OnMsg接口，若OnMsg处理耗时，会影响整个消息总线的处理能力。</p></li>
-<li><p>XPluginAsync类：在XPlugin的基础上，对OnMsg接口做了实现，提供了消息处理的回调接口注册能力。OnMsg内部将plugin感兴趣的消息放入任务队列，由注册的回调处理消息，这样可以避免消息总线处理性能下降的风险。</p></li>
+<li>XPlugin类：定义了管理周期的相关接口以及发送接收消息的接口，派生类通过overide OnMsg接口，处理plugin感兴趣的消息。消息总线处理消息，会同步调用OnMsg接口，若OnMsg处理耗时，会影响整个消息总线的处理能力。</li>
+<li>XPluginAsync类：在XPlugin的基础上，对OnMsg接口做了实现，提供了消息处理的回调接口注册能力。OnMsg内部将plugin感兴趣的消息放入任务队列，由注册的回调处理消息，这样可以避免消息总线处理性能下降的风险。</li>
 </ul>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">XPlugin</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_shared_from_this</span><span class="o">&lt;</span><span class="n">XPlugin</span><span class="o">&gt;</span> <span class="p">{</span>
  <span class="k">public</span><span class="o">:</span>
   <span class="n">XPlugin</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">XPlugin</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
   <span class="c1">// 完成register msg和workflow的初始化操作</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">DeInit</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">DeInit</span><span class="p">();</span>
   <span class="c1">// 处理register的msg类型，如有需要，push自己的msg到总线</span>
-  <span class="k">virtual</span> <span class="kt">void</span> <span class="n">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
   <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">desc</span><span class="p">();</span>
 
@@ -320,9 +325,9 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
   <span class="c1">// 消息处理上半部分，将消息推送该plugin的消息队列 + 流量控制，派生类不需要override OnMsg</span>
   <span class="kt">void</span> <span class="nf">OnMsg</span><span class="p">(</span><span class="n">XProtoMessagePtr</span> <span class="n">msg</span><span class="p">);</span>
   <span class="c1">// 启动Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Start</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Start</span><span class="p">();</span>
   <span class="c1">// 停止Plugin</span>
-  <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Stop</span><span class="p">();</span>
+  <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">Stop</span><span class="p">();</span>
 
  <span class="k">protected</span><span class="o">:</span>
   <span class="k">using</span> <span class="n">XProtoMessageFunc</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="n">XProtoMessagePtr</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
@@ -343,9 +348,9 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 </div>
 <p>建议基于XPluginAsync开发。XPluginAsync的功能特性如下：</p>
 <ul class="simple">
-<li><p>基于消息队列+线程，处理感兴趣的消息</p></li>
-<li><p>设置Plugin缓存的消息数量的大小限制</p></li>
-<li><p>Plugin处理消息超时预警</p></li>
+<li>基于消息队列+线程，处理感兴趣的消息</li>
+<li>设置Plugin缓存的消息数量的大小限制</li>
+<li>Plugin处理消息超时预警</li>
 </ul>
 </div>
 <div class="section" id="id7">
@@ -371,14 +376,14 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <div class="section" id="id8">
 <h2>内置数据类型msgtype<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li><p>protobuf：用于序列化智能数据，便于不同平台间交互，详细请参考x3.proto文件</p></li>
-<li><p>can_bus_data：用于存放接收来自MCU或发送到MCU的消息</p></li>
-<li><p>gdcplugin_data：用于存放俯视图</p></li>
-<li><p>hbipcplugin_data：hbipcplugin交互的数据载体</p></li>
-<li><p>reorderplugin_data：reorderplugin交互的数据载体</p></li>
-<li><p>rtspplugin_data：rtspplugin对外输出视频的数据载体</p></li>
-<li><p>smartplugin_data：智能数据的载体</p></li>
-<li><p>vioplugin_data：vio图像数据载体</p></li>
+<li>protobuf：用于序列化智能数据，便于不同平台间交互，详细请参考x3.proto文件</li>
+<li>can_bus_data：用于存放接收来自MCU或发送到MCU的消息</li>
+<li>gdcplugin_data：用于存放俯视图</li>
+<li>hbipcplugin_data：hbipcplugin交互的数据载体</li>
+<li>reorderplugin_data：reorderplugin交互的数据载体</li>
+<li>rtspplugin_data：rtspplugin对外输出视频的数据载体</li>
+<li>smartplugin_data：智能数据的载体</li>
+<li>vioplugin_data：vio图像数据载体</li>
 </ul>
 </div>
 <div class="section" id="id9">
@@ -395,9 +400,9 @@ XProto原型应用开发框架，定义了基础的消息类型、Plugin基础�
 <h4>定制开发<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
 <p>定制开发需要三步：</p>
 <ol class="simple">
-<li><p>根据自己的智能化应用需要依赖的XStream method更新build.properties文件及src/xstream/method_factory.cpp;</p></li>
-<li><p>根据自己的智能化应用需要输出的智能化结果重写protobuf串行化，即重新实现SmartMessage的Serialize方法。
-master分支提供了串行化输出的人脸检测框的sample程序，标准化的protobuf协议在repo xproto_msgtype/include/xproto_msgtype/protobuf/proto/x2.proto。</p></li>
+<li>根据自己的智能化应用需要依赖的XStream method更新build.properties文件及src/xstream/method_factory.cpp;</li>
+<li>根据自己的智能化应用需要输出的智能化结果重写protobuf串行化，即重新实现SmartMessage的Serialize方法。
+master分支提供了串行化输出的人脸检测框的sample程序，标准化的protobuf协议在repo xproto_msgtype/include/xproto_msgtype/protobuf/proto/x2.proto。</li>
 </ol>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">CustomSmartMessage</span><span class="o">::</span><span class="n">Serialize</span><span class="p">()</span> <span class="p">{</span>
   <span class="c1">// serialize smart message using defined smart protobuf.</span>
@@ -439,8 +444,8 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>将编译完成的库替换deploy/xprotocp_smart/lib/下的libsmartplugin.so。
-更新xstream workflow配置文件，默认为deploy/configs/smart_config.json</p></li>
+<li>将编译完成的库替换deploy/xprotocp_smart/lib/下的libsmartplugin.so。
+更新xstream workflow配置文件，默认为deploy/configs/smart_config.json</li>
 </ol>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span>  <span class="p">{</span>
       <span class="nt">&quot;xstream_workflow_file&quot;</span><span class="p">:</span> <span class="s2">&quot;configs/det_mot.json&quot;</span><span class="p">,</span>
@@ -450,9 +455,9 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>xstream_workflow_file: 指定xstream workflow配置文件;</p></li>
-<li><p>enable_profile: 是否使能online profile，该feature是xstream支持的feature，如果method开发中包括了profile信息可通过该开关online使能;</p></li>
-<li><p>profile_log_path: online profile 日志输出路径。</p></li>
+<li>xstream_workflow_file: 指定xstream workflow配置文件;</li>
+<li>enable_profile: 是否使能online profile，该feature是xstream支持的feature，如果method开发中包括了profile信息可通过该开关online使能;</li>
+<li>profile_log_path: online profile 日志输出路径。</li>
 </ul>
 <p>将xprotocp_smart部署包放在真机上，运行xproto_start.sh 即可启动智能化应用;</p>
 <p>其中，sample/smart_main.cpp即是主程序源码，主程序启动方式为：</p>
@@ -467,7 +472,7 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <h5>SmartFrameMessage<a class="headerlink" href="#smartframemessage" title="永久链接至标题">¶</a></h5>
 <p>SmartFrameMessage包括Timestamp、Error_Code和Target</p>
 <ol class="simple">
-<li><p>人体智能信息</p></li>
+<li>人体智能信息</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Target {
   string type_;             // &quot;person&quot;
@@ -495,7 +500,7 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>车辆信息</p></li>
+<li>车辆信息</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Target {
   string type_;               // &quot;vehicle&quot;、&quot;vehicle_capture&quot;、&quot;vehicle_anomaly&quot;，分别表示车辆信息、抓拍车辆信息、抓拍车辆违法信息
@@ -563,7 +568,7 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </pre></div>
 </div>
 <ol class="simple">
-<li><p>行人、非机动车信息</p></li>
+<li>行人、非机动车信息</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Target {
   string type_;           // &quot;person&quot;或&quot;no-motor&quot;
@@ -586,7 +591,7 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <div class="section" id="statisticsmessage">
 <h5>StatisticsMessage<a class="headerlink" href="#statisticsmessage" title="永久链接至标题">¶</a></h5>
 <ol class="simple">
-<li><p>车流统计信息</p></li>
+<li>车流统计信息</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>StatisticsMessage {
    repeated Attributes attributes_ = [{
@@ -623,8 +628,8 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">domain_name</span></code>表示HBIPC通信域， 可选的值有<code class="docutils literal notranslate"><span class="pre">X2SD001</span></code>和<code class="docutils literal notranslate"><span class="pre">X2BIF001</span></code>， 分别对应bifsd和bifspi两种物理通路。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">server_id</span></code>表示CP侧的服务ID，UUID格式。AP侧在建立连接的时候会用到该UUID。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">domain_name</span></code>表示HBIPC通信域， 可选的值有<code class="docutils literal notranslate"><span class="pre">X2SD001</span></code>和<code class="docutils literal notranslate"><span class="pre">X2BIF001</span></code>， 分别对应bifsd和bifspi两种物理通路。</li>
+<li><code class="docutils literal notranslate"><span class="pre">server_id</span></code>表示CP侧的服务ID，UUID格式。AP侧在建立连接的时候会用到该UUID。</li>
 </ul>
 <table border="1" class="docutils">
 <thead>
@@ -641,14 +646,14 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </tbody>
 </table><p>HBIPC框架的库与使用示例请参考系统软件bsp发布包。</p>
 <p>当HBIPCPlugin收到AP侧发来的配置数据和命令数据时，会将其以<code class="docutils literal notranslate"><span class="pre">XPLUGIN_HBIPC_MESSAGE</span></code>类型的消息发送到XProto内部总线。消息对应的结构体定义如下：</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">HbipcMessage</span> <span class="o">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">HbipcMessage</span> <span class="p">:</span> <span class="n">XProtoMessage</span> <span class="p">{</span>
   <span class="n">HbipcMessage</span><span class="p">()</span> <span class="p">{</span> <span class="n">type_</span> <span class="o">=</span> <span class="s">&quot;XPLUGIN_HBIPC_MESSAGE&quot;</span><span class="p">;</span> <span class="p">}</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Serialize</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;Default hbipc message&quot;</span><span class="p">;</span> <span class="p">}</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">HbipcMessage</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">CustomHbipcMessage</span> <span class="o">:</span> <span class="n">HbipcMessage</span> <span class="p">{</span>
-  <span class="k">explicit</span> <span class="nf">CustomHbipcMessage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">proto</span><span class="p">)</span> <span class="o">:</span> <span class="n">proto_</span><span class="p">(</span><span class="n">proto</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">CustomHbipcMessage</span> <span class="p">:</span> <span class="n">HbipcMessage</span> <span class="p">{</span>
+  <span class="k">explicit</span> <span class="n">CustomHbipcMessage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">proto</span><span class="p">)</span> <span class="o">:</span> <span class="n">proto_</span><span class="p">(</span><span class="n">proto</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">type_</span> <span class="o">=</span> <span class="s">&quot;XPLUGIN_HBIPC_MESSAGE&quot;</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Serialize</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
@@ -660,9 +665,9 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 </div>
 <p>HBIPCPlugin负责将VioPlugin和SmartPlugin产生的消息发送到AP侧，所以它需要监听总线上面的<code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>、<code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>和<code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>。</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>：图像数据帧。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>：报告VIOPlugin丢弃的帧。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>：图像数据帧。</li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>：报告VIOPlugin丢弃的帧。</li>
 </ul>
 <p>同时，HbipcPlugin也提供了以下公共接口，支持客户在业务逻辑中进行集成：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HbipcPlugin</span> <span class="o">:</span> <span class="k">public</span> <span class="n">XPluginAsync</span> <span class="p">{</span>
@@ -681,7 +686,7 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>关于HBIPCPlugin，详细参考<a class="reference internal" href="../../xsdk/common/xproto/plugins/hbipcplugin/README.html"><span class="doc">README</span></a>。</p>
+<p>关于HBIPCPlugin，详细参考<a class="reference external" href="../../xsdk/common/xproto/plugins/hbipcplugin/README">README</a>。</p>
 </div>
 <div class="section" id="websocketplugin">
 <h3>3.WebsocketPlugin<a class="headerlink" href="#websocketplugin" title="永久链接至标题">¶</a></h3>
@@ -721,9 +726,9 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <p>采用websocket方案时display_mode为1。</p>
 <p>WebsocketPlugin负责将VioPlugin和SmartPlugin产生的消息发送到web端，所以它需要监听总线上面的<code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>、<code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>和<code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>。</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>：图像数据帧。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>：报告VIOPlugin丢弃的帧。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>：图像数据帧。</li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>：报告VIOPlugin丢弃的帧。</li>
 </ul>
 <p>同时，WebsocketPlugin也提供了以下公共接口，支持客户在业务逻辑中进行集成：</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">WebsocketPlugin</span> <span class="o">:</span> <span class="k">public</span> <span class="n">xproto</span><span class="o">::</span><span class="n">XPluginAsync</span> <span class="p">{</span>
@@ -746,9 +751,9 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <p>UvcPlugin内部会对智能结果做序列化，通过HID协议，将智能结果通过usb硬件链路发送给host端。</p>
 <p>UvcPlugin负责将VioPlugin和SmartPlugin产生的消息发送到web端，所以它需要监听总线上面的<code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>、<code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>和<code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>。</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>：图像数据帧。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>：报告VIOPlugin丢弃的帧。</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_SMART_MESSAGE</span></code>: 智能数据帧。</li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_IMAGE_MESSAGE</span></code>：图像数据帧。</li>
+<li><code class="docutils literal notranslate"><span class="pre">XPLUGIN_DROP_MESSAGE</span></code>：报告VIOPlugin丢弃的帧。</li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
   &quot;auth_mode&quot;: 0,
@@ -800,13 +805,12 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 <p>IoTVioPlugin支持获取MIPI camera图像、本地回灌图像、外接usb camera图像，基于硬件生成图像金字塔，向xproto消息总线发送图像消息，用于其他plugin使用。</p>
 <p>IoTVioPlugin分为两个部分：</p>
 <ul class="simple">
-<li><p>图像数据的获取：图像来源可以分为SIF（摄像头）、JPEG回灌图片和NV12回灌图片。</p></li>
-<li><p>控制图像数据获取速率：VioPlugin中通过定长buffer来实现速率控制。buffer大小可以通过JSON文件进行配置。单输入图像源的情况下理论最多可达6个，当智能帧产生速率过慢，buffer耗尽时，VioPlugin产生主动丢帧数据</p></li>
-<li><p>消息的产生和推送：消息分为图像数据消息与主动丢帧数据消息，由第一部分产生后推送至消息总线。</p></li>
-<li><p>支持单路camera、单路回灌、多路camera不同步运行、多路camera同步运行、一路cam+一路回灌同时运行 (目前可支持的多路理论最多达6路)</p>
-<ul>
-<li><p>多路camera不同步运行，顾名思义就是获取上来的camera数据是独立的，每个camera就分别占用一路pipeID。例如两路camera，就会分别获取到两路不同的图像数据结果</p></li>
-<li><p>多路camera同步运行，顾名思义就是上层每帧只能获取一次结果，该结果中包含了多路camera的图像数据，并且多路的图像数据的时间戳是同步过的，如果多路中有任意一路发生丢帧，则用户也无法获取到其他路的图像结果数据。</p></li>
+<li>图像数据的获取：图像来源可以分为SIF（摄像头）、JPEG回灌图片和NV12回灌图片。</li>
+<li>控制图像数据获取速率：VioPlugin中通过定长buffer来实现速率控制。buffer大小可以通过JSON文件进行配置。单输入图像源的情况下理论最多可达6个，当智能帧产生速率过慢，buffer耗尽时，VioPlugin产生主动丢帧数据</li>
+<li>消息的产生和推送：消息分为图像数据消息与主动丢帧数据消息，由第一部分产生后推送至消息总线。</li>
+<li>支持单路camera、单路回灌、多路camera不同步运行、多路camera同步运行、一路cam+一路回灌同时运行 (目前可支持的多路理论最多达6路)<ul>
+<li>多路camera不同步运行，顾名思义就是获取上来的camera数据是独立的，每个camera就分别占用一路pipeID。例如两路camera，就会分别获取到两路不同的图像数据结果</li>
+<li>多路camera同步运行，顾名思义就是上层每帧只能获取一次结果，该结果中包含了多路camera的图像数据，并且多路的图像数据的时间戳是同步过的，如果多路中有任意一路发生丢帧，则用户也无法获取到其他路的图像结果数据。</li>
 </ul>
 </li>
 </ul>
@@ -972,17 +976,15 @@ master分支提供了串行化输出的人脸检测框的sample程序，标准�
 pipe_id的取值范围为(0~5),即最多存在6路camera的pipeline同时运行(受限于mipi host的硬件限制以及ddr带宽限制)</p>
 <p>如下是VioPipeLine的接口，支持单路和多路同步接口，并支持客户在业务逻辑中进行集成。主要包括单路和多路同步2个部分：</p>
 <ul class="simple">
-<li><p>单路camera和单路回灌</p>
-<ul>
-<li><p>单路camera获取原始帧信息(GetIpuInfo)、金字塔的处理结果帧(GetPymInfo)</p></li>
-<li><p>单路回灌获取回灌图像存储信息(GetFbSrcInfo)、回灌图像处理(SetFbPymProcess)</p></li>
-<li><p>单路释放原始帧释放接口(FreeIpuInfo)、金字塔结果帧释放接口(FreePymInfo)</p></li>
+<li>单路camera和单路回灌<ul>
+<li>单路camera获取原始帧信息(GetIpuInfo)、金字塔的处理结果帧(GetPymInfo)</li>
+<li>单路回灌获取回灌图像存储信息(GetFbSrcInfo)、回灌图像处理(SetFbPymProcess)</li>
+<li>单路释放原始帧释放接口(FreeIpuInfo)、金字塔结果帧释放接口(FreePymInfo)</li>
 </ul>
 </li>
-<li><p>多路camera同步</p>
-<ul>
-<li><p>多路camera获取原始帧信息(GetMultIpuInfo)、金字塔的处理结果帧(GetMultPymInfo)</p></li>
-<li><p>多路camera释放原始帧释放接口(FreeMultIpuInfo)、金字塔结果帧释放接口(FreeMultPymInfo)</p></li>
+<li>多路camera同步<ul>
+<li>多路camera获取原始帧信息(GetMultIpuInfo)、金字塔的处理结果帧(GetMultPymInfo)</li>
+<li>多路camera释放原始帧释放接口(FreeMultIpuInfo)、金字塔结果帧释放接口(FreeMultPymInfo)</li>
 </ul>
 </li>
 </ul>
@@ -1031,28 +1033,25 @@ pipe_id的取值范围为(0~5),即最多存在6路camera的pipeline同时运行(
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

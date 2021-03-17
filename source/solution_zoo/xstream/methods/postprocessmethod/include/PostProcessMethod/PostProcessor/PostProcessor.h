@@ -33,10 +33,8 @@ class PostProcessor {
   virtual int Init(const std::string &cfg);
   virtual void Finalize();
 
-  virtual std::vector<std::vector<BaseDataPtr>> Do(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) = 0;
-
+  virtual std::vector<BaseDataPtr> Do(const std::vector<BaseDataPtr> &input,
+                                      const xstream::InputParamPtr &param) = 0;
  protected:
   // release tensor
   int ReleaseTensor(std::shared_ptr<std::vector<BPU_TENSOR_S>> tensor);
@@ -47,6 +45,7 @@ class PostProcessor {
   std::shared_ptr<std::vector<BPU_TENSOR_S>> output_tensors_ = nullptr;
   std::shared_ptr<BPU_TASK_HANDLE> task_handle_ = nullptr;
   std::shared_ptr<BPU_MODEL_S> bpu_model_ = nullptr;
+  std::shared_ptr<std::vector<BPU_BBOX>> bpu_boxes_ = nullptr;
 
   int src_image_width_;
   int src_image_height_;

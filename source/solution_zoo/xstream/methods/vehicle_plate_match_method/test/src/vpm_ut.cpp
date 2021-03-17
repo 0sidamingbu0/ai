@@ -90,19 +90,16 @@ TEST(VehiclePlateMatchMethod_TEST, Basic) {
     data_pcolor->name_ = "plate_color";
     data_pcolor->datas_.push_back(BaseDataPtr(pcolor));
 
-  std::vector<std::vector<BaseDataPtr>> input;
-  input.reserve(1);
-  input.push_back(std::vector<BaseDataPtr>());
-  input[0].push_back(data_vbox);
-  input[0].push_back(data_pbox);
-  input[0].push_back(data_vlmk);
-  input[0].push_back(data_plmk);
-  input[0].push_back(data_ptype);
-  input[0].push_back(data_pcolor);
+  std::vector<BaseDataPtr> input;
+  input.push_back(data_vbox);
+  input.push_back(data_pbox);
+  input.push_back(data_vlmk);
+  input.push_back(data_plmk);
+  input.push_back(data_ptype);
+  input.push_back(data_pcolor);
 
   // 2. build param
-  std::vector<xstream::InputParamPtr> param;
-  param.reserve(1);
+  xstream::InputParamPtr param;
 
   // 3. run
   auto xstream_output = vpm_method.DoProcess(input, param);

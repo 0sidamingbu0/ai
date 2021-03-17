@@ -1,0 +1,39 @@
+# 版本说明  版本 2.10.0
+
+<h2>        Task
+</h2>
+<ul>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-821'>XPPXROC-821</a>] -         大唐车路协同硬件调试
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-914'>XPPXROC-914</a>] -         apa示例黑盒模型将原图与APA两个通路都运行
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-922'>XPPXROC-922</a>] -         集成系统软件TR5镜像版本
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-929'>XPPXROC-929</a>] -         X3面板机支持运行camera过程中，按需进行图像回灌
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-933'>XPPXROC-933</a>] -         大唐移动模型变更测试
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-934'>XPPXROC-934</a>] -         集成带有车辆关键点的多任务模型
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-935'>XPPXROC-935</a>] -         XStream简化Method开发
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-953'>XPPXROC-953</a>] -         系统镜像-bpupredict-AIExpress版本对应关系
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-954'>XPPXROC-954</a>] -         sensor插件化
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-958'>XPPXROC-958</a>] -         默认回灌buffer使能cached
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-960'>XPPXROC-960</a>] -         适配工具链1.1.21版本的预测库
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-961'>XPPXROC-961</a>] -         解决mot模块，配置使用单例，导致多个mot method参数互相影响的问题
+</li>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-963'>XPPXROC-963</a>] -         定位tv uvc 性能瓶颈
+</li>
+</ul>
+    
+<h2>        Bug
+</h2>
+<ul>
+<li>[<a href='https://jira.hobot.cc:8443/browse/XPPXROC-941'>XPPXROC-941</a>] -         功能手势识别
+</li>
+</ul>

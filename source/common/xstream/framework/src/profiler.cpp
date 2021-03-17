@@ -38,9 +38,8 @@ static std::vector<std::string> split(const std::string &str, char delim) {
 
 int TimeStatisticInfo::cycle_ms = 3000;
 
-int FpsStatisticInfo::cycle_ms = 200 * 1000;
-
 ProfilerPtr Profiler::instance_;
+std::map<std::thread::id, std::string> Profiler::thread_id2name_;
 
 /// used to guarantee the Profiler::instance_ is created only once
 std::once_flag create_profiler_flag;
@@ -54,13 +53,6 @@ ProfilerPtr Profiler::Get() {
   }
   return instance_;
 }
-
-// Profiler::~Profiler() {
-//   std::lock_guard<std::mutex> lock(lock_);
-//   if (foi_.is_open()) {
-//     foi_.close();
-//   }
-// }
 
 Profiler::~Profiler() {
   LOGD << "~Profiler() Start";
@@ -154,14 +146,21 @@ void Profiler::SetIntervalForTimeStat(int cycle_ms) {
   LOGI << "SetFrameIntervalForTimeStat to " << cycle_ms;
 }
 
-void Profiler::SetIntervalForFPSStat(int cycle_ms) {
-  HOBOT_CHECK_GE(cycle_ms, 1);
-  FpsStatisticInfo::cycle_ms = cycle_ms;
-  LOGI << "SetTimeIntervalForFPSStat to " << cycle_ms;
+std::unique_ptr<ProfilerScope> Profiler::CreateFpsScope(const std::string &name) {
+  std::lock_guard<std::mutex> lock(lock_);
+
+  std::shared_ptr<FpsStatisticInfo> curr_stat;
+  if (fps_stats_.find(name) == fps_stats_.end()) {
+    fps_stats_[name] = std::make_shared<FpsStatisticInfo>();
+  }
+  curr_stat = fps_stats_[name];
+  std::unique_ptr<ScopeFps> scope(
+      new ScopeFps(shared_from_this(), name, curr_stat));
+  return scope;
 }
 
-std::unique_ptr<ProfilerScope> Profiler::CreateScope(const std::string &name,
-                                                     const std::string &tag) {
+std::unique_ptr<ProfilerScope> Profiler::CreateTimeScope(const std::string &name,
+                                                         int sequence_id) {
   std::lock_guard<std::mutex> lock(lock_);
 
   auto id = std::this_thread::get_id();
@@ -169,25 +168,12 @@ std::unique_ptr<ProfilerScope> Profiler::CreateScope(const std::string &name,
   ss << id;
   std::string thread_id = name + "_" + ss.str();
 
-  if (tag == "FPS") {
-    std::shared_ptr<FpsStatisticInfo> curr_stat;
-    if (fps_stats_.find(thread_id) == fps_stats_.end()) {
-      fps_stats_[thread_id] = std::make_shared<FpsStatisticInfo>();
-    }
-    curr_stat = fps_stats_[thread_id];
-    std::unique_ptr<ProfilerScope> scope(
-        new ScopeFps(shared_from_this(), name, tag, curr_stat));
-    return scope;
-  } else if (tag == "TIME") {
-    std::shared_ptr<TimeStatisticInfo> curr_stat;
-    if (time_stats_.find(thread_id) == time_stats_.end()) {
-      time_stats_[thread_id] = std::make_shared<TimeStatisticInfo>();
-    }
-    curr_stat = time_stats_[thread_id];
-    std::unique_ptr<ProfilerScope> scope(
-        new ScopeTime(shared_from_this(), name, tag, curr_stat));
-    return scope;
+  std::shared_ptr<TimeStatisticInfo> curr_stat;
+  if (time_stats_.find(thread_id) == time_stats_.end()) {
+    time_stats_[thread_id] = std::make_shared<TimeStatisticInfo>();
   }
-  HOBOT_CHECK(false) << "Not support scope: " << tag;
-  return nullptr;
+  curr_stat = time_stats_[thread_id];
+  std::unique_ptr<ScopeTime> scope(
+      new ScopeTime(shared_from_this(), name, curr_stat, sequence_id));
+  return scope;
 }

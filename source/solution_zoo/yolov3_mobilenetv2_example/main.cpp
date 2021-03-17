@@ -14,6 +14,7 @@
 #include "vioplugin/vioplugin.h"
 #include "ExampleSmartPlugin.h"
 #include "ExampleWebsocketPlugin.h"
+#include "bpu_predict/bpu_predict_extension.h"
 
 using horizon::vision::xproto::vioplugin::VioPlugin;
 using horizon::vision::xproto::ExampleSmartPlugin::ExampleSmartPlugin;
@@ -28,6 +29,7 @@ static void signal_handle(int param) {
 }
 
 int main(int argc, char **argv) {
+  HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_MAX_TASK_NUM, "128");
   std::string vio_config_file = std::string(argv[1]);
   std::string smart_config_file = std::string(argv[2]);
   std::string websocket_config_file = std::string(argv[3]);

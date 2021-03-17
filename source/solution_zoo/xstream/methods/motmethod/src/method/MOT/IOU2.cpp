@@ -53,7 +53,7 @@ int IOU2::MotInit(const std::string &config_file_path) {
 
 int IOU2::SetTrackerConfig() {
   auto iou2_config = GetConfig();
-  auto config = hobot::iou_mot::ConfigMessage::instance();
+  auto config = tracker_->GetParamConfig();
   config->track_param.match_type = iou2_config->match_type;
   config->track_param.use_kalman_filter = iou2_config->use_kalman_filter;
   config->track_param.missing_time_thres = iou2_config->missing_time_thres;

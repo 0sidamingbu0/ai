@@ -51,7 +51,7 @@ std::vector<BaseDataPtr> RGBNIRStrategy::ProcessFrame(
           content.c_str(), content.c_str() + content.size(), &out_jv, &error);
       auto reader = std::make_shared<JsonReader>(out_jv);
       ret = UpdateParameter(reader);
-      HOBOT_CHECK(ret == kHorizonVisionSuccess) << "param error";
+      HOBOT_CHECK(ret == 0) << "param error";
       RunSingleRGBFrame(in, &out);
     }
   } else {
@@ -97,7 +97,7 @@ int RGBNIRStrategy::Init(std::shared_ptr<MergeParam> config) {
               "Please do camera calibration first";
       delete read_eeprom_handle;
       read_eeprom_handle = nullptr;
-      return kHorizonVisionFailure;
+      return -1;
     }
   } else {
     cv::Mat eeprom_mat(3, 3, cv::DataType<double>::type,
@@ -107,7 +107,7 @@ int RGBNIRStrategy::Init(std::shared_ptr<MergeParam> config) {
   }
   delete read_eeprom_handle;
 
-  return kHorizonVisionSuccess;
+  return 0;
 }
 
 void RGBNIRStrategy::RunSingleRGBFrame(

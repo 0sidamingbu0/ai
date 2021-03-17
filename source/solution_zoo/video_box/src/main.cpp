@@ -50,6 +50,7 @@ static void signal_handle(int param) {
 }
 
 int main(int argc, char **argv) {
+  HB_BPU_setGlobalConfig(BPU_GLOBAL_CONFIG_MAX_TASK_NUM, "128");
   auto mallopt_option = getenv("MALLOC");
   auto bpu_engine_option = getenv("BPU_ENGINE");
   if (mallopt_option && !strcmp(mallopt_option, "OFF")) {
@@ -136,14 +137,6 @@ int main(int argc, char **argv) {
     visual_plg->Start();
 
   sleep(5);
-
-  auto smart_plg = std::make_shared<SmartPlugin>(box_config_file);
-  auto ret = smart_plg->Init();
-  if (ret != 0) {
-    LOGE << "Failed to init smart plugin";
-    return 2;
-  }
-  smart_plg->Start();
   if (run_mode == "ruku") {
     if (argc == 7) {
       vio_config_file = std::string(argv[6]);
@@ -169,6 +162,14 @@ int main(int argc, char **argv) {
       LOGI << "rtsp plugin start success";
     }
   }
+
+  auto smart_plg = std::make_shared<SmartPlugin>(box_config_file);
+  auto ret = smart_plg->Init();
+  if (ret != 0) {
+    LOGE << "Failed to init smart plugin";
+    return 2;
+  }
+  smart_plg->Start();
 
   if (run_mode == "ut") {
     std::this_thread::sleep_for(std::chrono::seconds(30));

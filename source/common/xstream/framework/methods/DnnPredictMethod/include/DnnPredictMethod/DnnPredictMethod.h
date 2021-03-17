@@ -18,12 +18,12 @@
 #include <memory>
 #include "json/json.h"
 #include "horizon/vision_type/vision_type.hpp"
-#include "hobotxstream/method.h"
+#include "hobotxstream/simple_method.h"
 #include "bpu_predict/bpu_predict_extension.h"
 #include "DnnAsyncData.h"
 namespace xstream {
 
-class DnnPredictMethod : public Method {
+class DnnPredictMethod : public SimpleMethod {
  public:
   DnnPredictMethod() {}
   virtual ~DnnPredictMethod() {}
@@ -32,9 +32,9 @@ class DnnPredictMethod : public Method {
   void Finalize() override;
 
   // 主逻辑，完全复用，派生类不需要再实现DoProcess
-  std::vector<std::vector<BaseDataPtr>> DoProcess(
-      const std::vector<std::vector<BaseDataPtr>> &input,
-      const std::vector<xstream::InputParamPtr> &param) override;
+  std::vector<BaseDataPtr> DoProcess(
+      const std::vector<BaseDataPtr> &input,
+      const xstream::InputParamPtr &param) override;
 
  public:
   Json::Value config_;
@@ -67,8 +67,7 @@ class DnnPredictMethod : public Method {
   // IN: input, param; OUT: input_tensors, output_tensors
   // 返回码：0，成功；否则失败；
   virtual int PrepareInputData(
-      const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
+      const std::vector<BaseDataPtr> &input, const xstream::InputParamPtr param,
       std::vector<std::vector<BPU_TENSOR_S>> &input_tensors,
       std::vector<std::vector<BPU_TENSOR_S>> &output_tensors) {
     return -1;
@@ -80,13 +79,12 @@ class DnnPredictMethod : public Method {
   // 函数内部需要获取hobot::vision::PymImageFrame pyramid
   // IN: input, param; OUT: pyramid, input_bbox, valid_box, output_tensors
   // 返回码：0，成功；否则失败；若存在申请失败，函数内部还需负责已申请空间的释放
-  virtual int PrepareInputData(
-      const std::vector<BaseDataPtr> &input,
-      const std::vector<InputParamPtr> param,
-      hobot::vision::PymImageFrame &pyramid,
-      std::vector<BPU_BBOX> &input_bbox,
-      std::vector<int> &valid_box,
-      std::vector<BPU_TENSOR_S> &output_tensors) {
+  virtual int PrepareInputData(const std::vector<BaseDataPtr> &input,
+                               const xstream::InputParamPtr param,
+                               hobot::vision::PymImageFrame &pyramid,
+                               std::vector<BPU_BBOX> &input_bbox,
+                               std::vector<int> &valid_box,
+                               std::vector<BPU_TENSOR_S> &output_tensors) {
     return -1;
   }
 

@@ -144,7 +144,7 @@ int WeightGrading::ProcessFrame(const std::vector<BaseDataPtr> &in,
                      config_param_->lmk_weight * ProcessLmk(*lmk);
     }
 
-    LOGI << "score:" << score->value;
+    LOGD << "score:" << score->value;
     scores->datas_.push_back(score);
   }
   return XSTREAM_GRADING_OK;

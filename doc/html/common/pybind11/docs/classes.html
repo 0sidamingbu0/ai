@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html4" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Object-oriented code &mdash; AI Express用户手册 2.9.0 文档</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -26,11 +29,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/translations.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> AI Express用户手册
+            <a href="../../../index.html" class="icon icon-home"> AI Express用户手册
           
 
           
@@ -132,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -143,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/common/pybind11/docs/classes.rst.txt" rel="nofollow"> 查看页面源码</a>
           
         
@@ -163,7 +168,7 @@
 <h2>Creating bindings for a custom type<a class="headerlink" href="#creating-bindings-for-a-custom-type" title="永久链接至标题">¶</a></h2>
 <p>Let’s now look at a more complex example where we’ll create bindings for a
 custom C++ data structure named <code class="docutils literal notranslate"><span class="pre">Pet</span></code>. Its definition is given below:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Pet</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Pet</span> <span class="p">{</span>
     <span class="n">Pet</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
     <span class="kt">void</span> <span class="n">setName</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name_</span><span class="p">)</span> <span class="p">{</span> <span class="n">name</span> <span class="o">=</span> <span class="n">name_</span><span class="p">;</span> <span class="p">}</span>
     <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">getName</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">name</span><span class="p">;</span> <span class="p">}</span>
@@ -203,8 +208,8 @@ interactive Python session demonstrating this example is shown below:</p>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>Static member functions can be bound in the same way using
+<p class="first admonition-title">参见</p>
+<p class="last">Static member functions can be bound in the same way using
 <code class="xref py py-func docutils literal notranslate"><span class="pre">class_::def_static()</span></code>.</p>
 </div>
 </div>
@@ -237,17 +242,18 @@ Lambda function instead:</p>
     <span class="p">);</span>
 </pre></div>
 </div>
-<p>Both stateless <a class="footnote-reference brackets" href="#f1" id="id1">1</a> and stateful lambda closures are supported by pybind11.
+<p>Both stateless <a class="footnote-reference" href="#f1" id="id1">[1]</a> and stateful lambda closures are supported by pybind11.
 With the above change, the same Python code now produces the following output:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">&lt;example.Pet named &#39;Molly&#39;&gt;</span>
 </pre></div>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="f1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>Stateless closures are those with an empty pair of brackets <code class="docutils literal notranslate"><span class="pre">[]</span></code> as the capture object.</p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Stateless closures are those with an empty pair of brackets <code class="docutils literal notranslate"><span class="pre">[]</span></code> as the capture object.</td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="instance-and-static-fields">
 <span id="properties"></span><h2>Instance and static fields<a class="headerlink" href="#instance-and-static-fields" title="永久链接至标题">¶</a></h2>
@@ -294,8 +300,8 @@ the setter and getter functions:</p>
 <p>Write only properties can be defined by passing <code class="docutils literal notranslate"><span class="pre">nullptr</span></code> as the
 input for the read function.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>Similar functions <code class="xref py py-func docutils literal notranslate"><span class="pre">class_::def_readwrite_static()</span></code>,
+<p class="first admonition-title">参见</p>
+<p class="last">Similar functions <code class="xref py py-func docutils literal notranslate"><span class="pre">class_::def_readwrite_static()</span></code>,
 <code class="xref py py-func docutils literal notranslate"><span class="pre">class_::def_readonly_static()</span></code> <code class="xref py py-func docutils literal notranslate"><span class="pre">class_::def_property_static()</span></code>,
 and <code class="xref py py-func docutils literal notranslate"><span class="pre">class_::def_property_readonly_static()</span></code> are provided for binding
 static variables and properties. Please also see the section on
@@ -355,12 +361,12 @@ just brings them on par.</p>
 <span id="inheritance"></span><h2>Inheritance and automatic downcasting<a class="headerlink" href="#inheritance-and-automatic-downcasting" title="永久链接至标题">¶</a></h2>
 <p>Suppose now that the example consists of two data structures with an
 inheritance relationship:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Pet</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Pet</span> <span class="p">{</span>
     <span class="n">Pet</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Pet</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">Dog</span> <span class="p">:</span> <span class="n">Pet</span> <span class="p">{</span>
     <span class="n">Dog</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">bark</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;woof!&quot;</span><span class="p">;</span> <span class="p">}</span>
 <span class="p">};</span>
@@ -417,11 +423,11 @@ inheritance relationship. This is reflected in Python:</p>
 type behind a base pointer, Python only sees a <code class="docutils literal notranslate"><span class="pre">Pet</span></code>. In C++, a type is only
 considered polymorphic if it has at least one virtual function and pybind11
 will automatically recognize this:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">PolymorphicPet</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">PolymorphicPet</span> <span class="p">{</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">PolymorphicPet</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">PolymorphicDog</span> <span class="o">:</span> <span class="n">PolymorphicPet</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">PolymorphicDog</span> <span class="p">:</span> <span class="n">PolymorphicPet</span> <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">bark</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;woof!&quot;</span><span class="p">;</span> <span class="p">}</span>
 <span class="p">};</span>
 
@@ -448,15 +454,15 @@ C++: we don’t just get access to the virtual functions of the base, we get the
 concrete derived type including functions and attributes that the base type may
 not even be aware of.</p>
 <div class="admonition seealso">
-<p class="admonition-title">参见</p>
-<p>For more information about polymorphic behavior see <a class="reference internal" href="advanced/classes.html#overriding-virtuals"><span class="std std-ref">Overriding virtual functions in Python</span></a>.</p>
+<p class="first admonition-title">参见</p>
+<p class="last">For more information about polymorphic behavior see <a class="reference internal" href="advanced/classes.html#overriding-virtuals"><span class="std std-ref">Overriding virtual functions in Python</span></a>.</p>
 </div>
 </div>
 <div class="section" id="overloaded-methods">
 <h2>Overloaded methods<a class="headerlink" href="#overloaded-methods" title="永久链接至标题">¶</a></h2>
 <p>Sometimes there are several overloaded C++ methods with the same name taking
 different kinds of input arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Pet</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Pet</span> <span class="p">{</span>
     <span class="n">Pet</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">age</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
     <span class="kt">void</span> <span class="n">set</span><span class="p">(</span><span class="kt">int</span> <span class="n">age_</span><span class="p">)</span> <span class="p">{</span> <span class="n">age</span> <span class="o">=</span> <span class="n">age_</span><span class="p">;</span> <span class="p">}</span>
@@ -497,7 +503,7 @@ sequence.</p>
 <span class="go"> |      Set the pet&#39;s name</span>
 </pre></div>
 </div>
-<p>If you have a C++14 compatible compiler <a class="footnote-reference brackets" href="#cpp14" id="id2">2</a>, you can use an alternative
+<p>If you have a C++14 compatible compiler <a class="footnote-reference" href="#cpp14" id="id2">[2]</a>, you can use an alternative
 syntax to cast the overloaded function:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">Pet</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;Pet&quot;</span><span class="p">)</span>
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;set&quot;</span><span class="p">,</span> <span class="n">py</span><span class="o">::</span><span class="n">overload_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Pet</span><span class="o">::</span><span class="n">set</span><span class="p">),</span> <span class="s">&quot;Set the pet&#39;s age&quot;</span><span class="p">)</span>
@@ -508,8 +514,8 @@ syntax to cast the overloaded function:</p>
 The return type and class are deduced. This avoids the additional noise of
 <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">(Pet::*)()</span></code> as seen in the raw cast. If a function is overloaded based
 on constness, the <code class="docutils literal notranslate"><span class="pre">py::const_</span></code> tag should be used:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Widget</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Widget</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">);</span>
     <span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -528,15 +534,16 @@ you can use <code class="docutils literal notranslate"><span class="pre">py::det
     <span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;set&quot;</span><span class="p">,</span> <span class="n">overload_cast_</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;&gt;</span><span class="p">()(</span><span class="o">&amp;</span><span class="n">Pet</span><span class="o">::</span><span class="n">set</span><span class="p">),</span> <span class="s">&quot;Set the pet&#39;s name&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="cpp14"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p>A compiler which supports the <code class="docutils literal notranslate"><span class="pre">-std=c++14</span></code> flag
-or Visual Studio 2015 Update 2 and newer.</p>
-</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="cpp14" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>A compiler which supports the <code class="docutils literal notranslate"><span class="pre">-std=c++14</span></code> flag
+or Visual Studio 2015 Update 2 and newer.</td></tr>
+</tbody>
+</table>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
-<p>To define multiple overloaded constructors, simply declare one after the
+<p class="first admonition-title">注解</p>
+<p class="last">To define multiple overloaded constructors, simply declare one after the
 other using the <code class="docutils literal notranslate"><span class="pre">.def(py::init&lt;...&gt;())</span></code> syntax. The existing machinery
 for specifying keyword and default arguments also works.</p>
 </div>
@@ -545,8 +552,8 @@ for specifying keyword and default arguments also works.</p>
 <h2>Enumerations and internal types<a class="headerlink" href="#enumerations-and-internal-types" title="永久链接至标题">¶</a></h2>
 <p>Let’s now suppose that the example class contains an internal enumeration type,
 e.g.:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">Pet</span> <span class="p">{</span>
-    <span class="k">enum</span> <span class="nc">Kind</span> <span class="p">{</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Pet</span> <span class="p">{</span>
+    <span class="k">enum</span> <span class="n">Kind</span> <span class="p">{</span>
         <span class="n">Dog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">Cat</span>
     <span class="p">};</span>
@@ -590,10 +597,10 @@ typed enums.</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">name</span></code> property returns the name of the enum value as a unicode string.</p>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
+<p class="first admonition-title">注解</p>
 <p>It is also possible to use <code class="docutils literal notranslate"><span class="pre">str(enum)</span></code>, however these accomplish different
 goals. The following shows how these two approaches differ.</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span> <span class="s2">&quot;Lucy&quot;</span><span class="p">,</span> <span class="n">Pet</span><span class="o">.</span><span class="n">Cat</span> <span class="p">)</span>
+<div class="last highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span> <span class="s2">&quot;Lucy&quot;</span><span class="p">,</span> <span class="n">Pet</span><span class="o">.</span><span class="n">Cat</span> <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pet_type</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pet_type</span>
 <span class="go">Pet.Cat</span>
@@ -605,7 +612,7 @@ goals. The following shows how these two approaches differ.</p>
 </div>
 </div>
 <div class="admonition note">
-<p class="admonition-title">注解</p>
+<p class="first admonition-title">注解</p>
 <p>When the special tag <code class="docutils literal notranslate"><span class="pre">py::arithmetic()</span></code> is specified to the <code class="docutils literal notranslate"><span class="pre">enum_</span></code>
 constructor, pybind11 creates an enumeration that also supports rudimentary
 arithmetic and bit-level operations like comparisons, and, or, xor, negation,
@@ -614,7 +621,7 @@ etc.</p>
    <span class="p">...</span>
 </pre></div>
 </div>
-<p>By default, these are omitted to conserve space.</p>
+<p class="last">By default, these are omitted to conserve space.</p>
 </div>
 </div>
 </div>
@@ -624,28 +631,25 @@ etc.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2020, Horizon Robotics
+        &#169; 版权所有 2020, Horizon Robotics.
 
     </p>
   </div>
     
     
     
-    利用 <a href="http://sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
     由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

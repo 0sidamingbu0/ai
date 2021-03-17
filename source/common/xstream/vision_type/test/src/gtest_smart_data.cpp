@@ -14,27 +14,27 @@ TEST(HorizonVisionFaceSmartData, alloc_free) {
   HorizonVisionAllocLandmarks(&data->landmarks);
   HorizonVisionAllocFloatArray(&data->feature);
   HorizonVisionAllocCharArray(&data->encrypted_feature);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   ret = HorizonVisionFreeFaceSmartData(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionBodySmartData, alloc_free) {
   HorizonVisionBodySmartData *data;
   auto ret = HorizonVisionAllocBodySmartData(&data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   HorizonVisionAllocSegmentation(&data->segmentation);
   HorizonVisionAllocLandmarks(&data->skeleton);
   ret = HorizonVisionFreeBodySmartData(data);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
 
 TEST(HorizonVisionSmartData, alloc_free) {
   HorizonVisionSmartData *data;
   auto ret = HorizonVisionAllocSmartData(&data, 1);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
   EXPECT_EQ(data->type, uint(0));
   EXPECT_EQ(data->face_extra, nullptr);
   ret = HorizonVisionFreeSmartData(data, 1);
-  EXPECT_EQ(kHorizonVisionSuccess, ret);
+  EXPECT_EQ(0, ret);
 }
