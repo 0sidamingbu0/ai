@@ -1,0 +1,36 @@
+{
+    "config_number": 1,
+    "board_name": "x3dev",
+    "config_data": [
+        {
+            "cam_type": "dual",
+            "data_source": "dual_panel_camera",
+            "max_vio_buffer": 3,
+            "ts_type": "frame_id",
+            "file_path": "configs/vio_hg/name.list",
+            "image_list": [
+                "face_body_multisource/configs/images/image-001.jpeg",
+                "face_body_multisource/configs/images/image-002.jpeg"
+            ],
+            "video_path": "test.avi",
+            "interval": 20,
+            "name_list_loop": 1,
+            "pad_width": 1920,
+            "pad_height": 1080,
+            "vio_cfg_file": {
+                "ipc_camera": "configs/vio/hb_vio.json",
+                "panel_camera": "configs/vio/x3dev/iot_vio_x3_imx327.json",
+                "dual_panel_camera": [
+                    "configs/vio/x3dev/iot_vio_x3_imx327.json",
+                    "configs/vio/x3dev/iot_vio_x3_os8a10.json"
+                ],
+                "usb_cam": "configs/vio/x3dev/iot_vio_x3_usb_cam_1080p.json",
+                "jpeg_image_list": "configs/vio/x3dev/iot_vio_x3_1080_fb.json",
+                "nv12_image_list": "configs/vio/x3dev/iot_vio_x3_1080_fb.json",
+                "image": "configs/vio/x3dev/iot_vio_x3_1080_fb.json",
+                "cached_image_list": "configs/vio/x3dev/iot_vio_x3_1080_fb.json",
+                "video_feedback_produce": "configs/vio/x3dev/iot_vio_x3_1080_fb.json"
+            }
+        }
+    ]
+}

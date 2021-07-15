@@ -1,0 +1,47 @@
+{
+    "config_number": 1,
+    "board_name": "j3dev",
+    "config_data": [
+        {
+            "cam_type": "multi_sync",
+            "data_source": "multi_feedback_produce",
+            "max_vio_buffer": 3,
+            "ts_type": "inner_frame_id",
+            "file_path": [
+              "configs/vio_hg/multi_fb/name_jpg_256x512/fb_pipe0.list",
+              "configs/vio_hg/multi_fb/name_jpg_256x512/fb_pipe1.list",
+              "configs/vio_hg/multi_fb/name_jpg_256x512/fb_pipe2.list",
+              "configs/vio_hg/multi_fb/name_jpg_256x512/fb_pipe3.list"
+            ],
+            "image_list": [
+                "face_body_multisource/configs/images/image-001.jpeg",
+                "face_body_multisource/configs/images/image-002.jpeg"
+            ],
+            "video_path": "test.avi",
+            "interval": 40,
+            "name_list_loop": 1,
+            "pad_width": 256,
+            "pad_height": 512,
+            "multi_feedback_mode": "jpeg_image_list",
+            "vio_cfg_file": {
+                "apa_camera": "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                "multi_apa_camera": [
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe1.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe2.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe3.json"
+                ],
+                "multi_feedback_produce": [
+                    "configs/vio/j3dev/multi_feedback_256x512/fb_256x512_pipe0.json",
+                    "configs/vio/j3dev/multi_feedback_256x512/fb_256x512_pipe1.json",
+                    "configs/vio/j3dev/multi_feedback_256x512/fb_256x512_pipe2.json",
+                    "configs/vio/j3dev/multi_feedback_256x512/fb_256x512_pipe3.json"
+                ],
+                "jpeg_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "nv12_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "cached_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "video_feedback_produce": "configs/vio/j3dev/1080_fb_pipe0.json"
+            }
+        }
+    ]
+}

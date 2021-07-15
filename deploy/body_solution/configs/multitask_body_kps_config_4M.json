@@ -1,0 +1,40 @@
+{
+  "in_msg_type": "pyramid_image",
+  "net_info": {
+    "model_name": "multitask_body_kps_960x544",
+    "model_version": "0.0.5",
+    "model_out_sequence": [
+      {
+        "name": "body_box_int",
+        "type": "invalid"
+      },
+      {
+        "name": "body_box",
+        "type": "bbox",
+        "labels": [
+          {"key": 1, "value": "body_box"},
+          {"key": 2, "value": "cat_box"},
+          {"key": 3, "value": "dog_box"},
+          {"key": 4, "value": "other_box"}
+        ]
+      },
+      {
+        "name": "kps",
+        "type": "kps",
+        "box_name": "body_box"
+      }
+    ],
+    "model_input_width": 960,
+    "model_input_height": 544,
+    "pyramid_layer": 5,
+    "kps_pos_distance": 0.1,
+    "kps_feat_width": 16,
+    "kps_feat_height": 16,
+    "kps_points_number": 19,
+    "kps_anchor_param": -0.46875
+  },
+  "method_outs": ["body_box", "kps"],
+  "bpu_config_path": "../configs/bpu_config.json",
+  "model_file_path": "../../models/multitask_body_kps_960x544.hbm",
+  "core_id": 2
+}

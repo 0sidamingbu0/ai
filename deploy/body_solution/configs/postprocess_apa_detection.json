@@ -1,0 +1,87 @@
+{
+    "post_type": "detect",
+    "net_info": {
+      "model_out_sequence": [
+        {
+          "name": "head_box",
+          "type": "fcosbbox"
+        },
+	{
+          "name": "head_box_reg1",
+          "type": "invalid"
+        },
+	{
+          "name": "head_box_ctr1",
+          "type": "invalid"
+        },
+	{
+          "name": "head_box_score2",
+          "type": "invalid"
+        },
+	{
+          "name": "head_box_reg2",
+          "type": "invalid"
+        },
+	{
+          "name": "head_box_ctr2",
+          "type": "invalid"
+        },
+	{
+          "name": "face_box",
+          "type": "fcosbbox"
+        },
+	{
+          "name": "face_box_reg1",
+          "type": "invalid"
+        },
+	{
+          "name": "face_box_ctr1",
+          "type": "invalid"
+        },
+	{
+          "name": "face_box_score2",
+          "type": "invalid"
+        },
+	{
+          "name": "face_box_reg2",
+          "type": "invalid"
+        },
+	{
+          "name": "face_box_ctr2",
+          "type": "invalid"
+        },
+	{
+          "name": "hand_box",
+          "type": "fcosbbox"
+        },
+	{
+          "name": "hand_box_reg1",
+          "type": "invalid"
+        },
+	{
+          "name": "hand_box_ctr1",
+          "type": "invalid"
+        },
+	{
+          "name": "hand_box_score2",
+          "type": "invalid"
+        },
+	{
+          "name": "hand_box_reg2",
+          "type": "invalid"
+        },
+	{
+          "name": "hand_box_ctr2",
+          "type": "invalid"
+        }
+      ]
+    },
+    "method_outs": ["head_box", "face_box", "hand_box"],
+    "model_file_path": "../../models/cropDetection.hbm",
+    "pre_nms_top_n" : 4095,
+    "iou_threshold" : 0.5,
+    "post_nms_top_n": 100,
+    "box_score_thresh": 0.3,
+    "is_crop" : true,
+    "feat_stride": [8,16]
+}

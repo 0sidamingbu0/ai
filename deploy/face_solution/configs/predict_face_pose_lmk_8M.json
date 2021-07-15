@@ -1,0 +1,7 @@
+{
+  "model_input_width": 640,
+  "model_input_height": 360,
+  "pyramid_layer": 9,
+  "bpu_config_path": "../configs/bpu_config.json",
+  "model_file_path": "../../models/faceMultitask.hbm"
+}

@@ -1,0 +1,122 @@
+{
+    "config_number": 4,
+    "board_name": "j3dev",
+    "config_data": [
+        {
+            "cam_type": "mono",
+            "data_source": "apa_camera",
+            "max_vio_buffer": 3,
+            "ts_type": "inner_frame_id",
+            "file_path": "configs/vio_hg/name.list",
+            "image_list": [
+                "face_body_multisource/configs/images/image-001.jpeg",
+                "face_body_multisource/configs/images/image-002.jpeg"
+            ],
+            "video_path": "test.avi",
+            "interval": 20,
+            "name_list_loop": 1,
+            "pad_width": 1920,
+            "pad_height": 1080,
+            "vio_cfg_file": {
+                "apa_camera": "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                "multi_apa_camera": [
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe1.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe2.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe3.json"
+                ],
+                "jpeg_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "nv12_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "cached_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "video_feedback_produce": "configs/vio/j3dev/1080_fb_pipe0.json"
+            }
+        },
+        {
+            "cam_type": "mono",
+            "data_source": "apa_camera",
+            "max_vio_buffer": 3,
+            "ts_type": "inner_frame_id",
+            "file_path": "configs/vio_hg/name.list",
+            "image_list": [
+                "face_body_multisource/configs/images/image-001.jpeg",
+                "face_body_multisource/configs/images/image-002.jpeg"
+            ],
+            "video_path": "test.avi",
+            "interval": 20,
+            "name_list_loop": 1,
+            "pad_width": 1920,
+            "pad_height": 1080,
+            "vio_cfg_file": {
+                "apa_camera": "configs/vio/j3dev/ov10635_yuv_720p_960_pipe1.json",
+                "multi_apa_camera": [
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe1.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe2.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe3.json"
+                ],
+                "jpeg_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "nv12_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "cached_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "video_feedback_produce": "configs/vio/j3dev/1080_fb_pipe0.json"
+            }
+        },
+        {
+            "cam_type": "mono",
+            "data_source": "apa_camera",
+            "max_vio_buffer": 3,
+            "ts_type": "inner_frame_id",
+            "file_path": "configs/vio_hg/name.list",
+            "image_list": [
+                "face_body_multisource/configs/images/image-001.jpeg",
+                "face_body_multisource/configs/images/image-002.jpeg"
+            ],
+            "video_path": "test.avi",
+            "interval": 20,
+            "name_list_loop": 1,
+            "pad_width": 1920,
+            "pad_height": 1080,
+            "vio_cfg_file": {
+                "apa_camera": "configs/vio/j3dev/ov10635_yuv_720p_960_pipe2.json",
+                "multi_apa_camera": [
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe1.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe2.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe3.json"
+                ],
+                "jpeg_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "nv12_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "cached_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "video_feedback_produce": "configs/vio/j3dev/1080_fb_pipe0.json"
+            }
+        },
+        {
+            "cam_type": "mono",
+            "data_source": "apa_camera",
+            "max_vio_buffer": 3,
+            "ts_type": "inner_frame_id",
+            "file_path": "configs/vio_hg/name.list",
+            "image_list": [
+                "face_body_multisource/configs/images/image-001.jpeg",
+                "face_body_multisource/configs/images/image-002.jpeg"
+            ],
+            "video_path": "test.avi",
+            "interval": 20,
+            "name_list_loop": 1,
+            "pad_width": 1920,
+            "pad_height": 1080,
+            "vio_cfg_file": {
+                "apa_camera": "configs/vio/j3dev/ov10635_yuv_720p_960_pipe3.json",
+                "multi_apa_camera": [
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe0.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe1.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe2.json",
+                    "configs/vio/j3dev/ov10635_yuv_720p_960_pipe3.json"
+                ],
+                "jpeg_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "nv12_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "cached_image_list": "configs/vio/j3dev/1080_fb_pipe0.json",
+                "video_feedback_produce": "configs/vio/j3dev/1080_fb_pipe0.json"
+            }
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "score_threshold": 0.3,
+    "nms_threshold": 0.45,
+    "nms_top_k": 500,
+    "basic_pyramid_image_height": 1000,
+    "basic_pyramid_image_width": 750
+}

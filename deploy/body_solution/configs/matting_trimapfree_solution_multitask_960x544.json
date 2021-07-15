@@ -1,0 +1,15 @@
+{
+    "xstream_workflow_file": "./body_solution/configs/matting_trimapfree_multitask_960x544.json",
+    "enable_profile": 0,
+    "profile_log_path": "",
+    "time_monitor": 3,
+    "enable_result_to_json": false,
+    "gesture_as_event": false,
+    "gesture_mute_outside": 20,
+    "palm_move_dist_thr": 10,
+    "distance_calibration_width": 3840,
+    "distance_fit_factor": 61557.0,
+    "distance_fit_impower": -1.085,
+    "distance_smooth": true,
+    "dump_result": false
+}
