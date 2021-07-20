@@ -620,12 +620,14 @@ void FasterRCNNImp::GetFrameOutput(int src_img_width, int src_img_height,
       if (invalid_idx.find(i) != invalid_idx.end()) {
         continue;
       }
+//idol
       const auto &landmarks = landmarks_vec.second[i];
-      LOGD << "lmk point: [";
+      LOGE << "lmk point: [";
       for (const auto &point : landmarks.values) {
-        LOGD << point.x << "," << point.y << "," << point.score;
+        LOGE << point.x << "," << point.y << "," << point.score;
       }
-      LOGD << "]";
+      LOGE << "]";
+//idol
       auto xstream_landmark = std::make_shared<XStreamData<Landmarks>>();
       xstream_landmark->value = std::move(landmarks);
       xstream_det_result[landmarks_vec.first]->datas_.push_back(
