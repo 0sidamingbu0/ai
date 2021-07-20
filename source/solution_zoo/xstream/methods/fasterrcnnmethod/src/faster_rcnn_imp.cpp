@@ -628,7 +628,7 @@ void FasterRCNNImp::GetFrameOutput(int src_img_width, int src_img_height,
         i++;
         if(point.score > 0.3)
         {
-          LOGE << i: << point.x << "," << point.y << "," << point.score;
+          LOGE << i << ": " <<point.x << "," << point.y << "," << point.score;
         }
       }
       LOGE << "]";
