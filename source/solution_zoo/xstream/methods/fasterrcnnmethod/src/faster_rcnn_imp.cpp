@@ -625,10 +625,10 @@ void FasterRCNNImp::GetFrameOutput(int src_img_width, int src_img_height,
       LOGE << "lmk point: [";
       int idoli=0;
       for (const auto &point : landmarks.values) {
-        i++;
+        idoli++;
         if(point.score > 0.3)
         {
-          LOGE << i << ": " <<point.x << "," << point.y << "," << point.score;
+          LOGE << idoli << ": " <<point.x << "," << point.y << "," << point.score;
         }
       }
       LOGE << "]";
