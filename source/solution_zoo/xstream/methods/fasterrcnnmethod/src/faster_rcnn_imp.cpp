@@ -624,7 +624,8 @@ void FasterRCNNImp::GetFrameOutput(int src_img_width, int src_img_height,
       const auto &landmarks = landmarks_vec.second[i];
       LOGE << "lmk point: [";
       for (const auto &point : landmarks.values) {
-        LOGE << point.x << "," << point.y << "," << point.score;
+        if(point.score > 30)
+          LOGE << point.x << "," << point.y << "," << point.score;
       }
       LOGE << "]";
 //idol
